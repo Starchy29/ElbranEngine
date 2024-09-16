@@ -1,6 +1,7 @@
 #pragma comment(lib,"d3d11.lib")
 #include "DXGame.h"
 #include <tchar.h>
+#include "Color.h"
 
 // global callback that processes messages from the operating system
 LRESULT CALLBACK WndProc(_In_ HWND hWnd, _In_ UINT message, _In_ WPARAM wParam, _In_ LPARAM lParam) {
@@ -19,6 +20,9 @@ HRESULT DXGame::Initialize(HINSTANCE hInst) {
 	HRESULT hRes = instance->InitWindow();
 	if(FAILED(hRes)) return hRes;
 
+	hRes = instance->InitDirectX();
+	if(FAILED(hRes)) return hRes;
+
 	return S_OK;
 }
 
@@ -34,10 +38,8 @@ HRESULT DXGame::Run() {
 			DispatchMessage(&msg);
 		} else {
 			// only update game when not processing a message
-
-			// update
-
-			// draw
+			Update(0.0f);
+			Render();
 		}
 	}
 
@@ -72,6 +74,21 @@ LRESULT DXGame::ProcessMessage(HWND hWnd, UINT message, WPARAM wParam, LPARAM lP
 	}
 
 	return 0;
+}
+
+void DXGame::Update(float deltaTime) { }
+
+void DXGame::Render() { 
+	// erase screen and depth buffer
+	dxContext->ClearRenderTargetView(backBufferView.Get(), Color::Black);
+	dxContext->ClearDepthStencilView(
+		depthStencilView.Get(),
+		D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL,
+		1.0f, 0
+	);
+
+	swapChain->Present(0, 0);
+	dxContext->OMSetRenderTargets(1, backBufferView.GetAddressOf(), depthStencilView.Get());
 }
 
 HRESULT DXGame::InitWindow() {
@@ -168,7 +185,7 @@ HRESULT DXGame::InitDirectX() {
 	}
 
 	device.As(&dxDevice);
-	device.As(&dxContext);
+	context.As(&dxContext);
 
 	// create swap chain
 	DXGI_SWAP_CHAIN_DESC desc = {};
@@ -176,13 +193,13 @@ HRESULT DXGame::InitDirectX() {
 	desc.BufferCount = 2;
 	desc.BufferDesc.Format = DXGI_FORMAT_B8G8R8A8_UNORM;
 	desc.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;
-	desc.SampleDesc.Count = 1;      //multisampling setting
-	desc.SampleDesc.Quality = 0;    //vendor-specific flag
+	desc.SampleDesc.Count = 1;      // multisampling setting
+	desc.SampleDesc.Quality = 0;    // vendor-specific flag
 	desc.SwapEffect = DXGI_SWAP_EFFECT_FLIP_SEQUENTIAL;
 	desc.OutputWindow = hWnd;
 
-	Microsoft::WRL::ComPtr<IDXGIDevice3> giDevice;
-	dxgiDevice.As(&giDevice);
+	Microsoft::WRL::ComPtr<IDXGIDevice3> dxgiDevice;
+	dxDevice.As(&dxgiDevice);
 	Microsoft::WRL::ComPtr<IDXGIAdapter> adapter;
 	Microsoft::WRL::ComPtr<IDXGIFactory> factory;
 

@@ -16,6 +16,10 @@ public:
 	HRESULT Run();
 	LRESULT ProcessMessage(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
 
+protected:
+	virtual void Update(float deltaTime);
+	virtual void Render();
+
 private:
 	static DXGame* instance;
 	HINSTANCE hInstance;
@@ -24,7 +28,6 @@ private:
 	D3D_FEATURE_LEVEL featureLevel;
 	Microsoft::WRL::ComPtr<ID3D11Device> dxDevice;
 	Microsoft::WRL::ComPtr<ID3D11DeviceContext> dxContext;
-	Microsoft::WRL::ComPtr<IDXGIDevice3> dxgiDevice;
 	Microsoft::WRL::ComPtr<IDXGISwapChain> swapChain;
 	Microsoft::WRL::ComPtr<ID3D11RenderTargetView> backBufferView;
 	Microsoft::WRL::ComPtr<ID3D11DepthStencilView> depthStencilView;
