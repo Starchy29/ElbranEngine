@@ -8,6 +8,8 @@
 #include <string>
 #include <memory>
 #include "VertexShader.h"
+#include "PixelShader.h"
+#include "Mesh.h"
 
 #define GameInstance DXGame::GetInstance()
 
@@ -15,6 +17,7 @@ class DXGame
 {
 public:
 	std::wstring exePath;
+	std::shared_ptr<Mesh> unitSquare;
 
 	static DXGame* GetInstance();
 	static HRESULT Initialize(HINSTANCE hInst);
@@ -44,10 +47,12 @@ private:
 
 	// temp shader storage
 	std::shared_ptr<VertexShader> defaultVS;
+	std::shared_ptr<PixelShader> defaultPS;
 
 	DXGame(HINSTANCE hInst);
 
 	HRESULT InitWindow();
 	HRESULT InitDirectX();
+	void Resize();
 };
 

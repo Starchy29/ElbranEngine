@@ -7,6 +7,11 @@ VertexShader::VertexShader(Microsoft::WRL::ComPtr<ID3D11Device> device, Microsof
 	LoadShader(fileName);
 }
 
+void VertexShader::SetShader() {
+	context->IASetInputLayout(inputLayout.Get());
+	context->VSSetShader(dxShader.Get(), 0, 0);
+}
+
 void VertexShader::CreateShader(Microsoft::WRL::ComPtr<ID3DBlob> shaderBlob) {
 	HRESULT result = device->CreateVertexShader(
 		shaderBlob->GetBufferPointer(),

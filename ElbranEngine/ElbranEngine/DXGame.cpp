@@ -4,6 +4,7 @@
 #include <tchar.h>
 #include "Color.h"
 #include <d3dcompiler.h>
+#include "Vertex.h"
 
 // global callback that processes messages from the operating system
 LRESULT CALLBACK WndProc(_In_ HWND hWnd, _In_ UINT message, _In_ WPARAM wParam, _In_ LPARAM lParam) {
@@ -59,6 +60,29 @@ LRESULT DXGame::ProcessMessage(HWND hWnd, UINT message, WPARAM wParam, LPARAM lP
 	case WM_DESTROY:
 		PostQuitMessage(0);
 		break;
+	case WM_MENUCHAR:
+		// prevent beeping from alt-enter
+		return MAKELRESULT(0, MNC_CLOSE);
+	case WM_GETMINMAXINFO:
+		// set minimum window sizes
+		((MINMAXINFO*)lParam)->ptMinTrackSize.x = 200;
+		((MINMAXINFO*)lParam)->ptMinTrackSize.y = 200;
+		return 0;
+	case WM_SIZE:
+		if (wParam == SIZE_MINIMIZED)
+			// dont update when minimized
+			return 0;
+
+		// Save the new client area dimensions.
+		windowWidth = LOWORD(lParam);
+		windowHeight = HIWORD(lParam);
+
+		// update directX
+		if(dxDevice) {
+			Resize();
+		}
+
+		return 0;
 	default:
 		return DefWindowProc(hWnd, message, wParam, lParam);
 		break;
@@ -71,6 +95,19 @@ HRESULT DXGame::LoadAssets() {
 	HRESULT hr;
 	
 	defaultVS = std::make_shared<VertexShader>(dxDevice, dxContext, L"CameraVS.cso");
+	defaultPS = std::make_shared<PixelShader>(dxDevice, dxContext, L"ColorFillPS.cso");
+
+	Vertex vertices[3];
+	vertices[0] = Vertex{ DirectX::XMFLOAT2(-100.0f, 100.0f), DirectX::XMFLOAT2(0.0f, 0.0f)};
+	vertices[1] = Vertex{ DirectX::XMFLOAT2(100.0f, 100.0f), DirectX::XMFLOAT2(1.0f, 0.0f) };
+	vertices[2] = Vertex{ DirectX::XMFLOAT2(100.0f, -100.0f), DirectX::XMFLOAT2(0.5f, 1.0f) };
+
+	unsigned int indices[3];
+	indices[0] = 0;
+	indices[1] = 1;
+	indices[2] = 2;
+
+	unitSquare = std::make_shared<Mesh>(dxDevice, dxContext, &vertices[0], 4, &indices[0], 3);
 
 	return S_OK;
 }
@@ -85,6 +122,13 @@ void DXGame::Render() {
 		D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL,
 		1.0f, 0
 	);
+
+	// set shaders
+	defaultVS->SetShader();
+	defaultPS->SetShader();
+
+	// draw mesh
+	unitSquare->Draw();
 
 	swapChain->Present(0, 0);
 	dxContext->OMSetRenderTargets(1, backBufferView.GetAddressOf(), depthStencilView.Get());
@@ -167,16 +211,16 @@ HRESULT DXGame::InitDirectX() {
 	Microsoft::WRL::ComPtr<ID3D11DeviceContext> context;
 
 	HRESULT hr = D3D11CreateDevice(
-		nullptr,                    // Specify nullptr to use the default adapter.
-		D3D_DRIVER_TYPE_HARDWARE,   // Create a device using the hardware graphics driver.
-		0,                          // Should be 0 unless the driver is D3D_DRIVER_TYPE_SOFTWARE.
-		deviceFlags,                // Set debug and Direct2D compatibility flags.
-		levels,                     // List of feature levels this app can support.
-		ARRAYSIZE(levels),          // Size of the list above.
-		D3D11_SDK_VERSION,          // Always set this to D3D11_SDK_VERSION for Windows Store apps.
-		&device,                    // Returns the Direct3D device created.
-		&featureLevel,				// Returns feature level of device created.
-		&context                    // Returns the device immediate context.
+		nullptr,
+		D3D_DRIVER_TYPE_HARDWARE,
+		0,
+		deviceFlags,
+		levels,
+		ARRAYSIZE(levels),
+		D3D11_SDK_VERSION,
+		&device,
+		&featureLevel,
+		&context
 	);
 
 	if(FAILED(hr)) {
@@ -188,7 +232,7 @@ HRESULT DXGame::InitDirectX() {
 
 	// create swap chain
 	DXGI_SWAP_CHAIN_DESC desc = {};
-	desc.Windowed = TRUE; // Sets the initial state of full-screen mode.
+	desc.Windowed = TRUE; // initial full-screen state
 	desc.BufferCount = 2;
 	desc.BufferDesc.Format = DXGI_FORMAT_B8G8R8A8_UNORM;
 	desc.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;
@@ -249,8 +293,8 @@ HRESULT DXGame::InitDirectX() {
 		DXGI_FORMAT_D24_UNORM_S8_UINT,
 		static_cast<UINT> (windowWidth),
 		static_cast<UINT> (windowHeight),
-		1, // This depth stencil view has only one texture.
-		1, // Use a single mipmap level.
+		1,
+		1,
 		D3D11_BIND_DEPTH_STENCIL
 	);
 
@@ -294,7 +338,70 @@ HRESULT DXGame::InitDirectX() {
 	viewport.MaxDepth = 1.0f;
 	context->RSSetViewports(1, &viewport);
 
+	dxContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+
 	return S_OK;
+}
+
+void DXGame::Resize() {
+	backBufferView.Reset();
+	depthStencilView.Reset();
+
+	swapChain->ResizeBuffers(2, windowWidth, windowHeight, DXGI_FORMAT_R8G8B8A8_UNORM, 0);
+
+	// recreate back buffer
+	ID3D11Texture2D* backBufferTexture = 0;
+	swapChain->GetBuffer(0, __uuidof(ID3D11Texture2D), reinterpret_cast<void**>(&backBufferTexture));
+	if(backBufferTexture) {
+		dxDevice->CreateRenderTargetView(
+			backBufferTexture,
+			0,
+			backBufferView.ReleaseAndGetAddressOf()
+		);
+		backBufferTexture->Release();
+	}
+
+	// recreate depth stencil
+	D3D11_TEXTURE2D_DESC depthStencilDesc;
+	depthStencilDesc.Width = windowWidth;
+	depthStencilDesc.Height = windowHeight;
+	depthStencilDesc.MipLevels = 1;
+	depthStencilDesc.ArraySize = 1;
+	depthStencilDesc.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;
+	depthStencilDesc.Usage = D3D11_USAGE_DEFAULT;
+	depthStencilDesc.BindFlags = D3D11_BIND_DEPTH_STENCIL;
+	depthStencilDesc.CPUAccessFlags = 0;
+	depthStencilDesc.MiscFlags = 0;
+	depthStencilDesc.SampleDesc.Count = 1;
+	depthStencilDesc.SampleDesc.Quality = 0;
+
+	ID3D11Texture2D* depthBufferTexture = 0;
+	dxDevice->CreateTexture2D(&depthStencilDesc, 0, &depthBufferTexture);
+	if(depthBufferTexture != 0) {
+		dxDevice->CreateDepthStencilView(
+			depthBufferTexture,
+			0,
+			depthStencilView.ReleaseAndGetAddressOf()
+		);
+		depthBufferTexture->Release();
+	}
+
+	// bind to the pipeline
+	dxContext->OMSetRenderTargets(
+		1,
+		backBufferView.GetAddressOf(),
+		depthStencilView.Get()
+	);
+
+	// set viewport
+	D3D11_VIEWPORT viewport = {};
+	viewport.TopLeftX = 0;
+	viewport.TopLeftY = 0;
+	viewport.Width = (float)windowWidth;
+	viewport.Height = (float)windowHeight;
+	viewport.MinDepth = 0.0f;
+	viewport.MaxDepth = 1.0f;
+	dxContext->RSSetViewports(1, &viewport);
 }
 
 DXGame::DXGame(HINSTANCE hInst) {
