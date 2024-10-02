@@ -1,7 +1,9 @@
 #pragma comment(lib,"d3d11.lib")
+
 #include "DXGame.h"
 #include <tchar.h>
 #include "Color.h"
+#include <d3dcompiler.h>
 
 // global callback that processes messages from the operating system
 LRESULT CALLBACK WndProc(_In_ HWND hWnd, _In_ UINT message, _In_ WPARAM wParam, _In_ LPARAM lParam) {
@@ -21,6 +23,9 @@ HRESULT DXGame::Initialize(HINSTANCE hInst) {
 	if(FAILED(hRes)) return hRes;
 
 	hRes = instance->InitDirectX();
+	if(FAILED(hRes)) return hRes;
+
+	hRes = instance->LoadAssets();
 	if(FAILED(hRes)) return hRes;
 
 	return S_OK;
@@ -49,22 +54,8 @@ HRESULT DXGame::Run() {
 LRESULT DXGame::ProcessMessage(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam) {
 	PAINTSTRUCT ps;
 	HDC hdc;
-	TCHAR greeting[] = _T("Hello, Windows desktop!");
 
 	switch (message) {
-	case WM_PAINT:
-		hdc = BeginPaint(hWnd, &ps);
-
-		// Here your application is laid out.
-		// For this introduction, we just print out "Hello, Windows desktop!"
-		// in the top left corner.
-		TextOut(hdc,
-			5, 5,
-			greeting, _tcslen(greeting));
-		// End application specific layout section.
-
-		EndPaint(hWnd, &ps);
-		break;
 	case WM_DESTROY:
 		PostQuitMessage(0);
 		break;
@@ -74,6 +65,14 @@ LRESULT DXGame::ProcessMessage(HWND hWnd, UINT message, WPARAM wParam, LPARAM lP
 	}
 
 	return 0;
+}
+
+HRESULT DXGame::LoadAssets() {
+	HRESULT hr;
+	
+	defaultVS = std::make_shared<VertexShader>(dxDevice, dxContext, L"CameraVS.cso");
+
+	return S_OK;
 }
 
 void DXGame::Update(float deltaTime) { }
@@ -93,7 +92,7 @@ void DXGame::Render() {
 
 HRESULT DXGame::InitWindow() {
 	static TCHAR szWindowClass[] = _T("DesktopApp");
-	static TCHAR szTitle[] = _T("Windows Desktop Guided Tour Application");
+	static TCHAR szTitle[] = _T("Elbran Engine");
 
 	WNDCLASSEX wcex = {};
 	wcex.cbSize = sizeof(WNDCLASSEX);
@@ -302,4 +301,14 @@ DXGame::DXGame(HINSTANCE hInst) {
 	hInstance = hInst;
 	windowWidth = 960;
 	windowHeight = 540;
+
+	// determine file path
+	wchar_t directory[1024] = {};
+	GetModuleFileNameW(0, directory, 1024);
+	wchar_t* lastSlash = wcsrchr(directory, '\\');
+	if(lastSlash) {
+		// null terminate here to eliminate .exe name and leave directory
+		*(lastSlash+1) = 0;
+	}
+	exePath = directory;
 }

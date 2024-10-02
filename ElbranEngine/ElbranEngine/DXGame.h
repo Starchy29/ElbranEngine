@@ -4,12 +4,18 @@
 #include <wrl/client.h>
 #include <d3d11.h>
 #include <dxgi1_3.h>
+#include <DirectXMath.h>
+#include <string>
+#include <memory>
+#include "VertexShader.h"
 
 #define GameInstance DXGame::GetInstance()
 
 class DXGame
 {
 public:
+	std::wstring exePath;
+
 	static DXGame* GetInstance();
 	static HRESULT Initialize(HINSTANCE hInst);
 
@@ -17,6 +23,7 @@ public:
 	LRESULT ProcessMessage(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
 
 protected:
+	virtual HRESULT LoadAssets();
 	virtual void Update(float deltaTime);
 	virtual void Render();
 
@@ -34,6 +41,9 @@ private:
 
 	int windowWidth;
 	int windowHeight;
+
+	// temp shader storage
+	std::shared_ptr<VertexShader> defaultVS;
 
 	DXGame(HINSTANCE hInst);
 
