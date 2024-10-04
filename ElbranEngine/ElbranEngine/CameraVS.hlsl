@@ -1,7 +1,7 @@
 #include "ShaderStructs.hlsli"
 
 struct VertexShaderInput {
-	float2 screenPos : POSITION;
+	float2 screenPos : SV_POSITION;
 	float2 uv : TEXCOORD;
 };
 
@@ -9,8 +9,9 @@ VertexToPixel main(VertexShaderInput input)
 {
 	VertexToPixel output;
 
-	output.screenPosition = float4(input.screenPos.x, input.screenPos.y, 0, 0);
+	output.screenPosition = float4(input.screenPos.x, input.screenPos.y, 0, 1);
 	output.uv = input.uv;
+	output.color = float4(1, 1, 1, 1);
 
 	return output;
 }

@@ -92,22 +92,22 @@ LRESULT DXGame::ProcessMessage(HWND hWnd, UINT message, WPARAM wParam, LPARAM lP
 }
 
 HRESULT DXGame::LoadAssets() {
-	HRESULT hr;
-	
 	defaultVS = std::make_shared<VertexShader>(dxDevice, dxContext, L"CameraVS.cso");
 	defaultPS = std::make_shared<PixelShader>(dxDevice, dxContext, L"ColorFillPS.cso");
 
-	Vertex vertices[3];
-	vertices[0] = Vertex{ DirectX::XMFLOAT2(-100.0f, 100.0f), DirectX::XMFLOAT2(0.0f, 0.0f)};
-	vertices[1] = Vertex{ DirectX::XMFLOAT2(100.0f, 100.0f), DirectX::XMFLOAT2(1.0f, 0.0f) };
-	vertices[2] = Vertex{ DirectX::XMFLOAT2(100.0f, -100.0f), DirectX::XMFLOAT2(0.5f, 1.0f) };
+	Vertex vertices[] = {
+		{ DirectX::XMFLOAT2(-0.5f, -0.5f), DirectX::XMFLOAT2(0.0f, 0.0f) },
+		{ DirectX::XMFLOAT2(-0.5f, 0.5f), DirectX::XMFLOAT2(0.0f, 1.0f) },
+		{ DirectX::XMFLOAT2(0.5f, 0.5f), DirectX::XMFLOAT2(1.0f, 1.0f) },
+		{ DirectX::XMFLOAT2(0.5f, -0.5f), DirectX::XMFLOAT2(1.0f, 0.0f) }
+	};
 
-	unsigned int indices[3];
-	indices[0] = 0;
-	indices[1] = 1;
-	indices[2] = 2;
+	unsigned int indices[] = {
+		0, 1, 3,
+		1, 2, 3
+	};
 
-	unitSquare = std::make_shared<Mesh>(dxDevice, dxContext, &vertices[0], 4, &indices[0], 3);
+	unitSquare = std::make_shared<Mesh>(dxDevice, dxContext, &vertices[0], 4, &indices[0], 6);
 
 	return S_OK;
 }
@@ -161,7 +161,7 @@ HRESULT DXGame::InitWindow() {
 		return 1;
 	}
 
-	hWnd = CreateWindowEx(
+	windowHandle = CreateWindowEx(
 		WS_EX_OVERLAPPEDWINDOW,
 		szWindowClass,
 		szTitle,
@@ -174,7 +174,7 @@ HRESULT DXGame::InitWindow() {
 		NULL
 	);
 
-	if(!hWnd) {
+	if(!windowHandle) {
 		MessageBox(NULL,
 			_T("Call to CreateWindowEx failed!"),
 			_T("Windows Desktop Guided Tour"),
@@ -183,8 +183,8 @@ HRESULT DXGame::InitWindow() {
 	}
 
 	// display the window
-	ShowWindow(hWnd, SW_SHOW);
-	UpdateWindow(hWnd);
+	ShowWindow(windowHandle, SW_SHOW);
+	UpdateWindow(windowHandle);
 
 	return S_OK;
 }
@@ -239,7 +239,7 @@ HRESULT DXGame::InitDirectX() {
 	desc.SampleDesc.Count = 1;      // multisampling setting
 	desc.SampleDesc.Quality = 0;    // vendor-specific flag
 	desc.SwapEffect = DXGI_SWAP_EFFECT_FLIP_SEQUENTIAL;
-	desc.OutputWindow = hWnd;
+	desc.OutputWindow = windowHandle;
 
 	Microsoft::WRL::ComPtr<IDXGIDevice3> dxgiDevice;
 	dxDevice.As(&dxgiDevice);

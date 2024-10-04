@@ -34,7 +34,7 @@ private:
 	static DXGame* instance;
 	HINSTANCE hInstance;
 	
-	HWND hWnd; // window handle
+	HWND windowHandle;
 	D3D_FEATURE_LEVEL featureLevel;
 	Microsoft::WRL::ComPtr<ID3D11Device> dxDevice;
 	Microsoft::WRL::ComPtr<ID3D11DeviceContext> dxContext;
