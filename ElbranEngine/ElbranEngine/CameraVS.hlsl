@@ -11,7 +11,6 @@ VertexToPixel main(VertexShaderInput input)
 
 	output.screenPosition = float4(input.screenPos.x, input.screenPos.y, 0, 1);
 	output.uv = input.uv;
-	output.color = float4(1, 1, 1, 1);
 
 	return output;
 }

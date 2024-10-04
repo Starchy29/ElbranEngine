@@ -48,6 +48,7 @@ private:
 	// temp shader storage
 	std::shared_ptr<VertexShader> defaultVS;
 	std::shared_ptr<PixelShader> defaultPS;
+	Microsoft::WRL::ComPtr<ID3D11Buffer> colorCBuffer;
 
 	DXGame(HINSTANCE hInst);
 

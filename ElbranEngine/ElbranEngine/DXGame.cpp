@@ -109,6 +109,21 @@ HRESULT DXGame::LoadAssets() {
 
 	unitSquare = std::make_shared<Mesh>(dxDevice, dxContext, &vertices[0], 4, &indices[0], 6);
 
+	D3D11_BUFFER_DESC colorBufferDescr;
+	colorBufferDescr.ByteWidth = sizeof(float) * 4;
+	colorBufferDescr.Usage = D3D11_USAGE_DYNAMIC;
+	colorBufferDescr.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
+	colorBufferDescr.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
+	colorBufferDescr.MiscFlags = 0;
+	colorBufferDescr.StructureByteStride = 0;
+
+	float color[4] = { 1, 0, 0, 1 };
+	D3D11_SUBRESOURCE_DATA startData = {};
+	startData.pSysMem = &color;
+
+	dxDevice->CreateBuffer(&colorBufferDescr, &startData, colorCBuffer.GetAddressOf());
+	dxContext->PSSetConstantBuffers(0, 1, colorCBuffer.GetAddressOf());
+
 	return S_OK;
 }
 
