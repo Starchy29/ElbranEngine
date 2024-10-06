@@ -10,6 +10,7 @@
 #include "VertexShader.h"
 #include "PixelShader.h"
 #include "Mesh.h"
+#include "Color.h"
 
 #define GameInstance DXGame::GetInstance()
 
@@ -49,6 +50,7 @@ private:
 	std::shared_ptr<VertexShader> defaultVS;
 	std::shared_ptr<PixelShader> defaultPS;
 	Microsoft::WRL::ComPtr<ID3D11Buffer> colorCBuffer;
+	Color testColor;
 
 	DXGame(HINSTANCE hInst);
 

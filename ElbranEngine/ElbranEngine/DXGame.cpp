@@ -117,17 +117,15 @@ HRESULT DXGame::LoadAssets() {
 	colorBufferDescr.MiscFlags = 0;
 	colorBufferDescr.StructureByteStride = 0;
 
-	float color[4] = { 1, 0, 0, 1 };
-	D3D11_SUBRESOURCE_DATA startData = {};
-	startData.pSysMem = &color;
-
-	dxDevice->CreateBuffer(&colorBufferDescr, &startData, colorCBuffer.GetAddressOf());
-	dxContext->PSSetConstantBuffers(0, 1, colorCBuffer.GetAddressOf());
+	dxDevice->CreateBuffer(&colorBufferDescr, 0, colorCBuffer.GetAddressOf());
 
 	return S_OK;
 }
 
-void DXGame::Update(float deltaTime) { }
+void DXGame::Update(float deltaTime) {
+	testColor.blue += 0.0005f;
+	defaultPS->SetConstantVariable("color", &testColor);
+}
 
 void DXGame::Render() { 
 	// erase screen and depth buffer

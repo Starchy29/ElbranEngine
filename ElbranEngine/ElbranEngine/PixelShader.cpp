@@ -6,12 +6,12 @@ PixelShader::PixelShader(Microsoft::WRL::ComPtr<ID3D11Device> device, Microsoft:
 	LoadShader(fileName);
 }
 
-void PixelShader::SetShader() {
-	context->PSSetShader(dxShader.Get(), 0, 0);
+void PixelShader::SetSpecificShader() {
+	dxContext->PSSetShader(dxShader.Get(), 0, 0);
 }
 
 void PixelShader::CreateShader(Microsoft::WRL::ComPtr<ID3DBlob> shaderBlob) {
-	HRESULT result = device->CreatePixelShader(
+	HRESULT result = dxDevice->CreatePixelShader(
 		shaderBlob->GetBufferPointer(),
 		shaderBlob->GetBufferSize(),
 		0,
@@ -21,4 +21,8 @@ void PixelShader::CreateShader(Microsoft::WRL::ComPtr<ID3DBlob> shaderBlob) {
 	if(result != S_OK) {
 		throw std::exception("failed to create pixel shader");
 	}
+}
+
+void PixelShader::SetConstantBuffer(int slot, Microsoft::WRL::ComPtr<ID3D11Buffer> cBuffer) {
+	dxContext->PSSetConstantBuffers(slot, 1, cBuffer.GetAddressOf());
 }

@@ -7,13 +7,17 @@ VertexShader::VertexShader(Microsoft::WRL::ComPtr<ID3D11Device> device, Microsof
 	LoadShader(fileName);
 }
 
-void VertexShader::SetShader() {
-	context->IASetInputLayout(inputLayout.Get());
-	context->VSSetShader(dxShader.Get(), 0, 0);
+void VertexShader::SetSpecificShader() {
+	dxContext->IASetInputLayout(inputLayout.Get());
+	dxContext->VSSetShader(dxShader.Get(), 0, 0);
+}
+
+void VertexShader::SetConstantBuffer(int slot, Microsoft::WRL::ComPtr<ID3D11Buffer> cBuffer) {
+	dxContext->VSSetConstantBuffers(slot, 1, cBuffer.GetAddressOf());
 }
 
 void VertexShader::CreateShader(Microsoft::WRL::ComPtr<ID3DBlob> shaderBlob) {
-	HRESULT result = device->CreateVertexShader(
+	HRESULT result = dxDevice->CreateVertexShader(
 		shaderBlob->GetBufferPointer(),
 		shaderBlob->GetBufferSize(),
 		0,
@@ -84,7 +88,7 @@ void VertexShader::CreateShader(Microsoft::WRL::ComPtr<ID3DBlob> shaderBlob) {
 		inputLayoutDescription.push_back(elementDescription);
 	}
 
-	result = device->CreateInputLayout(
+	result = dxDevice->CreateInputLayout(
 		&inputLayoutDescription[0],
 		(UINT)inputLayoutDescription.size(),
 		shaderBlob->GetBufferPointer(),
