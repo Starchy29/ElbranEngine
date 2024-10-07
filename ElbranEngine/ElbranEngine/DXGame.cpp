@@ -53,9 +53,6 @@ HRESULT DXGame::Run() {
 }
 
 LRESULT DXGame::ProcessMessage(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam) {
-	PAINTSTRUCT ps;
-	HDC hdc;
-
 	switch (message) {
 	case WM_DESTROY:
 		PostQuitMessage(0);
@@ -91,6 +88,10 @@ LRESULT DXGame::ProcessMessage(HWND hWnd, UINT message, WPARAM wParam, LPARAM lP
 	return 0;
 }
 
+float DXGame::GetAspectRatio() {
+	return (float)windowWidth / windowHeight;
+}
+
 HRESULT DXGame::LoadAssets() {
 	defaultVS = std::make_shared<VertexShader>(dxDevice, dxContext, L"CameraVS.cso");
 	defaultPS = std::make_shared<PixelShader>(dxDevice, dxContext, L"ColorFillPS.cso");
@@ -108,40 +109,25 @@ HRESULT DXGame::LoadAssets() {
 	};
 
 	unitSquare = std::make_shared<Mesh>(dxDevice, dxContext, &vertices[0], 4, &indices[0], 6);
+	tempMaterial = std::make_shared<Material>(defaultVS, defaultPS);
+	testObject = new GameObject(unitSquare, tempMaterial);
+	testObject->colorTint = Color::Red;
 
-	D3D11_BUFFER_DESC colorBufferDescr;
-	colorBufferDescr.ByteWidth = sizeof(float) * 4;
-	colorBufferDescr.Usage = D3D11_USAGE_DYNAMIC;
-	colorBufferDescr.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
-	colorBufferDescr.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
-	colorBufferDescr.MiscFlags = 0;
-	colorBufferDescr.StructureByteStride = 0;
-
-	dxDevice->CreateBuffer(&colorBufferDescr, 0, colorCBuffer.GetAddressOf());
+	mainCamera = std::make_shared<Camera>(16, (float)windowWidth / windowHeight);
 
 	return S_OK;
 }
 
 void DXGame::Update(float deltaTime) {
-	testColor.blue += 0.0005f;
-	defaultPS->SetConstantVariable("color", &testColor);
+	testObject->colorTint.blue += 0.0008f;
 }
 
 void DXGame::Render() { 
 	// erase screen and depth buffer
 	dxContext->ClearRenderTargetView(backBufferView.Get(), Color::Black);
-	dxContext->ClearDepthStencilView(
-		depthStencilView.Get(),
-		D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL,
-		1.0f, 0
-	);
+	dxContext->ClearDepthStencilView(depthStencilView.Get(), D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
 
-	// set shaders
-	defaultVS->SetShader();
-	defaultPS->SetShader();
-
-	// draw mesh
-	unitSquare->Draw();
+	testObject->Draw(mainCamera);
 
 	swapChain->Present(0, 0);
 	dxContext->OMSetRenderTargets(1, backBufferView.GetAddressOf(), depthStencilView.Get());

@@ -7,7 +7,7 @@ Shader::Shader(Microsoft::WRL::ComPtr<ID3D11Device> device, Microsoft::WRL::ComP
 }
 
 Shader::~Shader() {
-	for (int i = 0; i < cBuffCount; i++) {
+	for(UINT i = 0; i < cBuffCount; i++) {
 		delete[] constantBuffers[i].localData;
 	}
 

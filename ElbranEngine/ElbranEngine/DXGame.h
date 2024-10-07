@@ -11,6 +11,8 @@
 #include "PixelShader.h"
 #include "Mesh.h"
 #include "Color.h"
+#include "Material.h"
+#include "GameObject.h"
 
 #define GameInstance DXGame::GetInstance()
 
@@ -18,13 +20,14 @@ class DXGame
 {
 public:
 	std::wstring exePath;
-	std::shared_ptr<Mesh> unitSquare;
 
 	static DXGame* GetInstance();
 	static HRESULT Initialize(HINSTANCE hInst);
 
 	HRESULT Run();
 	LRESULT ProcessMessage(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
+
+	float GetAspectRatio();
 
 protected:
 	virtual HRESULT LoadAssets();
@@ -43,14 +46,16 @@ private:
 	Microsoft::WRL::ComPtr<ID3D11RenderTargetView> backBufferView;
 	Microsoft::WRL::ComPtr<ID3D11DepthStencilView> depthStencilView;
 
+	std::shared_ptr<Mesh> unitSquare;
 	int windowWidth;
 	int windowHeight;
 
-	// temp shader storage
+	// temp asset storage
 	std::shared_ptr<VertexShader> defaultVS;
 	std::shared_ptr<PixelShader> defaultPS;
-	Microsoft::WRL::ComPtr<ID3D11Buffer> colorCBuffer;
-	Color testColor;
+	std::shared_ptr<Material> tempMaterial;
+	GameObject* testObject;
+	std::shared_ptr<Camera> mainCamera;
 
 	DXGame(HINSTANCE hInst);
 
