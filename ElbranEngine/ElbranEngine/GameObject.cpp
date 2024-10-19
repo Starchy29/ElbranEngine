@@ -1,4 +1,5 @@
 #include "GameObject.h"
+#include "DXGame.h"
 
 GameObject::GameObject(std::shared_ptr<Mesh> mesh, std::shared_ptr<Material> material) {
 	this->mesh = mesh;
@@ -21,6 +22,8 @@ void GameObject::Draw(std::shared_ptr<Camera> camera) {
 
 	std::shared_ptr<PixelShader> pixelShader = material->GetPixelShader();
 	pixelShader->SetConstantVariable("color", &colorTint);
+	pixelShader->SetSampler(GameInstance->GetSamplerState());
+	pixelShader->SetTexture(sprite);
 
 	vertexShader->SetShader();
 	pixelShader->SetShader();

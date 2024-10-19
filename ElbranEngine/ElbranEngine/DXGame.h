@@ -31,6 +31,8 @@ public:
 
 	float GetViewAspectRatio();
 	float GetWindowAspectRatio();
+	Microsoft::WRL::ComPtr<ID3D11SamplerState> GetSamplerState();
+	void LoadTexture(std::wstring localPath, ID3D11ShaderResourceView** destination);
 
 protected:
 	virtual HRESULT LoadAssets();
@@ -48,6 +50,7 @@ private:
 	Microsoft::WRL::ComPtr<IDXGISwapChain> swapChain;
 	Microsoft::WRL::ComPtr<ID3D11RenderTargetView> backBufferView;
 	Microsoft::WRL::ComPtr<ID3D11DepthStencilView> depthStencilView;
+	Microsoft::WRL::ComPtr<ID3D11SamplerState> samplerState;
 
 	std::shared_ptr<Mesh> unitSquare;
 	float aspectRatio;

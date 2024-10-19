@@ -10,6 +10,7 @@ class GameObject {
 public:
 	std::shared_ptr<Mesh> mesh;
 	std::shared_ptr<Material> material;
+	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> sprite;
 	Color colorTint;
 
 	GameObject(std::shared_ptr<Mesh> mesh, std::shared_ptr<Material> material);

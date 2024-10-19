@@ -5,6 +5,8 @@
 #include "Color.h"
 #include <d3dcompiler.h>
 #include "Vertex.h"
+#include "AssetManager.h"
+#include "WICTextureLoader.h"
 
 // global callback that processes messages from the operating system
 LRESULT CALLBACK WndProc(_In_ HWND hWnd, _In_ UINT message, _In_ WPARAM wParam, _In_ LPARAM lParam) {
@@ -100,15 +102,36 @@ float DXGame::GetWindowAspectRatio() {
 	return (float)windowWidth / windowHeight;
 }
 
+Microsoft::WRL::ComPtr<ID3D11SamplerState> DXGame::GetSamplerState() {
+	return samplerState;
+}
+
+void DXGame::LoadTexture(std::wstring fileName, ID3D11ShaderResourceView** destination) {
+	std::wstring fullPath = exePath + L"Assets\\" + fileName;
+	CreateWICTextureFromFile(dxDevice.Get(), dxContext.Get(), fullPath.c_str(), nullptr, destination);
+}
+
 HRESULT DXGame::LoadAssets() {
 	defaultVS = std::make_shared<VertexShader>(dxDevice, dxContext, L"CameraVS.cso");
-	defaultPS = std::make_shared<PixelShader>(dxDevice, dxContext, L"ColorFillPS.cso");
+	defaultPS = std::make_shared<PixelShader>(dxDevice, dxContext, L"TexturePS.cso");
 
+	// create default sampler state
+	D3D11_SAMPLER_DESC samplerDescription = {};
+	samplerDescription.AddressU = D3D11_TEXTURE_ADDRESS_WRAP;
+	samplerDescription.AddressV = D3D11_TEXTURE_ADDRESS_WRAP;
+	samplerDescription.AddressW = D3D11_TEXTURE_ADDRESS_WRAP;
+	samplerDescription.Filter = D3D11_FILTER_MIN_MAG_MIP_POINT;
+	//samplerDescription.MaxAnisotropy = 8;
+	samplerDescription.MaxLOD = D3D11_FLOAT32_MAX;
+
+	dxDevice.Get()->CreateSamplerState(&samplerDescription, samplerState.GetAddressOf());
+
+	// create unit square
 	Vertex vertices[] = {
-		{ DirectX::XMFLOAT2(-0.5f, -0.5f), DirectX::XMFLOAT2(0.0f, 0.0f) },
-		{ DirectX::XMFLOAT2(-0.5f, 0.5f), DirectX::XMFLOAT2(0.0f, 1.0f) },
-		{ DirectX::XMFLOAT2(0.5f, 0.5f), DirectX::XMFLOAT2(1.0f, 1.0f) },
-		{ DirectX::XMFLOAT2(0.5f, -0.5f), DirectX::XMFLOAT2(1.0f, 0.0f) }
+		{ DirectX::XMFLOAT2(-0.5f, -0.5f), DirectX::XMFLOAT2(0.0f, 1.0f) },
+		{ DirectX::XMFLOAT2(-0.5f, 0.5f), DirectX::XMFLOAT2(0.0f, 0.0f) },
+		{ DirectX::XMFLOAT2(0.5f, 0.5f), DirectX::XMFLOAT2(1.0f, 0.0f) },
+		{ DirectX::XMFLOAT2(0.5f, -0.5f), DirectX::XMFLOAT2(1.0f, 1.0f) }
 	};
 
 	unsigned int indices[] = {
@@ -117,9 +140,15 @@ HRESULT DXGame::LoadAssets() {
 	};
 
 	unitSquare = std::make_shared<Mesh>(dxDevice, dxContext, &vertices[0], 4, &indices[0], 6);
+
+	// create test object
+	LoadTexture(L"temp sprite.png", Assets->testImage.GetAddressOf());
+
 	tempMaterial = std::make_shared<Material>(defaultVS, defaultPS);
 	testObject = new GameObject(unitSquare, tempMaterial);
 	testObject->colorTint = Color::Red;
+	testObject->sprite = Assets->testImage;
+	testObject->GetTransform()->Scale(3, 3);
 
 	mainCamera = std::make_shared<Camera>(20, (float)windowWidth / windowHeight);
 
