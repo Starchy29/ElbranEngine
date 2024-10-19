@@ -2,9 +2,9 @@
 #include "DXGame.h"
 using namespace DirectX;
 
-Camera::Camera(float unitWidth, float aspectRatio) {
-	this->unitWidth = unitWidth;
-	this->aspectRatio = aspectRatio;
+Camera::Camera(float worldWidth, float aspectRatio) {
+	this->worldWidth = worldWidth;
+	windowAspectRatio = GameInstance->GetWindowAspectRatio();
 	position = DirectX::XMFLOAT2(0, 0);
 	rotation = 0;
 	UpdateViewMatrix();
@@ -21,9 +21,9 @@ void Camera::SetPosition(DirectX::XMFLOAT2 position) {
 	this->position = position;
 }
 
-void Camera::SetUnitWidth(float width) {
+void Camera::SetWorldWidth(float worldWidth) {
 	projNeedsUpdate = true;
-	this->unitWidth = unitWidth;
+	this->worldWidth = worldWidth;
 }
 
 float Camera::GetRotation() {
@@ -42,9 +42,9 @@ DirectX::XMFLOAT4X4 Camera::GetView() {
 }
 
 DirectX::XMFLOAT4X4 Camera::GetProjection() {
-	float currentAspectRatio = GameInstance->GetAspectRatio();
-	if(aspectRatio != currentAspectRatio) {
-		aspectRatio = currentAspectRatio;
+	float newWindowAspectRatio = GameInstance->GetWindowAspectRatio();
+	if(windowAspectRatio != newWindowAspectRatio) {
+		windowAspectRatio = newWindowAspectRatio;
 		UpdateProjectionMatrix();
 	}
 	else if(projNeedsUpdate) {
@@ -62,5 +62,8 @@ void Camera::UpdateViewMatrix() {
 
 void Camera::UpdateProjectionMatrix() {
 	projNeedsUpdate = false;
-	XMStoreFloat4x4(&projection, XMMatrixOrthographicLH(unitWidth, unitWidth / aspectRatio, 0.1f, 1000.0f));
+	float viewAspectRatio = GameInstance->GetViewAspectRatio();
+	float worldHeight = worldWidth / viewAspectRatio;
+	DirectX::XMFLOAT2 viewDims = windowAspectRatio > viewAspectRatio ? DirectX::XMFLOAT2(worldHeight * windowAspectRatio, worldHeight) : DirectX::XMFLOAT2(worldWidth, worldWidth / windowAspectRatio);
+	XMStoreFloat4x4(&projection, XMMatrixOrthographicLH(viewDims.x, viewDims.y, 0.1f, 1000.0f));
 }

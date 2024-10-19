@@ -32,6 +32,10 @@ HRESULT DXGame::Initialize(HINSTANCE hInst) {
 	return S_OK;
 }
 
+DXGame::~DXGame() {
+	delete testObject;
+}
+
 HRESULT DXGame::Run() {
 	// main message loop
 	bool hasMsg;
@@ -88,7 +92,11 @@ LRESULT DXGame::ProcessMessage(HWND hWnd, UINT message, WPARAM wParam, LPARAM lP
 	return 0;
 }
 
-float DXGame::GetAspectRatio() {
+float DXGame::GetViewAspectRatio() {
+	return aspectRatio;
+}
+
+float DXGame::GetWindowAspectRatio() {
 	return (float)windowWidth / windowHeight;
 }
 
@@ -113,7 +121,7 @@ HRESULT DXGame::LoadAssets() {
 	testObject = new GameObject(unitSquare, tempMaterial);
 	testObject->colorTint = Color::Red;
 
-	mainCamera = std::make_shared<Camera>(16, (float)windowWidth / windowHeight);
+	mainCamera = std::make_shared<Camera>(20, (float)windowWidth / windowHeight);
 
 	return S_OK;
 }
@@ -393,6 +401,8 @@ void DXGame::Resize() {
 	);
 
 	// set viewport
+	UpdateView();
+
 	D3D11_VIEWPORT viewport = {};
 	viewport.TopLeftX = 0;
 	viewport.TopLeftY = 0;
@@ -403,10 +413,21 @@ void DXGame::Resize() {
 	dxContext->RSSetViewports(1, &viewport);
 }
 
+void DXGame::UpdateView() {
+	float windowAspectRatio = (float)windowWidth / windowHeight;
+	if(windowAspectRatio > aspectRatio) {
+		viewDims = DirectX::XMFLOAT2(windowHeight * aspectRatio, windowHeight);
+	} else {
+		viewDims = DirectX::XMFLOAT2(windowWidth, windowWidth / aspectRatio);
+	}
+}
+
 DXGame::DXGame(HINSTANCE hInst) {
 	hInstance = hInst;
 	windowWidth = 960;
-	windowHeight = 540;
+	aspectRatio = 16.0f / 9.0f;
+	windowHeight = windowWidth / aspectRatio;
+	UpdateView();
 
 	// determine file path
 	wchar_t directory[1024] = {};

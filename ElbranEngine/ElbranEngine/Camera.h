@@ -4,11 +4,11 @@
 
 class Camera {
 public:
-	Camera(float unitWidth, float aspectRatio);
+	Camera(float worldWidth, float aspectRatio);
 
 	void SetRotation(float radians);
 	void SetPosition(DirectX::XMFLOAT2 position);
-	void SetUnitWidth(float width);
+	void SetWorldWidth(float worldWidth);
 
 	float GetRotation();
 	DirectX::XMFLOAT2 GetPosition();
@@ -16,8 +16,8 @@ public:
 	DirectX::XMFLOAT4X4 GetProjection();
 
 private:
-	float unitWidth;
-	float aspectRatio;
+	float windowAspectRatio;
+	float worldWidth;
 	float rotation;
 	DirectX::XMFLOAT2 position;
 	DirectX::XMFLOAT4X4 view;

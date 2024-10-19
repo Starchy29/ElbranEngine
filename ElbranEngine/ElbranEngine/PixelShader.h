@@ -7,6 +7,9 @@ class PixelShader :
 public:
     PixelShader(Microsoft::WRL::ComPtr<ID3D11Device> device, Microsoft::WRL::ComPtr<ID3D11DeviceContext> context, std::wstring fileName);
 
+    void SetTexture(Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> resourceView, int slot = 0);
+    void SetSampler(Microsoft::WRL::ComPtr<ID3D11SamplerState> samplerState, int slot = 0);
+
 private:
     Microsoft::WRL::ComPtr<ID3D11PixelShader> dxShader;
 

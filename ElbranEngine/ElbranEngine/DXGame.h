@@ -24,10 +24,13 @@ public:
 	static DXGame* GetInstance();
 	static HRESULT Initialize(HINSTANCE hInst);
 
+	~DXGame();
+
 	HRESULT Run();
 	LRESULT ProcessMessage(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
 
-	float GetAspectRatio();
+	float GetViewAspectRatio();
+	float GetWindowAspectRatio();
 
 protected:
 	virtual HRESULT LoadAssets();
@@ -47,8 +50,10 @@ private:
 	Microsoft::WRL::ComPtr<ID3D11DepthStencilView> depthStencilView;
 
 	std::shared_ptr<Mesh> unitSquare;
+	float aspectRatio;
 	int windowWidth;
 	int windowHeight;
+	DirectX::XMFLOAT2 viewDims;
 
 	// temp asset storage
 	std::shared_ptr<VertexShader> defaultVS;
@@ -62,5 +67,6 @@ private:
 	HRESULT InitWindow();
 	HRESULT InitDirectX();
 	void Resize();
+	void UpdateView();
 };
 

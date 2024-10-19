@@ -17,7 +17,6 @@ VertexToPixel main(VertexShaderInput input)
 
 	matrix worldViewProj = mul(projection, mul(view, worldTransform));
 	output.screenPosition = mul(worldViewProj, float4(input.position, 0, 1));
-	//output.screenPosition = float4(input.position, 0, 1);
 	output.uv = input.uv;
 
 	return output;
