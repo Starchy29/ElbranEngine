@@ -4,7 +4,6 @@ using namespace DirectX;
 
 Camera::Camera(float worldWidth, float aspectRatio) {
 	this->worldWidth = worldWidth;
-	windowAspectRatio = GameInstance->GetWindowAspectRatio();
 	position = DirectX::XMFLOAT2(0, 0);
 	rotation = 0;
 	UpdateViewMatrix();
@@ -34,6 +33,10 @@ DirectX::XMFLOAT2 Camera::GetPosition() {
 	return position;
 }
 
+DirectX::XMFLOAT2 Camera::GetWorldDimensions() {
+	return DirectX::XMFLOAT2(worldWidth, worldWidth / GameInstance->GetAspectRatio());
+}
+
 DirectX::XMFLOAT4X4 Camera::GetView() {
 	if(viewNeedsUpdate) {
 		UpdateViewMatrix();
@@ -42,12 +45,7 @@ DirectX::XMFLOAT4X4 Camera::GetView() {
 }
 
 DirectX::XMFLOAT4X4 Camera::GetProjection() {
-	float newWindowAspectRatio = GameInstance->GetWindowAspectRatio();
-	if(windowAspectRatio != newWindowAspectRatio) {
-		windowAspectRatio = newWindowAspectRatio;
-		UpdateProjectionMatrix();
-	}
-	else if(projNeedsUpdate) {
+	if(projNeedsUpdate) {
 		UpdateProjectionMatrix();
 	}
 	return projection;
@@ -62,8 +60,7 @@ void Camera::UpdateViewMatrix() {
 
 void Camera::UpdateProjectionMatrix() {
 	projNeedsUpdate = false;
-	float viewAspectRatio = GameInstance->GetViewAspectRatio();
+	float viewAspectRatio = GameInstance->GetAspectRatio();
 	float worldHeight = worldWidth / viewAspectRatio;
-	DirectX::XMFLOAT2 viewDims = windowAspectRatio > viewAspectRatio ? DirectX::XMFLOAT2(worldHeight * windowAspectRatio, worldHeight) : DirectX::XMFLOAT2(worldWidth, worldWidth / windowAspectRatio);
-	XMStoreFloat4x4(&projection, XMMatrixOrthographicLH(viewDims.x, viewDims.y, 0.1f, 1000.0f));
+	XMStoreFloat4x4(&projection, XMMatrixOrthographicLH(worldWidth, worldHeight, 0.1f, 1000.0f));
 }

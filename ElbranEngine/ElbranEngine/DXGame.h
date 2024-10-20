@@ -29,8 +29,7 @@ public:
 	HRESULT Run();
 	LRESULT ProcessMessage(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
 
-	float GetViewAspectRatio();
-	float GetWindowAspectRatio();
+	float GetAspectRatio();
 	Microsoft::WRL::ComPtr<ID3D11SamplerState> GetSamplerState();
 	void LoadTexture(std::wstring localPath, ID3D11ShaderResourceView** destination);
 
@@ -56,7 +55,8 @@ private:
 	float aspectRatio;
 	int windowWidth;
 	int windowHeight;
-	DirectX::XMFLOAT2 viewDims;
+	int viewWidth;
+	int viewHeight;
 
 	// temp asset storage
 	std::shared_ptr<VertexShader> defaultVS;
@@ -70,6 +70,5 @@ private:
 	HRESULT InitWindow();
 	HRESULT InitDirectX();
 	void Resize();
-	void UpdateView();
 };
 

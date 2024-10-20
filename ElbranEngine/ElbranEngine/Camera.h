@@ -12,11 +12,12 @@ public:
 
 	float GetRotation();
 	DirectX::XMFLOAT2 GetPosition();
+	DirectX::XMFLOAT2 GetWorldDimensions();
+
 	DirectX::XMFLOAT4X4 GetView();
 	DirectX::XMFLOAT4X4 GetProjection();
 
 private:
-	float windowAspectRatio;
 	float worldWidth;
 	float rotation;
 	DirectX::XMFLOAT2 position;

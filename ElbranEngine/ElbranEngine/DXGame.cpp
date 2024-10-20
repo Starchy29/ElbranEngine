@@ -77,8 +77,13 @@ LRESULT DXGame::ProcessMessage(HWND hWnd, UINT message, WPARAM wParam, LPARAM lP
 			return 0;
 
 		// Save the new client area dimensions.
-		windowWidth = LOWORD(lParam);
-		windowHeight = HIWORD(lParam);
+		//windowWidth = LOWORD(lParam);
+		//windowHeight = HIWORD(lParam);
+
+		RECT windowRect;
+		GetWindowRect(windowHandle, &windowRect);
+		windowWidth = windowRect.right - windowRect.left;
+		windowHeight = windowRect.bottom - windowRect.top;
 
 		// update directX
 		if(dxDevice) {
@@ -94,12 +99,8 @@ LRESULT DXGame::ProcessMessage(HWND hWnd, UINT message, WPARAM wParam, LPARAM lP
 	return 0;
 }
 
-float DXGame::GetViewAspectRatio() {
+float DXGame::GetAspectRatio() {
 	return aspectRatio;
-}
-
-float DXGame::GetWindowAspectRatio() {
-	return (float)windowWidth / windowHeight;
 }
 
 Microsoft::WRL::ComPtr<ID3D11SamplerState> DXGame::GetSamplerState() {
@@ -141,16 +142,19 @@ HRESULT DXGame::LoadAssets() {
 
 	unitSquare = std::make_shared<Mesh>(dxDevice, dxContext, &vertices[0], 4, &indices[0], 6);
 
+	mainCamera = std::make_shared<Camera>(20, (float)windowWidth / windowHeight);
+
 	// create test object
 	LoadTexture(L"temp sprite.png", Assets->testImage.GetAddressOf());
+	DirectX::XMFLOAT2 dims = mainCamera->GetWorldDimensions();
 
 	tempMaterial = std::make_shared<Material>(defaultVS, defaultPS);
 	testObject = new GameObject(unitSquare, tempMaterial);
 	testObject->colorTint = Color::Red;
 	testObject->sprite = Assets->testImage;
-	testObject->GetTransform()->Scale(3, 3);
-
-	mainCamera = std::make_shared<Camera>(20, (float)windowWidth / windowHeight);
+	//testObject->GetTransform()->SetScale(dims.x + 3, dims.y + 3);
+	//testObject->GetTransform()->SetZ(1);
+	//testObject->GetTransform()->SetPosition(DirectX::XMFLOAT2(dims.x / 2.0f - 0.5f, dims.y / 2.0f - 0.5f));
 
 	return S_OK;
 }
@@ -358,21 +362,8 @@ HRESULT DXGame::InitDirectX() {
 
 	depthStencil->Release();
 
-	context->OMSetRenderTargets(
-		1,
-		backBufferView.GetAddressOf(),
-		depthStencilView.Get()
-	);
-
 	// create viewport
-	D3D11_VIEWPORT viewport = {};
-	viewport.TopLeftX = 0;
-	viewport.TopLeftY = 0;
-	viewport.Width = (float)windowWidth;
-	viewport.Height = (float)windowHeight;
-	viewport.MinDepth = 0.0f;
-	viewport.MaxDepth = 1.0f;
-	context->RSSetViewports(1, &viewport);
+	Resize();
 
 	dxContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
@@ -430,25 +421,27 @@ void DXGame::Resize() {
 	);
 
 	// set viewport
-	UpdateView();
+	float windowAspectRatio = (float)windowWidth / windowHeight;
+	int shiftX = 0;
+	int shiftY = 0;
+	viewWidth = windowWidth;
+	viewHeight = windowHeight;
+	if(windowAspectRatio > aspectRatio) {
+		viewWidth = windowHeight * aspectRatio;
+		shiftX = (windowWidth - viewWidth) / 2;
+	} else {
+		viewHeight = windowWidth / aspectRatio;
+		shiftY = (windowHeight - viewHeight) / 2;
+	}
 
 	D3D11_VIEWPORT viewport = {};
-	viewport.TopLeftX = 0;
-	viewport.TopLeftY = 0;
-	viewport.Width = (float)windowWidth;
-	viewport.Height = (float)windowHeight;
+	viewport.TopLeftX = shiftX;
+	viewport.TopLeftY = shiftY;
+	viewport.Width = (float)viewWidth;
+	viewport.Height = (float)viewHeight;
 	viewport.MinDepth = 0.0f;
 	viewport.MaxDepth = 1.0f;
 	dxContext->RSSetViewports(1, &viewport);
-}
-
-void DXGame::UpdateView() {
-	float windowAspectRatio = (float)windowWidth / windowHeight;
-	if(windowAspectRatio > aspectRatio) {
-		viewDims = DirectX::XMFLOAT2(windowHeight * aspectRatio, windowHeight);
-	} else {
-		viewDims = DirectX::XMFLOAT2(windowWidth, windowWidth / aspectRatio);
-	}
 }
 
 DXGame::DXGame(HINSTANCE hInst) {
@@ -456,7 +449,6 @@ DXGame::DXGame(HINSTANCE hInst) {
 	windowWidth = 960;
 	aspectRatio = 16.0f / 9.0f;
 	windowHeight = windowWidth / aspectRatio;
-	UpdateView();
 
 	// determine file path
 	wchar_t directory[1024] = {};
