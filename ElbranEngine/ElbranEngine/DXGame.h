@@ -58,6 +58,9 @@ private:
 	int viewWidth;
 	int viewHeight;
 
+	double performanceCountSeconds;
+	__int64 lastPerfCount;
+
 	// temp asset storage
 	std::shared_ptr<VertexShader> defaultVS;
 	std::shared_ptr<PixelShader> defaultPS;

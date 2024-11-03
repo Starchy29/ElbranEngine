@@ -50,7 +50,16 @@ HRESULT DXGame::Run() {
 			DispatchMessage(&msg);
 		} else {
 			// only update game when not processing a message
-			Update(0.0f);
+			__int64 currentCount;
+			QueryPerformanceCounter((LARGE_INTEGER*) &currentCount);
+			double deltaTime = (currentCount - lastPerfCount) * performanceCountSeconds;
+			if(deltaTime < 0.0) {
+				deltaTime = 0.0;
+			}
+			lastPerfCount = currentCount;
+
+
+			Update(deltaTime);
 			Render();
 		}
 	}
@@ -136,7 +145,7 @@ HRESULT DXGame::LoadAssets() {
 	};
 
 	unsigned int indices[] = {
-		0, 1, 3,
+		0, 1, 3, // clockwise winding order
 		1, 2, 3
 	};
 
@@ -150,17 +159,18 @@ HRESULT DXGame::LoadAssets() {
 
 	tempMaterial = std::make_shared<Material>(defaultVS, defaultPS);
 	testObject = new GameObject(unitSquare, tempMaterial);
-	testObject->colorTint = Color::Red;
+	//testObject->colorTint = Color::Red;
 	testObject->sprite = Assets->testImage;
 	//testObject->GetTransform()->SetScale(dims.x + 3, dims.y + 3);
 	//testObject->GetTransform()->SetZ(1);
-	//testObject->GetTransform()->SetPosition(DirectX::XMFLOAT2(dims.x / 2.0f - 0.5f, dims.y / 2.0f - 0.5f));
+	testObject->GetTransform()->SetPosition(DirectX::XMFLOAT2(-10.0f, 0.0f));
 
 	return S_OK;
 }
 
 void DXGame::Update(float deltaTime) {
-	testObject->colorTint.blue += 0.0008f;
+	//testObject->colorTint.blue += 0.0008f;
+	testObject->GetTransform()->TranslateAbsolute(1.0f * deltaTime, 0.0f);
 }
 
 void DXGame::Render() { 
@@ -449,6 +459,13 @@ DXGame::DXGame(HINSTANCE hInst) {
 	windowWidth = 960;
 	aspectRatio = 16.0f / 9.0f;
 	windowHeight = windowWidth / aspectRatio;
+
+	// set up timing info
+	__int64 perfFreq;
+	QueryPerformanceFrequency((LARGE_INTEGER*) &perfFreq);
+	performanceCountSeconds = 1.0 / (double)perfFreq;
+	
+	QueryPerformanceCounter((LARGE_INTEGER*) &lastPerfCount);
 
 	// determine file path
 	wchar_t directory[1024] = {};
