@@ -4,7 +4,7 @@
 
 class Camera {
 public:
-	Camera(float worldWidth, float aspectRatio);
+	Camera(float worldWidth);
 
 	void SetRotation(float radians);
 	void SetPosition(DirectX::XMFLOAT2 position);

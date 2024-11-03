@@ -35,7 +35,7 @@ HRESULT DXGame::Initialize(HINSTANCE hInst) {
 }
 
 DXGame::~DXGame() {
-	delete testObject;
+	delete sampleScene;
 }
 
 HRESULT DXGame::Run() {
@@ -122,8 +122,9 @@ void DXGame::LoadTexture(std::wstring fileName, ID3D11ShaderResourceView** desti
 }
 
 HRESULT DXGame::LoadAssets() {
-	defaultVS = std::make_shared<VertexShader>(dxDevice, dxContext, L"CameraVS.cso");
-	defaultPS = std::make_shared<PixelShader>(dxDevice, dxContext, L"TexturePS.cso");
+	Assets->cameraVS = std::make_shared<VertexShader>(dxDevice, dxContext, L"CameraVS.cso");
+	Assets->imagePS = std::make_shared<PixelShader>(dxDevice, dxContext, L"TexturePS.cso");
+	Assets->colorPS = std::make_shared<PixelShader>(dxDevice, dxContext, L"ColorFillPS.cso");
 
 	// create default sampler state
 	D3D11_SAMPLER_DESC samplerDescription = {};
@@ -149,18 +150,17 @@ HRESULT DXGame::LoadAssets() {
 		1, 2, 3
 	};
 
-	unitSquare = std::make_shared<Mesh>(dxDevice, dxContext, &vertices[0], 4, &indices[0], 6);
+	Assets->unitSquare = std::make_shared<Mesh>(dxDevice, dxContext, &vertices[0], 4, &indices[0], 6);
 
-	mainCamera = std::make_shared<Camera>(20, (float)windowWidth / windowHeight);
-
-	// create test object
+	// sample assets
 	LoadTexture(L"temp sprite.png", Assets->testImage.GetAddressOf());
-	DirectX::XMFLOAT2 dims = mainCamera->GetWorldDimensions();
+	sampleScene = new Scene(20);
+	
+	DirectX::XMFLOAT2 dims = sampleScene->GetCamera()->GetWorldDimensions();
 
-	tempMaterial = std::make_shared<Material>(defaultVS, defaultPS);
-	testObject = new GameObject(unitSquare, tempMaterial);
+	testObject = new GameObject(Assets->testImage);
+	sampleScene->AddObject(testObject);
 	//testObject->colorTint = Color::Red;
-	testObject->sprite = Assets->testImage;
 	//testObject->GetTransform()->SetScale(dims.x + 3, dims.y + 3);
 	//testObject->GetTransform()->SetZ(1);
 	testObject->GetTransform()->SetPosition(DirectX::XMFLOAT2(-10.0f, 0.0f));
@@ -173,12 +173,16 @@ void DXGame::Update(float deltaTime) {
 	testObject->GetTransform()->TranslateAbsolute(1.0f * deltaTime, 0.0f);
 }
 
+void DXGame::Draw() {
+	sampleScene->Draw();
+}
+
 void DXGame::Render() { 
 	// erase screen and depth buffer
 	dxContext->ClearRenderTargetView(backBufferView.Get(), Color::Black);
 	dxContext->ClearDepthStencilView(depthStencilView.Get(), D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
 
-	testObject->Draw(mainCamera);
+	Draw();
 
 	swapChain->Present(0, 0);
 	dxContext->OMSetRenderTargets(1, backBufferView.GetAddressOf(), depthStencilView.Get());

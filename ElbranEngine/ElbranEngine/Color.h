@@ -17,7 +17,7 @@ public:
 	float alpha;
 
 	Color();
-	Color(float r, float g, float b, float a);
+	Color(float r, float g, float b, float a = 1.0f);
 
 	operator float* () const;
 };

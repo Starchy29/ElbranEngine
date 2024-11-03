@@ -2,7 +2,7 @@
 #include "DXGame.h"
 using namespace DirectX;
 
-Camera::Camera(float worldWidth, float aspectRatio) {
+Camera::Camera(float worldWidth) {
 	this->worldWidth = worldWidth;
 	position = DirectX::XMFLOAT2(0, 0);
 	rotation = 0;

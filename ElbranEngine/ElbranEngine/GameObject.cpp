@@ -1,9 +1,32 @@
 #include "GameObject.h"
 #include "DXGame.h"
+#include "AssetManager.h"
 
-GameObject::GameObject(std::shared_ptr<Mesh> mesh, std::shared_ptr<Material> material) {
-	this->mesh = mesh;
-	this->material = material;
+GameObject::GameObject(Color color) {
+	active = true;
+	visible = true;
+	toBeDeleted = false;
+
+	AssetManager* assets = AssetManager::GetInstance();
+	mesh = assets->unitSquare;
+	vertexShader = assets->cameraVS;
+
+	pixelShader = Assets->colorPS;
+	this->sprite = nullptr;
+	colorTint = color;
+}
+
+GameObject::GameObject(Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> sprite) {
+	active = true;
+	visible = true;
+	toBeDeleted = false;
+
+	AssetManager* assets = AssetManager::GetInstance();
+	mesh = assets->unitSquare;
+	vertexShader = assets->cameraVS;
+
+	pixelShader = Assets->imagePS;
+	this->sprite = sprite;
 	colorTint = Color::White;
 }
 
@@ -11,8 +34,9 @@ Transform* GameObject::GetTransform() {
 	return &transform;
 }
 
-void GameObject::Draw(std::shared_ptr<Camera> camera) {
-	std::shared_ptr<VertexShader> vertexShader = material->GetVertexShader();
+void GameObject::Update(float deltaTime) {}
+
+void GameObject::Draw(Camera* camera) {
 	DirectX::XMFLOAT4X4 worldMat = transform.GetWorldMatrix();
 	DirectX::XMFLOAT4X4 viewMat = camera->GetView();
 	DirectX::XMFLOAT4X4 projMat = camera->GetProjection();
@@ -20,10 +44,11 @@ void GameObject::Draw(std::shared_ptr<Camera> camera) {
 	vertexShader->SetConstantVariable("view", &viewMat);
 	vertexShader->SetConstantVariable("projection", &projMat);
 
-	std::shared_ptr<PixelShader> pixelShader = material->GetPixelShader();
 	pixelShader->SetConstantVariable("color", &colorTint);
-	pixelShader->SetSampler(GameInstance->GetSamplerState());
-	pixelShader->SetTexture(sprite);
+	if(sprite != nullptr) {
+		pixelShader->SetSampler(GameInstance->GetSamplerState());
+		pixelShader->SetTexture(sprite);
+	}
 
 	vertexShader->SetShader();
 	pixelShader->SetShader();
