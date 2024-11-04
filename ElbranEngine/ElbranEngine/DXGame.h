@@ -30,6 +30,8 @@ public:
 	LRESULT ProcessMessage(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
 
 	float GetAspectRatio();
+	int GetWindowWidth();
+	int GetWindowHeight();
 	Microsoft::WRL::ComPtr<ID3D11SamplerState> GetSamplerState();
 	void LoadTexture(std::wstring localPath, ID3D11ShaderResourceView** destination);
 

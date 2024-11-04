@@ -53,9 +53,11 @@ DirectX::XMFLOAT4X4 Camera::GetProjection() {
 
 void Camera::UpdateViewMatrix() {
 	viewNeedsUpdate = false;
+	XMFLOAT3 pos = XMFLOAT3(position.x, position.y, CAMERA_Z);
 	XMFLOAT3 forward = XMFLOAT3(0, 0, 1);
-	XMFLOAT3 truePos = XMFLOAT3(position.x, position.y, CAMERA_Z);
-	XMStoreFloat4x4(&view, XMMatrixLookToLH(XMLoadFloat3(&truePos), XMLoadFloat3(&forward), XMVectorSet(0, 1, 0, 0)));
+	XMVECTOR forwardVec = XMLoadFloat3(&forward);
+	XMVECTOR up = XMVector3Rotate(XMVectorSet(0, 1, 0, 0), XMQuaternionRotationAxis(forwardVec, rotation));
+	XMStoreFloat4x4(&view, XMMatrixLookToLH(XMLoadFloat3(&pos), forwardVec, up));
 }
 
 void Camera::UpdateProjectionMatrix() {

@@ -7,6 +7,7 @@
 #include "Vertex.h"
 #include "AssetManager.h"
 #include "WICTextureLoader.h"
+#include "InputManager.h"
 
 // global callback that processes messages from the operating system
 LRESULT CALLBACK WndProc(_In_ HWND hWnd, _In_ UINT message, _In_ WPARAM wParam, _In_ LPARAM lParam) {
@@ -31,6 +32,8 @@ HRESULT DXGame::Initialize(HINSTANCE hInst) {
 	hRes = instance->LoadAssets();
 	if(FAILED(hRes)) return hRes;
 
+	Inputs->Initialize(instance->windowHandle);
+
 	return S_OK;
 }
 
@@ -44,12 +47,10 @@ HRESULT DXGame::Run() {
 	MSG msg = {};
 	while(msg.message != WM_QUIT) {
 		hasMsg = (PeekMessage(&msg, NULL, 0U, 0U, PM_REMOVE) != 0);
-		if(hasMsg) {
-			// process the message
+		if(hasMsg) { // only update game when not processing a message
 			TranslateMessage(&msg);
 			DispatchMessage(&msg);
 		} else {
-			// only update game when not processing a message
 			__int64 currentCount;
 			QueryPerformanceCounter((LARGE_INTEGER*) &currentCount);
 			double deltaTime = (currentCount - lastPerfCount) * performanceCountSeconds;
@@ -58,7 +59,7 @@ HRESULT DXGame::Run() {
 			}
 			lastPerfCount = currentCount;
 
-
+			Inputs->Update();
 			Update(deltaTime);
 			Render();
 		}
@@ -110,6 +111,14 @@ LRESULT DXGame::ProcessMessage(HWND hWnd, UINT message, WPARAM wParam, LPARAM lP
 
 float DXGame::GetAspectRatio() {
 	return aspectRatio;
+}
+
+int DXGame::GetWindowWidth() {
+	return windowWidth;
+}
+
+int DXGame::GetWindowHeight() {
+	return windowHeight;
 }
 
 Microsoft::WRL::ComPtr<ID3D11SamplerState> DXGame::GetSamplerState() {
@@ -170,7 +179,10 @@ HRESULT DXGame::LoadAssets() {
 
 void DXGame::Update(float deltaTime) {
 	//testObject->colorTint.blue += 0.0008f;
-	testObject->GetTransform()->TranslateAbsolute(1.0f * deltaTime, 0.0f);
+	/*if(Input->JustReleased(VK_MOUSE_LEFT)) {
+		testObject->GetTransform()->TranslateAbsolute(5.0f, 0.0f);
+	}*/
+	testObject->GetTransform()->SetPosition(Inputs->GetMousePosition(sampleScene->GetCamera()));
 }
 
 void DXGame::Draw() {
