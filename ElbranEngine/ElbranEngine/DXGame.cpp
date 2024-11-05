@@ -87,13 +87,13 @@ LRESULT DXGame::ProcessMessage(HWND hWnd, UINT message, WPARAM wParam, LPARAM lP
 			return 0;
 
 		// Save the new client area dimensions.
-		//windowWidth = LOWORD(lParam);
-		//windowHeight = HIWORD(lParam);
+		windowDims.x = LOWORD(lParam);
+		windowDims.y = HIWORD(lParam);
 
 		RECT windowRect;
 		GetWindowRect(windowHandle, &windowRect);
-		windowWidth = windowRect.right - windowRect.left;
-		windowHeight = windowRect.bottom - windowRect.top;
+		//windowDims.x = windowRect.right - windowRect.left;
+		//windowDims.y = windowRect.bottom - windowRect.top;
 
 		// update directX
 		if(dxDevice) {
@@ -113,12 +113,16 @@ float DXGame::GetAspectRatio() {
 	return aspectRatio;
 }
 
-int DXGame::GetWindowWidth() {
-	return windowWidth;
+DirectX::XMINT2 DXGame::GetWindowDims() {
+	return windowDims;
 }
 
-int DXGame::GetWindowHeight() {
-	return windowHeight;
+DirectX::XMINT2 DXGame::GetViewportDims() {
+	return viewportDims;
+}
+
+DirectX::XMINT2 DXGame::GetViewportShift() {
+	return viewportShift;
 }
 
 Microsoft::WRL::ComPtr<ID3D11SamplerState> DXGame::GetSamplerState() {
@@ -163,16 +167,16 @@ HRESULT DXGame::LoadAssets() {
 
 	// sample assets
 	LoadTexture(L"temp sprite.png", Assets->testImage.GetAddressOf());
-	sampleScene = new Scene(20);
+	sampleScene = new Scene(100);
 	
 	DirectX::XMFLOAT2 dims = sampleScene->GetCamera()->GetWorldDimensions();
 
-	testObject = new GameObject(Assets->testImage);
+	testObject = new GameObject(Color::Cyan);
 	sampleScene->AddObject(testObject);
 	//testObject->colorTint = Color::Red;
 	//testObject->GetTransform()->SetScale(dims.x + 3, dims.y + 3);
 	//testObject->GetTransform()->SetZ(1);
-	testObject->GetTransform()->SetPosition(DirectX::XMFLOAT2(-10.0f, 0.0f));
+	//testObject->GetTransform()->SetPosition(DirectX::XMFLOAT2(-10.0f, 0.0f));
 
 	return S_OK;
 }
@@ -233,7 +237,7 @@ HRESULT DXGame::InitWindow() {
 		szTitle,
 		WS_OVERLAPPEDWINDOW,
 		CW_USEDEFAULT, CW_USEDEFAULT, // start position
-		windowWidth, windowHeight,
+		windowDims.x, windowDims.y,
 		NULL,
 		NULL,
 		hInstance,
@@ -357,8 +361,8 @@ HRESULT DXGame::InitDirectX() {
 
 	CD3D11_TEXTURE2D_DESC depthStencilDesc(
 		DXGI_FORMAT_D24_UNORM_S8_UINT,
-		static_cast<UINT> (windowWidth),
-		static_cast<UINT> (windowHeight),
+		static_cast<UINT> (windowDims.x),
+		static_cast<UINT> (windowDims.x),
 		1,
 		1,
 		D3D11_BIND_DEPTH_STENCIL
@@ -400,7 +404,7 @@ void DXGame::Resize() {
 	backBufferView.Reset();
 	depthStencilView.Reset();
 
-	swapChain->ResizeBuffers(2, windowWidth, windowHeight, DXGI_FORMAT_R8G8B8A8_UNORM, 0);
+	swapChain->ResizeBuffers(2, windowDims.x, windowDims.y, DXGI_FORMAT_R8G8B8A8_UNORM, 0);
 
 	// recreate back buffer
 	ID3D11Texture2D* backBufferTexture = 0;
@@ -416,8 +420,8 @@ void DXGame::Resize() {
 
 	// recreate depth stencil
 	D3D11_TEXTURE2D_DESC depthStencilDesc;
-	depthStencilDesc.Width = windowWidth;
-	depthStencilDesc.Height = windowHeight;
+	depthStencilDesc.Width = windowDims.x;
+	depthStencilDesc.Height = windowDims.y;
 	depthStencilDesc.MipLevels = 1;
 	depthStencilDesc.ArraySize = 1;
 	depthStencilDesc.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;
@@ -447,24 +451,22 @@ void DXGame::Resize() {
 	);
 
 	// set viewport
-	float windowAspectRatio = (float)windowWidth / windowHeight;
-	int shiftX = 0;
-	int shiftY = 0;
-	viewWidth = windowWidth;
-	viewHeight = windowHeight;
+	float windowAspectRatio = (float)windowDims.x / windowDims.y;
+	viewportShift = DirectX::XMINT2(0, 0);
+	viewportDims = windowDims;
 	if(windowAspectRatio > aspectRatio) {
-		viewWidth = windowHeight * aspectRatio;
-		shiftX = (windowWidth - viewWidth) / 2;
+		viewportDims.x = windowDims.y * aspectRatio;
+		viewportShift.x = (windowDims.x - viewportDims.x) / 2;
 	} else {
-		viewHeight = windowWidth / aspectRatio;
-		shiftY = (windowHeight - viewHeight) / 2;
+		viewportDims.y = windowDims.x / aspectRatio;
+		viewportShift.y = (windowDims.y - viewportDims.y) / 2;
 	}
 
 	D3D11_VIEWPORT viewport = {};
-	viewport.TopLeftX = shiftX;
-	viewport.TopLeftY = shiftY;
-	viewport.Width = (float)viewWidth;
-	viewport.Height = (float)viewHeight;
+	viewport.TopLeftX = viewportShift.x;
+	viewport.TopLeftY = viewportShift.y;
+	viewport.Width = (float)viewportDims.x;
+	viewport.Height = (float)viewportDims.y;
 	viewport.MinDepth = 0.0f;
 	viewport.MaxDepth = 1.0f;
 	dxContext->RSSetViewports(1, &viewport);
@@ -472,9 +474,9 @@ void DXGame::Resize() {
 
 DXGame::DXGame(HINSTANCE hInst) {
 	hInstance = hInst;
-	windowWidth = 960;
 	aspectRatio = 16.0f / 9.0f;
-	windowHeight = windowWidth / aspectRatio;
+	int windowWidth = 960;
+	windowDims = DirectX::XMINT2(windowWidth, windowWidth / aspectRatio);
 
 	// set up timing info
 	__int64 perfFreq;

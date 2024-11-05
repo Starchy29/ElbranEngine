@@ -35,6 +35,6 @@ private:
 	HWND windowHandle;
 	PBYTE keyboardState;
 	PBYTE previousKeyboard;
-	DirectX::XMFLOAT2 mousePosition;
+	DirectX::XMFLOAT2 mouseScreenPos;
 };
 

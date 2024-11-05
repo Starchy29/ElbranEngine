@@ -38,8 +38,16 @@ void InputManager::Update() {
 	POINT mousePos;
 	GetCursorPos(&mousePos);
 	ScreenToClient(windowHandle, &mousePos);
-	mousePosition.x = (float)mousePos.x / GameInstance->GetWindowWidth() * 2.0f - 1.0f;
-	mousePosition.y = -((float)mousePos.y / GameInstance->GetWindowHeight() * 2.0f - 1.0f);
+
+	XMINT2 viewShift = GameInstance->GetViewportShift();
+	mousePos.x -= viewShift.x;
+	mousePos.y -= viewShift.y;
+
+	XMINT2 viewDims = GameInstance->GetViewportDims();
+	mouseScreenPos.x = (float)mousePos.x / viewDims.x * 2.0f - 1.0f;
+	mouseScreenPos.y = (float)mousePos.y / viewDims.y * 2.0f - 1.0f;
+	mouseScreenPos.y *= -1.0f;
+
 }
 
 bool InputManager::IsPressed(int key) {
@@ -55,9 +63,14 @@ bool InputManager::JustReleased(int key) {
 }
 
 XMFLOAT2 InputManager::GetMousePosition(Camera* worldView) {
-	XMFLOAT4X4 viewMatrix = worldView->GetView();
-	XMVECTOR transformed = XMVector3Transform(XMLoadFloat2(&mousePosition), XMLoadFloat4x4(&viewMatrix));
+	XMFLOAT2 cameraCenter = worldView->GetPosition();
+	XMFLOAT2 worldScale = worldView->GetWorldDimensions();
+	
+	XMVECTOR shiftFromMid = XMVectorMultiply(XMLoadFloat2(&mouseScreenPos), XMVectorScale(XMLoadFloat2(&worldScale), 0.5f));
+	shiftFromMid = XMVector3Rotate(shiftFromMid, XMQuaternionRotationAxis(XMVectorSet(0, 0, 1, 0), worldView->GetRotation()));
+	XMVECTOR worldPos = XMVectorAdd(XMLoadFloat2(&cameraCenter), shiftFromMid);
+
 	XMFLOAT2 result;
-	XMStoreFloat2(&result, transformed);
+	XMStoreFloat2(&result, worldPos);
 	return result;
 }

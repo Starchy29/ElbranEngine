@@ -30,8 +30,9 @@ public:
 	LRESULT ProcessMessage(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
 
 	float GetAspectRatio();
-	int GetWindowWidth();
-	int GetWindowHeight();
+	DirectX::XMINT2 GetWindowDims();
+	DirectX::XMINT2 GetViewportDims();
+	DirectX::XMINT2 GetViewportShift();
 	Microsoft::WRL::ComPtr<ID3D11SamplerState> GetSamplerState();
 	void LoadTexture(std::wstring localPath, ID3D11ShaderResourceView** destination);
 
@@ -54,10 +55,9 @@ private:
 	Microsoft::WRL::ComPtr<ID3D11SamplerState> samplerState;
 
 	float aspectRatio;
-	int windowWidth;
-	int windowHeight;
-	int viewWidth;
-	int viewHeight;
+	DirectX::XMINT2 windowDims;
+	DirectX::XMINT2 viewportDims;
+	DirectX::XMINT2 viewportShift;
 
 	double performanceCountSeconds;
 	__int64 lastPerfCount;
