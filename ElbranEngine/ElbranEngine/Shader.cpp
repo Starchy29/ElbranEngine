@@ -1,5 +1,5 @@
 #include "Shader.h"
-#include "DXGame.h"
+#include "NewGame.h"
 
 Shader::Shader(Microsoft::WRL::ComPtr<ID3D11Device> device, Microsoft::WRL::ComPtr<ID3D11DeviceContext> context) {
 	this->dxDevice = device;

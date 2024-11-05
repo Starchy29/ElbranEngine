@@ -8,38 +8,14 @@
 #include "AssetManager.h"
 #include "WICTextureLoader.h"
 #include "InputManager.h"
+#include "NewGame.h"
 
 // global callback that processes messages from the operating system
 LRESULT CALLBACK WndProc(_In_ HWND hWnd, _In_ UINT message, _In_ WPARAM wParam, _In_ LPARAM lParam) {
 	return GameInstance->ProcessMessage(hWnd, message, wParam, lParam);
 }
 
-DXGame* DXGame::instance;
-
-DXGame* DXGame::GetInstance() {
-	return instance;
-}
-
-HRESULT DXGame::Initialize(HINSTANCE hInst) {
-	instance = new DXGame(hInst);
-
-	HRESULT hRes = instance->InitWindow();
-	if(FAILED(hRes)) return hRes;
-
-	hRes = instance->InitDirectX();
-	if(FAILED(hRes)) return hRes;
-
-	hRes = instance->LoadAssets();
-	if(FAILED(hRes)) return hRes;
-
-	Inputs->Initialize(instance->windowHandle);
-
-	return S_OK;
-}
-
-DXGame::~DXGame() {
-	delete sampleScene;
-}
+DXGame::~DXGame() {}
 
 HRESULT DXGame::Run() {
 	// main message loop
@@ -89,11 +65,6 @@ LRESULT DXGame::ProcessMessage(HWND hWnd, UINT message, WPARAM wParam, LPARAM lP
 		// Save the new client area dimensions.
 		windowDims.x = LOWORD(lParam);
 		windowDims.y = HIWORD(lParam);
-
-		RECT windowRect;
-		GetWindowRect(windowHandle, &windowRect);
-		//windowDims.x = windowRect.right - windowRect.left;
-		//windowDims.y = windowRect.bottom - windowRect.top;
 
 		// update directX
 		if(dxDevice) {
@@ -165,32 +136,7 @@ HRESULT DXGame::LoadAssets() {
 
 	Assets->unitSquare = std::make_shared<Mesh>(dxDevice, dxContext, &vertices[0], 4, &indices[0], 6);
 
-	// sample assets
-	LoadTexture(L"temp sprite.png", Assets->testImage.GetAddressOf());
-	sampleScene = new Scene(100);
-	
-	DirectX::XMFLOAT2 dims = sampleScene->GetCamera()->GetWorldDimensions();
-
-	testObject = new GameObject(Color::Cyan);
-	sampleScene->AddObject(testObject);
-	//testObject->colorTint = Color::Red;
-	//testObject->GetTransform()->SetScale(dims.x + 3, dims.y + 3);
-	//testObject->GetTransform()->SetZ(1);
-	//testObject->GetTransform()->SetPosition(DirectX::XMFLOAT2(-10.0f, 0.0f));
-
 	return S_OK;
-}
-
-void DXGame::Update(float deltaTime) {
-	//testObject->colorTint.blue += 0.0008f;
-	/*if(Input->JustReleased(VK_MOUSE_LEFT)) {
-		testObject->GetTransform()->TranslateAbsolute(5.0f, 0.0f);
-	}*/
-	testObject->GetTransform()->SetPosition(Inputs->GetMousePosition(sampleScene->GetCamera()));
-}
-
-void DXGame::Draw() {
-	sampleScene->Draw();
 }
 
 void DXGame::Render() { 
@@ -474,8 +420,10 @@ void DXGame::Resize() {
 
 DXGame::DXGame(HINSTANCE hInst) {
 	hInstance = hInst;
-	aspectRatio = 16.0f / 9.0f;
-	int windowWidth = 960;
+
+	// set up window size
+	aspectRatio = START_ASPECT_RATIO;
+	int windowWidth = START_WINDOW_WIDTH;
 	windowDims = DirectX::XMINT2(windowWidth, windowWidth / aspectRatio);
 
 	// set up timing info

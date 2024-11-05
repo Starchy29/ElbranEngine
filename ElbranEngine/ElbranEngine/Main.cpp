@@ -3,7 +3,7 @@
 #include <Windows.h>
 #include <tchar.h>
 #include <memory>
-#include "DXGame.h"
+#include "NewGame.h"
 
 // entry point for desktop app
 int WINAPI WinMain(
@@ -17,7 +17,7 @@ int WINAPI WinMain(
 	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
 #endif
 
-	HRESULT hRes = DXGame::Initialize(hInstance);
+	HRESULT hRes = NewGame::Initialize(hInstance);
 	if (FAILED(hRes)) return hRes;
 
 	return GameInstance->Run();

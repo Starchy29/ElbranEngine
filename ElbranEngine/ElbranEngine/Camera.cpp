@@ -1,5 +1,5 @@
 #include "Camera.h"
-#include "DXGame.h"
+#include "NewGame.h"
 using namespace DirectX;
 
 Camera::Camera(float worldWidth) {

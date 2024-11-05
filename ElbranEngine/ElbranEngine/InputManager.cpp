@@ -1,5 +1,5 @@
 #include "InputManager.h"
-#include "DXGame.h"
+#include "NewGame.h"
 using namespace DirectX;
 
 #define KEY_COUNT 256

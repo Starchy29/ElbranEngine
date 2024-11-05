@@ -14,17 +14,12 @@
 #include "GameObject.h"
 #include "Scene.h"
 
-#define GameInstance DXGame::GetInstance()
-
 class DXGame
 {
 public:
 	std::wstring exePath;
 
-	static DXGame* GetInstance();
-	static HRESULT Initialize(HINSTANCE hInst);
-
-	~DXGame();
+	virtual ~DXGame();
 
 	HRESULT Run();
 	LRESULT ProcessMessage(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
@@ -37,15 +32,19 @@ public:
 	void LoadTexture(std::wstring localPath, ID3D11ShaderResourceView** destination);
 
 protected:
+	DXGame(HINSTANCE hInst);
+
+	HINSTANCE hInstance;
+	HWND windowHandle;
+
+	HRESULT InitWindow();
+	HRESULT InitDirectX();
+
 	virtual HRESULT LoadAssets();
-	virtual void Update(float deltaTime);
-	virtual void Draw();
+	virtual void Update(float deltaTime) = 0;
+	virtual void Draw() = 0;
 
 private:
-	static DXGame* instance;
-	HINSTANCE hInstance;
-	
-	HWND windowHandle;
 	D3D_FEATURE_LEVEL featureLevel;
 	Microsoft::WRL::ComPtr<ID3D11Device> dxDevice;
 	Microsoft::WRL::ComPtr<ID3D11DeviceContext> dxContext;
@@ -62,14 +61,6 @@ private:
 	double performanceCountSeconds;
 	__int64 lastPerfCount;
 
-	// temp asset storage
-	GameObject* testObject;
-	Scene* sampleScene;
-
-	DXGame(HINSTANCE hInst);
-
-	HRESULT InitWindow();
-	HRESULT InitDirectX();
 	void Resize();
 	void Render();
 };

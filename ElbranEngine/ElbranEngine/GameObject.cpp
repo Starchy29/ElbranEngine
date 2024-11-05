@@ -1,5 +1,5 @@
 #include "GameObject.h"
-#include "DXGame.h"
+#include "NewGame.h"
 #include "AssetManager.h"
 
 GameObject::GameObject(Color color) {
