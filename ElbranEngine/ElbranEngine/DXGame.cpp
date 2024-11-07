@@ -96,10 +96,6 @@ DirectX::XMINT2 DXGame::GetViewportShift() {
 	return viewportShift;
 }
 
-Microsoft::WRL::ComPtr<ID3D11SamplerState> DXGame::GetSamplerState() {
-	return samplerState;
-}
-
 void DXGame::LoadTexture(std::wstring fileName, ID3D11ShaderResourceView** destination) {
 	std::wstring fullPath = exePath + L"Assets\\" + fileName;
 	CreateWICTextureFromFile(dxDevice.Get(), dxContext.Get(), fullPath.c_str(), nullptr, destination);
@@ -107,8 +103,10 @@ void DXGame::LoadTexture(std::wstring fileName, ID3D11ShaderResourceView** desti
 
 HRESULT DXGame::LoadAssets() {
 	Assets->cameraVS = std::make_shared<VertexShader>(dxDevice, dxContext, L"CameraVS.cso");
+	Assets->backgroundVS = std::make_shared<VertexShader>(dxDevice, dxContext, L"BackgroundVS.cso");
 	Assets->imagePS = std::make_shared<PixelShader>(dxDevice, dxContext, L"TexturePS.cso");
 	Assets->colorPS = std::make_shared<PixelShader>(dxDevice, dxContext, L"ColorFillPS.cso");
+	Assets->circlePS = std::make_shared<PixelShader>(dxDevice, dxContext, L"CirclePS.cso");
 
 	// create default sampler state
 	D3D11_SAMPLER_DESC samplerDescription = {};
@@ -119,7 +117,7 @@ HRESULT DXGame::LoadAssets() {
 	//samplerDescription.MaxAnisotropy = 8;
 	samplerDescription.MaxLOD = D3D11_FLOAT32_MAX;
 
-	dxDevice.Get()->CreateSamplerState(&samplerDescription, samplerState.GetAddressOf());
+	dxDevice.Get()->CreateSamplerState(&samplerDescription, Assets->defaultSampler.GetAddressOf());
 
 	// create unit square
 	Vertex vertices[] = {

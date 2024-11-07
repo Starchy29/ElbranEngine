@@ -25,7 +25,7 @@ HRESULT NewGame::Initialize(HINSTANCE hInst) {
 	return S_OK;
 }
 
-NewGame::NewGame(HINSTANCE hInst) : DXGame(hInst) { }
+NewGame::NewGame(HINSTANCE hInst) : DXGame(hInst) {}
 
 NewGame::~NewGame() {
 	delete sampleScene;
@@ -39,12 +39,19 @@ HRESULT NewGame::LoadAssets() {
 
 	// sample assets
 	LoadTexture(L"temp sprite.png", Assets->testImage.GetAddressOf());
-	sampleScene = new Scene(100);
+	sampleScene = new Scene(10, Color(0.2f, 0.2f, 0.2f));
 
 	DirectX::XMFLOAT2 dims = sampleScene->GetCamera()->GetWorldDimensions();
 
-	testObject = new GameObject(Color::Cyan);
+	testObject = new GameObject(Color(0, 1, 1, 0.5f));
+	testObject->pixelShader = Assets->circlePS;
+
 	sampleScene->AddObject(testObject);
+	GameObject* other = new GameObject(Color::Yellow);
+	sampleScene->AddObject(other);
+
+	other->GetTransform()->SetZ(CAMERA_MAX_Z - 1);
+	testObject->GetTransform()->SetZ(1);
 	//testObject->colorTint = Color::Red;
 	//testObject->GetTransform()->SetScale(dims.x + 3, dims.y + 3);
 	//testObject->GetTransform()->SetZ(1);

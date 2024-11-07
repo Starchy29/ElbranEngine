@@ -64,5 +64,5 @@ void Camera::UpdateProjectionMatrix() {
 	projNeedsUpdate = false;
 	float viewAspectRatio = GameInstance->GetAspectRatio();
 	float worldHeight = worldWidth / viewAspectRatio;
-	XMStoreFloat4x4(&projection, XMMatrixOrthographicLH(worldWidth, worldHeight, 0.1f, 1000.0f));
+	XMStoreFloat4x4(&projection, XMMatrixOrthographicLH(worldWidth, worldHeight, 0.0f, CAMERA_DEPTH));
 }

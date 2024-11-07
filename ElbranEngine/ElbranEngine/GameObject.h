@@ -13,6 +13,9 @@ public:
 	bool visible;
 	bool toBeDeleted;
 
+	std::shared_ptr<Mesh> mesh;
+	std::shared_ptr<VertexShader> vertexShader;
+	std::shared_ptr<PixelShader> pixelShader;
 	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> sprite;
 	Color colorTint;
 
@@ -25,8 +28,5 @@ public:
 
 private:
 	Transform transform;
-	std::shared_ptr<Mesh> mesh;
-	std::shared_ptr<VertexShader> vertexShader;
-	std::shared_ptr<PixelShader> pixelShader;
 };
 

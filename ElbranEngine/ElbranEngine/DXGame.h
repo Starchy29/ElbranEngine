@@ -28,7 +28,6 @@ public:
 	DirectX::XMINT2 GetWindowDims();
 	DirectX::XMINT2 GetViewportDims();
 	DirectX::XMINT2 GetViewportShift();
-	Microsoft::WRL::ComPtr<ID3D11SamplerState> GetSamplerState();
 	void LoadTexture(std::wstring localPath, ID3D11ShaderResourceView** destination);
 
 protected:
@@ -51,7 +50,6 @@ private:
 	Microsoft::WRL::ComPtr<IDXGISwapChain> swapChain;
 	Microsoft::WRL::ComPtr<ID3D11RenderTargetView> backBufferView;
 	Microsoft::WRL::ComPtr<ID3D11DepthStencilView> depthStencilView;
-	Microsoft::WRL::ComPtr<ID3D11SamplerState> samplerState;
 
 	float aspectRatio;
 	DirectX::XMINT2 windowDims;

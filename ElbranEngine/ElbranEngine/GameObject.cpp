@@ -1,6 +1,6 @@
 #include "GameObject.h"
-#include "NewGame.h"
 #include "AssetManager.h"
+using namespace DirectX;
 
 GameObject::GameObject(Color color) {
 	active = true;
@@ -37,21 +37,23 @@ Transform* GameObject::GetTransform() {
 void GameObject::Update(float deltaTime) {}
 
 void GameObject::Draw(Camera* camera) {
-	DirectX::XMFLOAT4X4 worldMat = transform.GetWorldMatrix();
-	DirectX::XMFLOAT4X4 viewMat = camera->GetView();
-	DirectX::XMFLOAT4X4 projMat = camera->GetProjection();
-	vertexShader->SetConstantVariable("worldTransform", &worldMat);
-	vertexShader->SetConstantVariable("view", &viewMat);
-	vertexShader->SetConstantVariable("projection", &projMat);
+	XMFLOAT4X4 worldMat = transform.GetWorldMatrix();
+	XMFLOAT4X4 viewMat = camera->GetView();
+	XMFLOAT4X4 projMat = camera->GetProjection();
+	XMMATRIX product = XMLoadFloat4x4(&worldMat);
+	product = XMMatrixMultiply(product, XMLoadFloat4x4(&viewMat));
+	product = XMMatrixMultiply(product, XMLoadFloat4x4(&projMat));
+	XMFLOAT4X4 worldViewProj;
+	XMStoreFloat4x4(&worldViewProj, product);
+	vertexShader->SetConstantVariable("worldViewProj", &worldViewProj);
 
 	pixelShader->SetConstantVariable("color", &colorTint);
 	if(sprite != nullptr) {
-		pixelShader->SetSampler(GameInstance->GetSamplerState());
+		pixelShader->SetSampler(Assets->defaultSampler);
 		pixelShader->SetTexture(sprite);
 	}
 
 	vertexShader->SetShader();
 	pixelShader->SetShader();
-
 	mesh->Draw();
 }

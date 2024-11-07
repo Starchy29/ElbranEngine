@@ -11,6 +11,8 @@ public:
 	bool hidden;
 
 	Scene(float cameraWidth);
+	Scene(float cameraWidth, Color backgroundColor);
+	Scene(float cameraWidth, Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> backgroundImage);
 	~Scene();
 
 	Camera* GetCamera();
@@ -20,6 +22,10 @@ public:
 	void AddObject(GameObject* object);
 
 private:
+	bool hasBackground;
+	Color backColor;
+	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> backImage;
+
 	Camera* camera;
 	std::vector<GameObject*> objects;
 };
