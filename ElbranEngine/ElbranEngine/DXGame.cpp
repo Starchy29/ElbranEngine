@@ -80,6 +80,14 @@ LRESULT DXGame::ProcessMessage(HWND hWnd, UINT message, WPARAM wParam, LPARAM lP
 	return 0;
 }
 
+void DXGame::EnableAlpha() {
+	dxContext->OMSetBlendState(alphaBlendState.Get(), NULL, 0xffffffff);
+}
+
+void DXGame::DisableAlpha() {
+	dxContext->OMSetBlendState(NULL, NULL, 0xffffffff);
+}
+
 float DXGame::GetAspectRatio() {
 	return aspectRatio;
 }
@@ -94,6 +102,14 @@ DirectX::XMINT2 DXGame::GetViewportDims() {
 
 DirectX::XMINT2 DXGame::GetViewportShift() {
 	return viewportShift;
+}
+
+Microsoft::WRL::ComPtr<ID3D11Device> DXGame::GetDXDevice() {
+	return dxDevice;
+}
+
+Microsoft::WRL::ComPtr<ID3D11DeviceContext> DXGame::GetDXContext() {
+	return dxContext;
 }
 
 void DXGame::LoadTexture(std::wstring fileName, ID3D11ShaderResourceView** destination) {
@@ -335,6 +351,43 @@ HRESULT DXGame::InitDirectX() {
 	}
 
 	depthStencil->Release();
+
+	D3D11_DEPTH_STENCIL_DESC stencilOMDesc = {};
+	stencilOMDesc.DepthEnable = true;
+	stencilOMDesc.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ALL;
+	stencilOMDesc.DepthFunc = D3D11_COMPARISON_LESS_EQUAL;
+	stencilOMDesc.StencilEnable = false;
+	stencilOMDesc.StencilReadMask = D3D11_DEFAULT_STENCIL_READ_MASK;
+	stencilOMDesc.StencilWriteMask = D3D11_DEFAULT_STENCIL_WRITE_MASK;
+	stencilOMDesc.FrontFace.StencilFunc = D3D11_COMPARISON_ALWAYS;
+	stencilOMDesc.BackFace.StencilFunc = D3D11_COMPARISON_ALWAYS;
+	stencilOMDesc.FrontFace.StencilFailOp = D3D11_STENCIL_OP_KEEP;
+	stencilOMDesc.BackFace.StencilFailOp = D3D11_STENCIL_OP_KEEP;
+	stencilOMDesc.FrontFace.StencilDepthFailOp = D3D11_STENCIL_OP_KEEP;
+	stencilOMDesc.BackFace.StencilDepthFailOp = D3D11_STENCIL_OP_KEEP;
+	stencilOMDesc.FrontFace.StencilPassOp = D3D11_STENCIL_OP_KEEP;
+	stencilOMDesc.BackFace.StencilPassOp = D3D11_STENCIL_OP_KEEP;
+
+	ID3D11DepthStencilState* stencilState;
+	dxDevice->CreateDepthStencilState(&stencilOMDesc, &stencilState);
+	dxContext->OMSetDepthStencilState(stencilState, 0);
+
+	stencilState->Release();
+
+	// create the blend state for alpha blendig
+	D3D11_BLEND_DESC blendDescription = {};
+	blendDescription.AlphaToCoverageEnable = false;
+	blendDescription.IndependentBlendEnable = false;
+	blendDescription.RenderTarget[0].BlendEnable = true;
+	blendDescription.RenderTarget[0].SrcBlend = D3D11_BLEND_SRC_ALPHA;
+	blendDescription.RenderTarget[0].DestBlend = D3D11_BLEND_INV_SRC_ALPHA;
+	blendDescription.RenderTarget[0].BlendOp = D3D11_BLEND_OP_ADD;
+	blendDescription.RenderTarget[0].SrcBlendAlpha = D3D11_BLEND_ONE;
+	blendDescription.RenderTarget[0].DestBlendAlpha = D3D11_BLEND_ZERO;
+	blendDescription.RenderTarget[0].BlendOpAlpha = D3D11_BLEND_OP_ADD;
+	blendDescription.RenderTarget[0].RenderTargetWriteMask = D3D11_COLOR_WRITE_ENABLE_ALL;
+
+	dxDevice->CreateBlendState(&blendDescription, alphaBlendState.GetAddressOf());
 
 	// create viewport
 	Resize();

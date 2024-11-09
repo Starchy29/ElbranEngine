@@ -6,27 +6,38 @@
 #include "Color.h"
 #include "VertexShader.h"
 #include "PixelShader.h"
+#include "Sprite.h"
+#include "Scene.h"
 
 class GameObject {
+	friend class Scene;
+
 public:
 	bool active;
 	bool visible;
 	bool toBeDeleted;
-
+	
 	std::shared_ptr<Mesh> mesh;
 	std::shared_ptr<VertexShader> vertexShader;
 	std::shared_ptr<PixelShader> pixelShader;
-	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> sprite;
+	std::shared_ptr<Sprite> sprite;
 	Color colorTint;
 
-	GameObject(Color color);
-	GameObject(Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> sprite);
-	Transform* GetTransform();
+	GameObject(Color color, bool translucent);
+	GameObject(std::shared_ptr<Sprite> sprite, bool translucent);
 
 	virtual void Update(float deltaTime);
 	virtual void Draw(Camera* camera);
 
-private:
+	void SetZ(float z);
+	Transform* GetTransform();
+	bool IsTranslucent();
+
+protected:
+	Scene* scene;
 	Transform transform;
+
+private:
+	bool translucent; // true if this object ever has a pixel with alpha between 0-1 exclusive
 };
 

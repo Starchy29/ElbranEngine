@@ -2,10 +2,11 @@
 #include "AssetManager.h"
 using namespace DirectX;
 
-GameObject::GameObject(Color color) {
+GameObject::GameObject(Color color, bool translucent) {
 	active = true;
 	visible = true;
 	toBeDeleted = false;
+	this->translucent = translucent;
 
 	AssetManager* assets = AssetManager::GetInstance();
 	mesh = assets->unitSquare;
@@ -16,10 +17,11 @@ GameObject::GameObject(Color color) {
 	colorTint = color;
 }
 
-GameObject::GameObject(Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> sprite) {
+GameObject::GameObject(std::shared_ptr<Sprite> sprite, bool translucent) {
 	active = true;
 	visible = true;
 	toBeDeleted = false;
+	this->translucent = translucent;
 
 	AssetManager* assets = AssetManager::GetInstance();
 	mesh = assets->unitSquare;
@@ -28,10 +30,20 @@ GameObject::GameObject(Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> sprite) 
 	pixelShader = Assets->imagePS;
 	this->sprite = sprite;
 	colorTint = Color::White;
+	transform.SetScale(sprite->GetAspectRatio(), 1.0f);
+}
+
+void GameObject::SetZ(float z) {
+	transform.SetZ(z);
+	if(scene) scene->UpdateDrawOrder(this);
 }
 
 Transform* GameObject::GetTransform() {
 	return &transform;
+}
+
+bool GameObject::IsTranslucent() {
+	return translucent;
 }
 
 void GameObject::Update(float deltaTime) {}
@@ -50,7 +62,7 @@ void GameObject::Draw(Camera* camera) {
 	pixelShader->SetConstantVariable("color", &colorTint);
 	if(sprite != nullptr) {
 		pixelShader->SetSampler(Assets->defaultSampler);
-		pixelShader->SetTexture(sprite);
+		pixelShader->SetTexture(sprite->GetResourceView());
 	}
 
 	vertexShader->SetShader();

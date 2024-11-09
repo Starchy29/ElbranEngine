@@ -2,22 +2,21 @@
 #include <DirectXMath.h>
 
 class Transform {
+	friend class GameObject;
+
 public:
 	Transform();
 
 	void SetPosition(DirectX::XMFLOAT2 position);
 	void SetX(float x);
 	void SetY(float y);
-	void SetZ(float z);
 	void SetScale(float x, float y);
-	void SetHoriScale(float x);
-	void SetVertScale(float y);
 	void SetRotation(float rotation);
 
 	void TranslateRelative(float x, float y);
 	void TranslateAbsolute(float x, float y);
 	void Rotate(float radians);
-	void Scale(float xMult, float yMult);
+	void Scale(float multiplier);
 
 	DirectX::XMFLOAT2 GetPosition();
 	float GetZ();
@@ -34,5 +33,6 @@ private:
 
 	bool needsUpdate; // only update the matrix when necessary
 	void UpdateMatrix();
+	void SetZ(float z);
 };
 

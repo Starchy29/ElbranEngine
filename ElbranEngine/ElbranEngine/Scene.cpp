@@ -1,5 +1,6 @@
 #include "Scene.h"
 #include "AssetManager.h"
+#include "NewGame.h"
 
 Scene::Scene(float cameraWidth) {
 	paused = false;
@@ -19,7 +20,7 @@ Scene::Scene(float cameraWidth, Color backgroundColor) {
 	backImage = nullptr;
 }
 
-Scene::Scene(float cameraWidth, Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> backgroundImage) {
+Scene::Scene(float cameraWidth, std::shared_ptr<Sprite> backgroundImage) {
 	paused = false;
 	hidden = false;
 	camera = new Camera(cameraWidth);
@@ -32,7 +33,10 @@ Scene::Scene(float cameraWidth, Microsoft::WRL::ComPtr<ID3D11ShaderResourceView>
 Scene::~Scene() {
 	delete camera;
 
-	for(GameObject* object : objects) {
+	for(GameObject* object : opaques) {
+		delete object;
+	}
+	for(GameObject* object : translucents) {
 		delete object;
 	}
 }
@@ -43,29 +47,65 @@ Camera* Scene::GetCamera() {
 
 void Scene::Update(float deltaTime) {
 	// update all game objects
-	for(GameObject* object : objects) {
-		if(object->active) {
+	for(GameObject* object : opaques) {
+		if(object->active && !object->toBeDeleted) {
+			object->Update(deltaTime);
+		}
+	}
+	for(GameObject* object : translucents) {
+		if(object->active && !object->toBeDeleted) {
 			object->Update(deltaTime);
 		}
 	}
 
 	// remove objects that need to be deleted
-	for(int i = objects.size() - 1; i >= 0; i--) {
-		if(objects[i]->toBeDeleted) {
-			delete objects[i];
-			objects.erase(std::next(objects.begin(), i));
+	for(int i = opaques.size() - 1; i >= 0; i--) {
+		if(opaques[i]->toBeDeleted) {
+			delete opaques[i];
+			opaques.erase(std::next(opaques.begin(), i));
+		}
+	}
+	for(int i = translucents.size() - 1; i >= 0; i--) {
+		if(translucents[i]->toBeDeleted) {
+			delete translucents[i];
+			translucents.erase(std::next(translucents.begin(), i));
 		}
 	}
 }
 
 void Scene::Draw() {
-	for(GameObject* object : objects) {
+	// draw opaques front to back
+	GameInstance->DisableAlpha();
+	for(GameObject* object : opaques) {
 		if(object->visible) {
 			object->Draw(camera);
 		}
 	}
+	
+	DrawBackground();
 
-	// draw the background
+	// draw translucents back to front
+	GameInstance->EnableAlpha();
+	for(int i = translucents.size() - 1; i >= 0; i--) {
+		if(translucents[i]->visible) {
+			translucents[i]->Draw(camera);
+		}
+	}
+}
+
+void Scene::AddObject(GameObject* object) {
+	object->scene = this;
+	SortInto(object, object->IsTranslucent() ? translucents : opaques);
+}
+
+// called by a game object when it changes its Z coordinate
+void Scene::UpdateDrawOrder(GameObject* sceneMember) {
+	std::vector<GameObject*> & list = sceneMember->IsTranslucent() ? translucents : opaques;
+	list.erase(std::find(list.begin(), list.end(), sceneMember));
+	SortInto(sceneMember, list);
+}
+
+inline void Scene::DrawBackground() {
 	if(!hasBackground) {
 		return;
 	}
@@ -75,7 +115,7 @@ void Scene::Draw() {
 	if(backImage != nullptr) {
 		std::shared_ptr<PixelShader> imageShader = assets->imagePS;
 		imageShader->SetConstantVariable("color", &backColor);
-		imageShader->SetTexture(backImage);
+		imageShader->SetTexture(backImage->GetResourceView());
 		imageShader->SetSampler(assets->defaultSampler);
 		imageShader->SetShader();
 	} else {
@@ -87,6 +127,16 @@ void Scene::Draw() {
 	assets->unitSquare->Draw();
 }
 
-void Scene::AddObject(GameObject* object) {
-	objects.push_back(object);
+void Scene::SortInto(GameObject* sceneMember, std::vector<GameObject*> & objectList) {
+	if(objectList.size() == 0) {
+		objectList.push_back(sceneMember);
+		return;
+	}
+
+	float newZ = sceneMember->GetTransform()->GetZ();
+	int insertIndex = 0;
+	while(insertIndex < objectList.size() && newZ > objectList[insertIndex]->GetTransform()->GetZ()) {
+		insertIndex++;
+	}
+	objectList.insert(std::next(translucents.begin(), insertIndex), sceneMember);
 }

@@ -5,6 +5,7 @@
 #include "VertexShader.h"
 #include "PixelShader.h"
 #include "Mesh.h"
+#include "Sprite.h"
 
 #define Assets AssetManager::GetInstance()
 
@@ -26,7 +27,7 @@ public:
 	Microsoft::WRL::ComPtr<ID3D11SamplerState> defaultSampler;
 #pragma endregion
 
-	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> testImage;
+	std::shared_ptr<Sprite> testImage;
 
 private:
 	static AssetManager* instance;

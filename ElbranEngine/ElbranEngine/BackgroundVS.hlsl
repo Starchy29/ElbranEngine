@@ -4,7 +4,7 @@
 VertexToPixel main(VertexShaderInput input)
 {
 	VertexToPixel output;
-	output.screenPosition = float4(input.position.x * 2.0, input.position.y * 2.0, 0.999, 1.0); // max depth ensures it is drawn behind everything
+	output.screenPosition = float4(input.position.x * 2.0, input.position.y * 2.0, 1.0, 1.0); // max depth ensures it is drawn behind everything
 	output.uv = input.uv;
 	return output;
 }

@@ -36,16 +36,6 @@ void Transform::SetScale(float x, float y) {
 	scale = XMFLOAT2(x, y);
 }
 
-void Transform::SetHoriScale(float x) {
-	needsUpdate = true;
-	scale.x = x;
-}
-
-void Transform::SetVertScale(float y) {
-	needsUpdate = true;
-	scale.y = y;
-}
-
 void Transform::SetRotation(float rotation) {
 	needsUpdate = true;
 	this->rotation = rotation;
@@ -70,9 +60,9 @@ void Transform::Rotate(float radians) {
 	rotation += radians;
 }
 
-void Transform::Scale(float xMult, float yMult) {
+void Transform::Scale(float multiplier) {
 	needsUpdate = true;
-	XMVECTOR growth = XMVectorSet(xMult, yMult, 1, 0);
+	XMVECTOR growth = XMVectorSet(multiplier, multiplier, 1, 0);
 	XMVECTOR mathScale = XMLoadFloat2(&scale);
 	XMStoreFloat2(&scale, growth * mathScale);
 }

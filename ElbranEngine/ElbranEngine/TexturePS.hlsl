@@ -10,5 +10,7 @@ SamplerState Sampler : register(s0);
 float4 main(VertexToPixel input) : SV_TARGET
 {
 	float4 pixel = Image.Sample(Sampler, input.uv);
-	return pixel * color;
+	float4 result = pixel * color;
+	clip(result.a - 0.01);
+	return result;
 }

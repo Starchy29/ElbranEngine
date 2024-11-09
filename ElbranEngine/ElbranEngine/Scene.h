@@ -12,7 +12,7 @@ public:
 
 	Scene(float cameraWidth);
 	Scene(float cameraWidth, Color backgroundColor);
-	Scene(float cameraWidth, Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> backgroundImage);
+	Scene(float cameraWidth, std::shared_ptr<Sprite> backgroundImage);
 	~Scene();
 
 	Camera* GetCamera();
@@ -20,13 +20,18 @@ public:
 	void Update(float deltaTime);
 	void Draw();
 	void AddObject(GameObject* object);
+	void UpdateDrawOrder(GameObject* sceneMember);
 
 private:
 	bool hasBackground;
 	Color backColor;
-	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> backImage;
+	std::shared_ptr<Sprite> backImage;
 
 	Camera* camera;
-	std::vector<GameObject*> objects;
+	std::vector<GameObject*> opaques;
+	std::vector<GameObject*> translucents;
+
+	inline void DrawBackground();
+	void SortInto(GameObject* sceneMember, std::vector<GameObject*> & objectList);
 };
 

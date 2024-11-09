@@ -24,10 +24,15 @@ public:
 	HRESULT Run();
 	LRESULT ProcessMessage(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
 
+	void EnableAlpha();
+	void DisableAlpha();
+
 	float GetAspectRatio();
 	DirectX::XMINT2 GetWindowDims();
 	DirectX::XMINT2 GetViewportDims();
 	DirectX::XMINT2 GetViewportShift();
+	Microsoft::WRL::ComPtr<ID3D11Device> GetDXDevice();
+	Microsoft::WRL::ComPtr<ID3D11DeviceContext> GetDXContext();
 	void LoadTexture(std::wstring localPath, ID3D11ShaderResourceView** destination);
 
 protected:
@@ -50,6 +55,7 @@ private:
 	Microsoft::WRL::ComPtr<IDXGISwapChain> swapChain;
 	Microsoft::WRL::ComPtr<ID3D11RenderTargetView> backBufferView;
 	Microsoft::WRL::ComPtr<ID3D11DepthStencilView> depthStencilView;
+	Microsoft::WRL::ComPtr<ID3D11BlendState> alphaBlendState;
 
 	float aspectRatio;
 	DirectX::XMINT2 windowDims;
