@@ -67,10 +67,32 @@ void Transform::Scale(float multiplier) {
 	XMStoreFloat2(&scale, growth * mathScale);
 }
 
-void Transform::Grow(float scaleAdditive) {
+void Transform::SetWidth(float width) {
 	MarkForUpdate();
+	float aspectRatio = scale.x / scale.y;
+	scale.x = width;
+	scale.y = width / aspectRatio;
+}
+
+void Transform::SetHeight(float height) {
+	MarkForUpdate();
+	float aspectRatio = scale.x / scale.y;
+	scale.y = height;
+	scale.x = height * aspectRatio;
+}
+
+void Transform::GrowWidth(float scaleAdditive) {
+	MarkForUpdate();
+	float aspectRatio = scale.x / scale.y;
 	scale.x += scaleAdditive;
+	scale.y = scale.x / aspectRatio;
+}
+
+void Transform::GrowHeight(float scaleAdditive) {
+	MarkForUpdate();
+	float aspectRatio = scale.x / scale.y;
 	scale.y += scaleAdditive;
+	scale.x = scale.y * aspectRatio;
 }
 
 DirectX::XMFLOAT2 Transform::GetPosition() {

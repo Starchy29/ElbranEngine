@@ -60,7 +60,7 @@ HRESULT NewGame::LoadAssets() {
 
 void NewGame::Update(float deltaTime) {
 	testObject->GetTransform()->SetPosition(Inputs->GetMousePosition(sampleScene->GetCamera()));
-	//testObject->GetTransform()->Grow(deltaTime);
+	testObject->GetTransform()->GrowHeight(deltaTime);
 }
 
 void NewGame::Draw() {

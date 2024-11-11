@@ -18,10 +18,13 @@ public:
 	void TranslateRelative(float x, float y);
 	void TranslateAbsolute(float x, float y);
 	void Rotate(float radians);
-	void Scale(float multiplier);
-
+	
 	// scaling operations that maintain aspect ratio
-	void Grow(float scaleAdditive);
+	void Scale(float multiplier);
+	void SetWidth(float width);
+	void SetHeight(float height);
+	void GrowWidth(float scaleAdditive);
+	void GrowHeight(float scaleAdditive);
 	
 	DirectX::XMFLOAT2 GetPosition();
 	float GetZ();
