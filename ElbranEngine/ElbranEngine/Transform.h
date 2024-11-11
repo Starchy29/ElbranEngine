@@ -1,5 +1,7 @@
 #pragma once
 #include <DirectXMath.h>
+#include "RectangleBox.h"
+#include <list>
 
 class Transform {
 	friend class GameObject;
@@ -18,13 +20,20 @@ public:
 	void Rotate(float radians);
 	void Scale(float multiplier);
 
+	// scaling operations that maintain aspect ratio
+	void Grow(float scaleAdditive);
+	
 	DirectX::XMFLOAT2 GetPosition();
 	float GetZ();
 	DirectX::XMFLOAT2 GetScale();
 	float GetRotation();
 	DirectX::XMFLOAT4X4 GetWorldMatrix();
+	RectangleBox GetArea();
 
 private:
+	Transform* parent;
+	std::list<Transform*> children;
+
 	DirectX::XMFLOAT2 position;
 	float z;
 	DirectX::XMFLOAT2 scale;
@@ -32,6 +41,7 @@ private:
 	DirectX::XMFLOAT4X4 worldMatrix;
 
 	bool needsUpdate; // only update the matrix when necessary
+	inline void MarkForUpdate();
 	void UpdateMatrix();
 	void SetZ(float z);
 };

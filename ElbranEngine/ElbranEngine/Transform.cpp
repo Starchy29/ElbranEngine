@@ -12,59 +12,65 @@ Transform::Transform() {
 }
 
 void Transform::SetPosition(DirectX::XMFLOAT2 position) {
-	needsUpdate = true;
+	MarkForUpdate();
 	this->position = position;
 }
 
 void Transform::SetX(float x) {
-	needsUpdate = true;
+	MarkForUpdate();
 	position.x = x;
 }
 
 void Transform::SetY(float y) {
-	needsUpdate = true;
+	MarkForUpdate();
 	position.y = y;
 }
 
 void Transform::SetZ(float z) {
-	needsUpdate = true;
+	MarkForUpdate();
 	this->z = z;
 }
 
 void Transform::SetScale(float x, float y) {
-	needsUpdate = true;
+	MarkForUpdate();
 	scale = XMFLOAT2(x, y);
 }
 
 void Transform::SetRotation(float rotation) {
-	needsUpdate = true;
+	MarkForUpdate();
 	this->rotation = rotation;
 }
 
 void Transform::TranslateRelative(float x, float y) {
-	needsUpdate = true;
+	MarkForUpdate();
 	XMVECTOR shift = XMVectorSet(x, y, 0, 0);
 	XMVECTOR mathPos = XMLoadFloat2(&position);
 	XMStoreFloat2(&position, mathPos + shift);
 }
 
 void Transform::TranslateAbsolute(float x, float y) {
-	needsUpdate = true;
+	MarkForUpdate();
 	XMVECTOR shift = XMVector3Rotate(XMVectorSet(x, y, 0, 0), XMQuaternionRotationAxis(XMVectorSet(0, 0, 1, 0), rotation));
 	XMVECTOR mathPos = XMLoadFloat2(&position);
 	XMStoreFloat2(&position, mathPos + shift);
 }
 
 void Transform::Rotate(float radians) {
-	needsUpdate = true;
+	MarkForUpdate();
 	rotation += radians;
 }
 
 void Transform::Scale(float multiplier) {
-	needsUpdate = true;
+	MarkForUpdate();
 	XMVECTOR growth = XMVectorSet(multiplier, multiplier, 1, 0);
 	XMVECTOR mathScale = XMLoadFloat2(&scale);
 	XMStoreFloat2(&scale, growth * mathScale);
+}
+
+void Transform::Grow(float scaleAdditive) {
+	MarkForUpdate();
+	scale.x += scaleAdditive;
+	scale.y += scaleAdditive;
 }
 
 DirectX::XMFLOAT2 Transform::GetPosition() {
@@ -90,6 +96,17 @@ DirectX::XMFLOAT4X4 Transform::GetWorldMatrix() {
 	return worldMatrix;
 }
 
+RectangleBox Transform::GetArea() {
+	return RectangleBox(position, scale);
+}
+
+inline void Transform::MarkForUpdate() {
+	needsUpdate = true;
+	for(Transform* child : children) {
+		child->MarkForUpdate();
+	}
+}
+
 void Transform::UpdateMatrix() {
 	needsUpdate = false;
 
@@ -98,6 +115,11 @@ void Transform::UpdateMatrix() {
 	XMMATRIX rotMat = XMMatrixRotationAxis(XMVectorSet(0, 0, 1, 0), rotation);
 
 	XMMATRIX worldMat = scaleMat * rotMat * translationMat;
+
+	if(parent != nullptr) {
+		XMFLOAT4X4 parentMat = parent->GetWorldMatrix();
+		worldMat = XMMatrixMultiply(worldMat, XMLoadFloat4x4(&parentMat));
+	}
 
 	XMStoreFloat4x4(&worldMatrix, worldMat);
 }

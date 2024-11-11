@@ -38,12 +38,37 @@ void GameObject::SetZ(float z) {
 	if(scene) scene->UpdateDrawOrder(this);
 }
 
+void GameObject::SetParent(GameObject* newParent) {
+	if(parent != nullptr) {
+		RemoveParent();
+	}
+
+	if(newParent == nullptr) {
+		parent = nullptr;
+		transform.parent = nullptr;
+		return;
+	}
+
+	parent = newParent;
+	transform.parent = &(newParent->transform);
+
+	parent->children.push_back(this);
+	parent->transform.children.push_back(&transform);
+}
+
 Transform* GameObject::GetTransform() {
 	return &transform;
 }
 
 bool GameObject::IsTranslucent() {
 	return translucent;
+}
+
+void GameObject::RemoveParent() {
+	parent->children.remove(this);
+	parent->transform.children.remove(&transform);
+	parent = nullptr;
+	transform.parent = nullptr;
 }
 
 void GameObject::Update(float deltaTime) {}
@@ -68,4 +93,21 @@ void GameObject::Draw(Camera* camera) {
 	vertexShader->SetShader();
 	pixelShader->SetShader();
 	mesh->Draw();
+}
+
+void GameObject::Delete(bool keepChildren) {
+	toBeDeleted = true;
+	if(parent != nullptr && !parent->toBeDeleted) {
+		RemoveParent();
+	}
+
+	if(keepChildren) {
+		for(GameObject* child : children) {
+			child->SetParent(nullptr);
+		}
+	} else {
+		for(GameObject* child : children) {
+			child->Delete();
+		}
+	}
 }

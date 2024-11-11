@@ -143,6 +143,7 @@
     <ClCompile Include="Mesh.cpp" />
     <ClCompile Include="NewGame.cpp" />
     <ClCompile Include="PixelShader.cpp" />
+    <ClCompile Include="RectangleBox.cpp" />
     <ClCompile Include="Scene.cpp" />
     <ClCompile Include="Shader.cpp" />
     <ClCompile Include="Sprite.cpp" />
@@ -160,6 +161,7 @@
     <ClInclude Include="Mesh.h" />
     <ClInclude Include="NewGame.h" />
     <ClInclude Include="PixelShader.h" />
+    <ClInclude Include="RectangleBox.h" />
     <ClInclude Include="Scene.h" />
     <ClInclude Include="Shader.h" />
     <ClInclude Include="Sprite.h" />

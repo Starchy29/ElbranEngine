@@ -15,7 +15,6 @@ class GameObject {
 public:
 	bool active;
 	bool visible;
-	bool toBeDeleted;
 	
 	std::shared_ptr<Mesh> mesh;
 	std::shared_ptr<VertexShader> vertexShader;
@@ -28,16 +27,23 @@ public:
 
 	virtual void Update(float deltaTime);
 	virtual void Draw(Camera* camera);
+	virtual void Delete(bool keepChildren = false);
 
 	void SetZ(float z);
+	void SetParent(GameObject* newParent);
 	Transform* GetTransform();
 	bool IsTranslucent();
 
 protected:
-	Scene* scene;
 	Transform transform;
+	Scene* scene;
+	GameObject* parent;
+	std::list<GameObject*> children;
 
 private:
 	bool translucent; // true if this object ever has a pixel with alpha between 0-1 exclusive
+	bool toBeDeleted;
+
+	void RemoveParent();
 };
 
