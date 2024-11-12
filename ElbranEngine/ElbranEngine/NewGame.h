@@ -1,9 +1,10 @@
 #pragma once
 #include "DXGame.h"
-
 #define GameInstance NewGame::GetInstance()
+
 #define START_ASPECT_RATIO 16.0f / 9.0f
 #define START_WINDOW_WIDTH 960
+#define MAX_FPS 60.0
 
 class NewGame : public DXGame
 {

@@ -30,7 +30,7 @@ NewGame::NewGame(HINSTANCE hInst) : DXGame(hInst) {}
 NewGame::~NewGame() {
 	delete sampleScene;
 }
-GameObject* picture;
+
 HRESULT NewGame::LoadAssets() {
 	HRESULT hr = DXGame::LoadAssets();
 	if(FAILED(hr)) {
@@ -44,7 +44,7 @@ HRESULT NewGame::LoadAssets() {
 	testObject = new GameObject(Color(0, 1, 1, 0.75f), true);
 	testObject->pixelShader = Assets->circlePS;
 	
-	picture = new GameObject(Assets->testImage, false);
+	GameObject* picture = new GameObject(Assets->testImage, false);
 	picture->colorTint = Color(1, 1, 1);
 	picture->GetTransform()->SetScale(2, 2);
 

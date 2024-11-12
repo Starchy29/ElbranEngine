@@ -36,6 +36,9 @@ GameObject::GameObject(std::shared_ptr<Sprite> sprite, bool translucent) {
 void GameObject::SetZ(float z) {
 	transform.SetZ(z);
 	if(scene) scene->UpdateDrawOrder(this);
+	for(GameObject* child : children) {
+		if(child->scene) child->scene->UpdateDrawOrder(this);;
+	}
 }
 
 void GameObject::SetParent(GameObject* newParent) {

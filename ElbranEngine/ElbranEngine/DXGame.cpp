@@ -30,8 +30,8 @@ HRESULT DXGame::Run() {
 			__int64 currentCount;
 			QueryPerformanceCounter((LARGE_INTEGER*) &currentCount);
 			double deltaTime = (currentCount - lastPerfCount) * performanceCountSeconds;
-			if(deltaTime < 0.0) {
-				deltaTime = 0.0;
+			if(deltaTime < minSecsPerFrame) {
+				continue;
 			}
 			lastPerfCount = currentCount;
 
@@ -471,6 +471,8 @@ void DXGame::Resize() {
 
 DXGame::DXGame(HINSTANCE hInst) {
 	hInstance = hInst;
+
+	minSecsPerFrame = 1.0 / MAX_FPS;
 
 	// set up window size
 	aspectRatio = START_ASPECT_RATIO;

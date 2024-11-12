@@ -100,8 +100,15 @@ Vector2 Transform::GetPosition() const {
 	return Vector2(position);
 }
 
-float Transform::GetZ() const {
-	return z;
+float Transform::GetGlobalZ() const {
+	float worldZ = z;
+	Transform* nextParent = parent;
+	while(nextParent != nullptr) {
+		worldZ += nextParent->z;
+		nextParent = nextParent->parent;
+	}
+
+	return worldZ;
 }
 
 Vector2 Transform::GetScale() const {

@@ -133,9 +133,9 @@ void Scene::SortInto(GameObject* sceneMember, std::vector<GameObject*> & objectL
 		return;
 	}
 
-	float newZ = sceneMember->GetTransform()->GetZ();
+	float newZ = sceneMember->GetTransform()->GetGlobalZ();
 	int insertIndex = 0;
-	while(insertIndex < objectList.size() && newZ > objectList[insertIndex]->GetTransform()->GetZ()) {
+	while(insertIndex < objectList.size() && newZ > objectList[insertIndex]->GetTransform()->GetGlobalZ()) {
 		insertIndex++;
 	}
 	objectList.insert(std::next(translucents.begin(), insertIndex), sceneMember);

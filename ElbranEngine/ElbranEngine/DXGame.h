@@ -62,6 +62,7 @@ private:
 	DirectX::XMINT2 viewportDims;
 	DirectX::XMINT2 viewportShift;
 
+	double minSecsPerFrame;
 	double performanceCountSeconds;
 	__int64 lastPerfCount;
 

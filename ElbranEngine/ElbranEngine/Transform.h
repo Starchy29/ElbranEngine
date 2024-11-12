@@ -28,7 +28,7 @@ public:
 	void GrowHeight(float scaleAdditive);
 	
 	Vector2 GetPosition() const;
-	float GetZ() const;
+	float GetGlobalZ() const;
 	Vector2 GetScale() const;
 	float GetRotation() const;
 	DirectX::XMFLOAT4X4 GetWorldMatrix() const;
