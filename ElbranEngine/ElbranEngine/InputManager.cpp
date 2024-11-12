@@ -62,7 +62,7 @@ bool InputManager::JustReleased(int key) {
 	return !KEY_DOWN(keyboardState[key]) && KEY_DOWN(previousKeyboard[key]);
 }
 
-XMFLOAT2 InputManager::GetMousePosition(Camera* worldView) {
+Vector2 InputManager::GetMousePosition(Camera* worldView) {
 	XMFLOAT2 cameraCenter = worldView->GetPosition();
 	XMFLOAT2 worldScale = worldView->GetWorldDimensions();
 	
@@ -72,5 +72,5 @@ XMFLOAT2 InputManager::GetMousePosition(Camera* worldView) {
 
 	XMFLOAT2 result;
 	XMStoreFloat2(&result, worldPos);
-	return result;
+	return Vector2(result);
 }

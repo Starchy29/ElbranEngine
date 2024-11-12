@@ -30,7 +30,7 @@ NewGame::NewGame(HINSTANCE hInst) : DXGame(hInst) {}
 NewGame::~NewGame() {
 	delete sampleScene;
 }
-
+GameObject* picture;
 HRESULT NewGame::LoadAssets() {
 	HRESULT hr = DXGame::LoadAssets();
 	if(FAILED(hr)) {
@@ -43,24 +43,22 @@ HRESULT NewGame::LoadAssets() {
 
 	testObject = new GameObject(Color(0, 1, 1, 0.75f), true);
 	testObject->pixelShader = Assets->circlePS;
-	testObject->GetTransform()->SetScale(1.0f, 0.5f);
 	
-	GameObject* picture = new GameObject(Assets->testImage, false);
+	picture = new GameObject(Assets->testImage, false);
 	picture->colorTint = Color(1, 1, 1);
+	picture->GetTransform()->SetScale(2, 2);
 
-	picture->SetZ(-1);
+	picture->SetZ(1);
 	picture->GetTransform()->SetPosition(DirectX::XMFLOAT2(0.5f, 0.5f));
 
 	sampleScene->AddObject(testObject);
 	sampleScene->AddObject(picture);
-	picture->SetParent(testObject);
 
 	return S_OK;
 }
 
 void NewGame::Update(float deltaTime) {
 	testObject->GetTransform()->SetPosition(Inputs->GetMousePosition(sampleScene->GetCamera()));
-	testObject->GetTransform()->GrowHeight(deltaTime);
 }
 
 void NewGame::Draw() {

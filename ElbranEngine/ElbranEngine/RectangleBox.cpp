@@ -1,6 +1,6 @@
 #include "RectangleBox.h"
 
-RectangleBox::RectangleBox(DirectX::XMFLOAT2 center, DirectX::XMFLOAT2 size) {
+RectangleBox::RectangleBox(Vector2 center, Vector2 size) {
 	SetCenterAndSize(center, size);
 }
 
@@ -11,47 +11,67 @@ RectangleBox::RectangleBox(float left, float right, float top, float bottom) {
 	this->bottom = bottom;
 }
 
-DirectX::XMFLOAT2 RectangleBox::GetCenter() {
-	return DirectX::XMFLOAT2((right + left) / 2.0f, (top + bottom) / 2.0f);
+Vector2 RectangleBox::GetCenter() const {
+	return Vector2((right + left) / 2.0f, (top + bottom) / 2.0f);
 }
 
-DirectX::XMFLOAT2 RectangleBox::GetSize() {
-	return DirectX::XMFLOAT2(right - left, top - bottom);
+Vector2 RectangleBox::GetSize() const {
+	return Vector2(right - left, top - bottom);
 }
 
-void RectangleBox::SetCenter(DirectX::XMFLOAT2 center) {
+void RectangleBox::SetCenter(Vector2 center) {
 	SetCenterAndSize(center, GetSize());
 }
 
 void RectangleBox::SetWidth(float width) {
-	DirectX::XMFLOAT2 size = GetSize();
+	Vector2 size = GetSize();
 	size.x = width;
 	SetCenterAndSize(GetCenter(), size);
 }
 
 void RectangleBox::SetHeight(float height) {
-	DirectX::XMFLOAT2 size = GetSize();
+	Vector2 size = GetSize();
 	size.y = height;
 	SetCenterAndSize(GetCenter(), size);
 }
 
-void RectangleBox::SetSize(DirectX::XMFLOAT2 size) {
+void RectangleBox::SetSize(Vector2 size) {
 	SetCenterAndSize(GetCenter(), size);
 }
 
-bool RectangleBox::Contains(const DirectX::XMFLOAT2 & point) {
+void RectangleBox::Expand(float shiftPerSide) {
+	left -= shiftPerSide;
+	right += shiftPerSide;
+	top += shiftPerSide;
+	bottom -= shiftPerSide;
+}
+
+bool RectangleBox::Contains(const Vector2 &point) const {
 	return point.x >= left && point.x <= right && point.y <= top && point.y >= bottom;
 }
 
-bool RectangleBox::Contains(const RectangleBox & other) {
+bool RectangleBox::Contains(const RectangleBox &other) const {
 	return other.left >= left && other.right <= right && other.top <= top && other.bottom >= bottom;
 }
 
-bool RectangleBox::Intersects(const RectangleBox & other) {
-	return false;
+bool RectangleBox::Intersects(const RectangleBox &other) const {
+	return !(right < other.left || left > other.right || top < other.bottom || bottom > other.top);
 }
 
-void RectangleBox::SetCenterAndSize(DirectX::XMFLOAT2 center, DirectX::XMFLOAT2 size) {
+bool RectangleBox::Intersects(const Circle& circle) const {
+	if(circle.center.x >= left && circle.center.x <= right) {
+		return fabs(circle.center.y - GetCenter().y) < circle.radius + (top - bottom) / 2.0f;
+	}
+
+	if(circle.center.y >= bottom && circle.center.y <= top) {
+		return fabs(circle.center.x - GetCenter().x) < circle.radius + (right - left) / 2.0f;
+	}
+
+	Vector2 corner = Vector2(circle.center.x < left ? left : right, circle.center.y < bottom ? bottom : top);
+	return circle.center.SqrDist(corner) <= circle.radius * circle.radius;
+}
+
+void RectangleBox::SetCenterAndSize(Vector2 center, Vector2 size) {
 	left = center.x - size.x / 2.0f;
 	right = center.x + size.x / 2.0f;
 	top = center.y + size.y / 2.0f;

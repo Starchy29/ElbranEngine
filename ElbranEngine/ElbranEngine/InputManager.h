@@ -24,7 +24,7 @@ public:
 	bool JustPressed(int key);
 	bool JustReleased(int key);
 
-	DirectX::XMFLOAT2 GetMousePosition(Camera* worldView);
+	Vector2 GetMousePosition(Camera* worldView);
 	// wheel spin
 
 	// gamepad stick vectors (left, right)

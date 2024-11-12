@@ -6,12 +6,13 @@ Transform::Transform() {
 	z = 0;
 	scale = XMFLOAT2(1, 1);
 	rotation = 0;
+	parent = nullptr;
 
 	XMStoreFloat4x4(&worldMatrix, XMMatrixIdentity());
 	needsUpdate = false;
 }
 
-void Transform::SetPosition(DirectX::XMFLOAT2 position) {
+void Transform::SetPosition(Vector2 position) {
 	MarkForUpdate();
 	this->position = position;
 }
@@ -41,16 +42,16 @@ void Transform::SetRotation(float rotation) {
 	this->rotation = rotation;
 }
 
-void Transform::TranslateRelative(float x, float y) {
+void Transform::TranslateRelative(Vector2 displacement) {
 	MarkForUpdate();
-	XMVECTOR shift = XMVectorSet(x, y, 0, 0);
+	XMVECTOR shift = XMVectorSet(displacement.x, displacement.y, 0, 0);
 	XMVECTOR mathPos = XMLoadFloat2(&position);
 	XMStoreFloat2(&position, mathPos + shift);
 }
 
-void Transform::TranslateAbsolute(float x, float y) {
+void Transform::TranslateAbsolute(Vector2 displacement) {
 	MarkForUpdate();
-	XMVECTOR shift = XMVector3Rotate(XMVectorSet(x, y, 0, 0), XMQuaternionRotationAxis(XMVectorSet(0, 0, 1, 0), rotation));
+	XMVECTOR shift = XMVector3Rotate(XMVectorSet(displacement.x, displacement.y, 0, 0), XMQuaternionRotationAxis(XMVectorSet(0, 0, 1, 0), rotation));
 	XMVECTOR mathPos = XMLoadFloat2(&position);
 	XMStoreFloat2(&position, mathPos + shift);
 }
@@ -95,30 +96,30 @@ void Transform::GrowHeight(float scaleAdditive) {
 	scale.x = scale.y * aspectRatio;
 }
 
-DirectX::XMFLOAT2 Transform::GetPosition() {
-	return position;
+Vector2 Transform::GetPosition() const {
+	return Vector2(position);
 }
 
-float Transform::GetZ() {
+float Transform::GetZ() const {
 	return z;
 }
 
-DirectX::XMFLOAT2 Transform::GetScale() {
-	return scale;
+Vector2 Transform::GetScale() const {
+	return Vector2(scale);
 }
 
-float Transform::GetRotation() {
+float Transform::GetRotation() const {
 	return rotation;
 }
 
-DirectX::XMFLOAT4X4 Transform::GetWorldMatrix() {
+DirectX::XMFLOAT4X4 Transform::GetWorldMatrix() const {
 	if(needsUpdate) {
 		UpdateMatrix();
 	}
 	return worldMatrix;
 }
 
-RectangleBox Transform::GetArea() {
+RectangleBox Transform::GetArea() const {
 	return RectangleBox(position, scale);
 }
 
@@ -129,7 +130,7 @@ inline void Transform::MarkForUpdate() {
 	}
 }
 
-void Transform::UpdateMatrix() {
+void Transform::UpdateMatrix() const {
 	needsUpdate = false;
 
 	XMMATRIX translationMat = XMMatrixTranslation(position.x, position.y, z);

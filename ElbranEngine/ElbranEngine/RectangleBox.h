@@ -1,5 +1,6 @@
 #pragma once
-#include <DirectXMath.h>
+#include "Vector2.h"
+#include "Circle.h"
 
 struct RectangleBox
 {
@@ -8,20 +9,22 @@ struct RectangleBox
 	float top;
 	float bottom;
 
-	RectangleBox(DirectX::XMFLOAT2 center, DirectX::XMFLOAT2 size);
+	RectangleBox(Vector2 center, Vector2 size);
 	RectangleBox(float left, float right, float top, float bottom);
 
-	DirectX::XMFLOAT2 GetCenter();
-	DirectX::XMFLOAT2 GetSize();
+	Vector2 GetCenter() const;
+	Vector2 GetSize() const;
 
-	void SetCenterAndSize(DirectX::XMFLOAT2 center, DirectX::XMFLOAT2 size);
-	void SetCenter(DirectX::XMFLOAT2 center);
+	void SetCenterAndSize(Vector2 center, Vector2 size);
+	void SetCenter(Vector2 center);
 	void SetWidth(float width);
 	void SetHeight(float height);
-	void SetSize(DirectX::XMFLOAT2 size);
+	void SetSize(Vector2 size);
+	void Expand(float shiftPerSide);
 
-	bool Contains(const DirectX::XMFLOAT2 & point);
-	bool Contains(const RectangleBox & other);
-	bool Intersects(const RectangleBox & other);
+	bool Contains(const Vector2 &point) const;
+	bool Contains(const RectangleBox &other) const;
+	bool Intersects(const RectangleBox &other) const;
+	bool Intersects(const Circle& circle) const;
 };
 

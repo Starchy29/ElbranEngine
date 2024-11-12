@@ -1,6 +1,7 @@
 #pragma once
 #include <DirectXMath.h>
 #include "RectangleBox.h"
+#include "Vector2.h"
 #include <list>
 
 class Transform {
@@ -9,14 +10,14 @@ class Transform {
 public:
 	Transform();
 
-	void SetPosition(DirectX::XMFLOAT2 position);
+	void SetPosition(Vector2 position);
 	void SetX(float x);
 	void SetY(float y);
 	void SetScale(float x, float y);
 	void SetRotation(float rotation);
 
-	void TranslateRelative(float x, float y);
-	void TranslateAbsolute(float x, float y);
+	void TranslateRelative(Vector2 displacement);
+	void TranslateAbsolute(Vector2 displacement);
 	void Rotate(float radians);
 	
 	// scaling operations that maintain aspect ratio
@@ -26,12 +27,12 @@ public:
 	void GrowWidth(float scaleAdditive);
 	void GrowHeight(float scaleAdditive);
 	
-	DirectX::XMFLOAT2 GetPosition();
-	float GetZ();
-	DirectX::XMFLOAT2 GetScale();
-	float GetRotation();
-	DirectX::XMFLOAT4X4 GetWorldMatrix();
-	RectangleBox GetArea();
+	Vector2 GetPosition() const;
+	float GetZ() const;
+	Vector2 GetScale() const;
+	float GetRotation() const;
+	DirectX::XMFLOAT4X4 GetWorldMatrix() const;
+	RectangleBox GetArea() const;
 
 private:
 	Transform* parent;
@@ -41,11 +42,11 @@ private:
 	float z;
 	DirectX::XMFLOAT2 scale;
 	float rotation;
-	DirectX::XMFLOAT4X4 worldMatrix;
+	mutable DirectX::XMFLOAT4X4 worldMatrix;
 
-	bool needsUpdate; // only update the matrix when necessary
+	mutable bool needsUpdate; // only update the matrix when necessary
 	inline void MarkForUpdate();
-	void UpdateMatrix();
+	void UpdateMatrix() const;
 	void SetZ(float z);
 };
 

@@ -155,7 +155,7 @@ HRESULT DXGame::LoadAssets() {
 
 void DXGame::Render() { 
 	// erase screen and depth buffer
-	dxContext->ClearRenderTargetView(backBufferView.Get(), Color::Black);
+	dxContext->ClearRenderTargetView(backBufferView.Get(), BLACK);
 	dxContext->ClearDepthStencilView(depthStencilView.Get(), D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
 
 	Draw();

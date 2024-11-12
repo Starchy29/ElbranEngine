@@ -9,26 +9,27 @@ public:
 	Camera(float worldWidth);
 
 	void SetRotation(float radians);
-	void SetPosition(DirectX::XMFLOAT2 position);
+	void SetPosition(Vector2 position);
 	void SetWorldWidth(float worldWidth);
 
-	float GetRotation();
-	DirectX::XMFLOAT2 GetPosition();
-	DirectX::XMFLOAT2 GetWorldDimensions();
+	float GetRotation() const;
+	Vector2 GetPosition() const;
+	Vector2 GetWorldDimensions() const;
+	RectangleBox GetVisibleArea() const;
 
-	DirectX::XMFLOAT4X4 GetView();
-	DirectX::XMFLOAT4X4 GetProjection();
+	DirectX::XMFLOAT4X4 GetView() const;
+	DirectX::XMFLOAT4X4 GetProjection() const;
 
 private:
 	float worldWidth;
 	float rotation;
-	DirectX::XMFLOAT2 position;
-	DirectX::XMFLOAT4X4 view;
-	DirectX::XMFLOAT4X4 projection;
+	Vector2 position;
+	mutable DirectX::XMFLOAT4X4 view;
+	mutable DirectX::XMFLOAT4X4 projection;
 
-	bool projNeedsUpdate;
-	bool viewNeedsUpdate;
-	void UpdateViewMatrix();
-	void UpdateProjectionMatrix();
+	mutable bool projNeedsUpdate;
+	mutable bool viewNeedsUpdate;
+	void UpdateViewMatrix() const;
+	void UpdateProjectionMatrix() const;
 };
 

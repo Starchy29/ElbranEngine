@@ -29,7 +29,7 @@ GameObject::GameObject(std::shared_ptr<Sprite> sprite, bool translucent) {
 
 	pixelShader = Assets->imagePS;
 	this->sprite = sprite;
-	colorTint = Color::White;
+	colorTint = WHITE;
 	transform.SetScale(sprite->GetAspectRatio(), 1.0f);
 }
 
