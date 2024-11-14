@@ -39,9 +39,9 @@ HRESULT NewGame::LoadAssets() {
 
 	// sample assets
 	Assets->testImage = std::make_shared<Sprite>(L"temp sprite.png");
-	sampleScene = new Scene(10, Color(0.2f, 0.2f, 0.2f));
+	sampleScene = new Scene(10, Color(0.1f, 0.1f, 0.1f));
 
-	testObject = new GameObject(Color(0, 1, 1, 0.75f), true);
+	testObject = new GameObject(Color(0, 0.8f, 0.5f, 0.75f), true);
 	testObject->pixelShader = Assets->circlePS;
 	
 	GameObject* picture = new GameObject(Assets->testImage, false);
@@ -59,6 +59,7 @@ HRESULT NewGame::LoadAssets() {
 
 void NewGame::Update(float deltaTime) {
 	testObject->GetTransform()->SetPosition(Inputs->GetMousePosition(sampleScene->GetCamera()));
+	testObject->colorTint.alpha += Inputs->GetMouseWheelSpin() / 20.0f;
 }
 
 void NewGame::Draw() {

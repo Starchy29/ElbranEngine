@@ -3,7 +3,6 @@
 #include <DirectXMath.h>
 #include "Camera.h"
 
-
 #define Inputs InputManager::GetInstance()
 #define VK_MOUSE_LEFT VK_LBUTTON
 #define VK_MOUSE_RIGHT VK_RBUTTON
@@ -11,6 +10,8 @@
 
 class InputManager
 {
+	friend class DXGame;
+
 public:
 	static void Initialize(HWND windowHandle);
 	static InputManager* GetInstance();
@@ -24,8 +25,9 @@ public:
 	bool JustPressed(int key);
 	bool JustReleased(int key);
 
+	Vector2 GetStick(bool left);
 	Vector2 GetMousePosition(Camera* worldView);
-	// wheel spin
+	float GetMouseWheelSpin();
 
 	// gamepad stick vectors (left, right)
 
@@ -36,5 +38,6 @@ private:
 	PBYTE keyboardState;
 	PBYTE previousKeyboard;
 	DirectX::XMFLOAT2 mouseScreenPos;
+	float mouseWheelDelta;
 };
 

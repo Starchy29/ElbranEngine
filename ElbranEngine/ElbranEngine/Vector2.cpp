@@ -74,6 +74,15 @@ Vector2 Vector2::GetPerpendicular(bool rightSide) const {
 	return result;
 }
 
+Vector2 Vector2::Normalize() const {
+	float length = Length();
+	if(length == 0.0f) {
+		return ZERO_VECTOR;
+	}
+
+	return Vector2(x / length, y / length);
+}
+
 Vector2 Vector2::operator-() const {
 	return Vector2(-x, -y);
 }

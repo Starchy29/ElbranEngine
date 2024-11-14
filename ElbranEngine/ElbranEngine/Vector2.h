@@ -24,6 +24,7 @@ struct Vector2
 	float SqrDist(const Vector2& other) const;
 	float Dot(const Vector2 &other) const;
 	Vector2 GetPerpendicular(bool rightSide = true) const;
+	Vector2 Normalize() const;
 
 	Vector2 operator-() const;
 	Vector2 operator+(const Vector2& other) const;

@@ -2,6 +2,7 @@
 #include "DXGame.h"
 #define GameInstance NewGame::GetInstance()
 
+#define WINDOW_TITLE "Elbran Engine"
 #define START_ASPECT_RATIO 16.0f / 9.0f
 #define START_WINDOW_WIDTH 960
 #define MAX_FPS 60.0

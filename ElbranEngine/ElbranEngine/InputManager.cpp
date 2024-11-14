@@ -47,7 +47,6 @@ void InputManager::Update() {
 	mouseScreenPos.x = (float)mousePos.x / viewDims.x * 2.0f - 1.0f;
 	mouseScreenPos.y = (float)mousePos.y / viewDims.y * 2.0f - 1.0f;
 	mouseScreenPos.y *= -1.0f;
-
 }
 
 bool InputManager::IsPressed(int key) {
@@ -62,6 +61,11 @@ bool InputManager::JustReleased(int key) {
 	return !KEY_DOWN(keyboardState[key]) && KEY_DOWN(previousKeyboard[key]);
 }
 
+Vector2 InputManager::GetStick(bool left) {
+	
+	return Vector2();
+}
+
 Vector2 InputManager::GetMousePosition(Camera* worldView) {
 	XMFLOAT2 cameraCenter = worldView->GetPosition();
 	XMFLOAT2 worldScale = worldView->GetWorldDimensions();
@@ -73,4 +77,8 @@ Vector2 InputManager::GetMousePosition(Camera* worldView) {
 	XMFLOAT2 result;
 	XMStoreFloat2(&result, worldPos);
 	return Vector2(result);
+}
+
+float InputManager::GetMouseWheelSpin() {
+	return mouseWheelDelta;
 }

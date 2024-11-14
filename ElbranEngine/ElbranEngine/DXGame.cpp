@@ -38,6 +38,8 @@ HRESULT DXGame::Run() {
 			Inputs->Update();
 			Update(deltaTime);
 			Render();
+
+			Inputs->mouseWheelDelta = 0.0f;
 		}
 	}
 
@@ -71,6 +73,9 @@ LRESULT DXGame::ProcessMessage(HWND hWnd, UINT message, WPARAM wParam, LPARAM lP
 			Resize();
 		}
 
+		return 0;
+	case WM_MOUSEWHEEL:
+		Inputs->mouseWheelDelta = GET_WHEEL_DELTA_WPARAM(wParam) / (float)WHEEL_DELTA;
 		return 0;
 	default:
 		return DefWindowProc(hWnd, message, wParam, lParam);
@@ -166,7 +171,7 @@ void DXGame::Render() {
 
 HRESULT DXGame::InitWindow() {
 	static TCHAR szWindowClass[] = _T("DesktopApp");
-	static TCHAR szTitle[] = _T("Elbran Engine");
+	static TCHAR szTitle[] = _T(WINDOW_TITLE);
 
 	WNDCLASSEX wcex = {};
 	wcex.cbSize = sizeof(WNDCLASSEX);
