@@ -19,7 +19,7 @@ public:
 
 	void Update(float deltaTime);
 	void Draw();
-	void AddObject(GameObject* object);
+	void Join(GameObject* object);
 	void UpdateDrawOrder(GameObject* sceneMember);
 
 private:

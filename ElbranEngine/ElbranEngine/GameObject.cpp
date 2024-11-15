@@ -2,11 +2,13 @@
 #include "AssetManager.h"
 using namespace DirectX;
 
-GameObject::GameObject(Color color, bool translucent) {
+GameObject::GameObject(Scene* scene, bool translucent, Color color) {
+	this->scene = scene;
 	active = true;
 	visible = true;
 	toBeDeleted = false;
 	this->translucent = translucent;
+	scene->Join(this);
 
 	AssetManager* assets = AssetManager::GetInstance();
 	mesh = assets->unitSquare;
@@ -17,11 +19,13 @@ GameObject::GameObject(Color color, bool translucent) {
 	colorTint = color;
 }
 
-GameObject::GameObject(std::shared_ptr<Sprite> sprite, bool translucent) {
+GameObject::GameObject(Scene* scene, bool translucent, std::shared_ptr<Sprite> sprite) {
+	this->scene = scene;
 	active = true;
 	visible = true;
 	toBeDeleted = false;
 	this->translucent = translucent;
+	scene->Join(this);
 
 	AssetManager* assets = AssetManager::GetInstance();
 	mesh = assets->unitSquare;

@@ -22,8 +22,8 @@ public:
 	std::shared_ptr<Sprite> sprite;
 	Color colorTint;
 
-	GameObject(Color color, bool translucent);
-	GameObject(std::shared_ptr<Sprite> sprite, bool translucent);
+	GameObject(Scene* scene, bool translucent, Color color);
+	GameObject(Scene* scene, bool translucent, std::shared_ptr<Sprite> sprite);
 
 	virtual void Update(float deltaTime);
 	virtual void Draw(Camera* camera);

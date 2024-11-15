@@ -68,5 +68,9 @@ private:
 
 	void Resize();
 	void Render();
+
+#if defined(DEBUG) | defined(_DEBUG)
+	inline void CreateDebugConsole();
+#endif
 };
 

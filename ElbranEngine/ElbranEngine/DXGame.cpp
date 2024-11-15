@@ -169,6 +169,29 @@ void DXGame::Render() {
 	dxContext->OMSetRenderTargets(1, backBufferView.GetAddressOf(), depthStencilView.Get());
 }
 
+#if defined(DEBUG) | defined(_DEBUG)
+inline void DXGame::CreateDebugConsole() {
+	CONSOLE_SCREEN_BUFFER_INFO consoleinfo;
+	AllocConsole();
+	GetConsoleScreenBufferInfo(GetStdHandle(STD_OUTPUT_HANDLE), &consoleinfo);
+	consoleinfo.dwSize.Y = 50;
+	consoleinfo.dwSize.X = 100;
+	SetConsoleScreenBufferSize(GetStdHandle(STD_OUTPUT_HANDLE), consoleinfo.dwSize);
+
+	SMALL_RECT rect;
+	rect.Left = 0;
+	rect.Top = 0;
+	rect.Right = 50;
+	rect.Bottom = 12;
+	SetConsoleWindowInfo(GetStdHandle(STD_OUTPUT_HANDLE), TRUE, &rect);
+
+	FILE* stream;
+	freopen_s(&stream, "CONIN$", "r", stdin);
+	freopen_s(&stream, "CONOUT$", "w", stdout);
+	freopen_s(&stream, "CONOUT$", "w", stderr);
+}
+#endif
+
 HRESULT DXGame::InitWindow() {
 	static TCHAR szWindowClass[] = _T("DesktopApp");
 	static TCHAR szTitle[] = _T(WINDOW_TITLE);
@@ -500,4 +523,8 @@ DXGame::DXGame(HINSTANCE hInst) {
 		*(lastSlash+1) = 0;
 	}
 	exePath = directory;
+
+#if defined(DEBUG) | defined(_DEBUG)
+	CreateDebugConsole();
+#endif
 }

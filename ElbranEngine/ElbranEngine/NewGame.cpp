@@ -41,18 +41,15 @@ HRESULT NewGame::LoadAssets() {
 	Assets->testImage = std::make_shared<Sprite>(L"temp sprite.png");
 	sampleScene = new Scene(10, Color(0.1f, 0.1f, 0.1f));
 
-	testObject = new GameObject(Color(0, 0.8f, 0.5f, 0.75f), true);
+	testObject = new GameObject(sampleScene, true, Color(0, 0.8f, 0.5f, 0.75f));
 	testObject->pixelShader = Assets->circlePS;
 	
-	GameObject* picture = new GameObject(Assets->testImage, false);
+	GameObject* picture = new GameObject(sampleScene, false, Assets->testImage);
 	picture->colorTint = Color(1, 1, 1);
 	picture->GetTransform()->SetScale(2, 2);
 
 	picture->SetZ(1);
 	picture->GetTransform()->SetPosition(DirectX::XMFLOAT2(0.5f, 0.5f));
-
-	sampleScene->AddObject(testObject);
-	sampleScene->AddObject(picture);
 
 	return S_OK;
 }

@@ -93,8 +93,7 @@ void Scene::Draw() {
 	}
 }
 
-void Scene::AddObject(GameObject* object) {
-	object->scene = this;
+void Scene::Join(GameObject* object) {
 	SortInto(object, object->IsTranslucent() ? translucents : opaques);
 }
 

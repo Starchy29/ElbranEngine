@@ -1,7 +1,10 @@
 #include "InputManager.h"
 #include "NewGame.h"
+#include <Xinput.h>
 using namespace DirectX;
 
+#define STICK_MAX 32767.0f
+#define GAMEPAD_DEAD_ZONE 0.2f
 #define KEY_COUNT 256
 #define KEY_DOWN(keyByte) (keyByte & 0x80) // high-order bit is 1 when the key is pressed
 
@@ -47,6 +50,28 @@ void InputManager::Update() {
 	mouseScreenPos.x = (float)mousePos.x / viewDims.x * 2.0f - 1.0f;
 	mouseScreenPos.y = (float)mousePos.y / viewDims.y * 2.0f - 1.0f;
 	mouseScreenPos.y *= -1.0f;
+
+	// update gamepad sticks
+	//DWORD result;
+	//for(DWORD i = 0; i < XUSER_MAX_COUNT; i++) {
+	//	XINPUT_STATE state = {};
+	//	result = XInputGetState(i, &state);
+
+	//	if(result == ERROR_SUCCESS) { // if connected
+	//		gamepadLeftSticks[i] = Vector2(
+	//			state.Gamepad.sThumbLX / STICK_MAX,
+	//			state.Gamepad.sThumbLY / STICK_MAX
+	//		);
+
+	//		gamepadRightSticks[i] = Vector2(
+	//			state.Gamepad.sThumbRX / STICK_MAX,
+	//			state.Gamepad.sThumbRY / STICK_MAX
+	//		);
+	//	} else {
+	//		gamepadLeftSticks[i] = ZERO_VECTOR;
+	//		gamepadRightSticks[i] = ZERO_VECTOR;
+	//	}
+	//}
 }
 
 bool InputManager::IsPressed(int key) {
@@ -61,9 +86,11 @@ bool InputManager::JustReleased(int key) {
 	return !KEY_DOWN(keyboardState[key]) && KEY_DOWN(previousKeyboard[key]);
 }
 
-Vector2 InputManager::GetStick(bool left) {
-	
-	return Vector2();
+Vector2 InputManager::GetStick(bool left, int slot) {
+	if(left) {
+		return gamepadLeftSticks[slot];
+	}
+	return gamepadRightSticks[slot];
 }
 
 Vector2 InputManager::GetMousePosition(Camera* worldView) {
