@@ -1,5 +1,6 @@
 #pragma once
 #include <DirectXMath.h>
+#include <string>
 
 #define ZERO_VECTOR Vector2(0, 0)
 #define RIGHT_VECTOR Vector2(1, 0)
@@ -25,6 +26,7 @@ struct Vector2
 	float Dot(const Vector2 &other) const;
 	Vector2 GetPerpendicular(bool rightSide = true) const;
 	Vector2 Normalize() const;
+	std::string ToString() const;
 
 	Vector2 operator-() const;
 	Vector2 operator+(const Vector2& other) const;

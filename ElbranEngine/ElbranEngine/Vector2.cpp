@@ -83,6 +83,10 @@ Vector2 Vector2::Normalize() const {
 	return Vector2(x / length, y / length);
 }
 
+std::string Vector2::ToString() const {
+	return "(" + std::to_string(x) + ", " + std::to_string(y) + ")";
+}
+
 Vector2 Vector2::operator-() const {
 	return Vector2(-x, -y);
 }

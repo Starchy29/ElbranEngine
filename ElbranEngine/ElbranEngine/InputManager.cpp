@@ -1,6 +1,8 @@
 #include "InputManager.h"
 #include "NewGame.h"
 #include <Xinput.h>
+#pragma comment(lib,"XInput.lib")
+#pragma comment(lib,"Xinput9_1_0.lib")
 using namespace DirectX;
 
 #define STICK_MAX 32767.0f
@@ -52,26 +54,43 @@ void InputManager::Update() {
 	mouseScreenPos.y *= -1.0f;
 
 	// update gamepad sticks
-	//DWORD result;
-	//for(DWORD i = 0; i < XUSER_MAX_COUNT; i++) {
-	//	XINPUT_STATE state = {};
-	//	result = XInputGetState(i, &state);
+	DWORD result;
+	for(DWORD i = 0; i < XUSER_MAX_COUNT; i++) {
+		XINPUT_STATE state = {};
+		result = XInputGetState(i, &state);
 
-	//	if(result == ERROR_SUCCESS) { // if connected
-	//		gamepadLeftSticks[i] = Vector2(
-	//			state.Gamepad.sThumbLX / STICK_MAX,
-	//			state.Gamepad.sThumbLY / STICK_MAX
-	//		);
+		if(result == ERROR_SUCCESS) { // if connected
+			short x = state.Gamepad.sThumbLX;
+			short y = state.Gamepad.sThumbLY;
+			if(x < 0) {
+				x++; // range is -32768 to 32767
+			}
+			if(y < 0) {
+				y++;
+			}
+			gamepadLeftSticks[i] = Vector2(x / STICK_MAX, y / STICK_MAX);
 
-	//		gamepadRightSticks[i] = Vector2(
-	//			state.Gamepad.sThumbRX / STICK_MAX,
-	//			state.Gamepad.sThumbRY / STICK_MAX
-	//		);
-	//	} else {
-	//		gamepadLeftSticks[i] = ZERO_VECTOR;
-	//		gamepadRightSticks[i] = ZERO_VECTOR;
-	//	}
-	//}
+			x = state.Gamepad.sThumbRX;
+			y = state.Gamepad.sThumbRY;
+			if(x < 0) {
+				x++; // range is -32768 to 32767
+			}
+			if(y < 0) {
+				y++;
+			}
+			gamepadRightSticks[i] = Vector2(x / STICK_MAX, y / STICK_MAX);
+
+			if(gamepadLeftSticks[i].Length() <= GAMEPAD_DEAD_ZONE) {
+				gamepadLeftSticks[i] = ZERO_VECTOR;
+			}
+			if(gamepadRightSticks[i].Length() <= GAMEPAD_DEAD_ZONE) {
+				gamepadRightSticks[i] = ZERO_VECTOR;
+			}
+		} else {
+			gamepadLeftSticks[i] = ZERO_VECTOR;
+			gamepadRightSticks[i] = ZERO_VECTOR;
+		}
+	}
 }
 
 bool InputManager::IsPressed(int key) {
