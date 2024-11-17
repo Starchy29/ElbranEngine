@@ -9,6 +9,7 @@ class Transform {
 
 public:
 	Transform();
+	Transform& operator=(const Transform& original);
 
 	void SetPosition(Vector2 position);
 	void SetX(float x);
@@ -16,8 +17,7 @@ public:
 	void SetScale(float x, float y);
 	void SetRotation(float rotation);
 
-	void TranslateRelative(Vector2 displacement);
-	void TranslateAbsolute(Vector2 displacement);
+	void Translate(Vector2 displacement);
 	void Rotate(float radians);
 	
 	// scaling operations that maintain aspect ratio

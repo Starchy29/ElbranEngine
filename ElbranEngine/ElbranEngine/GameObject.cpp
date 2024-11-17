@@ -3,11 +3,16 @@
 using namespace DirectX;
 
 GameObject::GameObject(Scene* scene, bool translucent, Color color) {
-	this->scene = scene;
 	active = true;
 	visible = true;
+	flipX = false;
+	flipY = false;
 	toBeDeleted = false;
+	parent = nullptr;
+	children = std::list<GameObject*>();
+	behaviors = std::vector<IBehavior*>();
 	this->translucent = translucent;
+	this->scene = scene;
 	scene->Join(this);
 
 	AssetManager* assets = AssetManager::GetInstance();
@@ -19,22 +24,16 @@ GameObject::GameObject(Scene* scene, bool translucent, Color color) {
 	colorTint = color;
 }
 
-GameObject::GameObject(Scene* scene, bool translucent, std::shared_ptr<Sprite> sprite) {
-	this->scene = scene;
-	active = true;
-	visible = true;
-	toBeDeleted = false;
-	this->translucent = translucent;
-	scene->Join(this);
-
-	AssetManager* assets = AssetManager::GetInstance();
-	mesh = assets->unitSquare;
-	vertexShader = assets->cameraVS;
-
+GameObject::GameObject(Scene* scene, bool translucent, std::shared_ptr<Sprite> sprite) : GameObject(scene, translucent) {
 	pixelShader = Assets->imagePS;
 	this->sprite = sprite;
-	colorTint = WHITE;
 	transform.SetScale(sprite->GetAspectRatio(), 1.0f);
+}
+
+GameObject::~GameObject() {
+	for(IBehavior* behavior : behaviors) {
+		delete behavior;
+	}
 }
 
 void GameObject::SetZ(float z) {
@@ -63,12 +62,52 @@ void GameObject::SetParent(GameObject* newParent) {
 	parent->transform.children.push_back(&transform);
 }
 
+void GameObject::AddBehavior(IBehavior* behavior) {
+	behaviors.push_back(behavior);
+}
+
 Transform* GameObject::GetTransform() {
 	return &transform;
 }
 
-bool GameObject::IsTranslucent() {
+bool GameObject::IsTranslucent() const {
 	return translucent;
+}
+
+GameObject* GameObject::Clone() const {
+	GameObject* copy = Copy();
+
+	for(GameObject* child : children) {
+		GameObject* childCopy = child->Clone();
+		childCopy->SetParent(copy);
+	}
+
+	return copy;
+}
+
+GameObject* GameObject::Copy() const {
+	GameObject* copy = new GameObject(this->scene, this->translucent, this->colorTint);
+	copy->active = active;
+	copy->visible = visible;
+	copy->flipX = flipX;
+	copy->flipY = flipY;
+
+	copy->mesh = mesh;
+	copy->vertexShader = vertexShader;
+	copy->pixelShader =  pixelShader;
+	copy->sprite = sprite;
+
+	copy->transform = transform;
+	copy->toBeDeleted = toBeDeleted;
+
+	// copy all behaviors
+	for(IBehavior* behavior : behaviors) {
+		copy->behaviors.push_back(behavior->Copy());
+	}
+
+	// parent and children set by Clone()
+
+	return copy;
 }
 
 void GameObject::RemoveParent() {
@@ -78,7 +117,11 @@ void GameObject::RemoveParent() {
 	transform.parent = nullptr;
 }
 
-void GameObject::Update(float deltaTime) {}
+void GameObject::Update(float deltaTime) {
+	for(IBehavior* behavior : behaviors) {
+		behavior->Update(deltaTime);
+	}
+}
 
 void GameObject::Draw(Camera* camera) {
 	XMFLOAT4X4 worldMat = transform.GetWorldMatrix();
@@ -90,6 +133,8 @@ void GameObject::Draw(Camera* camera) {
 	XMFLOAT4X4 worldViewProj;
 	XMStoreFloat4x4(&worldViewProj, product);
 	vertexShader->SetConstantVariable("worldViewProj", &worldViewProj);
+	vertexShader->SetBool("flipX", flipX);
+	vertexShader->SetBool("flipY", flipY);
 
 	pixelShader->SetConstantVariable("color", &colorTint);
 	if(sprite != nullptr) {

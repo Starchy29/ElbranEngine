@@ -30,6 +30,7 @@ public:
 
 	void SetShader();
 	void SetConstantVariable(std::string name, void* data);
+	void SetBool(std::string name, bool value);
 
 protected:
 	Microsoft::WRL::ComPtr<ID3D11Device> dxDevice;

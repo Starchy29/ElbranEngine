@@ -53,6 +53,12 @@ void Shader::SetShader() {
 	SetSpecificShader();
 }
 
+void Shader::SetBool(std::string name, bool value) {
+	// HLSL bools are 4 bytes. C++ bools are 1 byte. This function accounts for that discrepency
+	__int32 hlslBool = value ? 1 : 0;
+	SetConstantVariable(name, &hlslBool);
+}
+
 void Shader::LoadShader(std::wstring fileName) {
 	// get the blob data
 	std::wstring fileString = GameInstance->exePath + fileName;

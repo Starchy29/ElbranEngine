@@ -8,6 +8,7 @@
 #include "PixelShader.h"
 #include "Sprite.h"
 #include "Scene.h"
+#include "IBehavior.h"
 
 class GameObject {
 	friend class Scene;
@@ -15,6 +16,8 @@ class GameObject {
 public:
 	bool active;
 	bool visible;
+	bool flipX;
+	bool flipY;
 	
 	std::shared_ptr<Mesh> mesh;
 	std::shared_ptr<VertexShader> vertexShader;
@@ -22,23 +25,30 @@ public:
 	std::shared_ptr<Sprite> sprite;
 	Color colorTint;
 
-	GameObject(Scene* scene, bool translucent, Color color);
+	GameObject(Scene* scene, bool translucent, Color color = WHITE);
 	GameObject(Scene* scene, bool translucent, std::shared_ptr<Sprite> sprite);
+	virtual ~GameObject();
 
 	virtual void Update(float deltaTime);
 	virtual void Draw(Camera* camera);
-	virtual void Delete(bool keepChildren = false);
+	void Delete(bool keepChildren = false);
+	GameObject* Clone() const;
 
 	void SetZ(float z);
 	void SetParent(GameObject* newParent);
+	void AddBehavior(IBehavior* behavior);
+
 	Transform* GetTransform();
-	bool IsTranslucent();
+	bool IsTranslucent() const;
 
 protected:
 	Transform transform;
 	Scene* scene;
 	GameObject* parent;
 	std::list<GameObject*> children;
+	std::vector<IBehavior*> behaviors;
+
+	virtual GameObject* Copy() const; // each subclass overrides this to make deep copies
 
 private:
 	bool translucent; // true if this object ever has a pixel with alpha between 0-1 exclusive

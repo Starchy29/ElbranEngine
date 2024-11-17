@@ -12,6 +12,20 @@ Transform::Transform() {
 	needsUpdate = false;
 }
 
+Transform& Transform::operator=(const Transform& original) {
+	position = original.position;
+	z = original.z;
+	scale = original.scale;
+	rotation = original.rotation;
+	worldMatrix = original.worldMatrix;
+	needsUpdate = original.needsUpdate;
+
+	// when copied, clear parent and child relationships and recreate manually
+	Transform* parent = nullptr;
+	children.clear();
+	return *this;
+}
+
 void Transform::SetPosition(Vector2 position) {
 	MarkForUpdate();
 	this->position = position;
@@ -42,14 +56,7 @@ void Transform::SetRotation(float rotation) {
 	this->rotation = rotation;
 }
 
-void Transform::TranslateRelative(Vector2 displacement) {
-	MarkForUpdate();
-	XMVECTOR shift = XMVectorSet(displacement.x, displacement.y, 0, 0);
-	XMVECTOR mathPos = XMLoadFloat2(&position);
-	XMStoreFloat2(&position, mathPos + shift);
-}
-
-void Transform::TranslateAbsolute(Vector2 displacement) {
+void Transform::Translate(Vector2 displacement) {
 	MarkForUpdate();
 	XMVECTOR shift = XMVector3Rotate(XMVectorSet(displacement.x, displacement.y, 0, 0), XMQuaternionRotationAxis(XMVectorSet(0, 0, 1, 0), rotation));
 	XMVECTOR mathPos = XMLoadFloat2(&position);
@@ -127,6 +134,22 @@ DirectX::XMFLOAT4X4 Transform::GetWorldMatrix() const {
 }
 
 RectangleBox Transform::GetArea() const {
+	if(parent) {
+		RectangleBox localArea = RectangleBox(position, scale);
+		XMFLOAT4X4 parentTransforms = parent->GetWorldMatrix();
+		XMMATRIX transMat = XMLoadFloat4x4(&parentTransforms);
+		XMVECTOR bottomLeft = XMVectorSet(localArea.left, localArea.bottom, 0, 0);
+		XMVECTOR topRight = XMVectorSet(localArea.right, localArea.top, 0, 0);
+		bottomLeft = XMVector3Transform(bottomLeft, transMat);
+		topRight = XMVector3Transform(topRight, transMat);
+		
+		XMFLOAT2 trueBottomLeft;
+		XMFLOAT2 trueTopRight;
+		XMStoreFloat2(&trueBottomLeft, bottomLeft);
+		XMStoreFloat2(&trueTopRight, topRight);
+		return RectangleBox(trueBottomLeft.x, trueTopRight.x, trueTopRight.y, trueBottomLeft.y);
+	}
+
 	return RectangleBox(position, scale);
 }
 

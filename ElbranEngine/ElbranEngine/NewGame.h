@@ -25,6 +25,7 @@ private:
 
 	// temp asset storage
 	GameObject* testObject;
+	GameObject* picture;
 	Scene* sampleScene;
 };
 
