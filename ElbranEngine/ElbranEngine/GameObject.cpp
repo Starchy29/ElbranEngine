@@ -2,7 +2,7 @@
 #include "AssetManager.h"
 using namespace DirectX;
 
-GameObject::GameObject(Scene* scene, bool translucent, Color color) {
+GameObject::GameObject(Scene* scene, bool translucent, float zCoord, Color color) {
 	active = true;
 	visible = true;
 	flipX = false;
@@ -11,6 +11,8 @@ GameObject::GameObject(Scene* scene, bool translucent, Color color) {
 	parent = nullptr;
 	children = std::list<GameObject*>();
 	behaviors = std::vector<IBehavior*>();
+
+	transform.SetZ(zCoord);
 	this->translucent = translucent;
 	this->scene = scene;
 	scene->Join(this);
@@ -24,7 +26,7 @@ GameObject::GameObject(Scene* scene, bool translucent, Color color) {
 	colorTint = color;
 }
 
-GameObject::GameObject(Scene* scene, bool translucent, std::shared_ptr<Sprite> sprite) : GameObject(scene, translucent) {
+GameObject::GameObject(Scene* scene, bool translucent, float zCoord, std::shared_ptr<Sprite> sprite) : GameObject(scene, translucent, zCoord) {
 	pixelShader = Assets->imagePS;
 	this->sprite = sprite;
 	transform.SetScale(sprite->GetAspectRatio(), 1.0f);
@@ -86,7 +88,7 @@ GameObject* GameObject::Clone() const {
 }
 
 GameObject* GameObject::Copy() const {
-	GameObject* copy = new GameObject(this->scene, this->translucent, this->colorTint);
+	GameObject* copy = new GameObject(this->scene, this->translucent, this->transform.z, this->colorTint);
 	copy->active = active;
 	copy->visible = visible;
 	copy->flipX = flipX;

@@ -2,20 +2,11 @@
 #include "AssetManager.h"
 #include "NewGame.h"
 
-Scene::Scene(float cameraWidth) {
-	paused = false;
-	hidden = false;
-	camera = new Camera(cameraWidth);
-
-	hasBackground = false;
-}
-
 Scene::Scene(float cameraWidth, Color backgroundColor) {
 	paused = false;
 	hidden = false;
 	camera = new Camera(cameraWidth);
 
-	hasBackground = true;
 	backColor = backgroundColor;
 	backImage = nullptr;
 }
@@ -25,7 +16,6 @@ Scene::Scene(float cameraWidth, std::shared_ptr<Sprite> backgroundImage) {
 	hidden = false;
 	camera = new Camera(cameraWidth);
 
-	hasBackground = true;
 	backColor = WHITE;
 	backImage = backgroundImage;
 }
@@ -105,7 +95,7 @@ void Scene::UpdateDrawOrder(GameObject* sceneMember) {
 }
 
 inline void Scene::DrawBackground() {
-	if(!hasBackground) {
+	if(backColor.alpha <= 0) {
 		return;
 	}
 
@@ -123,7 +113,7 @@ inline void Scene::DrawBackground() {
 		colorShader->SetShader();
 	}
 	assets->backgroundVS->SetShader();
-	assets->unitSquare->Draw();
+	GameInstance->GetDXContext()->Draw(3, 0);
 }
 
 void Scene::SortInto(GameObject* sceneMember, std::vector<GameObject*> & objectList) {

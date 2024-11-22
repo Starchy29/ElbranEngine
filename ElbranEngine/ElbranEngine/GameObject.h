@@ -25,8 +25,8 @@ public:
 	std::shared_ptr<Sprite> sprite;
 	Color colorTint;
 
-	GameObject(Scene* scene, bool translucent, Color color = WHITE);
-	GameObject(Scene* scene, bool translucent, std::shared_ptr<Sprite> sprite);
+	GameObject(Scene* scene, bool translucent, float zCoord, Color color = WHITE);
+	GameObject(Scene* scene, bool translucent, float zCoord, std::shared_ptr<Sprite> sprite);
 	virtual ~GameObject();
 
 	virtual void Update(float deltaTime);
@@ -48,7 +48,7 @@ protected:
 	std::list<GameObject*> children;
 	std::vector<IBehavior*> behaviors;
 
-	virtual GameObject* Copy() const; // each subclass overrides this to make deep copies
+	virtual GameObject* Copy() const; // override this to make deep copies
 
 private:
 	bool translucent; // true if this object ever has a pixel with alpha between 0-1 exclusive

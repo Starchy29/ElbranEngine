@@ -10,8 +10,7 @@ public:
 	bool paused;
 	bool hidden;
 
-	Scene(float cameraWidth);
-	Scene(float cameraWidth, Color backgroundColor);
+	Scene(float cameraWidth, Color backgroundColor = CLEAR_COLOR);
 	Scene(float cameraWidth, std::shared_ptr<Sprite> backgroundImage);
 	~Scene();
 
@@ -23,7 +22,6 @@ public:
 	void UpdateDrawOrder(GameObject* sceneMember);
 
 private:
-	bool hasBackground;
 	Color backColor;
 	std::shared_ptr<Sprite> backImage;
 

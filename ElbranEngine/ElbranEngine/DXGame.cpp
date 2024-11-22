@@ -124,7 +124,7 @@ void DXGame::LoadTexture(std::wstring fileName, ID3D11ShaderResourceView** desti
 
 HRESULT DXGame::LoadAssets() {
 	Assets->cameraVS = std::make_shared<VertexShader>(dxDevice, dxContext, L"CameraVS.cso");
-	Assets->backgroundVS = std::make_shared<VertexShader>(dxDevice, dxContext, L"BackgroundVS.cso");
+	Assets->backgroundVS = std::make_shared<VertexShader>(dxDevice, dxContext, L"FullscreenVS.cso");
 	Assets->imagePS = std::make_shared<PixelShader>(dxDevice, dxContext, L"TexturePS.cso");
 	Assets->colorPS = std::make_shared<PixelShader>(dxDevice, dxContext, L"ColorFillPS.cso");
 	Assets->circlePS = std::make_shared<PixelShader>(dxDevice, dxContext, L"CirclePS.cso");
