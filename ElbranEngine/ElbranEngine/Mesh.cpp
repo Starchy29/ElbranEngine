@@ -1,5 +1,7 @@
 #include "Mesh.h"
 
+Mesh* Mesh::lastDrawn = nullptr;
+
 Mesh::Mesh(Microsoft::WRL::ComPtr<ID3D11Device> device, Microsoft::WRL::ComPtr<ID3D11DeviceContext> context, Vertex* vertices, int numVertices, unsigned int* indices, int numIndices) {
 	this->numIndices = numIndices;
 	dxContext = context;
@@ -34,9 +36,13 @@ Mesh::Mesh(Microsoft::WRL::ComPtr<ID3D11Device> device, Microsoft::WRL::ComPtr<I
 }
 
 void Mesh::Draw() {
-	UINT stride = sizeof(Vertex);
-	UINT offset = 0;
-	dxContext->IASetVertexBuffers(0, 1, vertexBuffer.GetAddressOf(), &stride, &offset);
-	dxContext->IASetIndexBuffer(indexBuffer.Get(), DXGI_FORMAT_R32_UINT, 0);
+	if(lastDrawn != this) {
+		UINT stride = sizeof(Vertex);
+		UINT offset = 0;
+		dxContext->IASetVertexBuffers(0, 1, vertexBuffer.GetAddressOf(), &stride, &offset);
+		dxContext->IASetIndexBuffer(indexBuffer.Get(), DXGI_FORMAT_R32_UINT, 0);
+	}
+
+	lastDrawn = this;
 	dxContext->DrawIndexed(numIndices, 0, 0);
 }

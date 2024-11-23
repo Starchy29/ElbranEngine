@@ -10,6 +10,8 @@ public:
 	void Draw();
 
 private:
+	static Mesh* lastDrawn;
+
 	Microsoft::WRL::ComPtr<ID3D11DeviceContext> dxContext;
 	Microsoft::WRL::ComPtr<ID3D11Buffer> vertexBuffer;
 	Microsoft::WRL::ComPtr<ID3D11Buffer> indexBuffer;
