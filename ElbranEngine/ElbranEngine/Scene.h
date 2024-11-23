@@ -10,7 +10,7 @@ public:
 	bool paused;
 	bool hidden;
 
-	Scene(float cameraWidth, Color backgroundColor = CLEAR_COLOR);
+	Scene(float cameraWidth, Color backgroundColor = Color::Clear);
 	Scene(float cameraWidth, std::shared_ptr<Sprite> backgroundImage);
 	~Scene();
 

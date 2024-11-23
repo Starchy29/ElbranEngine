@@ -4,7 +4,7 @@ using namespace DirectX;
 
 Camera::Camera(float worldWidth) {
 	this->worldWidth = worldWidth;
-	position = ZERO_VECTOR;
+	position = Vector2::Zero;
 	rotation = 0;
 	UpdateViewMatrix();
 	UpdateProjectionMatrix();

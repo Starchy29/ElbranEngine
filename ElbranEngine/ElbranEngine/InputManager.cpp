@@ -81,14 +81,14 @@ void InputManager::Update() {
 			gamepadRightSticks[i] = Vector2(x / STICK_MAX, y / STICK_MAX);
 
 			if(gamepadLeftSticks[i].Length() <= GAMEPAD_DEAD_ZONE) {
-				gamepadLeftSticks[i] = ZERO_VECTOR;
+				gamepadLeftSticks[i] = Vector2::Zero;
 			}
 			if(gamepadRightSticks[i].Length() <= GAMEPAD_DEAD_ZONE) {
-				gamepadRightSticks[i] = ZERO_VECTOR;
+				gamepadRightSticks[i] = Vector2::Zero;
 			}
 		} else {
-			gamepadLeftSticks[i] = ZERO_VECTOR;
-			gamepadRightSticks[i] = ZERO_VECTOR;
+			gamepadLeftSticks[i] = Vector2::Zero;
+			gamepadRightSticks[i] = Vector2::Zero;
 		}
 	}
 }

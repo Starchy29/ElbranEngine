@@ -6,7 +6,7 @@
 #include <d3dcompiler.h>
 #include "Vertex.h"
 #include "AssetManager.h"
-#include "WICTextureLoader.h"
+#include <WICTextureLoader.h>
 #include "InputManager.h"
 #include "NewGame.h"
 
@@ -119,7 +119,7 @@ Microsoft::WRL::ComPtr<ID3D11DeviceContext> DXGame::GetDXContext() {
 
 void DXGame::LoadTexture(std::wstring fileName, ID3D11ShaderResourceView** destination) {
 	std::wstring fullPath = exePath + L"Assets\\" + fileName;
-	CreateWICTextureFromFile(dxDevice.Get(), dxContext.Get(), fullPath.c_str(), nullptr, destination);
+	DirectX::CreateWICTextureFromFile(dxDevice.Get(), dxContext.Get(), fullPath.c_str(), nullptr, destination);
 }
 
 HRESULT DXGame::LoadAssets() {
@@ -160,7 +160,7 @@ HRESULT DXGame::LoadAssets() {
 
 void DXGame::Render() { 
 	// erase screen and depth buffer
-	dxContext->ClearRenderTargetView(backBufferView.Get(), BLACK);
+	dxContext->ClearRenderTargetView(backBufferView.Get(), Color::Black);
 	dxContext->ClearDepthStencilView(depthStencilView.Get(), D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
 
 	Draw();

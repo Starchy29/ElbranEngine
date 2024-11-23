@@ -2,14 +2,14 @@
 #include <DirectXMath.h>
 #include <string>
 
-#define ZERO_VECTOR Vector2(0, 0)
-#define RIGHT_VECTOR Vector2(1, 0)
-#define LEFT_VECTOR Vector2(-1, 0)
-#define UP_VECTOR Vector2(0, 1)
-#define DOWN_VECTOR Vector2(0, -1)
-
 struct Vector2
 {
+	static const Vector2 Zero;
+	static const Vector2 Up;
+	static const Vector2 Down;
+	static const Vector2 Left;
+	static const Vector2 Right;
+
 	float x;
 	float y;
 

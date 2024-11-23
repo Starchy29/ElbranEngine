@@ -16,7 +16,7 @@ Scene::Scene(float cameraWidth, std::shared_ptr<Sprite> backgroundImage) {
 	hidden = false;
 	camera = new Camera(cameraWidth);
 
-	backColor = WHITE;
+	backColor = Color::White;
 	backImage = backgroundImage;
 }
 

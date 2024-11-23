@@ -48,12 +48,12 @@ HRESULT NewGame::LoadAssets() {
 	picture->GetTransform()->SetWidth(2.0f);
 	picture->GetTransform()->SetPosition(Vector2(-1.5f, -1.5f));
 
-	GameObject* child = new GameObject(sampleScene, false, 0, RED);
+	GameObject* child = new GameObject(sampleScene, false, 0, Color::Red);
 	child->SetParent(picture);
 	child->GetTransform()->SetPosition(Vector2(-0.5f, 0.5f));
 	child->GetTransform()->Scale(0.3f);
 
-	GameObject* grandchild = new GameObject(sampleScene, false, 0, GREEN);
+	GameObject* grandchild = new GameObject(sampleScene, false, 0, Color::Green);
 	grandchild->SetParent(child);
 	grandchild->GetTransform()->SetPosition(Vector2(1.3f, 1.5f));
 	grandchild->GetTransform()->Scale(1.2f);

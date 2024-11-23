@@ -25,7 +25,7 @@ public:
 	std::shared_ptr<Sprite> sprite;
 	Color colorTint;
 
-	GameObject(Scene* scene, bool translucent, float zCoord, Color color = WHITE);
+	GameObject(Scene* scene, bool translucent, float zCoord, Color color = Color::White);
 	GameObject(Scene* scene, bool translucent, float zCoord, std::shared_ptr<Sprite> sprite);
 	virtual ~GameObject();
 
