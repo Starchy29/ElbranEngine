@@ -3,24 +3,15 @@
 #include <DirectXMath.h>
 #include "Camera.h"
 
-#define Inputs InputManager::GetInstance()
 #define VK_MOUSE_LEFT VK_LBUTTON
 #define VK_MOUSE_RIGHT VK_RBUTTON
 #define VK_MOUSE_MID VK_MBUTTON
 
 class InputManager
 {
-	friend class DXGame;
+	friend class Application;
 
 public:
-	static void Initialize(HWND windowHandle);
-	static InputManager* GetInstance();
-
-	InputManager(HWND windowHandle);
-	~InputManager();
-
-	void Update();
-
 	bool IsPressed(int key);
 	bool JustPressed(int key);
 	bool JustReleased(int key);
@@ -29,9 +20,11 @@ public:
 	Vector2 GetMousePosition(Camera* worldView);
 	float GetMouseWheelSpin();
 
-private:
-	static InputManager* instance;
+	// prevent copying
+	InputManager(const InputManager&) = delete;
+	void operator=(const InputManager&) = delete;
 
+private:
 	HWND windowHandle;
 	PBYTE keyboardState;
 	PBYTE previousKeyboard;
@@ -39,5 +32,10 @@ private:
 	float mouseWheelDelta;
 	Vector2 gamepadLeftSticks[4];
 	Vector2 gamepadRightSticks[4];
+
+	InputManager(HWND windowHandle);
+	~InputManager();
+
+	void Update();
 };
 

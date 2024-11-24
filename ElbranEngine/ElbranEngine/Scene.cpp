@@ -1,5 +1,5 @@
 #include "Scene.h"
-#include "AssetManager.h"
+#include "Application.h"
 #include "NewGame.h"
 
 Scene::Scene(float cameraWidth, Color backgroundColor) {
@@ -65,7 +65,7 @@ void Scene::Update(float deltaTime) {
 
 void Scene::Draw() {
 	// draw opaques front to back
-	GameInstance->DisableAlpha();
+	APP->GetDXCore()->SetAlphaBlend(false);
 	for(GameObject* object : opaques) {
 		if(object->visible) {
 			object->Draw(camera);
@@ -75,7 +75,7 @@ void Scene::Draw() {
 	DrawBackground();
 
 	// draw translucents back to front
-	GameInstance->EnableAlpha();
+	APP->GetDXCore()->SetAlphaBlend(true);
 	for(int i = translucents.size() - 1; i >= 0; i--) {
 		if(translucents[i]->visible) {
 			translucents[i]->Draw(camera);
@@ -99,7 +99,7 @@ inline void Scene::DrawBackground() {
 		return;
 	}
 
-	AssetManager* assets = AssetManager::GetInstance();
+	const AssetManager* assets = APP->Assets();
 
 	if(backImage != nullptr) {
 		std::shared_ptr<PixelShader> imageShader = assets->imagePS;
@@ -113,7 +113,7 @@ inline void Scene::DrawBackground() {
 		colorShader->SetShader();
 	}
 	assets->backgroundVS->SetShader();
-	GameInstance->GetDXContext()->Draw(3, 0);
+	APP->GetDXCore()->GetContext()->Draw(3, 0);
 }
 
 void Scene::SortInto(GameObject* sceneMember, std::vector<GameObject*> & objectList) {

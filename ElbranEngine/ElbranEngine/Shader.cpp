@@ -1,5 +1,5 @@
 #include "Shader.h"
-#include "NewGame.h"
+#include "Application.h"
 
 Shader::Shader(Microsoft::WRL::ComPtr<ID3D11Device> device, Microsoft::WRL::ComPtr<ID3D11DeviceContext> context) {
 	this->dxDevice = device;
@@ -61,7 +61,7 @@ void Shader::SetBool(std::string name, bool value) {
 
 void Shader::LoadShader(std::wstring fileName) {
 	// get the blob data
-	std::wstring fileString = GameInstance->exePath + fileName;
+	std::wstring fileString = APP->ExePath() + fileName;
 	LPCWSTR filePath = fileString.c_str();
 	Microsoft::WRL::ComPtr<ID3DBlob> shaderBlob;
 	HRESULT hr = D3DReadFileToBlob(filePath, shaderBlob.GetAddressOf());

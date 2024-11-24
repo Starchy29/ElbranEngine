@@ -3,7 +3,14 @@
 #include <Windows.h>
 #include <tchar.h>
 #include <memory>
-#include "NewGame.h"
+#include "Application.h"
+
+Application* app;
+
+// global callback that processes messages from the operating system
+LRESULT CALLBACK WndProc(_In_ HWND hWnd, _In_ UINT message, _In_ WPARAM wParam, _In_ LPARAM lParam) {
+	return app->ProcessMessage(hWnd, message, wParam, lParam);
+}
 
 // entry point for desktop app
 int WINAPI WinMain(
@@ -16,9 +23,10 @@ int WINAPI WinMain(
 	// enable memory leak detection
 	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
 #endif
-
-	HRESULT hRes = NewGame::Initialize(hInstance);
-	if (FAILED(hRes)) return hRes;
-
-	return GameInstance->Run();
+	
+	HRESULT result = Application::Initialize(hInstance, WndProc, &app);
+	if(FAILED(result)) return result;
+	result = app->Run();
+	app->Dispose();
+	return result;
 }

@@ -1,5 +1,5 @@
 #include "Camera.h"
-#include "NewGame.h"
+#include "Application.h"
 using namespace DirectX;
 
 Camera::Camera(float worldWidth) {
@@ -34,7 +34,7 @@ Vector2 Camera::GetPosition() const {
 }
 
 Vector2 Camera::GetWorldDimensions() const {
-	return Vector2(worldWidth, worldWidth / GameInstance->GetAspectRatio());
+	return Vector2(worldWidth, worldWidth / APP->GetViewAspectRatio());
 }
 
 RectangleBox Camera::GetVisibleArea() const {
@@ -65,7 +65,7 @@ void Camera::UpdateViewMatrix() const {
 
 void Camera::UpdateProjectionMatrix() const {
 	projNeedsUpdate = false;
-	float viewAspectRatio = GameInstance->GetAspectRatio();
+	float viewAspectRatio = APP->GetViewAspectRatio();
 	float worldHeight = worldWidth / viewAspectRatio;
 	XMStoreFloat4x4(&projection, XMMatrixOrthographicLH(worldWidth, worldHeight, 0.0f, CAMERA_DEPTH));
 }

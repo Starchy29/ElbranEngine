@@ -27,9 +27,6 @@
     <ClCompile Include="Main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="DXGame.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="Shader.cpp">
       <Filter>Source Files\Graphics</Filter>
     </ClCompile>
@@ -75,11 +72,14 @@
     <ClCompile Include="Color.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Application.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="DXCore.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="DXGame.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Color.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -132,6 +132,12 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="IBehavior.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Application.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="DXCore.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

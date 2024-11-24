@@ -7,14 +7,12 @@
 #include "Mesh.h"
 #include "Sprite.h"
 
-#define Assets AssetManager::GetInstance()
-
-// container for all assets to be globally accessible
+// container for all assets
 class AssetManager
 {
-public:
-	static AssetManager* GetInstance();
+	friend class Application;
 
+public:
 	std::shared_ptr<Mesh> unitSquare;
 
 #pragma region shaders
@@ -29,9 +27,9 @@ public:
 
 	std::shared_ptr<Sprite> testImage;
 
-private:
-	static AssetManager* instance;
+	void LoadTexture(std::wstring fileName, ID3D11ShaderResourceView** destination) const;
 
+private:
 	AssetManager();
 	~AssetManager();
 };

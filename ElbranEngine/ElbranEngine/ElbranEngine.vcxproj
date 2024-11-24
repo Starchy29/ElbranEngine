@@ -139,10 +139,11 @@
     </FxCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Application.cpp" />
     <ClCompile Include="AssetManager.cpp" />
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="Color.cpp" />
-    <ClCompile Include="DXGame.cpp" />
+    <ClCompile Include="DXCore.cpp" />
     <ClCompile Include="GameObject.cpp" />
     <ClCompile Include="InputManager.cpp" />
     <ClCompile Include="Main.cpp" />
@@ -158,11 +159,12 @@
     <ClCompile Include="VertexShader.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Application.h" />
     <ClInclude Include="AssetManager.h" />
     <ClInclude Include="Camera.h" />
     <ClInclude Include="Circle.h" />
     <ClInclude Include="Color.h" />
-    <ClInclude Include="DXGame.h" />
+    <ClInclude Include="DXCore.h" />
     <ClInclude Include="GameObject.h" />
     <ClInclude Include="IBehavior.h" />
     <ClInclude Include="InputManager.h" />

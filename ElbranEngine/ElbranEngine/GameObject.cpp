@@ -1,5 +1,5 @@
 #include "GameObject.h"
-#include "AssetManager.h"
+#include "Application.h"
 using namespace DirectX;
 
 GameObject::GameObject(Scene* scene, bool translucent, float zCoord, Color color) {
@@ -17,17 +17,17 @@ GameObject::GameObject(Scene* scene, bool translucent, float zCoord, Color color
 	this->scene = scene;
 	scene->Join(this);
 
-	AssetManager* assets = AssetManager::GetInstance();
+	const AssetManager* assets = APP->Assets();
 	mesh = assets->unitSquare;
 	vertexShader = assets->cameraVS;
 
-	pixelShader = Assets->colorPS;
+	pixelShader = assets->colorPS;
 	this->sprite = nullptr;
 	colorTint = color;
 }
 
 GameObject::GameObject(Scene* scene, bool translucent, float zCoord, std::shared_ptr<Sprite> sprite) : GameObject(scene, translucent, zCoord) {
-	pixelShader = Assets->imagePS;
+	pixelShader = APP->Assets()->imagePS;
 	this->sprite = sprite;
 	transform.SetScale(sprite->GetAspectRatio(), 1.0f);
 }
@@ -140,7 +140,7 @@ void GameObject::Draw(Camera* camera) {
 
 	pixelShader->SetConstantVariable("color", &colorTint);
 	if(sprite != nullptr) {
-		pixelShader->SetSampler(Assets->defaultSampler);
+		pixelShader->SetSampler(APP->Assets()->defaultSampler);
 		pixelShader->SetTexture(sprite->GetResourceView());
 	}
 

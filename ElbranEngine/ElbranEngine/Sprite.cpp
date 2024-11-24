@@ -1,8 +1,8 @@
 #include "Sprite.h"
-#include "NewGame.h"
+#include "Application.h"
 
 Sprite::Sprite(std::wstring fileName) {
-	GameInstance->LoadTexture(fileName, resourceView.GetAddressOf());
+	APP->Assets()->LoadTexture(fileName, resourceView.GetAddressOf());
 
 	ID3D11Resource* texture;
 	resourceView.Get()->GetResource(&texture);

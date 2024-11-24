@@ -1,5 +1,5 @@
 #include "InputManager.h"
-#include "NewGame.h"
+#include "Application.h"
 #include <Xinput.h>
 #pragma comment(lib,"XInput.lib")
 #pragma comment(lib,"Xinput9_1_0.lib")
@@ -9,16 +9,6 @@ using namespace DirectX;
 #define GAMEPAD_DEAD_ZONE 0.2f
 #define KEY_COUNT 256
 #define KEY_DOWN(keyByte) (keyByte & 0x80) // high-order bit is 1 when the key is pressed
-
-InputManager* InputManager::instance;
-
-void InputManager::Initialize(HWND windowHandle) {
-	instance = new InputManager(windowHandle);
-}
-
-InputManager* InputManager::GetInstance() {
-	return instance;
-}
 
 InputManager::InputManager(HWND windowHandle) {
 	this->windowHandle = windowHandle;
@@ -44,11 +34,11 @@ void InputManager::Update() {
 	GetCursorPos(&mousePos);
 	ScreenToClient(windowHandle, &mousePos);
 
-	XMINT2 viewShift = GameInstance->GetViewportShift();
+	XMINT2 viewShift = APP->GetDXCore()->GetViewOffset();
 	mousePos.x -= viewShift.x;
 	mousePos.y -= viewShift.y;
 
-	XMINT2 viewDims = GameInstance->GetViewportDims();
+	XMINT2 viewDims = APP->GetDXCore()->GetViewDimensions();
 	mouseScreenPos.x = (float)mousePos.x / viewDims.x * 2.0f - 1.0f;
 	mouseScreenPos.y = (float)mousePos.y / viewDims.y * 2.0f - 1.0f;
 	mouseScreenPos.y *= -1.0f;

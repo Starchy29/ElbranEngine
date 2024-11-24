@@ -1,31 +1,25 @@
 #pragma once
-#include "DXGame.h"
-#define GameInstance NewGame::GetInstance()
+#include "Scene.h"
+#include "AssetManager.h"
 
-#define WINDOW_TITLE "Elbran Engine"
-#define START_ASPECT_RATIO 16.0f / 9.0f
-#define START_WINDOW_WIDTH 960
-#define MAX_FPS 60.0
-
-class NewGame : public DXGame
+class NewGame
 {
-public:
-	static NewGame* GetInstance();
-	static HRESULT Initialize(HINSTANCE hInst);
+	friend class Application;
 
-	NewGame(HINSTANCE hInst);
-	~NewGame();
+public:
+	void Update(float deltaTime);
+	void Draw();
+
+	// prevent copying
+	NewGame(const NewGame&) = delete;
+	void operator=(const NewGame&) = delete;
 
 private:
-	static NewGame* instance;
-
-	HRESULT LoadAssets() override;
-	void Update(float deltaTime) override;
-	void Draw() override;
-
-	// temp asset storage
 	GameObject* testObject;
 	GameObject* picture;
 	Scene* sampleScene;
+
+	NewGame(AssetManager* assets);
+	~NewGame();
 };
 
