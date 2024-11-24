@@ -141,7 +141,6 @@ Application::~Application() {
 	delete assets;
 }
 
-
 HRESULT Application::InitApp(WNDPROC procCallback) {
 	HRESULT result = InitWindow(procCallback);
 	if (FAILED(result)) return result;

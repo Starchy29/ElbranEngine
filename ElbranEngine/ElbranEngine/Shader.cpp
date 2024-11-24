@@ -10,8 +10,7 @@ Shader::~Shader() {
 	for(UINT i = 0; i < cBuffCount; i++) {
 		delete[] constantBuffers[i].localData;
 	}
-
-	constantVars.clear();
+	delete[] constantBuffers;
 }
 
 // saves data for a variable into the correct spot of that buffer's localData. The resource is updated all at once in SetShader()
