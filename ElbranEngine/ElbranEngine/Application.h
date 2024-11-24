@@ -1,7 +1,7 @@
 #pragma once
 #include <Windows.h>
 #include "DXCore.h"
-#include "NewGame.h"
+#include "Game.h"
 #include "InputManager.h"
 #include "AssetManager.h"
 
@@ -19,7 +19,7 @@ public:
 	void Dispose();
 
 	DXCore* GetDXCore() const;
-	const NewGame* GetGame() const;
+	const Game* GetGame() const;
 	InputManager* Input() const;
 	const AssetManager* Assets() const;
 
@@ -45,7 +45,7 @@ private:
 	__int64 lastPerfCount;
 
 	DXCore* dxCore;
-	NewGame* game;
+	Game* game;
 	InputManager* input;
 	AssetManager* assets;
 	// sounds

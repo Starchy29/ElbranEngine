@@ -250,7 +250,7 @@ void DXCore::Resize(DirectX::XMINT2 windowDims, float viewAspectRatio) {
 	context->RSSetViewports(1, &viewport);
 }
 
-void DXCore::Render(NewGame* game) {
+void DXCore::Render(Game* game) {
 	context->ClearRenderTargetView(backBufferView.Get(), Color::Black);
 	context->ClearDepthStencilView(depthStencilView.Get(), D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
 

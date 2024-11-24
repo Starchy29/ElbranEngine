@@ -1,7 +1,7 @@
-#include "NewGame.h"
+#include "Game.h"
 #include "Application.h"
 
-NewGame::NewGame(AssetManager* assets) {
+Game::Game(AssetManager* assets) {
 	// load assets
 	assets->testImage = std::make_shared<Sprite>(L"temp sprite.png");
 
@@ -29,14 +29,14 @@ NewGame::NewGame(AssetManager* assets) {
 	copy->GetTransform()->SetPosition(Vector2(2, 0));
 }
 
-NewGame::~NewGame() {
+Game::~Game() {
 	delete sampleScene;
 }
 
-void NewGame::Update(float deltaTime) {
+void Game::Update(float deltaTime) {
 	testObject->GetTransform()->SetPosition(APP->Input()->GetMousePosition(sampleScene->GetCamera()));
 }
 
-void NewGame::Draw() {
+void Game::Draw() {
 	sampleScene->Draw();
 }

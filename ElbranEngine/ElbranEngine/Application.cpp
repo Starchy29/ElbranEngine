@@ -84,7 +84,7 @@ DXCore* Application::GetDXCore() const {
 	return dxCore;
 }
 
-const NewGame* Application::GetGame() const {
+const Game* Application::GetGame() const {
 	return game;
 }
 
@@ -151,7 +151,7 @@ HRESULT Application::InitApp(WNDPROC procCallback) {
 
 	input = new InputManager(windowHandle);
 	assets = new AssetManager();
-	game = new NewGame(assets);
+	game = new Game(assets);
 	return S_OK;
 }
 

@@ -2,7 +2,7 @@
 #include "Scene.h"
 #include "AssetManager.h"
 
-class NewGame
+class Game
 {
 	friend class Application;
 
@@ -11,15 +11,15 @@ public:
 	void Draw();
 
 	// prevent copying
-	NewGame(const NewGame&) = delete;
-	void operator=(const NewGame&) = delete;
+	Game(const Game&) = delete;
+	void operator=(const Game&) = delete;
 
 private:
 	GameObject* testObject;
 	GameObject* picture;
 	Scene* sampleScene;
 
-	NewGame(AssetManager* assets);
-	~NewGame();
+	Game(AssetManager* assets);
+	~Game();
 };
 

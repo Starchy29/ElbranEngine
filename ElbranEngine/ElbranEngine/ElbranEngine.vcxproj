@@ -148,7 +148,7 @@
     <ClCompile Include="InputManager.cpp" />
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="Mesh.cpp" />
-    <ClCompile Include="NewGame.cpp" />
+    <ClCompile Include="Game.cpp" />
     <ClCompile Include="PixelShader.cpp" />
     <ClCompile Include="RectangleBox.cpp" />
     <ClCompile Include="Scene.cpp" />
@@ -169,7 +169,7 @@
     <ClInclude Include="IBehavior.h" />
     <ClInclude Include="InputManager.h" />
     <ClInclude Include="Mesh.h" />
-    <ClInclude Include="NewGame.h" />
+    <ClInclude Include="Game.h" />
     <ClInclude Include="PixelShader.h" />
     <ClInclude Include="RectangleBox.h" />
     <ClInclude Include="Scene.h" />

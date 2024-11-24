@@ -4,7 +4,7 @@
 #include <dxgi1_3.h>
 #include <wrl/client.h>
 #include <DirectXMath.h>
-#include "NewGame.h"
+#include "Game.h"
 
 class DXCore
 {
@@ -37,6 +37,6 @@ private:
 	DXCore(HWND windowHandle, DirectX::XMINT2 windowDims, float viewAspectRatio, HRESULT* outResult);
 
 	void Resize(DirectX::XMINT2 windowDims, float viewAspectRatio);
-	void Render(NewGame* game);
+	void Render(Game* game);
 };
 

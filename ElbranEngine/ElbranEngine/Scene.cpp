@@ -1,6 +1,6 @@
 #include "Scene.h"
 #include "Application.h"
-#include "NewGame.h"
+#include "Game.h"
 
 Scene::Scene(float cameraWidth, Color backgroundColor) {
 	paused = false;
