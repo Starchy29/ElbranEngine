@@ -8,6 +8,11 @@ void AssetManager::LoadTexture(std::wstring fileName, ID3D11ShaderResourceView**
 	DirectX::CreateWICTextureFromFile(dx->GetDevice().Get(), dx->GetContext().Get(), fullPath.c_str(), nullptr, destination);
 }
 
+std::shared_ptr<DirectX::DX11::SpriteFont> AssetManager::LoadFont(std::wstring fileName) const {
+	std::wstring fullPath = APP->ExePath() + L"Assets\\" + fileName;
+	return std::make_shared<DirectX::DX11::SpriteFont>(APP->GetDXCore()->GetDevice().Get(), fullPath.c_str());
+}
+
 AssetManager::AssetManager() {
 	DXCore* dx = APP->GetDXCore();
 	Microsoft::WRL::ComPtr<ID3D11Device> dxDevice = dx->GetDevice();

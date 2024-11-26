@@ -39,11 +39,6 @@ void Shader::SetShader() {
 			dxContext->Map(buffer.cBuffer.Get(), 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
 			memcpy(mappedResource.pData, buffer.localData, buffer.size);
 			dxContext->Unmap(buffer.cBuffer.Get(), 0);
-
-			dxContext->UpdateSubresource(
-				buffer.cBuffer.Get(), 0, 0,
-				buffer.localData, 0, 0
-			);
 		}
 
 		SetConstantBuffer(i, buffer.cBuffer);

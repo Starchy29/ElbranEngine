@@ -36,7 +36,7 @@ Mesh::Mesh(Microsoft::WRL::ComPtr<ID3D11Device> device, Microsoft::WRL::ComPtr<I
 }
 
 void Mesh::Draw() {
-	if(lastDrawn != this) {
+	if(true || lastDrawn != this) {
 		UINT stride = sizeof(Vertex);
 		UINT offset = 0;
 		dxContext->IASetVertexBuffers(0, 1, vertexBuffer.GetAddressOf(), &stride, &offset);

@@ -4,6 +4,7 @@
 #include <dxgi1_3.h>
 #include <wrl/client.h>
 #include <DirectXMath.h>
+#include <SpriteBatch.h>
 #include "Game.h"
 
 class DXCore
@@ -30,13 +31,18 @@ private:
 	Microsoft::WRL::ComPtr<ID3D11RenderTargetView> backBufferView;
 	Microsoft::WRL::ComPtr<ID3D11DepthStencilView> depthStencilView;
 	Microsoft::WRL::ComPtr<ID3D11BlendState> alphaBlendState;
+	ID3D11DepthStencilState* defaultStencil;
+	DirectX::SpriteBatch* spriteBatch;
 
 	DirectX::XMINT2 viewportDims;
 	DirectX::XMINT2 viewportShift;
 
 	DXCore(HWND windowHandle, DirectX::XMINT2 windowDims, float viewAspectRatio, HRESULT* outResult);
+	~DXCore();
 
 	void Resize(DirectX::XMINT2 windowDims, float viewAspectRatio);
 	void Render(Game* game);
+
+	void ResetRenderState();
 };
 

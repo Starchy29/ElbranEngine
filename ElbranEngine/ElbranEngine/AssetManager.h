@@ -6,6 +6,7 @@
 #include "PixelShader.h"
 #include "Mesh.h"
 #include "Sprite.h"
+#include <SpriteFont.h>
 
 // container for all assets
 class AssetManager
@@ -26,8 +27,10 @@ public:
 #pragma endregion
 
 	std::shared_ptr<Sprite> testImage;
+	std::shared_ptr<DirectX::DX11::SpriteFont> arial;
 
 	void LoadTexture(std::wstring fileName, ID3D11ShaderResourceView** destination) const;
+	std::shared_ptr<DirectX::DX11::SpriteFont> LoadFont(std::wstring fileName) const;
 
 private:
 	AssetManager();

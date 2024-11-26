@@ -149,11 +149,8 @@ DXCore::DXCore(HWND windowHandle, DirectX::XMINT2 windowDims, float viewAspectRa
 	stencilOMDesc.FrontFace.StencilPassOp = D3D11_STENCIL_OP_KEEP;
 	stencilOMDesc.BackFace.StencilPassOp = D3D11_STENCIL_OP_KEEP;
 
-	ID3D11DepthStencilState* stencilState;
-	device->CreateDepthStencilState(&stencilOMDesc, &stencilState);
-	context->OMSetDepthStencilState(stencilState, 0);
-
-	stencilState->Release();
+	device->CreateDepthStencilState(&stencilOMDesc, &defaultStencil);
+	context->OMSetDepthStencilState(defaultStencil, 0);
 
 	// create the blend state for alpha blendig
 	D3D11_BLEND_DESC blendDescription = {};
@@ -175,7 +172,14 @@ DXCore::DXCore(HWND windowHandle, DirectX::XMINT2 windowDims, float viewAspectRa
 
 	context->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
+	spriteBatch = new DirectX::SpriteBatch(context.Get());
+
 	*outResult = S_OK;
+}
+
+DXCore::~DXCore() {
+	delete spriteBatch;
+	defaultStencil->Release();
 }
 
 void DXCore::Resize(DirectX::XMINT2 windowDims, float viewAspectRatio) {
@@ -250,12 +254,24 @@ void DXCore::Resize(DirectX::XMINT2 windowDims, float viewAspectRatio) {
 	context->RSSetViewports(1, &viewport);
 }
 
+#include "Application.h"
 void DXCore::Render(Game* game) {
 	context->ClearRenderTargetView(backBufferView.Get(), Color::Black);
 	context->ClearDepthStencilView(depthStencilView.Get(), D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
 
 	game->Draw();
 
+	spriteBatch->Begin();
+	APP->Assets()->arial->DrawString(spriteBatch, "hello where is this text?", DirectX::XMFLOAT2(0, 0));
+	spriteBatch->End();
+	ResetRenderState();
+
 	swapChain->Present(0, 0);
 	context->OMSetRenderTargets(1, backBufferView.GetAddressOf(), depthStencilView.Get());
+}
+
+void DXCore::ResetRenderState() {
+	context->OMSetBlendState(0, 0, 0xFFFFFFFF);
+	context->RSSetState(0);
+	context->OMSetDepthStencilState(defaultStencil, 0);
 }
