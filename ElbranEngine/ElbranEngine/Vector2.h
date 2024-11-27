@@ -10,9 +10,6 @@ struct Vector2 : public DirectX::XMFLOAT2
 	static const Vector2 Left;
 	static const Vector2 Right;
 
-	float x;
-	float y;
-
 	Vector2() : XMFLOAT2(0, 0) {}
 	Vector2(float x, float y) : XMFLOAT2(x, y) {}
 	Vector2(const XMFLOAT2& v) {

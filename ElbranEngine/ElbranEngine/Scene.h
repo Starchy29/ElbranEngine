@@ -32,6 +32,6 @@ private:
 	std::vector<GameObject*> texts;
 
 	inline void DrawBackground();
-	void SortInto(GameObject* sceneMember, std::vector<GameObject*> & objectList);
+	void SortInto(GameObject* sceneMember, std::vector<GameObject*>* objectList);
 };
 

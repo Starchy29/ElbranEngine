@@ -10,51 +10,57 @@ TextBox::TextBox(Scene* scene, float zCoord, std::string text, std::shared_ptr<D
 	maxSize = 1;
 }
 
-#include <iostream>
 void TextBox::Draw(Camera* camera) {
 	XMFLOAT4X4 worldMat = transform.GetWorldMatrix();
 	XMFLOAT4X4 viewMat = camera->GetView();
 	XMFLOAT4X4 projMat = camera->GetProjection();
-
 	XMMATRIX product = XMLoadFloat4x4(&worldMat);
 	product = XMMatrixMultiply(product, XMLoadFloat4x4(&viewMat));
 	product = XMMatrixMultiply(product, XMLoadFloat4x4(&projMat));
 
-	// convert from world space to normalized screen coords [-2,2]
-	XMFLOAT2 center = transform.GetPosition();
-	XMFLOAT2 right = center;
-	right.x += transform.GetScale().x / 2.0f;
-	XMFLOAT2 top = center;
-	top.y += transform.GetScale().y / 2.0f;
-	XMFLOAT3 normalizedCenter;
-	XMStoreFloat3(&normalizedCenter, XMVector3Transform(XMVectorSet(center.x, center.y, transform.GetGlobalZ(), 0), product));
-	XMStoreFloat2(&right, XMVector3Transform(XMVectorSet(right.x, right.y, 0, 0), product));
-	XMStoreFloat2(&top, XMVector3Transform(XMVectorSet(top.x, top.y, 0, 0), product));
+	// convert from model space to normalized screen coords [-1,1]
+	Vector2 center = Vector2::Zero;
+	Vector2 right = Vector2(0.5f, 0.0f);
+	Vector2 top = Vector2(0.0f, 0.5f);
+	XMFLOAT3 center3D;
+	center3D.x = center.x;
+	center3D.y = center.y;
+	center3D.z = transform.GetGlobalZ();
+	XMStoreFloat3(&center3D, XMVector3Transform(XMLoadFloat3(&center3D), product));
+	XMStoreFloat2(&right, XMVector3Transform(XMLoadFloat2(&right), product));
+	XMStoreFloat2(&top, XMVector3Transform(XMLoadFloat2(&top), product));
+	center = Vector2(center3D.x, center3D.y);
 
-	std::cout << "x: " + std::to_string(normalizedCenter.x) + ", y: " + std::to_string(normalizedCenter.y) + "\n";
+	Vector2 toRight = right - center;
+	//float angle = 
 
-	// convert from [-2,2] range to [0-pixelWidth]
+	// convert from [-1,1] range to [0-pixelWidth]
 	XMINT2 halfScreen = APP->GetDXCore()->GetViewDimensions();
 	halfScreen = XMINT2(halfScreen.x / 2, halfScreen.y / 2);
-	XMFLOAT2 screenPos = XMFLOAT2(halfScreen.x + halfScreen.x * normalizedCenter.x / 2.0f, halfScreen.y + halfScreen.y * -normalizedCenter.y / 2.0f);
+	center = Vector2(halfScreen.x + halfScreen.x * center.x, halfScreen.y + halfScreen.y * -center.y);
+	right = Vector2(halfScreen.x + halfScreen.x * right.x, halfScreen.y + halfScreen.y * -right.y);
+	top = Vector2(halfScreen.x + halfScreen.x * top.x, halfScreen.y + halfScreen.y * -top.y);
 
 	// determine the maximum size that can fit within the box
+	toRight = right - center;
+	Vector2 toTop = top - center;
+
 	float size = maxSize;
 	RECT textSize = font->MeasureDrawBounds(text.c_str(), XMFLOAT2(0, 0));
 	float startArea = textSize.right * textSize.bottom;
-	float maxArea = 1;
+	float maxArea = toRight.Length() * toTop.Length() * 4.0f;
 	if(startArea > maxArea) {
-		//size = maxArea / startArea;
+		size = maxArea / startArea;
 	}
 
 	font->DrawString(APP->GetDXCore()->spriteBatch,
 		text.c_str(),
-		screenPos,
+		center,
 		XMLoadFloat4((XMFLOAT4*)&colorTint),
 		0.0f,
 		XMFLOAT2(textSize.right / 2.0f, textSize.bottom / 2.0f),
 		size,
 		DX11::SpriteEffects_None,
-		1.0f
+		center3D.z
 	);
 }

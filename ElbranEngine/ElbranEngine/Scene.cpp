@@ -117,20 +117,20 @@ void Scene::Join(GameObject* object) {
 		return;
 	}
 
-	SortInto(object, renderMode == RenderMode::Translucent ? translucents : opaques);
+	SortInto(object, renderMode == RenderMode::Translucent ? &translucents : &opaques);
 }
 
 // called by a game object when it changes its Z coordinate
 void Scene::UpdateDrawOrder(GameObject* sceneMember) {
 	RenderMode renderMode = sceneMember->GetRenderMode();
-	std::vector<GameObject*> & list = opaques;
+	std::vector<GameObject*>* list = &opaques;
 	if(renderMode == RenderMode::Translucent) {
-		list = translucents;
+		list = &translucents;
 	}
 	else if(renderMode == RenderMode::Text) {
-		list = texts;
+		list = &texts;
 	}
-	list.erase(std::find(list.begin(), list.end(), sceneMember));
+	list->erase(std::find(list->begin(), list->end(), sceneMember));
 	SortInto(sceneMember, list);
 }
 
@@ -156,16 +156,16 @@ inline void Scene::DrawBackground() {
 	APP->GetDXCore()->GetContext()->Draw(3, 0);
 }
 
-void Scene::SortInto(GameObject* sceneMember, std::vector<GameObject*> & objectList) {
-	if(objectList.size() == 0) {
-		objectList.push_back(sceneMember);
+void Scene::SortInto(GameObject* sceneMember, std::vector<GameObject*>* objectList) {
+	if(objectList->size() == 0) {
+		objectList->push_back(sceneMember);
 		return;
 	}
 
 	float newZ = sceneMember->GetTransform()->GetGlobalZ();
 	int insertIndex = 0;
-	while(insertIndex < objectList.size() && newZ > objectList[insertIndex]->GetTransform()->GetGlobalZ()) {
+	while(insertIndex < objectList->size() && newZ > (*objectList)[insertIndex]->GetTransform()->GetGlobalZ()) {
 		insertIndex++;
 	}
-	objectList.insert(std::next(objectList.begin(), insertIndex), sceneMember);
+	objectList->insert(std::next(objectList->begin(), insertIndex), sceneMember);
 }
