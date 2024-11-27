@@ -22,11 +22,13 @@ Scene::Scene(float cameraWidth, std::shared_ptr<Sprite> backgroundImage) {
 
 Scene::~Scene() {
 	delete camera;
-
 	for(GameObject* object : opaques) {
 		delete object;
 	}
 	for(GameObject* object : translucents) {
+		delete object;
+	}
+	for(GameObject* object : texts) {
 		delete object;
 	}
 }
@@ -47,6 +49,11 @@ void Scene::Update(float deltaTime) {
 			object->Update(deltaTime);
 		}
 	}
+	for(GameObject* object : texts) {
+		if(object->active && !object->toBeDeleted) {
+			object->Update(deltaTime);
+		}
+	}
 
 	// remove objects that need to be deleted
 	for(int i = opaques.size() - 1; i >= 0; i--) {
@@ -61,21 +68,40 @@ void Scene::Update(float deltaTime) {
 			translucents.erase(std::next(translucents.begin(), i));
 		}
 	}
+	for(int i = texts.size() - 1; i >= 0; i--) {
+		if(texts[i]->toBeDeleted) {
+			delete texts[i];
+			texts.erase(std::next(texts.begin(), i));
+		}
+	}
 }
 
 void Scene::Draw() {
+	DXCore* directX = APP->GetDXCore();
+
 	// draw opaques front to back
-	APP->GetDXCore()->SetAlphaBlend(false);
+	directX->SetAlphaBlend(false);
 	for(GameObject* object : opaques) {
 		if(object->visible) {
 			object->Draw(camera);
 		}
 	}
-	
+
 	DrawBackground();
 
+	// draw all text
+	if(texts.size() > 0) {
+		directX->StartTextBatch();
+		for(GameObject* text : texts) {
+			if(text->visible) {
+				text->Draw(camera);
+			}
+		}
+		directX->FinishTextBatch();
+	}
+
 	// draw translucents back to front
-	APP->GetDXCore()->SetAlphaBlend(true);
+	directX->SetAlphaBlend(true);
 	for(int i = translucents.size() - 1; i >= 0; i--) {
 		if(translucents[i]->visible) {
 			translucents[i]->Draw(camera);
@@ -84,12 +110,26 @@ void Scene::Draw() {
 }
 
 void Scene::Join(GameObject* object) {
-	SortInto(object, object->IsTranslucent() ? translucents : opaques);
+	RenderMode renderMode = object->GetRenderMode();
+	if(renderMode == RenderMode::Text) {
+		// text ordering is done by the spriteBatch
+		texts.push_back(object);
+		return;
+	}
+
+	SortInto(object, renderMode == RenderMode::Translucent ? translucents : opaques);
 }
 
 // called by a game object when it changes its Z coordinate
 void Scene::UpdateDrawOrder(GameObject* sceneMember) {
-	std::vector<GameObject*> & list = sceneMember->IsTranslucent() ? translucents : opaques;
+	RenderMode renderMode = sceneMember->GetRenderMode();
+	std::vector<GameObject*> & list = opaques;
+	if(renderMode == RenderMode::Translucent) {
+		list = translucents;
+	}
+	else if(renderMode == RenderMode::Text) {
+		list = texts;
+	}
 	list.erase(std::find(list.begin(), list.end(), sceneMember));
 	SortInto(sceneMember, list);
 }

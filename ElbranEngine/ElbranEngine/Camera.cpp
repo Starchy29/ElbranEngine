@@ -1,6 +1,7 @@
 #include "Camera.h"
 #include "Application.h"
 using namespace DirectX;
+using namespace SimpleMath;
 
 Camera::Camera(float worldWidth) {
 	this->worldWidth = worldWidth;

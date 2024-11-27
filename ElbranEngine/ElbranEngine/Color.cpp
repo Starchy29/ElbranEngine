@@ -27,3 +27,7 @@ Color::Color(float r, float g, float b, float a) {
 Color::operator float* () const {
 	return (float*)this;
 }
+
+Color::operator DirectX::XMFLOAT4() const {
+	return DirectX::XMFLOAT4(red, green, blue, alpha);
+}

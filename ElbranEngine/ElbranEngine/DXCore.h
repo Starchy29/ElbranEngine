@@ -12,7 +12,11 @@ class DXCore
 	friend class Application;
 
 public:
+	DirectX::SpriteBatch* spriteBatch; // move back to private
+
 	void SetAlphaBlend(bool enabled);
+	void StartTextBatch();
+	void FinishTextBatch();
 
 	Microsoft::WRL::ComPtr<ID3D11Device> GetDevice() const;
 	Microsoft::WRL::ComPtr<ID3D11DeviceContext> GetContext() const;
@@ -32,7 +36,7 @@ private:
 	Microsoft::WRL::ComPtr<ID3D11DepthStencilView> depthStencilView;
 	Microsoft::WRL::ComPtr<ID3D11BlendState> alphaBlendState;
 	ID3D11DepthStencilState* defaultStencil;
-	DirectX::SpriteBatch* spriteBatch;
+	
 
 	DirectX::XMINT2 viewportDims;
 	DirectX::XMINT2 viewportShift;

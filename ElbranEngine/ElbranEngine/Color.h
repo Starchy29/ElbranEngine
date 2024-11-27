@@ -1,4 +1,5 @@
 #pragma once
+#include <DirectXMath.h>
 
 struct Color
 {
@@ -22,4 +23,5 @@ public:
 	Color(float r, float g, float b, float a = 1.0f);
 
 	operator float* () const;
+	operator DirectX::XMFLOAT4() const;
 };

@@ -1,8 +1,16 @@
 #include "DXCore.h"
-#include "Color.h"
 
 void DXCore::SetAlphaBlend(bool enabled) {
 	context->OMSetBlendState(enabled ? alphaBlendState.Get() : NULL, NULL, 0xffffffff);
+}
+
+void DXCore::StartTextBatch() {
+	spriteBatch->Begin(DirectX::DX11::SpriteSortMode_FrontToBack);
+}
+
+void DXCore::FinishTextBatch() {
+	spriteBatch->End();
+	ResetRenderState();
 }
 
 Microsoft::WRL::ComPtr<ID3D11Device> DXCore::GetDevice() const {
@@ -261,11 +269,6 @@ void DXCore::Render(Game* game) {
 
 	game->Draw();
 
-	spriteBatch->Begin();
-	APP->Assets()->arial->DrawString(spriteBatch, "hello where is this text?", DirectX::XMFLOAT2(0, 0));
-	spriteBatch->End();
-	ResetRenderState();
-
 	swapChain->Present(0, 0);
 	context->OMSetRenderTargets(1, backBufferView.GetAddressOf(), depthStencilView.Get());
 }
@@ -274,4 +277,5 @@ void DXCore::ResetRenderState() {
 	context->OMSetBlendState(0, 0, 0xFFFFFFFF);
 	context->RSSetState(0);
 	context->OMSetDepthStencilState(defaultStencil, 0);
+	Mesh::ClearLastDrawn();
 }

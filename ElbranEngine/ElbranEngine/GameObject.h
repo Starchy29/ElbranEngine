@@ -3,12 +3,26 @@
 #include "Mesh.h"
 #include "Transform.h"
 #include "Camera.h"
-#include "Color.h"
 #include "VertexShader.h"
 #include "PixelShader.h"
 #include "Sprite.h"
 #include "Scene.h"
 #include "IBehavior.h"
+#include "Color.h"
+
+enum RenderMode {
+	Opaque,
+	Translucent,
+	Text
+};
+
+enum Direction {
+	Center,
+	Up,
+	Down,
+	Left,
+	Right
+};
 
 class GameObject {
 	friend class Scene;
@@ -25,7 +39,7 @@ public:
 	std::shared_ptr<Sprite> sprite;
 	Color colorTint;
 
-	GameObject(Scene* scene, bool translucent, float zCoord, Color color = Color::White);
+	GameObject(Scene* scene, RenderMode renderMode, float zCoord, Color color = Color::White);
 	GameObject(Scene* scene, bool translucent, float zCoord, std::shared_ptr<Sprite> sprite);
 	virtual ~GameObject();
 
@@ -39,7 +53,7 @@ public:
 	void AddBehavior(IBehavior* behavior);
 
 	Transform* GetTransform();
-	bool IsTranslucent() const;
+	RenderMode GetRenderMode() const;
 
 protected:
 	Transform transform;
@@ -51,7 +65,7 @@ protected:
 	virtual GameObject* Copy() const; // override this to make deep copies
 
 private:
-	bool translucent; // true if this object ever has a pixel with alpha between 0-1 exclusive
+	RenderMode renderMode;
 	bool toBeDeleted;
 
 	void RemoveParent();

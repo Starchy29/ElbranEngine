@@ -1,5 +1,6 @@
 #include "Transform.h"
 using namespace DirectX;
+using namespace SimpleMath;
 
 Transform::Transform() {
 	position = XMFLOAT2(0, 0);
@@ -104,7 +105,7 @@ void Transform::GrowHeight(float scaleAdditive) {
 }
 
 Vector2 Transform::GetPosition() const {
-	return Vector2(position);
+	return position;
 }
 
 float Transform::GetGlobalZ() const {
@@ -134,6 +135,7 @@ DirectX::XMFLOAT4X4 Transform::GetWorldMatrix() const {
 }
 
 RectangleBox Transform::GetArea() const {
+	// does not work when rotated
 	if(parent) {
 		RectangleBox localArea = RectangleBox(position, scale);
 		XMFLOAT4X4 parentTransforms = parent->GetWorldMatrix();
