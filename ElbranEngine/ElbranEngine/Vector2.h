@@ -2,7 +2,7 @@
 #include <DirectXMath.h>
 #include <string>
 
-struct Vector2
+struct Vector2 : public DirectX::XMFLOAT2
 {
 	static const Vector2 Zero;
 	static const Vector2 Up;
@@ -13,9 +13,12 @@ struct Vector2
 	float x;
 	float y;
 
-	Vector2();
-	Vector2(float x, float y);
-	Vector2(DirectX::XMFLOAT2 float2);
+	Vector2() : XMFLOAT2(0, 0) {}
+	Vector2(float x, float y) : XMFLOAT2(x, y) {}
+	Vector2(const XMFLOAT2& v) {
+		x = v.x;
+		y = v.y;
+	}
 
 	void Rotate(float radians);
 
@@ -32,6 +35,5 @@ struct Vector2
 	Vector2 operator+(const Vector2& other) const;
 	Vector2 operator-(const Vector2& other) const;
 	Vector2 operator*(const Vector2& other) const;
-	operator DirectX::XMFLOAT2() const;
 };
 

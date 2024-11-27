@@ -1,11 +1,10 @@
 #include "Transform.h"
 using namespace DirectX;
-using namespace SimpleMath;
 
 Transform::Transform() {
-	position = XMFLOAT2(0, 0);
+	position = Vector2(0, 0);
 	z = 0;
-	scale = XMFLOAT2(1, 1);
+	scale = Vector2(1, 1);
 	rotation = 0;
 	parent = nullptr;
 
@@ -49,7 +48,7 @@ void Transform::SetZ(float z) {
 
 void Transform::SetScale(float x, float y) {
 	MarkForUpdate();
-	scale = XMFLOAT2(x, y);
+	scale = Vector2(x, y);
 }
 
 void Transform::SetRotation(float rotation) {

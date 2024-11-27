@@ -1,5 +1,4 @@
 #include "RectangleBox.h"
-using namespace DirectX::SimpleMath;
 
 RectangleBox::RectangleBox(Vector2 center, Vector2 size) {
 	SetCenterAndSize(center, size);
@@ -69,7 +68,7 @@ bool RectangleBox::Intersects(const Circle& circle) const {
 	}
 
 	Vector2 corner = Vector2(circle.center.x < left ? left : right, circle.center.y < bottom ? bottom : top);
-	return Vector2::DistanceSquared(circle.center, corner) <= circle.radius * circle.radius;
+	return circle.center.SqrDist(corner) <= circle.radius * circle.radius;
 }
 
 void RectangleBox::SetCenterAndSize(Vector2 center, Vector2 size) {

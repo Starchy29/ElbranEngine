@@ -7,21 +7,6 @@ const Vector2 Vector2::Down = Vector2(0, -1);
 const Vector2 Vector2::Left = Vector2(-1, 0);
 const Vector2 Vector2::Right = Vector2(1, 0);
 
-Vector2::Vector2() {
-	x = 0;
-	y = 0;
-}
-
-Vector2::Vector2(float x, float y) {
-	this->x = x;
-	this->y = y;
-}
-
-Vector2::Vector2(DirectX::XMFLOAT2 float2) {
-	x = float2.x;
-	y = float2.y;
-}
-
 void Vector2::Rotate(float radians) {
 	XMFLOAT2 result;
 	XMVECTOR rotated = XMVector3Rotate(XMVectorSet(x, y, 0, 0), XMQuaternionRotationAxis(XMVectorSet(0, 0, 1, 0), radians));
@@ -107,8 +92,4 @@ Vector2 Vector2::operator-(const Vector2& other) const {
 
 Vector2 Vector2::operator*(const Vector2& other) const {
 	return Vector2(x * other.x, y * other.y);
-}
-
-Vector2::operator DirectX::XMFLOAT2() const {
-	return XMFLOAT2(x, y);
 }

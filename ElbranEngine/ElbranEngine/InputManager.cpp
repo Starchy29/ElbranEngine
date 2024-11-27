@@ -4,7 +4,6 @@
 #pragma comment(lib,"XInput.lib")
 #pragma comment(lib,"Xinput9_1_0.lib")
 using namespace DirectX;
-using namespace SimpleMath;
 
 #define STICK_MAX 32767.0f
 #define GAMEPAD_DEAD_ZONE 0.2f

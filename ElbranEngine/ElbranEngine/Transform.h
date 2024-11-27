@@ -1,7 +1,6 @@
 #pragma once
 #include <DirectXMath.h>
 #include "RectangleBox.h"
-#include <SimpleMath.h>
 #include <list>
 
 class Transform {
@@ -11,13 +10,13 @@ public:
 	Transform();
 	Transform& operator=(const Transform& original);
 
-	void SetPosition(DirectX::SimpleMath::Vector2 position);
+	void SetPosition(Vector2 position);
 	void SetX(float x);
 	void SetY(float y);
 	void SetScale(float x, float y);
 	void SetRotation(float rotation);
 
-	void Translate(DirectX::SimpleMath::Vector2 displacement);
+	void Translate(Vector2 displacement);
 	void Rotate(float radians);
 	
 	// scaling operations that maintain aspect ratio
@@ -27,9 +26,9 @@ public:
 	void GrowWidth(float scaleAdditive);
 	void GrowHeight(float scaleAdditive);
 	
-	DirectX::SimpleMath::Vector2 GetPosition() const;
+	Vector2 GetPosition() const;
 	float GetGlobalZ() const;
-	DirectX::SimpleMath::Vector2 GetScale() const;
+	Vector2 GetScale() const;
 	float GetRotation() const;
 	DirectX::XMFLOAT4X4 GetWorldMatrix() const;
 	RectangleBox GetArea() const;
@@ -38,9 +37,9 @@ private:
 	Transform* parent;
 	std::list<Transform*> children;
 
-	DirectX::XMFLOAT2 position;
+	Vector2 position;
 	float z;
-	DirectX::XMFLOAT2 scale;
+	Vector2 scale;
 	float rotation;
 	mutable DirectX::XMFLOAT4X4 worldMatrix;
 

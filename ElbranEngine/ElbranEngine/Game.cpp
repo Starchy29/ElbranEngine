@@ -1,7 +1,6 @@
 #include "Game.h"
 #include "Application.h"
 #include "TextBox.h"
-using namespace DirectX::SimpleMath;
 
 GameObject* text;
 Game::Game(AssetManager* assets) {
@@ -18,7 +17,7 @@ Game::Game(AssetManager* assets) {
 
 	picture = new GameObject(sampleScene, false, 1, assets->testImage);
 	picture->GetTransform()->SetWidth(2.0f);
-	picture->GetTransform()->SetPosition(Vector2());
+	picture->GetTransform()->SetPosition(Vector2(0, 0));
 
 	text = new TextBox(sampleScene, 0, "Hello is there text here? what about there?", assets->arial, Color::White);
 }

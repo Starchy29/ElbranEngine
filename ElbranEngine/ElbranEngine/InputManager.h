@@ -16,8 +16,8 @@ public:
 	bool JustPressed(int key);
 	bool JustReleased(int key);
 
-	DirectX::SimpleMath::Vector2 GetStick(bool left, int slot = 0);
-	DirectX::SimpleMath::Vector2 GetMousePosition(Camera* worldView);
+	Vector2 GetStick(bool left, int slot = 0);
+	Vector2 GetMousePosition(Camera* worldView);
 	float GetMouseWheelSpin();
 
 	// prevent copying
@@ -30,8 +30,8 @@ private:
 	PBYTE previousKeyboard;
 	DirectX::XMFLOAT2 mouseScreenPos;
 	float mouseWheelDelta;
-	DirectX::SimpleMath::Vector2 gamepadLeftSticks[4];
-	DirectX::SimpleMath::Vector2 gamepadRightSticks[4];
+	Vector2 gamepadLeftSticks[4];
+	Vector2 gamepadRightSticks[4];
 
 	InputManager(HWND windowHandle);
 	~InputManager();
