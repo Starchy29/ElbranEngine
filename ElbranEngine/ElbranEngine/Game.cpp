@@ -11,7 +11,7 @@ Game::Game(AssetManager* assets) {
 	// set up game objects
 	sampleScene = new Scene(10, Color(0.1f, 0.1f, 0.1f));
 
-	testObject = new GameObject(sampleScene, RenderMode::Opaque, -1, Color(0, 0.8f, 0.5f, 0.7f));
+	testObject = new GameObject(sampleScene, RenderMode::Opaque, -20, Color(0, 0.8f, 0.5f, 0.7f));
 	testObject->pixelShader = assets->circlePS;
 
 	picture = new GameObject(sampleScene, false, 1, assets->testImage);

@@ -5,12 +5,19 @@ void DXCore::SetAlphaBlend(bool enabled) {
 }
 
 void DXCore::StartTextBatch() {
-	spriteBatch->Begin(DirectX::DX11::SpriteSortMode_FrontToBack);
+	spriteBatch->Begin(DirectX::DX11::SpriteSortMode_FrontToBack, 
+		nullptr,
+		nullptr,
+		defaultStencil.Get()
+	);
 }
 
 void DXCore::FinishTextBatch() {
 	spriteBatch->End();
-	ResetRenderState();
+
+	context->OMSetBlendState(0, 0, 0xFFFFFFFF);
+	context->RSSetState(0);
+	Mesh::ClearLastDrawn();
 }
 
 Microsoft::WRL::ComPtr<ID3D11Device> DXCore::GetDevice() const {
@@ -157,8 +164,8 @@ DXCore::DXCore(HWND windowHandle, DirectX::XMINT2 windowDims, float viewAspectRa
 	stencilOMDesc.FrontFace.StencilPassOp = D3D11_STENCIL_OP_KEEP;
 	stencilOMDesc.BackFace.StencilPassOp = D3D11_STENCIL_OP_KEEP;
 
-	device->CreateDepthStencilState(&stencilOMDesc, &defaultStencil);
-	context->OMSetDepthStencilState(defaultStencil, 0);
+	device->CreateDepthStencilState(&stencilOMDesc, defaultStencil.GetAddressOf());
+	context->OMSetDepthStencilState(defaultStencil.Get(), 0);
 
 	// create the blend state for alpha blendig
 	D3D11_BLEND_DESC blendDescription = {};
@@ -187,7 +194,6 @@ DXCore::DXCore(HWND windowHandle, DirectX::XMINT2 windowDims, float viewAspectRa
 
 DXCore::~DXCore() {
 	delete spriteBatch;
-	defaultStencil->Release();
 }
 
 void DXCore::Resize(DirectX::XMINT2 windowDims, float viewAspectRatio) {
@@ -262,7 +268,6 @@ void DXCore::Resize(DirectX::XMINT2 windowDims, float viewAspectRatio) {
 	context->RSSetViewports(1, &viewport);
 }
 
-#include "Application.h"
 void DXCore::Render(Game* game) {
 	context->ClearRenderTargetView(backBufferView.Get(), Color::Black);
 	context->ClearDepthStencilView(depthStencilView.Get(), D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
@@ -271,11 +276,4 @@ void DXCore::Render(Game* game) {
 
 	swapChain->Present(0, 0);
 	context->OMSetRenderTargets(1, backBufferView.GetAddressOf(), depthStencilView.Get());
-}
-
-void DXCore::ResetRenderState() {
-	context->OMSetBlendState(0, 0, 0xFFFFFFFF);
-	context->RSSetState(0);
-	context->OMSetDepthStencilState(defaultStencil, 0);
-	Mesh::ClearLastDrawn();
 }

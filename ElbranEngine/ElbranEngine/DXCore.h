@@ -35,7 +35,7 @@ private:
 	Microsoft::WRL::ComPtr<ID3D11RenderTargetView> backBufferView;
 	Microsoft::WRL::ComPtr<ID3D11DepthStencilView> depthStencilView;
 	Microsoft::WRL::ComPtr<ID3D11BlendState> alphaBlendState;
-	ID3D11DepthStencilState* defaultStencil;
+	Microsoft::WRL::ComPtr < ID3D11DepthStencilState> defaultStencil;
 	
 
 	DirectX::XMINT2 viewportDims;
@@ -46,7 +46,5 @@ private:
 
 	void Resize(DirectX::XMINT2 windowDims, float viewAspectRatio);
 	void Render(Game* game);
-
-	void ResetRenderState();
 };
 
