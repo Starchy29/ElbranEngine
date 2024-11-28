@@ -18,6 +18,7 @@ public:
 
 	void Translate(Vector2 displacement);
 	void Rotate(float radians);
+	void Stretch(float horiontal, float vertical);
 	
 	// scaling operations that maintain aspect ratio
 	void Scale(float multiplier);

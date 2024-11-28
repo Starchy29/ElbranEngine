@@ -21,16 +21,26 @@ struct Vector2 : public DirectX::XMFLOAT2
 
 	float Length() const;
 	float Angle() const;
+	Vector2 GetPerpendicular(bool rightSide = true) const;
+	Vector2 Normalize() const;
 	float Distance(const Vector2 &other) const;
 	float SqrDist(const Vector2& other) const;
 	float Dot(const Vector2 &other) const;
-	Vector2 GetPerpendicular(bool rightSide = true) const;
-	Vector2 Normalize() const;
+	float AngleBetween(const Vector2& other) const;
+	
 	std::string ToString() const;
 
 	Vector2 operator-() const;
 	Vector2 operator+(const Vector2& other) const;
 	Vector2 operator-(const Vector2& other) const;
 	Vector2 operator*(const Vector2& other) const;
+	Vector2 operator*(const float& scalar) const;
+	Vector2 operator/(const float& scalar) const;
+
+	Vector2& operator+= (const Vector2& vec);
+	Vector2& operator-= (const Vector2& vec);
+	Vector2& operator*= (const Vector2& vec);
+	Vector2& operator*= (float scalar);
+	Vector2& operator/= (float scalar);
 };
 

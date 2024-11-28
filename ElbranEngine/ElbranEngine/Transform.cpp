@@ -68,6 +68,12 @@ void Transform::Rotate(float radians) {
 	rotation += radians;
 }
 
+void Transform::Stretch(float horiontal, float vertical) {
+	MarkForUpdate();
+	scale.x += horiontal;
+	scale.y += vertical;
+}
+
 void Transform::Scale(float multiplier) {
 	MarkForUpdate();
 	XMVECTOR growth = XMVectorSet(multiplier, multiplier, 1, 0);

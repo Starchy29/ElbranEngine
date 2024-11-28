@@ -31,9 +31,6 @@ void TextBox::Draw(Camera* camera) {
 	XMStoreFloat2(&top, XMVector3Transform(XMLoadFloat2(&top), product));
 	center = Vector2(center3D.x, center3D.y);
 
-	Vector2 toRight = right - center;
-	//float angle = 
-
 	// convert from [-1,1] range to [0-pixelWidth]
 	XMINT2 halfScreen = APP->GetDXCore()->GetViewDimensions();
 	halfScreen = XMINT2(halfScreen.x / 2, halfScreen.y / 2);
@@ -42,22 +39,44 @@ void TextBox::Draw(Camera* camera) {
 	top = Vector2(halfScreen.x + halfScreen.x * top.x, halfScreen.y + halfScreen.y * -top.y);
 
 	// determine the maximum size that can fit within the box
-	toRight = right - center;
+	Vector2 toRight = right - center;
 	Vector2 toTop = top - center;
+	float angle = toRight.Angle();
 
-	float size = maxSize;
 	RECT textSize = font->MeasureDrawBounds(text.c_str(), XMFLOAT2(0, 0));
-	float startArea = textSize.right * textSize.bottom;
-	float maxArea = toRight.Length() * toTop.Length() * 4.0f;
-	if(startArea > maxArea) {
-		size = maxArea / startArea;
+	float horiScale = 2 * toRight.Length() / textSize.right;
+	float vertScale = 2 * toTop.Length() / textSize.bottom;
+	float size = min(horiScale, vertScale);
+	if(size > maxSize) {
+		size = maxSize;
+	}
+
+	// align the text to a side of the box
+	float halfWidth;
+	if(horizontalAlignment == Direction::Left) {
+		halfWidth = textSize.right * size / 2.0f;
+		center += -toRight + toRight.Normalize() * halfWidth;
+	}
+	else if(horizontalAlignment == Direction::Right) {
+		halfWidth = textSize.right * size / 2.0f;
+		center += toRight - toRight.Normalize() * halfWidth;
+	}
+
+	float halfHeight;
+	if(verticalAlignment == Direction::Up) {
+		halfHeight = textSize.bottom * size / 2.0f;
+		center += toTop - toTop.Normalize() * halfHeight;
+	}
+	else if(verticalAlignment == Direction::Down) {
+		halfHeight = textSize.bottom * size / 2.0f;
+		center += -toTop + toTop.Normalize() * halfHeight;
 	}
 
 	font->DrawString(APP->GetDXCore()->spriteBatch,
 		text.c_str(),
 		center,
 		XMLoadFloat4((XMFLOAT4*)&colorTint),
-		0.0f,
+		angle,
 		XMFLOAT2(textSize.right / 2.0f, textSize.bottom / 2.0f),
 		size,
 		DX11::SpriteEffects_None,

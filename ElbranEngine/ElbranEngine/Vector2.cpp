@@ -55,6 +55,10 @@ float Vector2::Dot(const Vector2& other) const {
 	return result;
 }
 
+float Vector2::AngleBetween(const Vector2& other) const {
+	return acos(Dot(other) / (Length() * other.Length()));
+}
+
 Vector2 Vector2::GetPerpendicular(bool rightSide) const {
 	Vector2 result = Vector2(y, -x);
 
@@ -92,4 +96,37 @@ Vector2 Vector2::operator-(const Vector2& other) const {
 
 Vector2 Vector2::operator*(const Vector2& other) const {
 	return Vector2(x * other.x, y * other.y);
+}
+
+Vector2 Vector2::operator*(const float& scalar) const {
+	return Vector2(x * scalar, y * scalar);
+}
+
+Vector2 Vector2::operator/(const float& scalar) const {
+	return Vector2(x / scalar, y / scalar);
+}
+
+Vector2& Vector2::operator+=(const Vector2& vec) {
+	*this = *this + vec;
+	return *this;
+}
+
+Vector2& Vector2::operator-=(const Vector2& vec) {
+	*this = *this - vec;
+	return *this;
+}
+
+Vector2& Vector2::operator*=(const Vector2& vec) {
+	*this = *this * vec;
+	return *this;
+}
+
+Vector2& Vector2::operator*=(float scalar) {
+	*this = *this * scalar;
+	return *this;
+}
+
+Vector2& Vector2::operator/=(float scalar) {
+	*this = *this / scalar;
+	return *this;
 }
