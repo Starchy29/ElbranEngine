@@ -18,7 +18,7 @@ public:
 	LRESULT ProcessMessage(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
 	void Dispose();
 
-	DXCore* GetDXCore() const;
+	DXCore* Graphics() const;
 	const Game* GetGame() const;
 	InputManager* Input() const;
 	const AssetManager* Assets() const;

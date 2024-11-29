@@ -39,8 +39,8 @@ public:
 	std::shared_ptr<Sprite> sprite;
 	Color colorTint;
 
-	GameObject(Scene* scene, RenderMode renderMode, float zCoord, Color color = Color::White);
-	GameObject(Scene* scene, bool translucent, float zCoord, std::shared_ptr<Sprite> sprite);
+	GameObject(RenderMode renderMode, float zCoord, Color color = Color::White);
+	GameObject(bool translucent, float zCoord, std::shared_ptr<Sprite> sprite);
 	virtual ~GameObject();
 
 	virtual void Update(float deltaTime);
@@ -54,10 +54,10 @@ public:
 
 	Transform* GetTransform();
 	RenderMode GetRenderMode() const;
+	Scene* GetScene() const;
 
 protected:
 	Transform transform;
-	Scene* scene;
 	GameObject* parent;
 	std::list<GameObject*> children;
 	std::vector<IBehavior*> behaviors;
@@ -67,6 +67,7 @@ protected:
 private:
 	RenderMode renderMode;
 	bool toBeDeleted;
+	Scene* scene;
 
 	void RemoveParent();
 };

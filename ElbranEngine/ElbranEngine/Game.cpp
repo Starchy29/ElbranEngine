@@ -11,18 +11,21 @@ Game::Game(AssetManager* assets) {
 	// set up game objects
 	sampleScene = new Scene(10, Color(0.1f, 0.1f, 0.1f));
 
-	testObject = new GameObject(sampleScene, RenderMode::Opaque, -20, Color(0, 0.8f, 0.5f, 0.7f));
+	testObject = new GameObject(RenderMode::Opaque, -20, Color(0, 0.8f, 0.5f, 0.7f));
+	sampleScene->Add(testObject);
 	testObject->pixelShader = assets->circlePS;
 
-	picture = new GameObject(sampleScene, false, 1, assets->testImage);
+	picture = new GameObject(false, 1, assets->testImage);
+	sampleScene->Add(picture);
 	picture->GetTransform()->SetPosition(Vector2(0, -2));
 
-	text = new TextBox(sampleScene, 0, "Hello is there text here? what about there?", assets->arial, Color::White);
+	text = new TextBox(0, "Hello is there text here? what about there?", assets->arial, Color::White);
 	text->GetTransform()->SetScale(4, 0.5f);
 	text->verticalAlignment = Direction::Up;
 	text->horizontalAlignment = Direction::Left;
-	GameObject* textBack = new GameObject(sampleScene, RenderMode::Opaque, 1, Color::Cyan);
+	GameObject* textBack = new GameObject(RenderMode::Opaque, 1, Color::Cyan);
 	textBack->SetParent(text);
+	sampleScene->Add(text);
 }
 
 Game::~Game() {

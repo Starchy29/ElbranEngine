@@ -141,12 +141,14 @@
   <ItemGroup>
     <ClCompile Include="Application.cpp" />
     <ClCompile Include="AssetManager.cpp" />
+    <ClCompile Include="Button.cpp" />
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="Color.cpp" />
     <ClCompile Include="DXCore.cpp" />
     <ClCompile Include="GameObject.cpp" />
     <ClCompile Include="InputManager.cpp" />
     <ClCompile Include="Main.cpp" />
+    <ClCompile Include="Menu.cpp" />
     <ClCompile Include="Mesh.cpp" />
     <ClCompile Include="Game.cpp" />
     <ClCompile Include="PixelShader.cpp" />
@@ -162,6 +164,7 @@
   <ItemGroup>
     <ClInclude Include="Application.h" />
     <ClInclude Include="AssetManager.h" />
+    <ClInclude Include="Button.h" />
     <ClInclude Include="Camera.h" />
     <ClInclude Include="Circle.h" />
     <ClInclude Include="Color.h" />
@@ -169,6 +172,7 @@
     <ClInclude Include="GameObject.h" />
     <ClInclude Include="IBehavior.h" />
     <ClInclude Include="InputManager.h" />
+    <ClInclude Include="Menu.h" />
     <ClInclude Include="Mesh.h" />
     <ClInclude Include="Game.h" />
     <ClInclude Include="PixelShader.h" />

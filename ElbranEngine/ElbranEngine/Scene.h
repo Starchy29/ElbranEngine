@@ -9,7 +9,6 @@ class Scene
 {
 public:
 	bool paused;
-	bool hidden;
 
 	Scene(float cameraWidth, Color backgroundColor = Color::Clear);
 	Scene(float cameraWidth, std::shared_ptr<Sprite> backgroundImage);
@@ -17,9 +16,9 @@ public:
 
 	Camera* GetCamera();
 
-	void Update(float deltaTime);
-	void Draw();
-	void Join(GameObject* object);
+	virtual void Update(float deltaTime);
+	virtual void Draw();
+	void Add(GameObject* object);
 	void UpdateDrawOrder(GameObject* sceneMember);
 
 private:
@@ -31,7 +30,7 @@ private:
 	std::vector<GameObject*> translucents;
 	std::vector<GameObject*> texts;
 
-	inline void DrawBackground();
+	virtual void DrawBackground();
 	void SortInto(GameObject* sceneMember, std::vector<GameObject*>* objectList);
 };
 

@@ -80,7 +80,7 @@ void Application::Dispose() {
 	delete instance;
 }
 
-DXCore* Application::GetDXCore() const {
+DXCore* Application::Graphics() const {
 	return dxCore;
 }
 

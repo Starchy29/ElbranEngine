@@ -2,7 +2,7 @@
 #include "Application.h"
 using namespace DirectX;
 
-GameObject::GameObject(Scene* scene, RenderMode renderMode, float zCoord, Color color) {
+GameObject::GameObject(RenderMode renderMode, float zCoord, Color color) {
 	active = true;
 	visible = true;
 	flipX = false;
@@ -14,8 +14,7 @@ GameObject::GameObject(Scene* scene, RenderMode renderMode, float zCoord, Color 
 
 	transform.SetZ(zCoord);
 	this->renderMode = renderMode;
-	this->scene = scene;
-	scene->Join(this);
+	colorTint = color;
 
 	const AssetManager* assets = APP->Assets();
 	mesh = assets->unitSquare;
@@ -23,11 +22,10 @@ GameObject::GameObject(Scene* scene, RenderMode renderMode, float zCoord, Color 
 
 	pixelShader = assets->colorPS;
 	this->sprite = nullptr;
-	colorTint = color;
 }
 
-GameObject::GameObject(Scene* scene, bool translucent, float zCoord, std::shared_ptr<Sprite> sprite)
-	: GameObject(scene, translucent ? RenderMode::Translucent : RenderMode::Opaque, zCoord) 
+GameObject::GameObject(bool translucent, float zCoord, std::shared_ptr<Sprite> sprite)
+	: GameObject(translucent ? RenderMode::Translucent : RenderMode::Opaque, zCoord) 
 {
 	pixelShader = APP->Assets()->imagePS;
 	this->sprite = sprite;
@@ -64,6 +62,10 @@ void GameObject::SetParent(GameObject* newParent) {
 
 	parent->children.push_back(this);
 	parent->transform.children.push_back(&transform);
+
+	if(scene == nullptr && newParent->scene != nullptr) {
+		newParent->scene->Add(this);
+	}
 }
 
 void GameObject::AddBehavior(IBehavior* behavior) {
@@ -78,6 +80,10 @@ RenderMode GameObject::GetRenderMode() const {
 	return renderMode;
 }
 
+Scene* GameObject::GetScene() const {
+	return scene;
+}
+
 GameObject* GameObject::Clone() const {
 	GameObject* copy = Copy();
 
@@ -90,7 +96,7 @@ GameObject* GameObject::Clone() const {
 }
 
 GameObject* GameObject::Copy() const {
-	GameObject* copy = new GameObject(this->scene, this->renderMode, this->transform.z, this->colorTint);
+	GameObject* copy = new GameObject(this->renderMode, this->transform.z, this->colorTint);
 	copy->active = active;
 	copy->visible = visible;
 	copy->flipX = flipX;
@@ -103,6 +109,11 @@ GameObject* GameObject::Copy() const {
 
 	copy->transform = transform;
 	copy->toBeDeleted = toBeDeleted;
+
+	// join the same scene
+	if(scene != nullptr) {
+		scene->Add(copy);
+	}
 
 	// copy all behaviors
 	for(IBehavior* behavior : behaviors) {
@@ -123,7 +134,9 @@ void GameObject::RemoveParent() {
 
 void GameObject::Update(float deltaTime) {
 	for(IBehavior* behavior : behaviors) {
-		behavior->Update(deltaTime);
+		if(behavior->enabled) {
+			behavior->Update(deltaTime);
+		}
 	}
 }
 

@@ -2,8 +2,8 @@
 #include "Application.h"
 using namespace DirectX;
 
-TextBox::TextBox(Scene* scene, float zCoord, std::string text, std::shared_ptr<DirectX::DX11::SpriteFont> font, Color color)
-	: GameObject(scene, RenderMode::Text, zCoord, color)
+TextBox::TextBox(float zCoord, std::string text, std::shared_ptr<DirectX::DX11::SpriteFont> font, Color color)
+	: GameObject(RenderMode::Text, zCoord, color)
 {
 	this->text = text;
 	this->font = font;
@@ -32,7 +32,7 @@ void TextBox::Draw(Camera* camera) {
 	center = Vector2(center3D.x, center3D.y);
 
 	// convert from [-1,1] range to [0-pixelWidth]
-	XMINT2 halfScreen = APP->GetDXCore()->GetViewDimensions();
+	XMINT2 halfScreen = APP->Graphics()->GetViewDimensions();
 	halfScreen = XMINT2(halfScreen.x / 2, halfScreen.y / 2);
 	center = Vector2(halfScreen.x + halfScreen.x * center.x, halfScreen.y + halfScreen.y * -center.y);
 	right = Vector2(halfScreen.x + halfScreen.x * right.x, halfScreen.y + halfScreen.y * -right.y);
@@ -72,7 +72,7 @@ void TextBox::Draw(Camera* camera) {
 		center += -toTop + toTop.Normalize() * halfHeight;
 	}
 
-	font->DrawString(APP->GetDXCore()->spriteBatch,
+	font->DrawString(APP->Graphics()->spriteBatch,
 		text.c_str(),
 		center,
 		XMLoadFloat4((XMFLOAT4*)&colorTint),

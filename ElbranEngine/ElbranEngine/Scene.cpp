@@ -1,10 +1,8 @@
 #include "Scene.h"
 #include "Application.h"
-#include "Game.h"
 
 Scene::Scene(float cameraWidth, Color backgroundColor) {
 	paused = false;
-	hidden = false;
 	camera = new Camera(cameraWidth);
 
 	backColor = backgroundColor;
@@ -13,7 +11,6 @@ Scene::Scene(float cameraWidth, Color backgroundColor) {
 
 Scene::Scene(float cameraWidth, std::shared_ptr<Sprite> backgroundImage) {
 	paused = false;
-	hidden = false;
 	camera = new Camera(cameraWidth);
 
 	backColor = Color::White;
@@ -38,6 +35,10 @@ Camera* Scene::GetCamera() {
 }
 
 void Scene::Update(float deltaTime) {
+	if(paused) {
+		return;
+	}
+
 	// update all game objects
 	for(GameObject* object : opaques) {
 		if(object->active && !object->toBeDeleted) {
@@ -77,7 +78,7 @@ void Scene::Update(float deltaTime) {
 }
 
 void Scene::Draw() {
-	DXCore* directX = APP->GetDXCore();
+	DXCore* directX = APP->Graphics();
 
 	// draw opaques front to back
 	directX->SetAlphaBlend(false);
@@ -109,7 +110,17 @@ void Scene::Draw() {
 	}
 }
 
-void Scene::Join(GameObject* object) {
+void Scene::Add(GameObject* object) {
+	if(object->scene != nullptr) {
+		return;
+	}
+
+	object->scene = this;
+
+	for(GameObject* child : object->children) {
+		Add(child);
+	}
+
 	RenderMode renderMode = object->GetRenderMode();
 	if(renderMode == RenderMode::Text) {
 		// text ordering is done by the spriteBatch
@@ -134,7 +145,7 @@ void Scene::UpdateDrawOrder(GameObject* sceneMember) {
 	SortInto(sceneMember, list);
 }
 
-inline void Scene::DrawBackground() {
+void Scene::DrawBackground() {
 	if(backColor.alpha <= 0) {
 		return;
 	}
@@ -153,7 +164,7 @@ inline void Scene::DrawBackground() {
 		colorShader->SetShader();
 	}
 	assets->backgroundVS->SetShader();
-	APP->GetDXCore()->GetContext()->Draw(3, 0);
+	APP->Graphics()->GetContext()->Draw(3, 0);
 }
 
 void Scene::SortInto(GameObject* sceneMember, std::vector<GameObject*>* objectList) {

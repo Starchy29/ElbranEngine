@@ -34,11 +34,11 @@ void InputManager::Update() {
 	GetCursorPos(&mousePos);
 	ScreenToClient(windowHandle, &mousePos);
 
-	XMINT2 viewShift = APP->GetDXCore()->GetViewOffset();
+	XMINT2 viewShift = APP->Graphics()->GetViewOffset();
 	mousePos.x -= viewShift.x;
 	mousePos.y -= viewShift.y;
 
-	XMINT2 viewDims = APP->GetDXCore()->GetViewDimensions();
+	XMINT2 viewDims = APP->Graphics()->GetViewDimensions();
 	mouseScreenPos.x = (float)mousePos.x / viewDims.x * 2.0f - 1.0f;
 	mouseScreenPos.y = (float)mousePos.y / viewDims.y * 2.0f - 1.0f;
 	mouseScreenPos.y *= -1.0f;
