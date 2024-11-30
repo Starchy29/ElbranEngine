@@ -1,8 +1,10 @@
 #include "Game.h"
 #include "Application.h"
-#include "TextBox.h"
 
-TextBox* text;
+#include "Enums.h"
+#include "TextRenderer.h"
+
+GameObject* text;
 Game::Game(AssetManager* assets) {
 	// load assets
 	assets->arial = assets->LoadFont(L"Arial.spritefont");
@@ -11,19 +13,17 @@ Game::Game(AssetManager* assets) {
 	// set up game objects
 	sampleScene = new Scene(10, Color(0.1f, 0.1f, 0.1f));
 
-	testObject = new GameObject(RenderMode::Opaque, -20, Color(0, 0.8f, 0.5f, 0.7f));
+	testObject = new GameObject(-20, Color(0, 0.8f, 0.5f, 0.7f), true);
 	sampleScene->Add(testObject);
-	testObject->pixelShader = assets->circlePS;
 
-	picture = new GameObject(false, 1, assets->testImage);
+	picture = new GameObject(1, assets->testImage, false);
 	sampleScene->Add(picture);
 	picture->GetTransform()->SetPosition(Vector2(0, -2));
 
-	text = new TextBox(0, "Hello is there text here? what about there?", assets->arial, Color::White);
+	text = new GameObject(0, "Hello is there text here? what about there?", assets->arial, Color::White);
 	text->GetTransform()->SetScale(4, 0.5f);
-	text->verticalAlignment = Direction::Up;
-	text->horizontalAlignment = Direction::Left;
-	GameObject* textBack = new GameObject(RenderMode::Opaque, 1, Color::Cyan);
+	text->GetRenderer<TextRenderer>()->horizontalAlignment = Direction::Left;
+	GameObject* textBack = new GameObject(1, Color::Cyan);
 	textBack->SetParent(text);
 	sampleScene->Add(text);
 }

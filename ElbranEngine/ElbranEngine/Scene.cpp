@@ -121,7 +121,7 @@ void Scene::Add(GameObject* object) {
 		Add(child);
 	}
 
-	RenderMode renderMode = object->GetRenderMode();
+	RenderMode renderMode = object->renderMode;
 	if(renderMode == RenderMode::Text) {
 		// text ordering is done by the spriteBatch
 		texts.push_back(object);
@@ -133,7 +133,7 @@ void Scene::Add(GameObject* object) {
 
 // called by a game object when it changes its Z coordinate
 void Scene::UpdateDrawOrder(GameObject* sceneMember) {
-	RenderMode renderMode = sceneMember->GetRenderMode();
+	RenderMode renderMode = sceneMember->renderMode;
 	std::vector<GameObject*>* list = &opaques;
 	if(renderMode == RenderMode::Translucent) {
 		list = &translucents;

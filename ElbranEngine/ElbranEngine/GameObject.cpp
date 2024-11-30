@@ -1,12 +1,13 @@
 #include "GameObject.h"
 #include "Application.h"
+#include "ColorRenderer.h"
+#include "SpriteRenderer.h"
+#include "TextRenderer.h"
 using namespace DirectX;
 
-GameObject::GameObject(RenderMode renderMode, float zCoord, Color color) {
+GameObject::GameObject(float zCoord, RenderMode renderMode) {
 	active = true;
 	visible = true;
-	flipX = false;
-	flipY = false;
 	toBeDeleted = false;
 	parent = nullptr;
 	children = std::list<GameObject*>();
@@ -14,22 +15,25 @@ GameObject::GameObject(RenderMode renderMode, float zCoord, Color color) {
 
 	transform.SetZ(zCoord);
 	this->renderMode = renderMode;
-	colorTint = color;
-
-	const AssetManager* assets = APP->Assets();
-	mesh = assets->unitSquare;
-	vertexShader = assets->cameraVS;
-
-	pixelShader = assets->colorPS;
-	this->sprite = nullptr;
 }
 
-GameObject::GameObject(bool translucent, float zCoord, std::shared_ptr<Sprite> sprite)
-	: GameObject(translucent ? RenderMode::Translucent : RenderMode::Opaque, zCoord) 
+GameObject::GameObject(float zCoord, Color color, bool circle)
+	: GameObject(zCoord, color.alpha < 1 ? RenderMode::Translucent : RenderMode::Opaque)
 {
-	pixelShader = APP->Assets()->imagePS;
-	this->sprite = sprite;
+	renderer = new ColorRenderer(color, circle);
+}
+
+GameObject::GameObject(float zCoord, std::shared_ptr<Sprite> sprite, bool translucent)
+	: GameObject(zCoord, translucent ? RenderMode::Translucent : RenderMode::Opaque) 
+{
+	renderer = new SpriteRenderer(sprite);
 	transform.SetScale(sprite->GetAspectRatio(), 1.0f);
+}
+
+GameObject::GameObject(float zCoord, std::string text, std::shared_ptr<DirectX::DX11::SpriteFont> font, Color color)
+	: GameObject(zCoord, RenderMode::Text)
+{
+	renderer = new TextRenderer(text, font, color);
 }
 
 GameObject::~GameObject() {
@@ -76,10 +80,6 @@ Transform* GameObject::GetTransform() {
 	return &transform;
 }
 
-RenderMode GameObject::GetRenderMode() const {
-	return renderMode;
-}
-
 Scene* GameObject::GetScene() const {
 	return scene;
 }
@@ -96,16 +96,9 @@ GameObject* GameObject::Clone() const {
 }
 
 GameObject* GameObject::Copy() const {
-	GameObject* copy = new GameObject(this->renderMode, this->transform.z, this->colorTint);
+	GameObject* copy = new GameObject(this->transform.z, this->renderMode);
 	copy->active = active;
-	copy->visible = visible;
-	copy->flipX = flipX;
-	copy->flipY = flipY;
-
-	copy->mesh = mesh;
-	copy->vertexShader = vertexShader;
-	copy->pixelShader =  pixelShader;
-	copy->sprite = sprite;
+	copy->renderer = renderer->Clone();
 
 	copy->transform = transform;
 	copy->toBeDeleted = toBeDeleted;
@@ -141,27 +134,9 @@ void GameObject::Update(float deltaTime) {
 }
 
 void GameObject::Draw(Camera* camera) {
-	XMFLOAT4X4 worldMat = transform.GetWorldMatrix();
-	XMFLOAT4X4 viewMat = camera->GetView();
-	XMFLOAT4X4 projMat = camera->GetProjection();
-	XMMATRIX product = XMLoadFloat4x4(&worldMat);
-	product = XMMatrixMultiply(product, XMLoadFloat4x4(&viewMat));
-	product = XMMatrixMultiply(product, XMLoadFloat4x4(&projMat));
-	XMFLOAT4X4 worldViewProj;
-	XMStoreFloat4x4(&worldViewProj, product);
-	vertexShader->SetConstantVariable("worldViewProj", &worldViewProj);
-	vertexShader->SetBool("flipX", flipX);
-	vertexShader->SetBool("flipY", flipY);
-
-	pixelShader->SetConstantVariable("color", &colorTint);
-	if(sprite != nullptr) {
-		pixelShader->SetSampler(APP->Assets()->defaultSampler);
-		pixelShader->SetTexture(sprite->GetResourceView());
+	if(renderer) {
+		renderer->Draw(camera, transform);
 	}
-
-	vertexShader->SetShader();
-	pixelShader->SetShader();
-	mesh->Draw();
 }
 
 void GameObject::Delete(bool keepChildren) {

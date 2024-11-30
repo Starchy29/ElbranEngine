@@ -8,20 +8,14 @@
 #include "Sprite.h"
 #include "Scene.h"
 #include "IBehavior.h"
+#include "IRenderer.h"
 #include "Color.h"
+#include <SpriteFont.h>
 
 enum RenderMode {
 	Opaque,
 	Translucent,
 	Text
-};
-
-enum Direction {
-	Center,
-	Up,
-	Down,
-	Left,
-	Right
 };
 
 class GameObject {
@@ -30,17 +24,11 @@ class GameObject {
 public:
 	bool active;
 	bool visible;
-	bool flipX;
-	bool flipY;
-	
-	std::shared_ptr<Mesh> mesh;
-	std::shared_ptr<VertexShader> vertexShader;
-	std::shared_ptr<PixelShader> pixelShader;
-	std::shared_ptr<Sprite> sprite;
-	Color colorTint;
 
-	GameObject(RenderMode renderMode, float zCoord, Color color = Color::White);
-	GameObject(bool translucent, float zCoord, std::shared_ptr<Sprite> sprite);
+	GameObject(float zCoord, RenderMode renderMode);
+	GameObject(float zCoord, Color color, bool circle = false);
+	GameObject(float zCoord, std::shared_ptr<Sprite> sprite, bool translucent);
+	GameObject(float zCoord, std::string text, std::shared_ptr<DirectX::DX11::SpriteFont> font, Color color);
 	virtual ~GameObject();
 
 	virtual void Update(float deltaTime);
@@ -53,11 +41,12 @@ public:
 	void AddBehavior(IBehavior* behavior);
 
 	Transform* GetTransform();
-	RenderMode GetRenderMode() const;
+	template<class RenderType> RenderType* GetRenderer() { return (RenderType*)renderer; }
 	Scene* GetScene() const;
 
 protected:
 	Transform transform;
+	IRenderer* renderer;
 	GameObject* parent;
 	std::list<GameObject*> children;
 	std::vector<IBehavior*> behaviors;
@@ -71,4 +60,3 @@ private:
 
 	void RemoveParent();
 };
-
