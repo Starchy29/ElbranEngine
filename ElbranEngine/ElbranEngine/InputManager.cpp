@@ -17,6 +17,14 @@ InputManager::InputManager(HWND windowHandle) {
 	previousKeyboard = new BYTE[KEY_COUNT];
 	memset(keyboardState, 0, sizeof(BYTE) * KEY_COUNT);
 	memset(previousKeyboard, 0, sizeof(BYTE) * KEY_COUNT);
+
+	// set keybinds
+	actionKeys[(int)InputAction::Up] = { VK_UP, 'W', VK_GAMEPAD_LEFT_THUMBSTICK_UP };
+	actionKeys[(int)InputAction::Down] = { VK_DOWN, 'S', VK_GAMEPAD_LEFT_THUMBSTICK_DOWN };
+	actionKeys[(int)InputAction::Left] = { VK_LEFT, 'A', VK_GAMEPAD_LEFT_THUMBSTICK_LEFT };
+	actionKeys[(int)InputAction::Right] = { VK_RIGHT, 'D', VK_GAMEPAD_LEFT_THUMBSTICK_RIGHT };
+	actionKeys[(int)InputAction::Select] = { VK_RETURN, VK_GAMEPAD_A };
+	actionKeys[(int)InputAction::Back] = { VK_BACK, VK_ESCAPE, VK_GAMEPAD_B };
 }
 
 InputManager::~InputManager() {
@@ -93,6 +101,43 @@ bool InputManager::JustPressed(int key) {
 
 bool InputManager::JustReleased(int key) {
 	return !KEY_DOWN(keyboardState[key]) && KEY_DOWN(previousKeyboard[key]);
+}
+
+bool InputManager::IsPressed(InputAction action) {
+	for(int key : actionKeys[(int)action]) {
+		if(IsPressed(key)) {
+			return true;
+		}
+	}
+	return false;
+}
+
+bool InputManager::JustPressed(InputAction action) {
+	bool pressed = false;
+	for(int key : actionKeys[(int)action]) {
+		if(JustPressed(key)) {
+			pressed = true;
+		}
+		else if(IsPressed(key)) {
+			// make sure another key is not already held
+			return false;
+		}
+	}
+	return pressed;
+}
+
+bool InputManager::JustReleased(InputAction action) {
+	bool released = false;
+	for(int key : actionKeys[(int)action]) {
+		if(IsPressed(key)) {
+			// make sure another key is not still held
+			return false;
+		}
+		else if(JustReleased(key)) {
+			released = true;
+		}
+	}
+	return released;
 }
 
 Vector2 InputManager::GetStick(bool left, int slot) {

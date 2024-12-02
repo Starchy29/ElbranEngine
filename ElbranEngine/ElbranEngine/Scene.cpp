@@ -2,7 +2,6 @@
 #include "Application.h"
 
 Scene::Scene(float cameraWidth, Color backgroundColor) {
-	paused = false;
 	camera = new Camera(cameraWidth);
 
 	backColor = backgroundColor;
@@ -10,7 +9,6 @@ Scene::Scene(float cameraWidth, Color backgroundColor) {
 }
 
 Scene::Scene(float cameraWidth, std::shared_ptr<Sprite> backgroundImage) {
-	paused = false;
 	camera = new Camera(cameraWidth);
 
 	backColor = Color::White;
@@ -35,10 +33,6 @@ Camera* Scene::GetCamera() {
 }
 
 void Scene::Update(float deltaTime) {
-	if(paused) {
-		return;
-	}
-
 	// update all game objects
 	for(GameObject* object : opaques) {
 		if(object->active && !object->toBeDeleted) {

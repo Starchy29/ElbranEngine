@@ -25,6 +25,7 @@ public:
 
 	float GetViewAspectRatio() const;
 	std::wstring ExePath() const;
+	void Quit() const;
 
 	// prevent copying
 	Application(const Application&) = delete;

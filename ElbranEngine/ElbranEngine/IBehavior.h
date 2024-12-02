@@ -1,5 +1,5 @@
 #pragma once
-#include "GameObject.h"
+class GameObject;
 
 class IBehavior
 {
@@ -12,7 +12,7 @@ public:
 	}
 
 	virtual void Update(float deltaTime) = 0;
-	virtual IBehavior* Copy() = 0;
+	virtual IBehavior* Clone() = 0;
 
 protected:
 	GameObject* owner;

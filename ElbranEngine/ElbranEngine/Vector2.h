@@ -42,5 +42,8 @@ struct Vector2 : public DirectX::XMFLOAT2
 	Vector2& operator*= (const Vector2& vec);
 	Vector2& operator*= (float scalar);
 	Vector2& operator/= (float scalar);
+
+	bool operator==(const Vector2& other) const;
+	bool operator!=(const Vector2& other) const;
 };
 

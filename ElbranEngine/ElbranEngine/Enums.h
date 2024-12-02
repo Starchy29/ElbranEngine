@@ -1,6 +1,6 @@
 #pragma once
 
-enum Direction {
+enum class Direction {
 	Center,
 	Up,
 	Down,

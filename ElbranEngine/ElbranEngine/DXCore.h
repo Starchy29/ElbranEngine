@@ -5,15 +5,14 @@
 #include <wrl/client.h>
 #include <DirectXMath.h>
 #include <SpriteBatch.h>
-#include "Game.h"
+
+class Game;
 
 class DXCore
 {
 	friend class Application;
 
 public:
-	DirectX::SpriteBatch* spriteBatch; // move back to private
-
 	void SetAlphaBlend(bool enabled);
 	void StartTextBatch();
 	void FinishTextBatch();
@@ -22,6 +21,7 @@ public:
 	Microsoft::WRL::ComPtr<ID3D11DeviceContext> GetContext() const;
 	DirectX::XMINT2 GetViewDimensions();
 	DirectX::XMINT2 GetViewOffset();
+	DirectX::SpriteBatch* GetSpriteBatch();
 
 	// prevent copying
 	DXCore(const DXCore&) = delete;
@@ -36,7 +36,7 @@ private:
 	Microsoft::WRL::ComPtr<ID3D11DepthStencilView> depthStencilView;
 	Microsoft::WRL::ComPtr<ID3D11BlendState> alphaBlendState;
 	Microsoft::WRL::ComPtr < ID3D11DepthStencilState> defaultStencil;
-	
+	DirectX::SpriteBatch* spriteBatch;
 
 	DirectX::XMINT2 viewportDims;
 	DirectX::XMINT2 viewportShift;

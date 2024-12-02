@@ -1,6 +1,8 @@
 #pragma once
 #include "Scene.h"
-#include "AssetManager.h"
+
+class AssetManager;
+class Menu;
 
 class Game
 {
@@ -18,6 +20,7 @@ private:
 	GameObject* testObject;
 	GameObject* picture;
 	Scene* sampleScene;
+	Menu* sampleMenu;
 
 	Game(AssetManager* assets);
 	~Game();

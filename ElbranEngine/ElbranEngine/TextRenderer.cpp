@@ -72,7 +72,7 @@ void TextRenderer::Draw(Camera* camera, const Transform& transform) {
 		center += -toTop + toTop.Normalize() * halfHeight;
 	}
 
-	font->DrawString(APP->Graphics()->spriteBatch,
+	font->DrawString(APP->Graphics()->GetSpriteBatch(),
 		text.c_str(),
 		center,
 		XMLoadFloat4((XMFLOAT4*)&color),

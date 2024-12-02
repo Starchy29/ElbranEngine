@@ -104,6 +104,10 @@ std::wstring Application::ExePath() const {
 	return exePath;
 }
 
+void Application::Quit() const {
+	PostQuitMessage(0);
+}
+
 Application::Application(HINSTANCE hInst) {
 	hInstance = hInst;
 

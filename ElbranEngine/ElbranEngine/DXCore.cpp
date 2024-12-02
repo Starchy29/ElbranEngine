@@ -1,4 +1,5 @@
 #include "DXCore.h"
+#include "Game.h"
 
 void DXCore::SetAlphaBlend(bool enabled) {
 	context->OMSetBlendState(enabled ? alphaBlendState.Get() : NULL, NULL, 0xffffffff);
@@ -34,6 +35,10 @@ DirectX::XMINT2 DXCore::GetViewDimensions() {
 
 DirectX::XMINT2 DXCore::GetViewOffset() {
 	return viewportShift;
+}
+
+DirectX::SpriteBatch* DXCore::GetSpriteBatch() {
+	return spriteBatch;
 }
 
 DXCore::DXCore(HWND windowHandle, DirectX::XMINT2 windowDims, float viewAspectRatio, HRESULT* outResult) {

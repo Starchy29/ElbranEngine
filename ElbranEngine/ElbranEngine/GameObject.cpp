@@ -1,8 +1,8 @@
 #include "GameObject.h"
-#include "Application.h"
 #include "ColorRenderer.h"
 #include "SpriteRenderer.h"
 #include "TextRenderer.h"
+#include "Scene.h"
 using namespace DirectX;
 
 GameObject::GameObject(float zCoord, RenderMode renderMode) {
@@ -40,6 +40,7 @@ GameObject::~GameObject() {
 	for(IBehavior* behavior : behaviors) {
 		delete behavior;
 	}
+	delete renderer;
 }
 
 void GameObject::SetZ(float z) {
@@ -86,6 +87,9 @@ Scene* GameObject::GetScene() const {
 
 GameObject* GameObject::Clone() const {
 	GameObject* copy = Copy();
+	if(scene != nullptr) {
+		scene->Add(copy);
+	}
 
 	for(GameObject* child : children) {
 		GameObject* childCopy = child->Clone();
@@ -96,26 +100,29 @@ GameObject* GameObject::Clone() const {
 }
 
 GameObject* GameObject::Copy() const {
-	GameObject* copy = new GameObject(this->transform.z, this->renderMode);
-	copy->active = active;
-	copy->renderer = renderer->Clone();
+	return new GameObject(*this);
+}
 
-	copy->transform = transform;
-	copy->toBeDeleted = toBeDeleted;
+GameObject::GameObject(const GameObject& original) {
+	active = original.active;
+	visible = original.visible;
 
-	// join the same scene
-	if(scene != nullptr) {
-		scene->Add(copy);
+	transform = original.transform;
+	if(original.renderer != nullptr) {
+		renderer = original.renderer->Clone();
 	}
+
+	// scene joined in Clone()
+	// parent and children set in Clone()
+	parent = nullptr;
 
 	// copy all behaviors
-	for(IBehavior* behavior : behaviors) {
-		copy->behaviors.push_back(behavior->Copy());
+	for(IBehavior* behavior : original.behaviors) {
+		behaviors.push_back(behavior->Clone());
 	}
 
-	// parent and children set by Clone()
-
-	return copy;
+	renderMode = original.renderMode;
+	toBeDeleted = original.toBeDeleted;
 }
 
 void GameObject::RemoveParent() {

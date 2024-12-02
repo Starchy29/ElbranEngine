@@ -1,16 +1,14 @@
 #pragma once
 #include <memory>
-#include "Mesh.h"
 #include "Transform.h"
-#include "Camera.h"
-#include "VertexShader.h"
-#include "PixelShader.h"
-#include "Sprite.h"
-#include "Scene.h"
 #include "IBehavior.h"
 #include "IRenderer.h"
-#include "Color.h"
 #include <SpriteFont.h>
+
+class Scene;
+struct Color;
+class Sprite;
+class Camera;
 
 enum RenderMode {
 	Opaque,
@@ -33,8 +31,8 @@ public:
 
 	virtual void Update(float deltaTime);
 	virtual void Draw(Camera* camera);
-	void Delete(bool keepChildren = false);
-	GameObject* Clone() const;
+	virtual void Delete(bool keepChildren = false);
+	virtual GameObject* Clone() const;
 
 	void SetZ(float z);
 	void SetParent(GameObject* newParent);
@@ -47,16 +45,17 @@ public:
 protected:
 	Transform transform;
 	IRenderer* renderer;
+	Scene* scene;
 	GameObject* parent;
 	std::list<GameObject*> children;
 	std::vector<IBehavior*> behaviors;
 
-	virtual GameObject* Copy() const; // override this to make deep copies
+	virtual GameObject* Copy() const;
+	GameObject(const GameObject& original);
 
 private:
 	RenderMode renderMode;
 	bool toBeDeleted;
-	Scene* scene;
 
 	void RemoveParent();
 };

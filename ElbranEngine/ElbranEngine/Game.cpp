@@ -1,8 +1,16 @@
 #include "Game.h"
 #include "Application.h"
-
 #include "Enums.h"
 #include "TextRenderer.h"
+#include "Menu.h"
+
+void Start(Button* clicked) {
+	clicked->GetLabel()->GetRenderer<TextRenderer>()->text = "started :)";
+}
+
+void Quit(Button* clicked) {
+	APP->Quit();
+}
 
 GameObject* text;
 Game::Game(AssetManager* assets) {
@@ -26,10 +34,21 @@ Game::Game(AssetManager* assets) {
 	GameObject* textBack = new GameObject(1, Color::Cyan);
 	textBack->SetParent(text);
 	sampleScene->Add(text);
+
+
+	sampleMenu = new Menu(Color(0.1f, 0.2f, 0.4f));
+	Button* startButton = new Button(Start, Color::White, Color::Blue, Color::Black, "Start");
+	sampleMenu->AddButton(startButton);
+
+	Button* quitButton = (Button*)startButton->Clone();
+	quitButton->GetLabel()->GetRenderer<TextRenderer>()->text = "Quit";
+	quitButton->GetTransform()->Translate(Vector2(0, -10));
+	quitButton->clickFunc = Quit;
 }
 
 Game::~Game() {
 	delete sampleScene;
+	delete sampleMenu;
 }
 
 void Game::Update(float deltaTime) {
@@ -42,8 +61,11 @@ void Game::Update(float deltaTime) {
 	else if (APP->Input()->IsPressed(VK_DOWN)) {
 		text->GetTransform()->Stretch(-1.5f * deltaTime, 0.0f);
 	}
+
+	sampleMenu->Update(deltaTime);
 }
 
 void Game::Draw() {
-	sampleScene->Draw();
+	//sampleScene->Draw();
+	sampleMenu->Draw();
 }
