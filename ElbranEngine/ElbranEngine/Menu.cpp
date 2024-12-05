@@ -89,9 +89,17 @@ void Menu::Update(float deltaTime) {
 	}
 }
 
-void Menu::AddButton(Button* button) {
-	Add(button);
-	buttons.push_back(button);
+void Menu::Add(GameObject* object) {
+	Scene::Add(object);
+	if(object->type == ObjectTag::MenuButton) {
+		buttons.push_back((Button*)object);
+	}
+}
+
+void Menu::Remove(GameObject* removed) {
+	if(removed->type == ObjectTag::MenuButton) {
+		buttons.erase(std::find(buttons.begin(), buttons.end(), removed));
+	}
 }
 
 Button* Menu::FindClosest(Button* button, InputAction directionInput) {

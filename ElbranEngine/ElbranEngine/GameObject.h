@@ -16,12 +16,18 @@ enum RenderMode {
 	Text
 };
 
+enum ObjectTag {
+	Default,
+	MenuButton
+};
+
 class GameObject {
 	friend class Scene;
 
 public:
 	bool active;
 	bool visible;
+	ObjectTag type;
 
 	GameObject(float zCoord, RenderMode renderMode);
 	GameObject(float zCoord, Color color, bool circle = false);

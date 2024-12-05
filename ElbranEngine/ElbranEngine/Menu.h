@@ -14,7 +14,10 @@ public:
     Menu(std::shared_ptr<Sprite> backgroundImage);
 
     void Update(float deltaTime) override;
-    void AddButton(Button* button);
+    virtual void Add(GameObject* object) override;
+
+protected:
+    virtual void Remove(GameObject* removed) override;
 
 private:
     InputManager* input;

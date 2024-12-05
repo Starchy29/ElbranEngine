@@ -53,18 +53,21 @@ void Scene::Update(float deltaTime) {
 	// remove objects that need to be deleted
 	for(int i = opaques.size() - 1; i >= 0; i--) {
 		if(opaques[i]->toBeDeleted) {
+			Remove(opaques[i]);
 			delete opaques[i];
 			opaques.erase(std::next(opaques.begin(), i));
 		}
 	}
 	for(int i = translucents.size() - 1; i >= 0; i--) {
 		if(translucents[i]->toBeDeleted) {
+			Remove(translucents[i]);
 			delete translucents[i];
 			translucents.erase(std::next(translucents.begin(), i));
 		}
 	}
 	for(int i = texts.size() - 1; i >= 0; i--) {
 		if(texts[i]->toBeDeleted) {
+			Remove(texts[i]);
 			delete texts[i];
 			texts.erase(std::next(texts.begin(), i));
 		}

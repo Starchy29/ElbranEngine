@@ -15,6 +15,7 @@ GameObject::GameObject(float zCoord, RenderMode renderMode) {
 
 	transform.SetZ(zCoord);
 	this->renderMode = renderMode;
+	type = ObjectTag::Default;
 }
 
 GameObject::GameObject(float zCoord, Color color, bool circle)
@@ -106,6 +107,7 @@ GameObject* GameObject::Copy() const {
 GameObject::GameObject(const GameObject& original) {
 	active = original.active;
 	visible = original.visible;
+	type = original.type;
 
 	transform = original.transform;
 	if(original.renderer != nullptr) {

@@ -18,7 +18,7 @@ Game::Game(AssetManager* assets) {
 	assets->arial = assets->LoadFont(L"Arial.spritefont");
 	assets->testImage = std::make_shared<Sprite>(L"temp sprite.png");
 
-	// set up game objects
+	// set up scenes
 	sampleScene = new Scene(10, Color(0.1f, 0.1f, 0.1f));
 
 	testObject = new GameObject(-20, Color(0, 0.8f, 0.5f, 0.7f), true);
@@ -38,7 +38,7 @@ Game::Game(AssetManager* assets) {
 
 	sampleMenu = new Menu(Color(0.1f, 0.2f, 0.4f));
 	Button* startButton = new Button(Start, Color::White, Color::Blue, Color::Black, "Start");
-	sampleMenu->AddButton(startButton);
+	sampleMenu->Add(startButton);
 
 	Button* quitButton = (Button*)startButton->Clone();
 	quitButton->GetLabel()->GetRenderer<TextRenderer>()->text = "Quit";

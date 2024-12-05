@@ -11,6 +11,7 @@ public:
 		enabled = true;
 	}
 
+	virtual ~IBehavior() {}
 	virtual void Update(float deltaTime) = 0;
 	virtual IBehavior* Clone() = 0;
 

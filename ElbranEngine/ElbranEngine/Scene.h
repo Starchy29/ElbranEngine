@@ -16,7 +16,7 @@ public:
 
 	virtual void Update(float deltaTime);
 	virtual void Draw();
-	void Add(GameObject* object);
+	virtual void Add(GameObject* object);
 	void UpdateDrawOrder(GameObject* sceneMember);
 
 protected:
@@ -25,6 +25,7 @@ protected:
 	Camera* camera;
 	
 	virtual void DrawBackground();
+	virtual void Remove(GameObject* removed) {}
 
 private:
 	std::vector<GameObject*> opaques;

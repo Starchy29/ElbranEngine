@@ -11,6 +11,7 @@ class IRenderer
 public:
 	std::shared_ptr<Mesh> mesh;
 
+	virtual ~IRenderer() {}
 	virtual void Draw(Camera* camera, const Transform& transform) = 0;
 	virtual IRenderer* Clone() = 0;
 

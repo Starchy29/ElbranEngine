@@ -10,6 +10,7 @@
 Button::Button(ClickEffect clickFunc, Color baseColor, Color hoveredColor, Color disabledColor, std::string label)
 	: GameObject(0, baseColor)
 {
+	type = ObjectTag::MenuButton;
 	this->clickFunc = clickFunc;
 	disabled = false;
 	transform.SetScale(START_WIDTH, START_HEIGHT);
@@ -28,6 +29,7 @@ Button::Button(ClickEffect clickFunc, Color baseColor, Color hoveredColor, Color
 Button::Button(ClickEffect clickFunc, bool translucent, std::shared_ptr<Sprite> baseSprite, Color hoveredColor, Color disabledColor, std::string label)
 	: GameObject(0, baseSprite, translucent)
 {
+	type = ObjectTag::MenuButton;
 	this->clickFunc = clickFunc;
 	disabled = false;
 	transform.SetScale(START_WIDTH, START_HEIGHT);
@@ -51,6 +53,7 @@ Button::Button(ClickEffect clickFunc, bool translucent, std::shared_ptr<Sprite> 
 Button::Button(ClickEffect clickFunc, bool translucent, std::shared_ptr<Sprite> baseSprite, std::shared_ptr<Sprite> hoverSprite, std::shared_ptr<Sprite> disableSprite, std::string label)
 	: GameObject(0, baseSprite, translucent)
 {
+	type = ObjectTag::MenuButton;
 	this->clickFunc = clickFunc;
 	disabled = false;
 	transform.SetScale(START_WIDTH, START_HEIGHT);
@@ -119,7 +122,9 @@ GameObject* Button::GetLabel() {
 
 GameObject* Button::Clone() const {
 	Button* copy = (Button*)Copy();
-	((Menu*)scene)->AddButton(copy); // buttons must be part of a menu
+	if(scene != nullptr) {
+		scene->Add(copy);
+	}
 
 	if(textBox != nullptr) {
 		copy->textBox = textBox->Clone();
