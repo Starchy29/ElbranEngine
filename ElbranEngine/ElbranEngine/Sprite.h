@@ -13,7 +13,7 @@ public:
 	float GetAspectRatio();
 	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> GetResourceView();
 
-private:
+protected:
 	int pixelWidth;
 	int pixelHeight;
 	float aspectRatio;

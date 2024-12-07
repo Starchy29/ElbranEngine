@@ -14,7 +14,7 @@ Shader::~Shader() {
 }
 
 // saves data for a variable into the correct spot of that buffer's localData. The resource is updated all at once in SetShader()
-void Shader::SetConstantVariable(std::string name, void* data) {
+void Shader::SetConstantVariable(std::string name, const void* data) {
 	std::unordered_map<std::string, ConstantVariable>::iterator element = constantVars.find(name);
 
 	if(element == constantVars.end()) {

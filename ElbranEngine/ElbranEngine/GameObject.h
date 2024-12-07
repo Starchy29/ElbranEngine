@@ -8,6 +8,7 @@
 class Scene;
 struct Color;
 class Sprite;
+class SpriteAtlas;
 class Camera;
 
 enum RenderMode {
@@ -29,7 +30,7 @@ public:
 	bool visible;
 	ObjectTag type;
 
-	GameObject(float zCoord, RenderMode renderMode);
+	GameObject(float zCoord, RenderMode renderMode, IRenderer* renderer);
 	GameObject(float zCoord, Color color, bool circle = false);
 	GameObject(float zCoord, std::shared_ptr<Sprite> sprite, bool translucent);
 	GameObject(float zCoord, std::string text, std::shared_ptr<DirectX::DX11::SpriteFont> font, Color color);

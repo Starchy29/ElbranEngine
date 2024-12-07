@@ -13,8 +13,9 @@ public:
     bool flipY;
 
     SpriteRenderer(std::shared_ptr<Sprite> sprite);
+    virtual ~SpriteRenderer() {}
 
-    void Draw(Camera* camera, const Transform& transform) override;
+    virtual void Draw(Camera* camera, const Transform& transform) override;
     IRenderer* Clone() override;
 };
 

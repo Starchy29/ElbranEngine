@@ -29,7 +29,7 @@ public:
 	~Shader();
 
 	void SetShader();
-	void SetConstantVariable(std::string name, void* data);
+	void SetConstantVariable(std::string name, const void* data);
 	void SetBool(std::string name, bool value);
 
 protected:

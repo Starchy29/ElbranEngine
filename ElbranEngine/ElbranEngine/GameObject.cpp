@@ -5,7 +5,7 @@
 #include "Scene.h"
 using namespace DirectX;
 
-GameObject::GameObject(float zCoord, RenderMode renderMode) {
+GameObject::GameObject(float zCoord, RenderMode renderMode, IRenderer* renderer) {
 	active = true;
 	visible = true;
 	toBeDeleted = false;
@@ -15,27 +15,23 @@ GameObject::GameObject(float zCoord, RenderMode renderMode) {
 
 	transform.SetZ(zCoord);
 	this->renderMode = renderMode;
+	this->renderer = renderer;
 	type = ObjectTag::Default;
 }
 
 GameObject::GameObject(float zCoord, Color color, bool circle)
-	: GameObject(zCoord, color.alpha < 1 ? RenderMode::Translucent : RenderMode::Opaque)
-{
-	renderer = new ColorRenderer(color, circle);
-}
+	: GameObject(zCoord, color.alpha < 1 ? RenderMode::Translucent : RenderMode::Opaque, new ColorRenderer(color, circle))
+{ }
 
 GameObject::GameObject(float zCoord, std::shared_ptr<Sprite> sprite, bool translucent)
-	: GameObject(zCoord, translucent ? RenderMode::Translucent : RenderMode::Opaque) 
+	: GameObject(zCoord, translucent ? RenderMode::Translucent : RenderMode::Opaque, new SpriteRenderer(sprite))
 {
-	renderer = new SpriteRenderer(sprite);
 	transform.SetScale(sprite->GetAspectRatio(), 1.0f);
 }
 
 GameObject::GameObject(float zCoord, std::string text, std::shared_ptr<DirectX::DX11::SpriteFont> font, Color color)
-	: GameObject(zCoord, RenderMode::Text)
-{
-	renderer = new TextRenderer(text, font, color);
-}
+	: GameObject(zCoord, RenderMode::Text, new TextRenderer(text, font, color))
+{ }
 
 GameObject::~GameObject() {
 	for(IBehavior* behavior : behaviors) {

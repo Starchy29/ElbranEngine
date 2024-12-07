@@ -3,6 +3,7 @@
 #include "Enums.h"
 #include "TextRenderer.h"
 #include "Menu.h"
+#include "AtlasRenderer.h"
 
 void Start(Button* clicked) {
 	clicked->GetLabel()->GetRenderer<TextRenderer>()->text = "started :)";
@@ -12,7 +13,6 @@ void Quit(Button* clicked) {
 	APP->Quit();
 }
 
-GameObject* text;
 Game::Game(AssetManager* assets) {
 	// load assets
 	assets->arial = assets->LoadFont(L"Arial.spritefont");
@@ -28,13 +28,14 @@ Game::Game(AssetManager* assets) {
 	sampleScene->Add(picture);
 	picture->GetTransform()->SetPosition(Vector2(0, -2));
 
-	text = new GameObject(0, "Hello is there text here? what about there?", assets->arial, Color::White);
-	text->GetTransform()->SetScale(4, 0.5f);
-	text->GetRenderer<TextRenderer>()->horizontalAlignment = Direction::Left;
-	GameObject* textBack = new GameObject(1, Color::Cyan);
-	textBack->SetParent(text);
-	sampleScene->Add(text);
-
+	std::shared_ptr<SpriteAtlas> grid = std::make_shared<SpriteAtlas>(L"testAtlas.png", 2, 2);
+	GameObject* atlas = new GameObject(0, RenderMode::Opaque, new AtlasRenderer(grid));
+	sampleScene->Add(atlas);
+	//atlas->GetRenderer<AtlasRenderer>()->row = 1;
+	atlas->GetRenderer<AtlasRenderer>()->col = 1;
+	atlas->GetRenderer<AtlasRenderer>()->flipX = true;
+	atlas->GetRenderer<AtlasRenderer>()->flipY = true;
+	atlas->GetRenderer<AtlasRenderer>()->tint = Color(0.3f, 0.4f, 0.5f);
 
 	sampleMenu = new Menu(Color(0.1f, 0.2f, 0.4f));
 	Button* startButton = new Button(Start, Color::White, Color::Blue, Color::Black, "Start");
@@ -52,20 +53,12 @@ Game::~Game() {
 }
 
 void Game::Update(float deltaTime) {
-	//text->GetTransform()->SetPosition(APP->Input()->GetMousePosition(sampleScene->GetCamera()));
 	testObject->GetTransform()->SetPosition(APP->Input()->GetMousePosition(sampleScene->GetCamera()));
-	//text->GetTransform()->Rotate(2*deltaTime);
-	if(APP->Input()->IsPressed(VK_UP)) {
-		text->GetTransform()->Stretch(1.5f * deltaTime, 0.0f);
-	}
-	else if (APP->Input()->IsPressed(VK_DOWN)) {
-		text->GetTransform()->Stretch(-1.5f * deltaTime, 0.0f);
-	}
 
-	sampleMenu->Update(deltaTime);
+	//sampleMenu->Update(deltaTime);
 }
 
 void Game::Draw() {
-	//sampleScene->Draw();
-	sampleMenu->Draw();
+	sampleScene->Draw();
+	//sampleMenu->Draw();
 }

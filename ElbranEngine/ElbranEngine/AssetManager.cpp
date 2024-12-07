@@ -19,6 +19,7 @@ AssetManager::AssetManager() {
 	Microsoft::WRL::ComPtr<ID3D11DeviceContext> dxContext = dx->GetContext();
 
 	cameraVS = std::make_shared<VertexShader>(dxDevice, dxContext, L"CameraVS.cso");
+	atlasVS = std::make_shared<VertexShader>(dxDevice, dxContext, L"TextureAtlasVS.cso");
 	backgroundVS = std::make_shared<VertexShader>(dxDevice, dxContext, L"FullscreenVS.cso");
 	imagePS = std::make_shared<PixelShader>(dxDevice, dxContext, L"TexturePS.cso");
 	colorPS = std::make_shared<PixelShader>(dxDevice, dxContext, L"ColorFillPS.cso");

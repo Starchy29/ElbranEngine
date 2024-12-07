@@ -18,6 +18,7 @@ public:
 
 #pragma region shaders
 	std::shared_ptr<VertexShader> cameraVS;
+	std::shared_ptr<VertexShader> atlasVS;
 	std::shared_ptr<VertexShader> backgroundVS;
 	std::shared_ptr<PixelShader> imagePS;
 	std::shared_ptr<PixelShader> colorPS;
