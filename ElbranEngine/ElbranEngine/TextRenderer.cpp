@@ -7,7 +7,6 @@ TextRenderer::TextRenderer(std::string text, std::shared_ptr<DirectX::DX11::Spri
 	this->font = font;
 	this->color = color;
 
-	maxSize = 1.0f;
 	horizontalAlignment = Direction::Center;
 	verticalAlignment = Direction::Center;
 
@@ -44,31 +43,35 @@ void TextRenderer::Draw(Camera* camera, const Transform& transform) {
 	float angle = toRight.Angle();
 
 	RECT textSize = font->MeasureDrawBounds(text.c_str(), XMFLOAT2(0, 0));
-	float horiScale = 2 * toRight.Length() / textSize.right;
-	float vertScale = 2 * toTop.Length() / textSize.bottom;
+	float textWidth = textSize.right - textSize.left;
+	float textHeight = textSize.bottom - textSize.top;
+
+	//XMVECTOR textSize = font->MeasureString(text.c_str());
+	//float textWidth = XMVectorGetX(textSize);
+	//float textHeight = XMVectorGetY(textSize);
+
+	float horiScale = 2 * toRight.Length() / textWidth;
+	float vertScale = 2 * toTop.Length() / textHeight;
 	float size = min(horiScale, vertScale);
-	if(size > maxSize) {
-		size = maxSize;
-	}
 
 	// align the text to a side of the box
 	float halfWidth;
 	if(horizontalAlignment == Direction::Left) {
-		halfWidth = textSize.right * size / 2.0f;
+		halfWidth = textWidth * size / 2.0f;
 		center += -toRight + toRight.Normalize() * halfWidth;
 	}
 	else if(horizontalAlignment == Direction::Right) {
-		halfWidth = textSize.right * size / 2.0f;
+		halfWidth = textWidth * size / 2.0f;
 		center += toRight - toRight.Normalize() * halfWidth;
 	}
 
 	float halfHeight;
 	if(verticalAlignment == Direction::Up) {
-		halfHeight = textSize.bottom * size / 2.0f;
+		halfHeight = textHeight * size / 2.0f;
 		center += toTop - toTop.Normalize() * halfHeight;
 	}
 	else if(verticalAlignment == Direction::Down) {
-		halfHeight = textSize.bottom * size / 2.0f;
+		halfHeight = textHeight * size / 2.0f;
 		center += -toTop + toTop.Normalize() * halfHeight;
 	}
 
@@ -77,7 +80,7 @@ void TextRenderer::Draw(Camera* camera, const Transform& transform) {
 		center,
 		XMLoadFloat4((XMFLOAT4*)&color),
 		angle,
-		XMFLOAT2(textSize.right / 2.0f, textSize.bottom / 2.0f),
+		XMFLOAT2(textWidth / 2.0f + textSize.left, textHeight / 2.0f + textSize.top),
 		size,
 		DX11::SpriteEffects_None,
 		center3D.z

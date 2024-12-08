@@ -6,7 +6,7 @@
 #include "AtlasRenderer.h"
 
 void Start(Button* clicked) {
-	clicked->GetLabel()->GetRenderer<TextRenderer>()->text = "started :)";
+	clicked->GetLabel()->GetRenderer<TextRenderer>()->text = "started :/";
 }
 
 void Quit(Button* clicked) {
@@ -28,16 +28,8 @@ Game::Game(AssetManager* assets) {
 	sampleScene->Add(picture);
 	picture->GetTransform()->SetPosition(Vector2(0, -2));
 
-	std::shared_ptr<SpriteAtlas> grid = std::make_shared<SpriteAtlas>(L"testAtlas.png", 2, 2);
-	GameObject* atlas = new GameObject(0, RenderMode::Opaque, new AtlasRenderer(grid));
-	sampleScene->Add(atlas);
-	//atlas->GetRenderer<AtlasRenderer>()->row = 1;
-	atlas->GetRenderer<AtlasRenderer>()->col = 1;
-	atlas->GetRenderer<AtlasRenderer>()->flipX = true;
-	atlas->GetRenderer<AtlasRenderer>()->flipY = true;
-	atlas->GetRenderer<AtlasRenderer>()->tint = Color(0.3f, 0.4f, 0.5f);
-
 	sampleMenu = new Menu(Color(0.1f, 0.2f, 0.4f));
+
 	Button* startButton = new Button(Start, Color::White, Color::Blue, Color::Black, "Start");
 	sampleMenu->Add(startButton);
 
@@ -45,6 +37,13 @@ Game::Game(AssetManager* assets) {
 	quitButton->GetLabel()->GetRenderer<TextRenderer>()->text = "Quit";
 	quitButton->GetTransform()->Translate(Vector2(0, -10));
 	quitButton->clickFunc = Quit;
+
+	GameObject* testTitle = new GameObject(0, "Game Title", assets->arial, Color::White);
+	sampleMenu->Add(testTitle);
+	testTitle->GetTransform()->Translate(Vector2(0, 10.0f));
+	testTitle->GetTransform()->SetScale(20, 4);
+	GameObject* titleBack = new GameObject(1, Color(0.3f, 0.3f, 0.3f));
+	titleBack->SetParent(testTitle);
 }
 
 Game::~Game() {
@@ -55,10 +54,10 @@ Game::~Game() {
 void Game::Update(float deltaTime) {
 	testObject->GetTransform()->SetPosition(APP->Input()->GetMousePosition(sampleScene->GetCamera()));
 
-	//sampleMenu->Update(deltaTime);
+	sampleMenu->Update(deltaTime);
 }
 
 void Game::Draw() {
-	sampleScene->Draw();
-	//sampleMenu->Draw();
+	//sampleScene->Draw();
+	sampleMenu->Draw();
 }

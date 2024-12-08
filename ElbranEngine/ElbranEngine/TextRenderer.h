@@ -11,7 +11,6 @@ public:
     std::string text;
     std::shared_ptr<DirectX::DX11::SpriteFont> font;
     Color color;
-    float maxSize;
     Direction horizontalAlignment;
     Direction verticalAlignment;
 

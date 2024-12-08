@@ -17,6 +17,10 @@ Button::Button(ClickEffect clickFunc, Color baseColor, Color hoveredColor, Color
 
 	textBox = new GameObject(1, label, APP->Assets()->arial, Color::Black);
 	textBox->SetParent(this);
+	textBox->GetTransform()->Scale(0.7f);
+
+	useSprite = false;
+	changeSprites = false;
 
 	this->baseColor = baseColor;
 	this->hoveredColor = hoveredColor;
@@ -37,9 +41,10 @@ Button::Button(ClickEffect clickFunc, bool translucent, std::shared_ptr<Sprite> 
 	if(label.size() > 0) {
 		textBox = new GameObject(1, label, APP->Assets()->arial, Color::Black);
 		textBox->SetParent(this);
+		textBox->GetTransform()->Scale(0.7f);
 	}
 
-	useSprite = false;
+	useSprite = true;
 	changeSprites = false;
 
 	baseColor = Color::White;
@@ -61,6 +66,7 @@ Button::Button(ClickEffect clickFunc, bool translucent, std::shared_ptr<Sprite> 
 	if(label.size() > 0) {
 		textBox = new GameObject(1, label, APP->Assets()->arial, Color::Black);
 		textBox->SetParent(this);
+		textBox->GetTransform()->Scale(0.7f);
 	}
 
 	useSprite = true;
