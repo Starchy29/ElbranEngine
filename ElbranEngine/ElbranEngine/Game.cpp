@@ -4,6 +4,7 @@
 #include "TextRenderer.h"
 #include "Menu.h"
 #include "AtlasRenderer.h"
+#include "SpriteAnimator.h"
 
 void Start(Button* clicked) {
 	clicked->GetLabel()->GetRenderer<TextRenderer>()->text = "started :/";
@@ -28,6 +29,14 @@ Game::Game(AssetManager* assets) {
 	sampleScene->Add(picture);
 	picture->GetTransform()->SetPosition(Vector2(0, -2));
 
+	GameObject* animator = new GameObject(0, RenderMode::Opaque, new AtlasRenderer(nullptr));
+	sampleScene->Add(animator);
+	SpriteAnimator* animation = new SpriteAnimator(std::make_shared<SpriteAtlas>(L"testAtlas.png", 2, 2), 4, 2.f);
+	animator->AddBehavior(animation);
+	animation->looped = false;
+	animation->oscillates = true;
+
+	// menu
 	sampleMenu = new Menu(Color(0.1f, 0.2f, 0.4f));
 
 	Button* startButton = new Button(Start, Color::White, Color::Blue, Color::Black, "Start");
@@ -53,11 +62,12 @@ Game::~Game() {
 
 void Game::Update(float deltaTime) {
 	testObject->GetTransform()->SetPosition(APP->Input()->GetMousePosition(sampleScene->GetCamera()));
+	sampleScene->Update(deltaTime);
 
-	sampleMenu->Update(deltaTime);
+	//sampleMenu->Update(deltaTime);
 }
 
 void Game::Draw() {
-	//sampleScene->Draw();
-	sampleMenu->Draw();
+	sampleScene->Draw();
+	//sampleMenu->Draw();
 }

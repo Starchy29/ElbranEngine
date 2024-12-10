@@ -4,6 +4,8 @@
 Sprite::Sprite(std::wstring fileName) {
 	APP->Assets()->LoadTexture(fileName, resourceView.GetAddressOf());
 
+	assert(resourceView != nullptr && "failed to find file");
+
 	ID3D11Resource* texture;
 	resourceView.Get()->GetResource(&texture);
 	

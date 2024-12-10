@@ -3,6 +3,7 @@
 #include "SpriteRenderer.h"
 #include "TextRenderer.h"
 #include "Scene.h"
+#include "IBehavior.h"
 using namespace DirectX;
 
 GameObject::GameObject(float zCoord, RenderMode renderMode, IRenderer* renderer) {
@@ -71,6 +72,7 @@ void GameObject::SetParent(GameObject* newParent) {
 }
 
 void GameObject::AddBehavior(IBehavior* behavior) {
+	behavior->SetOwner(this);
 	behaviors.push_back(behavior);
 }
 
@@ -116,7 +118,7 @@ GameObject::GameObject(const GameObject& original) {
 
 	// copy all behaviors
 	for(IBehavior* behavior : original.behaviors) {
-		behaviors.push_back(behavior->Clone());
+		AddBehavior(behavior->Clone());
 	}
 
 	renderMode = original.renderMode;

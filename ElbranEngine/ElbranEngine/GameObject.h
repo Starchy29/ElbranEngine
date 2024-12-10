@@ -1,7 +1,6 @@
 #pragma once
 #include <memory>
 #include "Transform.h"
-#include "IBehavior.h"
 #include "IRenderer.h"
 #include <SpriteFont.h>
 
@@ -10,6 +9,7 @@ struct Color;
 class Sprite;
 class SpriteAtlas;
 class Camera;
+class IBehavior;
 
 enum RenderMode {
 	Opaque,

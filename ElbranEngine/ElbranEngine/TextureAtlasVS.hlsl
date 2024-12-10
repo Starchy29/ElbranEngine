@@ -23,7 +23,7 @@ VertexToPixel main(VertexShaderInput input)
         input.uv.y = 1 - input.uv.y;
     }
 
-    output.uv = (input.uv + float2(row, col)) * float2(spriteWidth, spriteHeight);
+    output.uv = (input.uv + float2(col, row)) * float2(spriteWidth, spriteHeight);
 
 	return output;
 }
