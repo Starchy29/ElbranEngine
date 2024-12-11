@@ -22,6 +22,7 @@ AssetManager::AssetManager() {
 	atlasVS = std::make_shared<VertexShader>(dxDevice, dxContext, L"TextureAtlasVS.cso");
 	backgroundVS = std::make_shared<VertexShader>(dxDevice, dxContext, L"FullscreenVS.cso");
 	imagePS = std::make_shared<PixelShader>(dxDevice, dxContext, L"TexturePS.cso");
+	hueSwapPS = std::make_shared<PixelShader>(dxDevice, dxContext, L"HueSwapPS.cso");
 	colorPS = std::make_shared<PixelShader>(dxDevice, dxContext, L"ColorFillPS.cso");
 	circlePS = std::make_shared<PixelShader>(dxDevice, dxContext, L"CirclePS.cso");
 

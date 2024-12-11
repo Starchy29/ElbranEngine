@@ -21,6 +21,7 @@ public:
 	std::shared_ptr<VertexShader> atlasVS;
 	std::shared_ptr<VertexShader> backgroundVS;
 	std::shared_ptr<PixelShader> imagePS;
+	std::shared_ptr<PixelShader> hueSwapPS;
 	std::shared_ptr<PixelShader> colorPS;
 	std::shared_ptr<PixelShader> circlePS;
 

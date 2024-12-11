@@ -46,10 +46,6 @@ void TextRenderer::Draw(Camera* camera, const Transform& transform) {
 	float textWidth = textSize.right - textSize.left;
 	float textHeight = textSize.bottom - textSize.top;
 
-	//XMVECTOR textSize = font->MeasureString(text.c_str());
-	//float textWidth = XMVectorGetX(textSize);
-	//float textHeight = XMVectorGetY(textSize);
-
 	float horiScale = 2 * toRight.Length() / textWidth;
 	float vertScale = 2 * toTop.Length() / textHeight;
 	float size = min(horiScale, vertScale);

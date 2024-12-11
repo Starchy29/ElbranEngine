@@ -18,7 +18,7 @@ void SpriteRenderer::Draw(Camera* camera, const Transform& transform) {
 	vertexShader->SetBool("flipX", flipX);
 	vertexShader->SetBool("flipY", flipY);
 
-	pixelShader->SetConstantVariable("color", &tint);
+	pixelShader->SetConstantVariable("tint", &tint);
 	pixelShader->SetSampler(APP->Assets()->defaultSampler);
 	pixelShader->SetTexture(sprite->GetResourceView());
 
