@@ -16,6 +16,7 @@ public:
 	void SetAlphaBlend(bool enabled);
 	void StartTextBatch();
 	void FinishTextBatch();
+	void DrawScreen();
 
 	Microsoft::WRL::ComPtr<ID3D11Device> GetDevice() const;
 	Microsoft::WRL::ComPtr<ID3D11DeviceContext> GetContext() const;

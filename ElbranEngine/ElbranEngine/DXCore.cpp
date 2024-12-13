@@ -1,5 +1,6 @@
 #include "DXCore.h"
 #include "Game.h"
+#include "Application.h"
 
 void DXCore::SetAlphaBlend(bool enabled) {
 	context->OMSetBlendState(enabled ? alphaBlendState.Get() : NULL, NULL, 0xffffffff);
@@ -19,6 +20,11 @@ void DXCore::FinishTextBatch() {
 	context->OMSetBlendState(0, 0, 0xFFFFFFFF);
 	context->RSSetState(0);
 	Mesh::ClearLastDrawn();
+}
+
+void DXCore::DrawScreen() {
+	APP->Assets()->backgroundVS->SetShader();
+	context->Draw(3, 0);
 }
 
 Microsoft::WRL::ComPtr<ID3D11Device> DXCore::GetDevice() const {

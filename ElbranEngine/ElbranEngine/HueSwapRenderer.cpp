@@ -8,8 +8,8 @@ HueSwapRenderer::HueSwapRenderer(std::shared_ptr<Sprite> sprite)
 }
 
 void HueSwapRenderer::Draw(Camera* camera, const Transform& transform) {
-	pixelShader->SetConstantVariable("replacedColor", &replaced);
-	pixelShader->SetConstantVariable("replacementColor", &replacement);
+	pixelShader->SetConstantVariable("replacedColor", &oldHue);
+	pixelShader->SetConstantVariable("replacementColor", &newHue);
 	pixelShader->SetConstantVariable("sensitivity", &sensitivity);
 	SpriteRenderer::Draw(camera, transform);
 }

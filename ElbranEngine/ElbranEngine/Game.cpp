@@ -30,6 +30,22 @@ Game::Game(AssetManager* assets) {
 	sampleScene->Add(picture);
 	picture->GetTransform()->SetPosition(Vector2(0, -2));
 
+	std::shared_ptr<Sprite> crackleSprite = std::make_shared<Sprite>(L"crackle.png");
+	
+	GameObject* spawned = new GameObject(0, crackleSprite, false);
+	sampleScene->Add(spawned);
+	spawned->GetTransform()->Translate(Vector2(-1, 1));
+
+	HueSwapRenderer* hueSwapper = new HueSwapRenderer(crackleSprite);
+	spawned = new GameObject(0, RenderMode::Opaque, hueSwapper);
+	sampleScene->Add(spawned);
+	spawned->GetTransform()->Translate(Vector2(1, 1));
+	spawned->GetTransform()->SetScale(0.7f, 1.0f);
+
+	hueSwapper->oldHue = Color(1.f, 0.5f, 0);
+	hueSwapper->newHue = Color::Cyan;
+	hueSwapper->sensitivity = 0.3f;
+
 	// menu
 	sampleMenu = new Menu(Color(0.1f, 0.2f, 0.4f));
 

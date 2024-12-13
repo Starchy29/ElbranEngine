@@ -160,8 +160,8 @@ void Scene::DrawBackground() {
 		colorShader->SetConstantVariable("color", &backColor);
 		colorShader->SetShader();
 	}
-	assets->backgroundVS->SetShader();
-	APP->Graphics()->GetContext()->Draw(3, 0);
+	
+	APP->Graphics()->DrawScreen();
 }
 
 void Scene::SortInto(GameObject* sceneMember, std::vector<GameObject*>* objectList) {

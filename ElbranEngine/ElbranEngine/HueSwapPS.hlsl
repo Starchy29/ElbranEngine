@@ -1,4 +1,5 @@
 #include "ShaderStructs.hlsli"
+#include "ColorConversion.hlsli"
 
 cbuffer Constants : register(b0) {
     float4 tint;
@@ -12,12 +13,36 @@ SamplerState Sampler : register(s0);
 
 float4 main(VertexToPixel input) : SV_TARGET
 {
-	float4 color = Image.Sample(Sampler, input.uv);
-    float3 testDiff = replacedColor.rgb - color.rgb;
-    if(abs(testDiff.r) + abs(testDiff.g) + abs(testDiff.b) <= sensitivity) {
-        color = float4(saturate(replacementColor.rgb + testDiff), color.a);
+    float4 color = Image.Sample(Sampler, input.uv);
+    clip(color.a - 0.01);
+    
+    float3 sampleHSV = toHSV(color.rgb);
+    float3 testHSV = toHSV(replacedColor.rgb);
+    float3 replacementHSV = toHSV(replacementColor.rgb);
+    
+    if(testHSV.y <= 0) {
+        // when replacing grayscale, check brightness instead of hue
+        float brightnessDiff = sampleHSV.z - testHSV.z;
+        if(sampleHSV.y <= 0 && brightnessDiff <= sensitivity) {
+            replacementHSV.z = saturate(sampleHSV.z + brightnessDiff);
+            color = float4(toRGB(replacementHSV), color.a);
+        }
+        
+        return color;
+    }
+    
+    float hueDiff = sampleHSV.x - testHSV.x;
+    if(abs(hueDiff) <= sensitivity) {
+        if(replacementHSV.y <= 0) {
+            // when replacing with grayscale, set the saturation to 0
+            sampleHSV.y = 0;
+        } else {
+            // change the hue and keep the sampled saturation and brightness
+            sampleHSV.x = replacementHSV.x + hueDiff;
+        }
+        
+        color = float4(toRGB(sampleHSV), color.a);
     }
 	
-	clip(color.a - 0.01);
     return color;
 }
