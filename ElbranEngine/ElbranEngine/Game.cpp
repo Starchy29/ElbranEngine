@@ -6,6 +6,7 @@
 #include "AtlasRenderer.h"
 #include "SpriteAnimator.h"
 #include "HueSwapRenderer.h"
+#include "BrightConPostProc.h"
 
 void Start(Button* clicked) {
 	clicked->GetLabel()->GetRenderer<TextRenderer>()->text = "started :/";
@@ -23,12 +24,14 @@ Game::Game(AssetManager* assets) {
 	// set up scenes
 	sampleScene = new Scene(10, Color(0.1f, 0.1f, 0.1f));
 
+	APP->Graphics()->postProcesses.push_back(new BrightConPostProc());
+
 	testObject = new GameObject(-20, Color(0, 0.8f, 0.5f, 0.7f), true);
 	sampleScene->Add(testObject);
 
 	picture = new GameObject(1, assets->testImage, false);
 	sampleScene->Add(picture);
-	picture->GetTransform()->SetPosition(Vector2(0, -2));
+	picture->GetTransform()->SetPosition(Vector2(0, -1));
 
 	std::shared_ptr<Sprite> crackleSprite = std::make_shared<Sprite>(L"crackle.png");
 	
@@ -43,7 +46,7 @@ Game::Game(AssetManager* assets) {
 	spawned->GetTransform()->SetScale(0.7f, 1.0f);
 
 	hueSwapper->oldHue = Color(1.f, 0.5f, 0);
-	hueSwapper->newHue = Color::Cyan;
+	hueSwapper->newHue = Color(0.5, 0, 1);
 	hueSwapper->sensitivity = 0.3f;
 
 	// menu

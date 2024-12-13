@@ -35,16 +35,21 @@ Microsoft::WRL::ComPtr<ID3D11DeviceContext> DXCore::GetContext() const {
 	return context;
 }
 
-DirectX::XMINT2 DXCore::GetViewDimensions() {
+DirectX::XMINT2 DXCore::GetViewDimensions() const {
 	return viewportDims;
 }
 
-DirectX::XMINT2 DXCore::GetViewOffset() {
+DirectX::XMINT2 DXCore::GetViewOffset() const {
 	return viewportShift;
 }
 
-DirectX::SpriteBatch* DXCore::GetSpriteBatch() {
+DirectX::SpriteBatch* DXCore::GetSpriteBatch() const {
 	return spriteBatch;
+}
+
+PostProcessTexture* DXCore::GetPostProcessTexture(int index) {
+	assert(index >= 0 && index < MAX_POST_PROCESS_TEXTURES && "index was out of range");
+	return &ppHelpers[index];
 }
 
 DXCore::DXCore(HWND windowHandle, DirectX::XMINT2 windowDims, float viewAspectRatio, HRESULT* outResult) {
@@ -205,6 +210,9 @@ DXCore::DXCore(HWND windowHandle, DirectX::XMINT2 windowDims, float viewAspectRa
 
 DXCore::~DXCore() {
 	delete spriteBatch;
+	for(IPostProcess* pp : postProcesses) {
+		delete pp;
+	}
 }
 
 void DXCore::Resize(DirectX::XMINT2 windowDims, float viewAspectRatio) {
@@ -277,13 +285,33 @@ void DXCore::Resize(DirectX::XMINT2 windowDims, float viewAspectRatio) {
 	viewport.MinDepth = 0.0f;
 	viewport.MaxDepth = 1.0f;
 	context->RSSetViewports(1, &viewport);
+
+	ppTex1.Resize(device, windowDims.x, windowDims.y);
+	ppTex2.Resize(device, windowDims.x, windowDims.y);
+	for(int i = 0; i < MAX_POST_PROCESS_TEXTURES; i++) {
+		ppHelpers[i].Resize(device, windowDims.x, windowDims.y);
+	}
 }
 
 void DXCore::Render(Game* game) {
 	context->ClearRenderTargetView(backBufferView.Get(), Color::Black);
 	context->ClearDepthStencilView(depthStencilView.Get(), D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
 
+	if(postProcesses.size() > 0) {
+		context->OMSetRenderTargets(1, ppTex1.GetRenderTarget().GetAddressOf(), depthStencilView.Get());
+	}
+
 	game->Draw();
+
+	for(int i = 0; i < postProcesses.size(); i++) {
+		Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> input = i % 2 == 0 ? ppTex1.GetShaderResource() : ppTex2.GetShaderResource();
+		Microsoft::WRL::ComPtr<ID3D11RenderTargetView> output = i % 2 == 0 ? ppTex2.GetRenderTarget() : ppTex1.GetRenderTarget();
+		if(i == postProcesses.size() - 1) {
+			output = backBufferView;
+		}
+
+		postProcesses[i]->Render(input, output);
+	}
 
 	swapChain->Present(0, 0);
 	context->OMSetRenderTargets(1, backBufferView.GetAddressOf(), depthStencilView.Get());

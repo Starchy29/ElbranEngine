@@ -5,8 +5,7 @@
 class PostProcessTexture
 {
 public:
-
-	void Resize();
+	void Resize(Microsoft::WRL::ComPtr<ID3D11Device> device, float width, float height);
 
 	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> GetShaderResource();
 	Microsoft::WRL::ComPtr<ID3D11RenderTargetView> GetRenderTarget();
