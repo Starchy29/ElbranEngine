@@ -6,7 +6,7 @@
 #include "AtlasRenderer.h"
 #include "SpriteAnimator.h"
 #include "HueSwapRenderer.h"
-#include "BrightConPostProc.h"
+#include "HSVPostProcess.h"
 
 void Start(Button* clicked) {
 	clicked->GetLabel()->GetRenderer<TextRenderer>()->text = "started :/";
@@ -24,22 +24,26 @@ Game::Game(AssetManager* assets) {
 	// set up scenes
 	sampleScene = new Scene(10, Color(0.1f, 0.1f, 0.1f));
 
-	APP->Graphics()->postProcesses.push_back(new BrightConPostProc());
+	APP->Graphics()->postProcesses.push_back(new HSVPostProcess(0.3f, -1, 0));
 
 	testObject = new GameObject(-20, Color(0, 0.8f, 0.5f, 0.7f), true);
 	sampleScene->Add(testObject);
 
-	picture = new GameObject(1, assets->testImage, false);
+	/*picture = new GameObject(1, assets->testImage, false);
 	sampleScene->Add(picture);
-	picture->GetTransform()->SetPosition(Vector2(0, -1));
+	picture->GetTransform()->SetPosition(Vector2(0, -1));*/
+
+	GameObject* photo = new GameObject(0, std::make_shared<Sprite>(L"nature.jpg"), false);
+	sampleScene->Add(photo);
+	photo->GetTransform()->GrowWidth(9);
 
 	std::shared_ptr<Sprite> crackleSprite = std::make_shared<Sprite>(L"crackle.png");
 	
-	GameObject* spawned = new GameObject(0, crackleSprite, false);
+	/*GameObject* spawned = new GameObject(0, crackleSprite, false);
 	sampleScene->Add(spawned);
-	spawned->GetTransform()->Translate(Vector2(-1, 1));
+	spawned->GetTransform()->Translate(Vector2(-1, 1));*/
 
-	HueSwapRenderer* hueSwapper = new HueSwapRenderer(crackleSprite);
+	/*HueSwapRenderer* hueSwapper = new HueSwapRenderer(crackleSprite);
 	spawned = new GameObject(0, RenderMode::Opaque, hueSwapper);
 	sampleScene->Add(spawned);
 	spawned->GetTransform()->Translate(Vector2(1, 1));
@@ -47,7 +51,7 @@ Game::Game(AssetManager* assets) {
 
 	hueSwapper->oldHue = Color(1.f, 0.5f, 0);
 	hueSwapper->newHue = Color(0.5, 0, 1);
-	hueSwapper->sensitivity = 0.3f;
+	hueSwapper->sensitivity = 0.3f;*/
 
 	// menu
 	sampleMenu = new Menu(Color(0.1f, 0.2f, 0.4f));
@@ -76,6 +80,24 @@ Game::~Game() {
 void Game::Update(float deltaTime) {
 	testObject->GetTransform()->SetPosition(APP->Input()->GetMousePosition(sampleScene->GetCamera()));
 	sampleScene->Update(deltaTime);
+	
+	HSVPostProcess* pp = (HSVPostProcess*)APP->Graphics()->postProcesses[0];
+	if(APP->Input()->IsKeyPressed(VK_UP)) {
+		pp->brightness += deltaTime;
+	}
+	if(APP->Input()->IsKeyPressed(VK_DOWN)) {
+		pp->brightness -= deltaTime;
+	}
+
+	/*if (pp->saturation < -1) {
+		pp->saturation = -1;
+	}*/
+
+	if(APP->Input()->KeyJustPressed(VK_SPACE)) {
+		pp->brightness = 0.f;
+		//pp->contrast = 0.f;
+		//pp->saturation = 0.f;
+	}
 
 	//sampleMenu->Update(deltaTime);
 }

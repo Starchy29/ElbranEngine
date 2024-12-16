@@ -91,21 +91,21 @@ void InputManager::Update() {
 	}
 }
 
-bool InputManager::IsPressed(int key) {
+bool InputManager::IsKeyPressed(int key) {
 	return KEY_DOWN(keyboardState[key]);
 }
 
-bool InputManager::JustPressed(int key) {
+bool InputManager::KeyJustPressed(int key) {
 	return KEY_DOWN(keyboardState[key]) && !KEY_DOWN(previousKeyboard[key]);
 }
 
-bool InputManager::JustReleased(int key) {
+bool InputManager::KeyJustReleased(int key) {
 	return !KEY_DOWN(keyboardState[key]) && KEY_DOWN(previousKeyboard[key]);
 }
 
 bool InputManager::IsPressed(InputAction action) {
 	for(int key : actionKeys[(int)action]) {
-		if(IsPressed(key)) {
+		if(IsKeyPressed(key)) {
 			return true;
 		}
 	}
@@ -115,10 +115,10 @@ bool InputManager::IsPressed(InputAction action) {
 bool InputManager::JustPressed(InputAction action) {
 	bool pressed = false;
 	for(int key : actionKeys[(int)action]) {
-		if(JustPressed(key)) {
+		if(KeyJustPressed(key)) {
 			pressed = true;
 		}
-		else if(IsPressed(key)) {
+		else if(IsKeyPressed(key)) {
 			// make sure another key is not already held
 			return false;
 		}
@@ -129,11 +129,11 @@ bool InputManager::JustPressed(InputAction action) {
 bool InputManager::JustReleased(InputAction action) {
 	bool released = false;
 	for(int key : actionKeys[(int)action]) {
-		if(IsPressed(key)) {
+		if(IsKeyPressed(key)) {
 			// make sure another key is not still held
 			return false;
 		}
-		else if(JustReleased(key)) {
+		else if(KeyJustReleased(key)) {
 			released = true;
 		}
 	}

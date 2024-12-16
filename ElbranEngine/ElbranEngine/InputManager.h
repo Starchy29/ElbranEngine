@@ -24,9 +24,9 @@ class InputManager
 	friend class Application;
 
 public:
-	bool IsPressed(int key);
-	bool JustPressed(int key);
-	bool JustReleased(int key);
+	bool IsKeyPressed(int key);
+	bool KeyJustPressed(int key);
+	bool KeyJustReleased(int key);
 
 	bool IsPressed(InputAction action);
 	bool JustPressed(InputAction action);

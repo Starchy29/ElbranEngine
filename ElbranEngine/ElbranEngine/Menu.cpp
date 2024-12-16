@@ -56,7 +56,7 @@ void Menu::Update(float deltaTime) {
 	}
 	
 	if(mouseEnabled) {
-		if(hovered != nullptr && input->JustPressed(VK_MOUSE_LEFT)) {
+		if(hovered != nullptr && input->KeyJustPressed(VK_MOUSE_LEFT)) {
 			hovered->Click();
 			return;
 		}

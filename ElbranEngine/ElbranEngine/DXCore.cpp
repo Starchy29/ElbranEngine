@@ -315,4 +315,8 @@ void DXCore::Render(Game* game) {
 
 	swapChain->Present(0, 0);
 	context->OMSetRenderTargets(1, backBufferView.GetAddressOf(), depthStencilView.Get());
+
+	// Unbind shader resource views at the end of the frame
+	ID3D11ShaderResourceView* nullSRVs[128] = {};
+	context->PSSetShaderResources(0, ARRAYSIZE(nullSRVs), nullSRVs);
 }

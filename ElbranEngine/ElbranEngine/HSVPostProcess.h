@@ -3,14 +3,17 @@
 #include "PixelShader.h"
 #include <memory>
 
-class BrightConPostProc :
+class HSVPostProcess :
     public IPostProcess
 {
 public:
-    float brightness;
+    // range: 0-1
     float contrast;
+    float saturation;
+    float brightness;
 
-    BrightConPostProc();
+    HSVPostProcess();
+    HSVPostProcess(float contrast, float saturation, float brightness);
     void Render(Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> inputTexture, Microsoft::WRL::ComPtr<ID3D11RenderTargetView> outputTexture) override;
 
 private:
