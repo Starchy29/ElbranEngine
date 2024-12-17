@@ -9,7 +9,7 @@
 #include "IPostProcess.h"
 #include <vector>
 
-#define MAX_POST_PROCESS_TEXTURES 1
+#define MAX_POST_PROCESS_TEXTURES 3
 
 class Game;
 

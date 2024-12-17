@@ -1,12 +1,14 @@
 #include "Game.h"
 #include "Application.h"
 #include "Enums.h"
+
 #include "TextRenderer.h"
 #include "Menu.h"
 #include "AtlasRenderer.h"
 #include "SpriteAnimator.h"
 #include "HueSwapRenderer.h"
 #include "BlurPostProcess.h"
+#include "BloomPostProcess.h"
 
 void Start(Button* clicked) {
 	clicked->GetLabel()->GetRenderer<TextRenderer>()->text = "started :/";
@@ -24,9 +26,9 @@ Game::Game(AssetManager* assets) {
 	// set up scenes
 	sampleScene = new Scene(10, Color(0.1f, 0.1f, 0.1f));
 
-	APP->Graphics()->postProcesses.push_back(new BlurPostProcess(10));
+	APP->Graphics()->postProcesses.push_back(new BloomPostProcess(0.8f, 8));
 
-	testObject = new GameObject(-20, Color(0, 0.8f, 0.5f, 0.7f), true);
+	testObject = new GameObject(-20, Color(0.3f, 1.f, 0.5f, 1.f), true);
 	sampleScene->Add(testObject);
 
 	/*picture = new GameObject(1, assets->testImage, false);
@@ -36,22 +38,6 @@ Game::Game(AssetManager* assets) {
 	GameObject* photo = new GameObject(0, std::make_shared<Sprite>(L"nature.jpg"), false);
 	sampleScene->Add(photo);
 	photo->GetTransform()->GrowWidth(9);
-
-	std::shared_ptr<Sprite> crackleSprite = std::make_shared<Sprite>(L"crackle.png");
-	
-	/*GameObject* spawned = new GameObject(0, crackleSprite, false);
-	sampleScene->Add(spawned);
-	spawned->GetTransform()->Translate(Vector2(-1, 1));*/
-
-	/*HueSwapRenderer* hueSwapper = new HueSwapRenderer(crackleSprite);
-	spawned = new GameObject(0, RenderMode::Opaque, hueSwapper);
-	sampleScene->Add(spawned);
-	spawned->GetTransform()->Translate(Vector2(1, 1));
-	spawned->GetTransform()->SetScale(0.7f, 1.0f);
-
-	hueSwapper->oldHue = Color(1.f, 0.5f, 0);
-	hueSwapper->newHue = Color(0.5, 0, 1);
-	hueSwapper->sensitivity = 0.3f;*/
 
 	// menu
 	sampleMenu = new Menu(Color(0.1f, 0.2f, 0.4f));

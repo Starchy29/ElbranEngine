@@ -27,6 +27,8 @@ AssetManager::AssetManager() {
 	circlePS = std::make_shared<PixelShader>(dxDevice, dxContext, L"CirclePS.cso");
 	conSatValPP = std::make_shared<PixelShader>(dxDevice, dxContext, L"ConSatValPP.cso");
 	blurPP = std::make_shared<PixelShader>(dxDevice, dxContext, L"BlurPP.cso");
+	bloomFilterPP = std::make_shared<PixelShader>(dxDevice, dxContext, L"BloomFilterPP.cso");
+	screenSumPP = std::make_shared<PixelShader>(dxDevice, dxContext, L"ScreenSumPP.cso");
 
 	// create default sampler state
 	D3D11_SAMPLER_DESC samplerDescription = {};

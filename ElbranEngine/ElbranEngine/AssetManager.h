@@ -26,6 +26,8 @@ public:
 	std::shared_ptr<PixelShader> circlePS;
 	std::shared_ptr<PixelShader> conSatValPP;
 	std::shared_ptr<PixelShader> blurPP;
+	std::shared_ptr<PixelShader> bloomFilterPP;
+	std::shared_ptr<PixelShader> screenSumPP;
 
 	Microsoft::WRL::ComPtr<ID3D11SamplerState> defaultSampler;
 #pragma endregion
