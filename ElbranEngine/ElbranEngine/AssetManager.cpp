@@ -26,6 +26,7 @@ AssetManager::AssetManager() {
 	colorPS = std::make_shared<PixelShader>(dxDevice, dxContext, L"ColorFillPS.cso");
 	circlePS = std::make_shared<PixelShader>(dxDevice, dxContext, L"CirclePS.cso");
 	conSatValPP = std::make_shared<PixelShader>(dxDevice, dxContext, L"ConSatValPP.cso");
+	blurPP = std::make_shared<PixelShader>(dxDevice, dxContext, L"BlurPP.cso");
 
 	// create default sampler state
 	D3D11_SAMPLER_DESC samplerDescription = {};

@@ -6,7 +6,7 @@
 #include "AtlasRenderer.h"
 #include "SpriteAnimator.h"
 #include "HueSwapRenderer.h"
-#include "HSVPostProcess.h"
+#include "BlurPostProcess.h"
 
 void Start(Button* clicked) {
 	clicked->GetLabel()->GetRenderer<TextRenderer>()->text = "started :/";
@@ -24,7 +24,7 @@ Game::Game(AssetManager* assets) {
 	// set up scenes
 	sampleScene = new Scene(10, Color(0.1f, 0.1f, 0.1f));
 
-	APP->Graphics()->postProcesses.push_back(new HSVPostProcess(0.3f, -1, 0));
+	APP->Graphics()->postProcesses.push_back(new BlurPostProcess(10));
 
 	testObject = new GameObject(-20, Color(0, 0.8f, 0.5f, 0.7f), true);
 	sampleScene->Add(testObject);
@@ -80,24 +80,6 @@ Game::~Game() {
 void Game::Update(float deltaTime) {
 	testObject->GetTransform()->SetPosition(APP->Input()->GetMousePosition(sampleScene->GetCamera()));
 	sampleScene->Update(deltaTime);
-	
-	HSVPostProcess* pp = (HSVPostProcess*)APP->Graphics()->postProcesses[0];
-	if(APP->Input()->IsKeyPressed(VK_UP)) {
-		pp->brightness += deltaTime;
-	}
-	if(APP->Input()->IsKeyPressed(VK_DOWN)) {
-		pp->brightness -= deltaTime;
-	}
-
-	/*if (pp->saturation < -1) {
-		pp->saturation = -1;
-	}*/
-
-	if(APP->Input()->KeyJustPressed(VK_SPACE)) {
-		pp->brightness = 0.f;
-		//pp->contrast = 0.f;
-		//pp->saturation = 0.f;
-	}
 
 	//sampleMenu->Update(deltaTime);
 }
