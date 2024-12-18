@@ -8,6 +8,7 @@
 #include "SpriteAnimator.h"
 #include "HueSwapRenderer.h"
 #include "BlurPostProcess.h"
+#include "HSVPostProcess.h"
 #include "BloomPostProcess.h"
 
 void Start(Button* clicked) {
@@ -26,7 +27,10 @@ Game::Game(AssetManager* assets) {
 	// set up scenes
 	sampleScene = new Scene(10, Color(0.1f, 0.1f, 0.1f));
 
-	APP->Graphics()->postProcesses.push_back(new BloomPostProcess(0.8f, 8));
+	
+	//APP->Graphics()->postProcesses.push_back(new HSVPostProcess(0.3, -1, -0.2));
+	APP->Graphics()->postProcesses.push_back(new BloomPostProcess(0.7f, 50));
+	//APP->Graphics()->postProcesses.push_back(new BlurPostProcess(10));
 
 	testObject = new GameObject(-20, Color(0.3f, 1.f, 0.5f, 1.f), true);
 	sampleScene->Add(testObject);

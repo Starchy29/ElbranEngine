@@ -145,6 +145,7 @@
     <ClCompile Include="AtlasRenderer.cpp" />
     <ClCompile Include="BloomPostProcess.cpp" />
     <ClCompile Include="BlurPostProcess.cpp" />
+    <ClCompile Include="ComputeShader.cpp" />
     <ClCompile Include="HSVPostProcess.cpp" />
     <ClCompile Include="Button.cpp" />
     <ClCompile Include="Camera.cpp" />
@@ -180,6 +181,7 @@
     <ClInclude Include="AtlasRenderer.h" />
     <ClInclude Include="BloomPostProcess.h" />
     <ClInclude Include="BlurPostProcess.h" />
+    <ClInclude Include="ComputeShader.h" />
     <ClInclude Include="HSVPostProcess.h" />
     <ClInclude Include="Button.h" />
     <ClInclude Include="Camera.h" />

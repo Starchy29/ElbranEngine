@@ -20,6 +20,9 @@
     <Filter Include="Engine\Game Objects\Rendering">
       <UniqueIdentifier>{b1f0235e-0536-41d2-b0a1-0a470370775b}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Engine\Graphics\Post Processing">
+      <UniqueIdentifier>{c4ddca6b-208f-44bb-8bec-554fe22d460a}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Camera.cpp">
@@ -109,6 +112,21 @@
     <ClCompile Include="IRenderer.cpp">
       <Filter>Engine\Game Objects\Rendering</Filter>
     </ClCompile>
+    <ClCompile Include="ComputeShader.cpp">
+      <Filter>Engine\Graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="BloomPostProcess.cpp">
+      <Filter>Engine\Graphics\Post Processing</Filter>
+    </ClCompile>
+    <ClCompile Include="BlurPostProcess.cpp">
+      <Filter>Engine\Graphics\Post Processing</Filter>
+    </ClCompile>
+    <ClCompile Include="HSVPostProcess.cpp">
+      <Filter>Engine\Graphics\Post Processing</Filter>
+    </ClCompile>
+    <ClCompile Include="PostProcessTexture.cpp">
+      <Filter>Engine\Graphics\Post Processing</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Shader.h">
@@ -148,9 +166,6 @@
       <Filter>Engine</Filter>
     </ClInclude>
     <ClInclude Include="Enums.h">
-      <Filter>Engine</Filter>
-    </ClInclude>
-    <ClInclude Include="Game.h">
       <Filter>Engine</Filter>
     </ClInclude>
     <ClInclude Include="InputManager.h">
@@ -204,6 +219,27 @@
     <ClInclude Include="IRenderer.h">
       <Filter>Engine\Game Objects\Rendering</Filter>
     </ClInclude>
+    <ClInclude Include="ComputeShader.h">
+      <Filter>Engine\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="Game.h">
+      <Filter>Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="BloomPostProcess.h">
+      <Filter>Engine\Graphics\Post Processing</Filter>
+    </ClInclude>
+    <ClInclude Include="BlurPostProcess.h">
+      <Filter>Engine\Graphics\Post Processing</Filter>
+    </ClInclude>
+    <ClInclude Include="HSVPostProcess.h">
+      <Filter>Engine\Graphics\Post Processing</Filter>
+    </ClInclude>
+    <ClInclude Include="IPostProcess.h">
+      <Filter>Engine\Graphics\Post Processing</Filter>
+    </ClInclude>
+    <ClInclude Include="PostProcessTexture.h">
+      <Filter>Engine\Graphics\Post Processing</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="CameraVS.hlsl">
@@ -227,11 +263,26 @@
     <FxCompile Include="HueSwapPS.hlsl">
       <Filter>Engine\Shaders</Filter>
     </FxCompile>
+    <FxCompile Include="BloomFilterPP.hlsl">
+      <Filter>Engine\Shaders</Filter>
+    </FxCompile>
+    <FxCompile Include="BlurPP.hlsl">
+      <Filter>Engine\Shaders</Filter>
+    </FxCompile>
+    <FxCompile Include="ConSatValPP.hlsl">
+      <Filter>Engine\Shaders</Filter>
+    </FxCompile>
+    <FxCompile Include="ScreenSumPP.hlsl">
+      <Filter>Engine\Shaders</Filter>
+    </FxCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="ShaderStructs.hlsli">
       <Filter>Engine\Shaders</Filter>
     </None>
     <None Include="packages.config" />
+    <None Include="ColorConversion.hlsli">
+      <Filter>Engine\Shaders</Filter>
+    </None>
   </ItemGroup>
 </Project>
