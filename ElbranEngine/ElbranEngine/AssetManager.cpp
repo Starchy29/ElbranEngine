@@ -18,18 +18,6 @@ AssetManager::AssetManager() {
 	Microsoft::WRL::ComPtr<ID3D11Device> dxDevice = dx->GetDevice();
 	Microsoft::WRL::ComPtr<ID3D11DeviceContext> dxContext = dx->GetContext();
 
-	cameraVS = std::make_shared<VertexShader>(dxDevice, dxContext, L"CameraVS.cso");
-	atlasVS = std::make_shared<VertexShader>(dxDevice, dxContext, L"TextureAtlasVS.cso");
-	backgroundVS = std::make_shared<VertexShader>(dxDevice, dxContext, L"FullscreenVS.cso");
-	imagePS = std::make_shared<PixelShader>(dxDevice, dxContext, L"TexturePS.cso");
-	hueSwapPS = std::make_shared<PixelShader>(dxDevice, dxContext, L"HueSwapPS.cso");
-	colorPS = std::make_shared<PixelShader>(dxDevice, dxContext, L"ColorFillPS.cso");
-	circlePS = std::make_shared<PixelShader>(dxDevice, dxContext, L"CirclePS.cso");
-	conSatValPP = std::make_shared<PixelShader>(dxDevice, dxContext, L"ConSatValPP.cso");
-	blurPP = std::make_shared<PixelShader>(dxDevice, dxContext, L"BlurPP.cso");
-	bloomFilterPP = std::make_shared<PixelShader>(dxDevice, dxContext, L"BloomFilterPP.cso");
-	screenSumPP = std::make_shared<PixelShader>(dxDevice, dxContext, L"ScreenSumPP.cso");
-
 	// create default sampler state
 	D3D11_SAMPLER_DESC samplerDescription = {};
 	samplerDescription.AddressU = D3D11_TEXTURE_ADDRESS_WRAP;
@@ -55,6 +43,23 @@ AssetManager::AssetManager() {
 	};
 
 	unitSquare = std::make_shared<Mesh>(dxDevice, dxContext, &vertices[0], 4, &indices[0], 6);
+
+	cameraVS = std::make_shared<VertexShader>(dxDevice, dxContext, L"CameraVS.cso");
+	atlasVS = std::make_shared<VertexShader>(dxDevice, dxContext, L"TextureAtlasVS.cso");
+	backgroundVS = std::make_shared<VertexShader>(dxDevice, dxContext, L"FullscreenVS.cso");
+
+	imagePS = std::make_shared<PixelShader>(dxDevice, dxContext, L"TexturePS.cso");
+	hueSwapPS = std::make_shared<PixelShader>(dxDevice, dxContext, L"HueSwapPS.cso");
+	colorPS = std::make_shared<PixelShader>(dxDevice, dxContext, L"ColorFillPS.cso");
+	circlePS = std::make_shared<PixelShader>(dxDevice, dxContext, L"CirclePS.cso");
+
+	conSatValPP = std::make_shared<PixelShader>(dxDevice, dxContext, L"ConSatValPP.cso");
+	blurPP = std::make_shared<PixelShader>(dxDevice, dxContext, L"BlurPP.cso");
+	bloomFilterPP = std::make_shared<PixelShader>(dxDevice, dxContext, L"BloomFilterPP.cso");
+	screenSumPP = std::make_shared<PixelShader>(dxDevice, dxContext, L"ScreenSumPP.cso");
+
+	arial = LoadFont(L"Arial.spritefont");
+	testImage = std::make_shared<Sprite>(L"temp sprite.png");
 }
 
 AssetManager::~AssetManager() {
