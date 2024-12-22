@@ -20,10 +20,13 @@ public:
 	std::shared_ptr<VertexShader> cameraVS;
 	std::shared_ptr<VertexShader> atlasVS;
 	std::shared_ptr<VertexShader> backgroundVS;
+
 	std::shared_ptr<PixelShader> imagePS;
 	std::shared_ptr<PixelShader> hueSwapPS;
 	std::shared_ptr<PixelShader> colorPS;
 	std::shared_ptr<PixelShader> circlePS;
+	std::shared_ptr<PixelShader> stretchyPS;
+
 	std::shared_ptr<PixelShader> conSatValPP;
 	std::shared_ptr<PixelShader> blurPP;
 	std::shared_ptr<PixelShader> bloomFilterPP;

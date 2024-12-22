@@ -127,6 +127,9 @@
     <ClCompile Include="PostProcessTexture.cpp">
       <Filter>Engine\Graphics\Post Processing</Filter>
     </ClCompile>
+    <ClCompile Include="RepeatRenderer.cpp">
+      <Filter>Engine\Game Objects\Rendering</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Shader.h">
@@ -240,6 +243,9 @@
     <ClInclude Include="PostProcessTexture.h">
       <Filter>Engine\Graphics\Post Processing</Filter>
     </ClInclude>
+    <ClInclude Include="RepeatRenderer.h">
+      <Filter>Engine\Game Objects\Rendering</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="CameraVS.hlsl">
@@ -273,6 +279,9 @@
       <Filter>Engine\Shaders</Filter>
     </FxCompile>
     <FxCompile Include="ScreenSumPP.hlsl">
+      <Filter>Engine\Shaders</Filter>
+    </FxCompile>
+    <FxCompile Include="StretchyPS.hlsl">
       <Filter>Engine\Shaders</Filter>
     </FxCompile>
   </ItemGroup>

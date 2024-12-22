@@ -52,6 +52,7 @@ AssetManager::AssetManager() {
 	hueSwapPS = std::make_shared<PixelShader>(dxDevice, dxContext, L"HueSwapPS.cso");
 	colorPS = std::make_shared<PixelShader>(dxDevice, dxContext, L"ColorFillPS.cso");
 	circlePS = std::make_shared<PixelShader>(dxDevice, dxContext, L"CirclePS.cso");
+	stretchyPS = std::make_shared<PixelShader>(dxDevice, dxContext, L"StretchyPS.cso");
 
 	conSatValPP = std::make_shared<PixelShader>(dxDevice, dxContext, L"ConSatValPP.cso");
 	blurPP = std::make_shared<PixelShader>(dxDevice, dxContext, L"BlurPP.cso");
