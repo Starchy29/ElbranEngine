@@ -6,6 +6,10 @@ cbuffer Constants : register(b0)
     float contrast;
     float saturation;
     float brightness;
+    float averageBrightness;
+    
+    int2 viewMin;
+    int2 viewMax;
 }
 
 Texture2D Screen : register(t0);
@@ -23,21 +27,24 @@ float4 main(VertexToPixel input) : SV_TARGET
         hsv.y = lerp(hsv.y, 0, -saturation);
     }
     
-    float3 endColor = toRGB(hsv);
+    // adjust contrast
+    if(contrast != 0) {
+        float delta = hsv.z - averageBrightness;
+        float multiplier = contrast;
+        if(contrast > 0) {
+            multiplier *= 2.0;
+        }    
+        delta *= (multiplier + 1.0); // range: 0 - 3
+        hsv.z = averageBrightness + delta;
+    }
     
     // adjust brightness
+    float3 endColor = toRGB(hsv);
     if(brightness > 0) {
         endColor = lerp(endColor, float3(1, 1, 1), brightness);
 
     } else {
         endColor = lerp(endColor, float3(0, 0, 0), -brightness);
-    }
-    
-    // adjust contrast
-    if(contrast > 0) {
-        endColor = lerp(endColor, round(endColor), contrast);
-    } else {
-        endColor = lerp(endColor, float3(0.5, 0.5, 0.5), -contrast);
     }
     
     return float4(endColor, 1);

@@ -9,6 +9,7 @@ public:
 
     void SetTexture(Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> resourceView, int slot = 0);
     void SetSampler(Microsoft::WRL::ComPtr<ID3D11SamplerState> samplerState, int slot = 0);
+    void SetArrayBuffer(Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> view, int slot) override;
 
 private:
     Microsoft::WRL::ComPtr<ID3D11PixelShader> dxShader;

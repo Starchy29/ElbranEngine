@@ -1,13 +1,14 @@
 #pragma once
 #include "IPostProcess.h"
 #include "PixelShader.h"
+#include "ComputeShader.h"
 #include <memory>
 
 class HSVPostProcess :
     public IPostProcess
 {
 public:
-    // range: 0-1
+    // range: -1 to 1
     float contrast;
     float saturation;
     float brightness;
@@ -18,5 +19,7 @@ public:
 
 private:
     std::shared_ptr<PixelShader> shader;
+    std::shared_ptr<ComputeShader> brightComputer;
+    RWArrayBuffer totalBrightnessBuffer;
 };
 

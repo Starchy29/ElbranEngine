@@ -27,6 +27,22 @@ void DXCore::DrawScreen() {
 	context->Draw(3, 0);
 }
 
+void DXCore::RunPostProcesses() {
+	assert(!postProcessed && "attempted to run post processes twice");
+
+	postProcessed = true;
+
+	for(int i = 0; i < postProcesses.size(); i++) {
+		Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> input = i % 2 == 0 ? ppTex1.GetShaderResource() : ppTex2.GetShaderResource();
+		Microsoft::WRL::ComPtr<ID3D11RenderTargetView> output = i % 2 == 0 ? ppTex2.GetRenderTarget() : ppTex1.GetRenderTarget();
+		if(i == postProcesses.size() - 1) {
+			output = backBufferView;
+		}
+
+		postProcesses[i]->Render(input, output);
+	}
+}
+
 Microsoft::WRL::ComPtr<ID3D11Device> DXCore::GetDevice() const {
 	return device;
 }
@@ -294,6 +310,8 @@ void DXCore::Resize(DirectX::XMINT2 windowDims, float viewAspectRatio) {
 }
 
 void DXCore::Render(Game* game) {
+	postProcessed = false;
+
 	context->ClearRenderTargetView(backBufferView.Get(), Color::Black);
 	context->ClearDepthStencilView(depthStencilView.Get(), D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
 
@@ -303,14 +321,8 @@ void DXCore::Render(Game* game) {
 
 	game->Draw();
 
-	for(int i = 0; i < postProcesses.size(); i++) {
-		Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> input = i % 2 == 0 ? ppTex1.GetShaderResource() : ppTex2.GetShaderResource();
-		Microsoft::WRL::ComPtr<ID3D11RenderTargetView> output = i % 2 == 0 ? ppTex2.GetRenderTarget() : ppTex1.GetRenderTarget();
-		if(i == postProcesses.size() - 1) {
-			output = backBufferView;
-		}
-
-		postProcesses[i]->Render(input, output);
+	if(!postProcessed && postProcesses.size() > 0) {
+		RunPostProcesses();
 	}
 
 	swapChain->Present(0, 0);

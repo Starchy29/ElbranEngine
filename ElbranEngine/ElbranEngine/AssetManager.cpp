@@ -59,6 +59,11 @@ AssetManager::AssetManager() {
 	bloomFilterPP = std::make_shared<PixelShader>(dxDevice, dxContext, L"BloomFilterPP.cso");
 	screenSumPP = std::make_shared<PixelShader>(dxDevice, dxContext, L"ScreenSumPP.cso");
 
+	brightnessSumCS = std::make_shared<ComputeShader>(dxDevice, dxContext, L"BrightnessSumCS.cso");
+
+	Vector2 oneVec = Vector2(1, 1);
+	imagePS->SetConstantVariable("stretchFactor", &oneVec); // this var is for repeating textures, should default to (1,1)
+
 	arial = LoadFont(L"Arial.spritefont");
 	testImage = std::make_shared<Sprite>(L"temp sprite.png");
 }

@@ -24,6 +24,7 @@ public:
 	void StartTextBatch();
 	void FinishTextBatch();
 	void DrawScreen();
+	void RunPostProcesses();
 
 	Microsoft::WRL::ComPtr<ID3D11Device> GetDevice() const;
 	Microsoft::WRL::ComPtr<ID3D11DeviceContext> GetContext() const;
@@ -53,6 +54,8 @@ private:
 
 	DirectX::XMINT2 viewportDims;
 	DirectX::XMINT2 viewportShift;
+
+	bool postProcessed;
 
 	DXCore(HWND windowHandle, DirectX::XMINT2 windowDims, float viewAspectRatio, HRESULT* outResult);
 	~DXCore();

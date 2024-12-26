@@ -7,11 +7,15 @@ PixelShader::PixelShader(Microsoft::WRL::ComPtr<ID3D11Device> device, Microsoft:
 }
 
 void PixelShader::SetTexture(Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> resourceView, int slot) {
-	dxContext->PSSetShaderResources(slot, 1, resourceView.GetAddressOf());
+	SetArrayBuffer(resourceView, slot);
 }
 
 void PixelShader::SetSampler(Microsoft::WRL::ComPtr<ID3D11SamplerState> samplerState, int slot) {
 	dxContext->PSSetSamplers(slot, 1, samplerState.GetAddressOf());
+}
+
+void PixelShader::SetArrayBuffer(Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> view, int slot) {
+	dxContext->PSSetShaderResources(slot, 1, view.GetAddressOf());
 }
 
 void PixelShader::SetSpecificShader() {

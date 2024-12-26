@@ -16,10 +16,7 @@ Shader::~Shader() {
 // saves data for a variable into the correct spot of that buffer's localData. The resource is updated all at once in SetShader()
 void Shader::SetConstantVariable(std::string name, const void* data) {
 	std::unordered_map<std::string, ConstantVariable>::iterator element = constantVars.find(name);
-
-	if(element == constantVars.end()) {
-		throw std::invalid_argument("variable not found");
-	}
+	assert(element != constantVars.end() && "shader constant variable not found");
 
 	ConstantVariable variable = element->second;
 	ConstantBuffer buffer = constantBuffers[variable.bufferIndex];
@@ -30,18 +27,18 @@ void Shader::SetConstantVariable(std::string name, const void* data) {
 
 void Shader::SetShader() {
 	for(UINT i = 0; i < cBuffCount; i++) {
-		ConstantBuffer buffer = constantBuffers[i];
+		ConstantBuffer* buffer = &(constantBuffers[i]);
 
-		if(buffer.needsUpdate) {
-			buffer.needsUpdate = false;
+		if(buffer->needsUpdate) {
+			buffer->needsUpdate = false;
 
 			D3D11_MAPPED_SUBRESOURCE mappedResource = {};
-			dxContext->Map(buffer.cBuffer.Get(), 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
-			memcpy(mappedResource.pData, buffer.localData, buffer.size);
-			dxContext->Unmap(buffer.cBuffer.Get(), 0);
+			dxContext->Map(buffer->cBuffer.Get(), 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
+			memcpy(mappedResource.pData, buffer->localData, buffer->size);
+			dxContext->Unmap(buffer->cBuffer.Get(), 0);
 		}
 
-		SetConstantBuffer(i, buffer.cBuffer);
+		SetConstantBuffer(i, buffer->cBuffer);
 	}
 
 	SetSpecificShader();
@@ -59,9 +56,7 @@ void Shader::LoadShader(std::wstring fileName) {
 	LPCWSTR filePath = fileString.c_str();
 	Microsoft::WRL::ComPtr<ID3DBlob> shaderBlob;
 	HRESULT hr = D3DReadFileToBlob(filePath, shaderBlob.GetAddressOf());
-	if(hr != S_OK) {
-		throw std::invalid_argument("failed to read shader file");
-	}
+	assert(hr == S_OK && "failed to read shader file");
 
 	// get the info of this shader
 	Microsoft::WRL::ComPtr<ID3D11ShaderReflection> reflection;
@@ -120,4 +115,84 @@ void Shader::LoadShader(std::wstring fileName) {
 	}
 
 	CreateShader(shaderBlob);
+}
+
+ArrayBuffer Shader::CreateArrayBuffer(UINT elements, UINT elementBytes, ShaderDataType dataType) {
+	Microsoft::WRL::ComPtr<ID3D11Device> dxDevice = APP->Graphics()->GetDevice();
+	ArrayBuffer result = {};
+	result.elements = elements;
+	result.elementSize = elementBytes;
+
+	// create the buffer
+	D3D11_BUFFER_DESC bufferDescription = {};
+	bufferDescription.Usage = D3D11_USAGE_DYNAMIC;
+	bufferDescription.ByteWidth = elements * elementBytes;
+	bufferDescription.BindFlags = D3D11_BIND_SHADER_RESOURCE;
+	bufferDescription.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
+	if(dataType == ShaderDataType::Structured) {
+		bufferDescription.StructureByteStride = elementBytes;
+		bufferDescription.MiscFlags = D3D11_RESOURCE_MISC_BUFFER_STRUCTURED;
+	}
+
+	dxDevice->CreateBuffer(&bufferDescription, 0, result.buffer.GetAddressOf());
+
+	// create the view
+	D3D11_SHADER_RESOURCE_VIEW_DESC viewDescription = {};
+	viewDescription.ViewDimension = D3D11_SRV_DIMENSION_BUFFER;
+	viewDescription.Format = FormatOfType(dataType);
+
+	viewDescription.Buffer.FirstElement = 0;
+	viewDescription.Buffer.ElementOffset = 0;
+	viewDescription.Buffer.ElementWidth = elementBytes;
+	viewDescription.Buffer.NumElements = elements;
+
+	dxDevice->CreateShaderResourceView(result.buffer.Get(), &viewDescription, result.view.GetAddressOf());
+
+	return result;
+}
+
+void Shader::WriteArray(void* data, ArrayBuffer* destination) {
+	Microsoft::WRL::ComPtr<ID3D11DeviceContext> context = APP->Graphics()->GetContext();
+
+	D3D11_MAPPED_SUBRESOURCE mappedResource = {};
+	context->Map(destination->buffer.Get(), 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
+	memcpy(mappedResource.pData, data, destination->elements * destination->elementSize);
+	context->Unmap(destination->buffer.Get(), 0);
+}
+
+DXGI_FORMAT Shader::FormatOfType(ShaderDataType type) {
+	switch(type) {
+	case ShaderDataType::Structured:
+		return DXGI_FORMAT_UNKNOWN;
+
+	case ShaderDataType::Float:
+		return DXGI_FORMAT_R32_FLOAT;
+	case ShaderDataType::Int:
+		return DXGI_FORMAT_R32_SINT;
+	case ShaderDataType::UInt:
+		return DXGI_FORMAT_R32_UINT;
+
+	case ShaderDataType::Float2:
+		return DXGI_FORMAT_R32G32_FLOAT;
+	case ShaderDataType::Int2:
+		return DXGI_FORMAT_R32G32_SINT;
+	case ShaderDataType::UInt2:
+		return DXGI_FORMAT_R32G32_UINT;
+
+	case ShaderDataType::Float3:
+		return DXGI_FORMAT_R32G32B32_FLOAT;
+	case ShaderDataType::Int3:
+		return DXGI_FORMAT_R32G32B32_SINT;
+	case ShaderDataType::UInt3:
+		return DXGI_FORMAT_R32G32B32_UINT;
+
+	case ShaderDataType::Float4:
+		return DXGI_FORMAT_R32G32B32A32_FLOAT;
+	case ShaderDataType::Int4:
+		return DXGI_FORMAT_R32G32B32A32_SINT;
+	case ShaderDataType::UInt4:
+		return DXGI_FORMAT_R32G32B32A32_UINT;
+	}
+
+	return DXGI_FORMAT_UNKNOWN;
 }

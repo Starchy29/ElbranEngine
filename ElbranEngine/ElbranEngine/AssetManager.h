@@ -4,6 +4,7 @@
 #include <memory>
 #include "VertexShader.h"
 #include "PixelShader.h"
+#include "ComputeShader.h"
 #include "Mesh.h"
 #include "Sprite.h"
 #include <SpriteFont.h>
@@ -31,6 +32,8 @@ public:
 	std::shared_ptr<PixelShader> blurPP;
 	std::shared_ptr<PixelShader> bloomFilterPP;
 	std::shared_ptr<PixelShader> screenSumPP;
+
+	std::shared_ptr<ComputeShader> brightnessSumCS;
 
 	Microsoft::WRL::ComPtr<ID3D11SamplerState> defaultSampler;
 #pragma endregion

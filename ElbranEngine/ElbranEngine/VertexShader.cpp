@@ -7,6 +7,10 @@ VertexShader::VertexShader(Microsoft::WRL::ComPtr<ID3D11Device> device, Microsof
 	LoadShader(fileName);
 }
 
+void VertexShader::SetArrayBuffer(Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> view, int slot) {
+	dxContext->VSSetShaderResources(slot, 1, view.GetAddressOf());
+}
+
 void VertexShader::SetSpecificShader() {
 	dxContext->IASetInputLayout(inputLayout.Get());
 	dxContext->VSSetShader(dxShader.Get(), 0, 0);
