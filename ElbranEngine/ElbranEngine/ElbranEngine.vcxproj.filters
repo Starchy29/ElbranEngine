@@ -130,6 +130,9 @@
     <ClCompile Include="RepeatRenderer.cpp">
       <Filter>Engine\Game Objects\Rendering</Filter>
     </ClCompile>
+    <ClCompile Include="StretchRenderer.cpp">
+      <Filter>Engine\Game Objects\Rendering</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Shader.h">
@@ -244,6 +247,9 @@
       <Filter>Engine\Graphics\Post Processing</Filter>
     </ClInclude>
     <ClInclude Include="RepeatRenderer.h">
+      <Filter>Engine\Game Objects\Rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="StretchRenderer.h">
       <Filter>Engine\Game Objects\Rendering</Filter>
     </ClInclude>
   </ItemGroup>

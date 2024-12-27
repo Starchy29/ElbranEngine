@@ -26,10 +26,6 @@ class GameObject {
 	friend class Scene;
 
 public:
-	bool active;
-	bool visible;
-	ObjectTag type;
-
 	GameObject(float zCoord, RenderMode renderMode, IRenderer* renderer);
 	GameObject(float zCoord, Color color, bool circle = false);
 	GameObject(float zCoord, std::shared_ptr<Sprite> sprite, bool translucent);
@@ -42,14 +38,19 @@ public:
 	virtual GameObject* Clone() const;
 
 	void SetZ(float z);
+	void SetActive(bool active);
 	void SetParent(GameObject* newParent);
 	void AddBehavior(IBehavior* behavior);
 
 	Transform* GetTransform();
 	template<class RenderType> RenderType* GetRenderer() { return (RenderType*)renderer; }
 	Scene* GetScene() const;
+	bool IsActive() const;
+	ObjectTag GetType() const;
 
 protected:
+	bool active;
+	ObjectTag type;
 	Transform transform;
 	IRenderer* renderer;
 	Scene* scene;

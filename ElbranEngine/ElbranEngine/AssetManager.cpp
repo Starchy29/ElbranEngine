@@ -44,6 +44,17 @@ AssetManager::AssetManager() {
 
 	unitSquare = std::make_shared<Mesh>(dxDevice, dxContext, &vertices[0], 4, &indices[0], 6);
 
+	// create unit triangle
+	Vertex triVertices[] = {
+		{ DirectX::XMFLOAT2(-0.5f, 0.5f), DirectX::XMFLOAT2(0.0f, 0.0f) },
+		{ DirectX::XMFLOAT2(0.5f, 0.f), DirectX::XMFLOAT2(1.0f, 0.5f) },
+		{ DirectX::XMFLOAT2(-0.5f, -0.5f), DirectX::XMFLOAT2(0.0f, 1.0f) }
+	};
+
+	unsigned int triIndices[] = { 0, 1, 2, }; // clockwise winding order
+
+	unitTriangle = std::make_shared<Mesh>(dxDevice, dxContext, &triVertices[0], 3, &triIndices[0], 3);
+
 	cameraVS = std::make_shared<VertexShader>(dxDevice, dxContext, L"CameraVS.cso");
 	atlasVS = std::make_shared<VertexShader>(dxDevice, dxContext, L"TextureAtlasVS.cso");
 	backgroundVS = std::make_shared<VertexShader>(dxDevice, dxContext, L"FullscreenVS.cso");

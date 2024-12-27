@@ -8,7 +8,6 @@ using namespace DirectX;
 
 GameObject::GameObject(float zCoord, RenderMode renderMode, IRenderer* renderer) {
 	active = true;
-	visible = true;
 	toBeDeleted = false;
 	parent = nullptr;
 	children = std::list<GameObject*>();
@@ -49,7 +48,13 @@ void GameObject::SetZ(float z) {
 	}
 }
 
+void GameObject::SetActive(bool active) {
+	this->active = active;
+}
+
 void GameObject::SetParent(GameObject* newParent) {
+	assert(newParent != this && "attempted to make a game object its own parent");
+
 	if(parent != nullptr) {
 		RemoveParent();
 	}
@@ -84,6 +89,23 @@ Scene* GameObject::GetScene() const {
 	return scene;
 }
 
+bool GameObject::IsActive() const {
+	const GameObject* current = this;
+	while(current != nullptr) {
+		if(!current->active || current->toBeDeleted) {
+			return false;
+		}
+
+		current = current->parent;
+	}
+
+	return true;
+}
+
+ObjectTag GameObject::GetType() const {
+	return type;
+}
+
 GameObject* GameObject::Clone() const {
 	GameObject* copy = Copy();
 	if(scene != nullptr) {
@@ -104,7 +126,6 @@ GameObject* GameObject::Copy() const {
 
 GameObject::GameObject(const GameObject& original) {
 	active = original.active;
-	visible = original.visible;
 	type = original.type;
 
 	transform = original.transform;

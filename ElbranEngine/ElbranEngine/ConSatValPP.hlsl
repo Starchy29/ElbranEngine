@@ -30,12 +30,12 @@ float4 main(VertexToPixel input) : SV_TARGET
     // adjust contrast
     if(contrast != 0) {
         float delta = hsv.z - averageBrightness;
-        float multiplier = contrast;
+        float multiplier = max(contrast, -1);
         if(contrast > 0) {
             multiplier *= 2.0;
-        }    
+        }
         delta *= (multiplier + 1.0); // range: 0 - 3
-        hsv.z = averageBrightness + delta;
+        hsv.z = saturate(averageBrightness + delta);
     }
     
     // adjust brightness

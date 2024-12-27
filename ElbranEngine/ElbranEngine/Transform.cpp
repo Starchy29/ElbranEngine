@@ -63,6 +63,27 @@ void Transform::Translate(Vector2 displacement) {
 	XMStoreFloat2(&position, mathPos + shift);
 }
 
+// assumes this is not rotated. Places the center so that the input edge lines up with the input coordinate
+void Transform::SetEdge(Direction edge, float coordinate) {
+	MarkForUpdate();
+	RectangleBox area = GetArea();
+
+	switch(edge) {
+	case Direction::Up:
+		position.y += coordinate - area.top;
+		break;
+	case Direction::Down:
+		position.y += coordinate - area.bottom;
+		break;
+	case Direction::Left:
+		position.x += coordinate - area.left;
+		break;
+	case Direction::Right:
+		position.x += coordinate - area.right;
+		break;
+	}
+}
+
 void Transform::Rotate(float radians) {
 	MarkForUpdate();
 	rotation += radians;
@@ -109,8 +130,50 @@ void Transform::GrowHeight(float scaleAdditive) {
 	scale.x = scale.y * aspectRatio;
 }
 
-Vector2 Transform::GetPosition() const {
-	return position;
+Vector2 Transform::GetPosition(bool global) const {
+	if(!global || parent == nullptr) {
+		return position;
+	}
+
+	XMFLOAT4X4 transform = GetWorldMatrix();
+	XMVECTOR globalPos = XMVector2Transform(XMVectorSet(0, 0, 0, 0), XMLoadFloat4x4(&transform));
+
+	Vector2 result;
+	XMStoreFloat2(&result, globalPos);
+	return result;
+}
+
+Vector2 Transform::GetScale(bool global) const {
+	if(!global || parent == nullptr) {
+		return scale;
+	}
+
+	XMFLOAT4X4 transform = GetWorldMatrix();
+	XMMATRIX matrix = XMLoadFloat4x4(&transform);
+	Vector2 center;
+	Vector2 right;
+	Vector2 up;
+	XMStoreFloat2(&center, XMVector2Transform(XMVectorSet(0, 0, 0, 0), matrix));
+	XMStoreFloat2(&right, XMVector2Transform(XMVectorSet(0.5f, 0, 0, 0), matrix));
+	XMStoreFloat2(&up, XMVector2Transform(XMVectorSet(0, 0.5f, 0, 0), matrix));
+	
+	return Vector2(2.f * center.Distance(right), 2.f * center.Distance(up));
+}
+
+float Transform::GetRotation(bool global) const {
+	if(!global || parent == nullptr) {
+		return rotation;
+	}
+
+	XMFLOAT4X4 transform = GetWorldMatrix();
+	XMMATRIX matrix = XMLoadFloat4x4(&transform);
+	Vector2 center;
+	Vector2 right;
+	XMStoreFloat2(&center, XMVector2Transform(XMVectorSet(0, 0, 0, 0), matrix));
+	XMStoreFloat2(&right, XMVector2Transform(XMVectorSet(0.5f, 0, 0, 0), matrix));
+	right = right - center;
+
+	return right.Angle();
 }
 
 float Transform::GetGlobalZ() const {
@@ -124,15 +187,7 @@ float Transform::GetGlobalZ() const {
 	return worldZ;
 }
 
-Vector2 Transform::GetScale() const {
-	return Vector2(scale);
-}
-
-float Transform::GetRotation() const {
-	return rotation;
-}
-
-DirectX::XMFLOAT4X4 Transform::GetWorldMatrix() const {
+XMFLOAT4X4 Transform::GetWorldMatrix() const {
 	if(needsUpdate) {
 		UpdateMatrix();
 	}

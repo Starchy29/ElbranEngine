@@ -32,7 +32,7 @@ void Menu::Update(float deltaTime) {
 			if(hovered == nullptr) {
 				// when none are already hovered, go to the first non-disabled button
 				for(int i = 0; i < buttons.size(); i++) {
-					if(!buttons[i]->IsDisabled()) {
+					if(!buttons[i]->IsDisabled() && buttons[i]->IsActive()) {
 						hovered = buttons[i];
 						hovered->SetHovered(true);
 						break;
@@ -69,7 +69,7 @@ void Menu::Update(float deltaTime) {
 		lastMousePos = mousePos;
 		Button* newHover = nullptr;
 		for(Button* button : buttons) {
-			if(!button->IsDisabled() && button->GetTransform()->GetArea().Contains(mousePos)) {
+			if(!button->IsDisabled() && button->IsActive() && button->GetTransform()->GetArea().Contains(mousePos)) {
 				newHover = button;
 				break;
 			}
@@ -91,13 +91,13 @@ void Menu::Update(float deltaTime) {
 
 void Menu::Add(GameObject* object) {
 	Scene::Add(object);
-	if(object->type == ObjectTag::MenuButton) {
+	if(object->GetType() == ObjectTag::MenuButton) {
 		buttons.push_back((Button*)object);
 	}
 }
 
 void Menu::Remove(GameObject* removed) {
-	if(removed->type == ObjectTag::MenuButton) {
+	if(removed->GetType() == ObjectTag::MenuButton) {
 		buttons.erase(std::find(buttons.begin(), buttons.end(), removed));
 	}
 }
@@ -121,14 +121,14 @@ Button* Menu::FindClosest(Button* button, InputAction directionInput) {
 	}
 
 	Vector2 screenScale = camera->GetWorldDimensions();
-	Vector2 start = button->GetTransform()->GetPosition();
+	Vector2 start = button->GetTransform()->GetPosition(true);
 	Button* closest = nullptr;
 	float minDist;
 	for(Button* option : buttons) {
-		Vector2 pos = option->GetTransform()->GetPosition();
+		Vector2 pos = option->GetTransform()->GetPosition(true);
 
 		float dotProd = (pos - start).Dot(direction);
-		if(option->IsDisabled() || abs(dotProd) <= 0.1f) {
+		if(option->IsDisabled() || !option->IsActive() || abs(dotProd) <= 0.1f) {
 			continue;
 		}
 

@@ -1,21 +1,23 @@
-#include "RepeatRenderer.h"
+#include "StretchRenderer.h"
 #include "Application.h"
 
-RepeatRenderer::RepeatRenderer(std::shared_ptr<Sprite> sprite, Vector2 baseScale) {
-	tint = Color::White;
+StretchRenderer::StretchRenderer(std::shared_ptr<Sprite> sprite, Vector2 baseScale, Vector2 startUV, Vector2 endUV) {
 	this->sprite = sprite;
 	this->baseScale = baseScale;
+	this->startUV = startUV;
+	this->endUV = endUV;
+
+	tint = Color::White;
+	flipX = false;
+	flipY = false;
 
 	const AssetManager* assets = APP->Assets();
 	mesh = assets->unitSquare;
 	vertexShader = assets->cameraVS;
-	pixelShader = assets->imagePS;
-
-	flipX = false;
-	flipY = false;
+	pixelShader = assets->stretchyPS;
 }
 
-void RepeatRenderer::Draw(Camera* camera, const Transform& transform) {
+void StretchRenderer::Draw(Camera* camera, const Transform& transform) {
 	DirectX::XMFLOAT4X4 worldViewProj;
 	DirectX::XMStoreFloat4x4(&worldViewProj, CreateWorldViewProjection(camera, transform));
 	vertexShader->SetConstantVariable("worldViewProj", &worldViewProj);
@@ -28,15 +30,14 @@ void RepeatRenderer::Draw(Camera* camera, const Transform& transform) {
 
 	Vector2 stretchFactor = transform.GetScale(false) / baseScale;
 	pixelShader->SetConstantVariable("stretchFactor", &stretchFactor);
+	pixelShader->SetConstantVariable("startUV", &startUV);
+	pixelShader->SetConstantVariable("endUV", &endUV);
 
 	vertexShader->SetShader();
 	pixelShader->SetShader();
 	mesh->Draw();
-
-	Vector2 oneVec = Vector2(1, 1);
-	pixelShader->SetConstantVariable("stretchFactor", &oneVec);
 }
 
-IRenderer* RepeatRenderer::Clone() {
-	return new RepeatRenderer(*this);
+IRenderer* StretchRenderer::Clone() {
+	return new StretchRenderer(*this);
 }

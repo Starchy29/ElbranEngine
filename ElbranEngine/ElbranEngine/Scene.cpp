@@ -35,17 +35,17 @@ Camera* Scene::GetCamera() {
 void Scene::Update(float deltaTime) {
 	// update all game objects
 	for(GameObject* object : opaques) {
-		if(object->active && !object->toBeDeleted) {
+		if(object->IsActive()) {
 			object->Update(deltaTime);
 		}
 	}
 	for(GameObject* object : translucents) {
-		if(object->active && !object->toBeDeleted) {
+		if(object->IsActive()) {
 			object->Update(deltaTime);
 		}
 	}
 	for(GameObject* object : texts) {
-		if(object->active && !object->toBeDeleted) {
+		if(object->IsActive()) {
 			object->Update(deltaTime);
 		}
 	}
@@ -80,7 +80,7 @@ void Scene::Draw() {
 	// draw opaques front to back
 	directX->SetAlphaBlend(false);
 	for(GameObject* object : opaques) {
-		if(object->visible) {
+		if(object->IsActive()) {
 			object->Draw(camera);
 		}
 	}
@@ -91,7 +91,7 @@ void Scene::Draw() {
 	if(texts.size() > 0) {
 		directX->StartTextBatch();
 		for(GameObject* text : texts) {
-			if(text->visible) {
+			if(text->IsActive()) {
 				text->Draw(camera);
 			}
 		}
@@ -101,7 +101,7 @@ void Scene::Draw() {
 	// draw translucents back to front
 	directX->SetAlphaBlend(true);
 	for(int i = translucents.size() - 1; i >= 0; i--) {
-		if(translucents[i]->visible) {
+		if(translucents[i]->IsActive()) {
 			translucents[i]->Draw(camera);
 		}
 	}

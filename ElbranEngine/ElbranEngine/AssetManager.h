@@ -16,6 +16,7 @@ class AssetManager
 
 public:
 	std::shared_ptr<Mesh> unitSquare;
+	std::shared_ptr<Mesh> unitTriangle;
 
 #pragma region shaders
 	std::shared_ptr<VertexShader> cameraVS;
