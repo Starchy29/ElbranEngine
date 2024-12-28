@@ -209,6 +209,7 @@
     <ClInclude Include="PostProcessTexture.h" />
     <ClInclude Include="RectangleBox.h" />
     <ClInclude Include="RepeatRenderer.h" />
+    <ClInclude Include="resource.h" />
     <ClInclude Include="Scene.h" />
     <ClInclude Include="Shader.h" />
     <ClInclude Include="Sprite.h" />
@@ -309,6 +310,12 @@
     <None Include="ColorConversion.hlsli" />
     <None Include="packages.config" />
     <None Include="ShaderStructs.hlsli" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="ElbranEngine.rc" />
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="elbran.ico" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

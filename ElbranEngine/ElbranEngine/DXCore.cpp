@@ -41,6 +41,8 @@ void DXCore::RunPostProcesses() {
 
 		postProcesses[i]->Render(input, output);
 	}
+
+	context->OMSetRenderTargets(1, backBufferView.GetAddressOf(), depthStencilView.Get());
 }
 
 Microsoft::WRL::ComPtr<ID3D11Device> DXCore::GetDevice() const {

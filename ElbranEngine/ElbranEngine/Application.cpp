@@ -1,4 +1,5 @@
 #include "Application.h"
+#include "resource.h"
 #include <tchar.h>
 
 Application* Application::instance;
@@ -132,10 +133,6 @@ Application::Application(HINSTANCE hInst) {
 		*(lastSlash + 1) = 0;
 	}
 	exePath = directory;
-
-#if defined(DEBUG) | defined(_DEBUG)
-	CreateDebugConsole();
-#endif
 }
 
 Application::~Application() {
@@ -159,7 +156,11 @@ HRESULT Application::InitApp(WNDPROC procCallback) {
 }
 
 HRESULT Application::InitWindow(WNDPROC procCallback) {
-	static TCHAR szWindowClass[] = _T("DesktopApp");
+#if defined(DEBUG) | defined(_DEBUG)
+	//CreateDebugConsole();
+#endif
+
+	static TCHAR szWindowClass[] = _T("ElbranEngineWindow");
 	static TCHAR szTitle[] = _T("Elbran Engine");
 
 	WNDCLASSEX wcex = {};
@@ -169,12 +170,15 @@ HRESULT Application::InitWindow(WNDPROC procCallback) {
 	wcex.cbClsExtra = 0;
 	wcex.cbWndExtra = 0;
 	wcex.hInstance = hInstance;
-	wcex.hIcon = LoadIcon(wcex.hInstance, IDI_APPLICATION);
 	wcex.hCursor = LoadCursor(NULL, IDC_ARROW);
 	wcex.hbrBackground = (HBRUSH)(COLOR_WINDOW + 1);
 	wcex.lpszMenuName = NULL;
 	wcex.lpszClassName = szWindowClass;
-	wcex.hIconSm = LoadIcon(wcex.hInstance, IDI_APPLICATION);
+
+	// make an icon resource, then find its code in resource.h. 
+	HICON icon = LoadIcon(hInstance, MAKEINTRESOURCE(IDI_ICON1)); //(HICON)LoadImage(hInstance, L"IDI_ICON1", IMAGE_ICON, 32, 32, LR_DEFAULTCOLOR); 
+	wcex.hIcon = icon;
+	wcex.hIconSm = icon;
 
 	if(!RegisterClassEx(&wcex)) {
 		MessageBox(NULL,
