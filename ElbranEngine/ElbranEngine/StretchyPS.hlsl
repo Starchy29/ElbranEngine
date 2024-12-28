@@ -8,7 +8,7 @@ cbuffer Constants : register(b0) {
 }
 
 Texture2D Image : register(t0);
-SamplerState Sampler : register(s0);
+SamplerState Sampler : register(s0); // must wrap UVs
 
 float4 main(VertexToPixel input) : SV_TARGET
 {
@@ -22,7 +22,7 @@ float4 main(VertexToPixel input) : SV_TARGET
 	sampleUV = ( min(sampleUV, startUV) + max(0, sampleUV - startUV) % (endUV - startUV) ) * ceil(saturate(endSpot - sampleUV))
 		+ (1.0 - stretchFactor + sampleUV) * ceil(saturate(sampleUV - endSpot));
 
-	float4 pixel = Image.Sample(Sampler, sampleUV) * tint;
+	float4 pixel = Image.SampleLevel(Sampler, sampleUV, 0) * tint;
 	clip(pixel.a - 0.01);
 	return pixel;
 }
