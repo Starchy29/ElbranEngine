@@ -10,6 +10,10 @@ HRESULT Application::Initialize(HINSTANCE hInst, WNDPROC procCallback, Applicati
 	return instance->InitApp(procCallback);
 }
 
+#if defined(DEBUG) | defined(_DEBUG)
+float timeSinceFPSUpdate = 0.0f;
+#endif
+
 HRESULT Application::Run() {
 	// main message loop
 	bool hasMsg;
@@ -33,6 +37,16 @@ HRESULT Application::Run() {
 			dxCore->Render(game);
 
 			input->mouseWheelDelta = 0.0f;
+
+			#if defined(DEBUG) | defined(_DEBUG)
+			if(SHOW_FPS) {
+				timeSinceFPSUpdate += deltaTime;
+				if(timeSinceFPSUpdate >= 0.5) {
+					timeSinceFPSUpdate = 0.0f;
+					SetWindowText(windowHandle, (_T(GAME_TITLE) + std::wstring(L" FPS: ") + std::to_wstring(1.0 / deltaTime)).c_str());
+				}
+			}
+			#endif
 		}
 	}
 
@@ -113,12 +127,12 @@ Application::Application(HINSTANCE hInst) {
 	hInstance = hInst;
 
 	// window size
-	viewAspectRatio = 16.0f / 9.0f;
+	viewAspectRatio = ASPECT_RATIO;
 	windowDims.x = 960;
 	windowDims.y = (float)windowDims.x / viewAspectRatio;
 
 	// set timing data
-	minSecsPerFrame = 1.0f / 60.0f;
+	minSecsPerFrame = 1.0f / MAX_FPS;
 	__int64 perfFreq;
 	QueryPerformanceFrequency((LARGE_INTEGER*)&perfFreq);
 	perfCountSecs = 1.0 / (double)perfFreq;
@@ -157,11 +171,13 @@ HRESULT Application::InitApp(WNDPROC procCallback) {
 
 HRESULT Application::InitWindow(WNDPROC procCallback) {
 #if defined(DEBUG) | defined(_DEBUG)
-	//CreateDebugConsole();
+	if(USE_DEBUG_CONSOLE) {
+		CreateDebugConsole();
+	}
 #endif
 
 	static TCHAR szWindowClass[] = _T("ElbranEngineWindow");
-	static TCHAR szTitle[] = _T("Elbran Engine");
+	static TCHAR szTitle[] = _T(GAME_TITLE);
 
 	WNDCLASSEX wcex = {};
 	wcex.cbSize = sizeof(WNDCLASSEX);
@@ -176,7 +192,7 @@ HRESULT Application::InitWindow(WNDPROC procCallback) {
 	wcex.lpszClassName = szWindowClass;
 
 	// make an icon resource, then find its code in resource.h. 
-	HICON icon = LoadIcon(hInstance, MAKEINTRESOURCE(IDI_ICON1)); //(HICON)LoadImage(hInstance, L"IDI_ICON1", IMAGE_ICON, 32, 32, LR_DEFAULTCOLOR); 
+	HICON icon = LoadIcon(hInstance, MAKEINTRESOURCE(IDI_ICON1));
 	wcex.hIcon = icon;
 	wcex.hIconSm = icon;
 
