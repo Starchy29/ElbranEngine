@@ -24,7 +24,6 @@ AssetManager::AssetManager() {
 	samplerDescription.AddressV = D3D11_TEXTURE_ADDRESS_WRAP;
 	samplerDescription.AddressW = D3D11_TEXTURE_ADDRESS_WRAP;
 	samplerDescription.Filter = D3D11_FILTER_MIN_MAG_MIP_POINT;
-	//samplerDescription.MaxAnisotropy = 8;
 	samplerDescription.MaxLOD = D3D11_FLOAT32_MAX;
 
 	dxDevice.Get()->CreateSamplerState(&samplerDescription, defaultSampler.GetAddressOf());

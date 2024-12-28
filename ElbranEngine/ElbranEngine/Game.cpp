@@ -21,16 +21,17 @@ Game::Game(const AssetManager* assets) {
 
 	testObject = new GameObject(-20, Color(0.3f, 1.f, 0.5f, 0.7f), true);
 	sampleScene->Add(testObject);
+	testObject->GetTransform()->Scale(0.6f);
 
 	//picture = new GameObject(1, assets->testImage, false);
-	//StretchRenderer* repeater = new StretchRenderer(std::make_shared<Sprite>(L"stretcher.png"), Vector2(2, 2), Vector2(0.5f, 0.167f), Vector2(0.833f, 0.833f));
-	//picture = new GameObject(0, RenderMode::Opaque, repeater);
-	//picture->GetTransform()->SetScale(3, 2);
-	//sampleScene->Add(picture);
+	StretchRenderer* repeater = new StretchRenderer(std::make_shared<Sprite>(L"stretcher.png"), Vector2(2, 2), Vector2(0.5f, 0.167f), Vector2(0.833f, 0.833f));
+	picture = new GameObject(0, RenderMode::Opaque, repeater);
+	picture->GetTransform()->SetScale(3, 2);
+	sampleScene->Add(picture);
 
-	//GameObject* photo = new GameObject(0, std::make_shared<Sprite>(L"apple.jpeg"), false);
-	//sampleScene->Add(photo);
-	//photo->GetTransform()->GrowWidth(7.3f);
+	GameObject* photo = new GameObject(0, std::make_shared<Sprite>(L"apple.jpeg"), false);
+	sampleScene->Add(photo);
+	photo->GetTransform()->GrowWidth(7.3f);
 }
 
 Game::~Game() {
@@ -40,6 +41,20 @@ Game::~Game() {
 void Game::Update(float deltaTime) {
 	//sampleScene->Update(deltaTime);
 	testObject->GetTransform()->SetPosition(APP->Input()->GetMousePosition(sampleScene->GetCamera()));
+
+	if(APP->Input()->IsKeyPressed(VK_UP)) {
+		picture->GetTransform()->Stretch(0, deltaTime);
+	} 
+	else if(APP->Input()->IsKeyPressed(VK_DOWN)) {
+		picture->GetTransform()->Stretch(0, -deltaTime);
+	}
+
+	if(APP->Input()->IsKeyPressed(VK_RIGHT)) {
+		picture->GetTransform()->Stretch(deltaTime, 0);
+	} 
+	else if(APP->Input()->IsKeyPressed(VK_LEFT)) {
+		picture->GetTransform()->Stretch(-deltaTime, 0);
+	}
 
 	//HSVPostProcess* poster = (HSVPostProcess*)APP->Graphics()->postProcesses[0];
 	//if(APP->Input()->IsKeyPressed(VK_UP) /* && poster->contrast < 1.0f*/) {

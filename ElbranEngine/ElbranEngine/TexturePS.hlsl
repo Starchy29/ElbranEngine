@@ -11,8 +11,7 @@ SamplerState Sampler : register(s0);
 float4 main(VertexToPixel input) : SV_TARGET
 {
 	input.uv *= stretchFactor;
-	float4 pixel = Image.Sample(Sampler, input.uv);
-    float4 result = pixel * tint;
-	clip(result.a - 0.01);
-	return result;
+	float4 pixel = Image.Sample(Sampler, input.uv) * tint;
+	clip(pixel.a - 0.01);
+	return pixel;
 }
