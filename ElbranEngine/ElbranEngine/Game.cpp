@@ -19,19 +19,21 @@ Game::Game(const AssetManager* assets) {
 	//APP->Graphics()->postProcesses.push_back(new BloomPostProcess(0.7f, 50));
 	//APP->Graphics()->postProcesses.push_back(new BlurPostProcess(10));
 
-	testObject = new GameObject(-20, Color(0.3f, 1.f, 0.5f, 0.7f), true);
+	testObject = new GameObject(-20, 2, 2, Color::White);
 	sampleScene->Add(testObject);
-	testObject->GetTransform()->Scale(0.6f);
+	//testObject->GetTransform()->Scale(0.6f);
 
-	//picture = new GameObject(1, assets->testImage, false);
-	StretchRenderer* repeater = new StretchRenderer(std::make_shared<Sprite>(L"stretcher.png"), Vector2(2, 2), Vector2(0.5f, 0.167f), Vector2(0.833f, 0.833f));
-	picture = new GameObject(0, RenderMode::Opaque, repeater);
-	picture->GetTransform()->SetScale(3, 2);
-	sampleScene->Add(picture);
+	//StretchRenderer* repeater = new StretchRenderer(std::make_shared<Sprite>(L"stretcher.png"), Vector2(2, 2), Vector2(0.5f, 0.167f), Vector2(0.833f, 0.833f));
+	//picture = new GameObject(0, RenderMode::Opaque, repeater);
+	//picture->GetTransform()->SetScale(3, 2);
+	//sampleScene->Add(picture);
 
 	GameObject* photo = new GameObject(0, std::make_shared<Sprite>(L"apple.jpeg"), false);
 	sampleScene->Add(photo);
 	photo->GetTransform()->GrowWidth(7.3f);
+
+	photo->GetRenderer<SpriteRenderer>()->useLights = true;
+	sampleScene->ambientLight = Color::Black;
 }
 
 Game::~Game() {

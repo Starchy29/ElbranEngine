@@ -133,6 +133,9 @@
     <ClCompile Include="StretchRenderer.cpp">
       <Filter>Engine\Game Objects\Rendering</Filter>
     </ClCompile>
+    <ClCompile Include="LightRenderer.cpp">
+      <Filter>Engine\Game Objects\Rendering</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Shader.h">
@@ -253,6 +256,9 @@
       <Filter>Engine\Game Objects\Rendering</Filter>
     </ClInclude>
     <ClInclude Include="resource.h" />
+    <ClInclude Include="LightRenderer.h">
+      <Filter>Engine\Game Objects\Rendering</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="CameraVS.hlsl">
@@ -301,6 +307,9 @@
     </None>
     <None Include="packages.config" />
     <None Include="ColorConversion.hlsli">
+      <Filter>Engine\Shaders</Filter>
+    </None>
+    <None Include="Lighting.hlsli">
       <Filter>Engine\Shaders</Filter>
     </None>
   </ItemGroup>

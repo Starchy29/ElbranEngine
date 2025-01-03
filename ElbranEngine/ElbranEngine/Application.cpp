@@ -162,6 +162,7 @@ HRESULT Application::InitApp(WNDPROC procCallback) {
 
 	dxCore = new DXCore(windowHandle, windowDims, viewAspectRatio, &result);
 	if (FAILED(result)) return result;
+	dxCore->SetupLighting();
 
 	input = new InputManager(windowHandle);
 	assets = new AssetManager();

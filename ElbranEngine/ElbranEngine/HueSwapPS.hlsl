@@ -1,11 +1,13 @@
 #include "ShaderStructs.hlsli"
 #include "ColorConversion.hlsli"
+#include "Lighting.hlsli"
 
 cbuffer Constants : register(b0) {
     float4 tint;
 	float4 replacedColor;
     float4 replacementColor;
     float sensitivity;
+    bool lit;
 }
 
 Texture2D Image : register(t0);
@@ -28,6 +30,9 @@ float4 main(VertexToPixel input) : SV_TARGET
             color = float4(toRGB(replacementHSV), color.a);
         }
         
+        if(lit) {
+		    color = ApplyLights(color, input.worldPosition);
+	    }
         return color;
     }
     
@@ -44,5 +49,8 @@ float4 main(VertexToPixel input) : SV_TARGET
         color = float4(toRGB(sampleHSV), color.a);
     }
 	
+    if(lit) {
+		color = ApplyLights(color, input.worldPosition);
+	}
     return color;
 }

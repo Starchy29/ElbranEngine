@@ -2,6 +2,7 @@
 
 cbuffer Constants : register(b0) {
 	matrix worldViewProj;
+	matrix worldTransform;
 	bool flipX;
 	bool flipY;
 }
@@ -10,7 +11,9 @@ VertexToPixel main(VertexShaderInput input)
 {
 	VertexToPixel output;
 
-	output.screenPosition = mul(worldViewProj, float4(input.position, 0, 1));
+	float4 fullPosition = float4(input.position, 0, 1);
+	output.screenPosition = mul(worldViewProj, fullPosition);
+	output.worldPosition = mul(worldTransform, fullPosition);
 
 	output.uv = input.uv;
 	if(flipX) {
@@ -19,6 +22,6 @@ VertexToPixel main(VertexShaderInput input)
 	if(flipY) {
 		output.uv.y = 1 - output.uv.y;
 	}
-
+	
 	return output;
 }

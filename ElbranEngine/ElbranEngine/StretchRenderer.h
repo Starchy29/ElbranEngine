@@ -1,19 +1,15 @@
 #pragma once
-#include "IRenderer.h"
+#include "SpriteRenderer.h"
 #include "Color.h"
 #include "Sprite.h"
 
 class StretchRenderer :
-    public IRenderer
+    public SpriteRenderer
 {
 public:
-    std::shared_ptr<Sprite> sprite;
-    Color tint;
     Vector2 baseScale;
     Vector2 startUV;
     Vector2 endUV;
-    bool flipX;
-    bool flipY;
 
     StretchRenderer(std::shared_ptr<Sprite> sprite, Vector2 baseScale, Vector2 startUV, Vector2 endUV);
 

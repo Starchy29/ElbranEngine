@@ -38,7 +38,7 @@ void Shader::SetShader() {
 			dxContext->Unmap(buffer->cBuffer.Get(), 0);
 		}
 
-		SetConstantBuffer(i, buffer->cBuffer);
+		SetConstantBuffer(buffer->bindIndex, buffer->cBuffer);
 	}
 
 	SetSpecificShader();
@@ -72,14 +72,33 @@ void Shader::LoadShader(std::wstring fileName) {
 
 	// set up the constant buffer information
 	cBuffCount = shaderDescr.ConstantBuffers;
-	constantBuffers = new ConstantBuffer[cBuffCount];
-	for(UINT buffIndex = 0; buffIndex < cBuffCount; buffIndex++) {
+	for(UINT buffIndex = 0; buffIndex < shaderDescr.ConstantBuffers; buffIndex++) {
+		// filter out the global light buffers
 		ID3D11ShaderReflectionConstantBuffer* bufferReflection = reflection->GetConstantBufferByIndex(buffIndex);
 		D3D11_SHADER_BUFFER_DESC bufferDescr;
 		bufferReflection->GetDesc(&bufferDescr);
 
 		D3D11_SHADER_INPUT_BIND_DESC bindDescr;
 		reflection->GetResourceBindingDescByName(bufferDescr.Name, &bindDescr);
+
+		if(bindDescr.BindPoint == LIGHT_CONSTANTS_REGISTER || bindDescr.BindPoint == LIGHT_ARRAY_REGISTER) {
+			cBuffCount--;
+		}
+	}
+
+	int nextIndex = 0;
+	constantBuffers = new ConstantBuffer[cBuffCount];
+	for(UINT i = 0; i < shaderDescr.ConstantBuffers; i++) { // assumes light buffers are after all other buffers
+		ID3D11ShaderReflectionConstantBuffer* bufferReflection = reflection->GetConstantBufferByIndex(i);
+		D3D11_SHADER_BUFFER_DESC bufferDescr;
+		bufferReflection->GetDesc(&bufferDescr);
+
+		D3D11_SHADER_INPUT_BIND_DESC bindDescr;
+		reflection->GetResourceBindingDescByName(bufferDescr.Name, &bindDescr);
+
+		if(bindDescr.BindPoint == LIGHT_CONSTANTS_REGISTER || bindDescr.BindPoint == LIGHT_ARRAY_REGISTER) {
+			continue;
+		}
 
 		// create the constant buffer
 		D3D11_BUFFER_DESC creationDescr;
@@ -93,11 +112,12 @@ void Shader::LoadShader(std::wstring fileName) {
 		ConstantBuffer newBuffer = {};
 		newBuffer.needsUpdate = false;
 		newBuffer.size = bufferDescr.Size;
+		newBuffer.bindIndex = bindDescr.BindPoint;
 		dxDevice->CreateBuffer(&creationDescr, 0, newBuffer.cBuffer.GetAddressOf());
 		newBuffer.localData = new BYTE[bufferDescr.Size];
 		ZeroMemory(newBuffer.localData, bufferDescr.Size);
 
-		constantBuffers[buffIndex] = newBuffer;
+		constantBuffers[nextIndex] = newBuffer;
 
 		// set up each variable within the constant buffer
 		for(UINT varIndex = 0; varIndex < bufferDescr.Variables; varIndex++) {
@@ -106,12 +126,14 @@ void Shader::LoadShader(std::wstring fileName) {
 			variableReflection->GetDesc(&varDescr);
 
 			ConstantVariable variable = {};
-			variable.bufferIndex = buffIndex;
+			variable.bufferIndex = nextIndex;
 			variable.byteOffset = varDescr.StartOffset;
 			variable.size = varDescr.Size;
 
 			constantVars.insert(std::pair<std::string, ConstantVariable>(varDescr.Name, variable));
 		}
+
+		nextIndex++;
 	}
 
 	CreateShader(shaderBlob);
@@ -151,7 +173,7 @@ ArrayBuffer Shader::CreateArrayBuffer(UINT elements, UINT elementBytes, ShaderDa
 	return result;
 }
 
-void Shader::WriteArray(void* data, ArrayBuffer* destination) {
+void Shader::WriteArray(const void* data, ArrayBuffer* destination) {
 	Microsoft::WRL::ComPtr<ID3D11DeviceContext> context = APP->Graphics()->GetContext();
 
 	D3D11_MAPPED_SUBRESOURCE mappedResource = {};

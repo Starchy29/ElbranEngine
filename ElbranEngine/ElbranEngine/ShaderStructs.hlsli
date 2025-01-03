@@ -9,5 +9,6 @@ struct VertexShaderInput {
 struct VertexToPixel {
 	float4 screenPosition : SV_POSITION;
 	float2 uv : TEXCOORD;
+	float2 worldPosition : POSITION;
 };
 #endif

@@ -45,6 +45,18 @@ void DXCore::RunPostProcesses() {
 	context->OMSetRenderTargets(1, backBufferView.GetAddressOf(), depthStencilView.Get());
 }
 
+void DXCore::SetLights(const Light* lights, int numLights, const Color& ambientColor) {
+	Shader::WriteArray(lights, &lightBuffer);
+	context->PSSetShaderResources(LIGHT_ARRAY_REGISTER, 1, lightBuffer.view.GetAddressOf());
+
+	D3D11_MAPPED_SUBRESOURCE mappedResource = {};
+	context->Map(lightConstantBuffer.Get(), 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
+	memcpy(mappedResource.pData, ambientColor, sizeof(Color));
+	memcpy(((BYTE*)mappedResource.pData + sizeof(Color)), &numLights, sizeof(int));
+	context->Unmap(lightConstantBuffer.Get(), 0);
+	context->PSSetConstantBuffers(LIGHT_CONSTANTS_REGISTER, 1, lightConstantBuffer.GetAddressOf());
+}
+
 Microsoft::WRL::ComPtr<ID3D11Device> DXCore::GetDevice() const {
 	return device;
 }
@@ -231,6 +243,19 @@ DXCore::~DXCore() {
 	for(IPostProcess* pp : postProcesses) {
 		delete pp;
 	}
+}
+
+void DXCore::SetupLighting() {
+	lightBuffer = Shader::CreateArrayBuffer(MAX_LIGHTS, sizeof(Light), ShaderDataType::Structured);
+
+	D3D11_BUFFER_DESC bufferDescription;
+	bufferDescription.Usage = D3D11_USAGE_DYNAMIC;
+	bufferDescription.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
+	bufferDescription.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
+	bufferDescription.MiscFlags = 0;
+	bufferDescription.StructureByteStride = 0;
+	bufferDescription.ByteWidth = 32; // float4 + int, rounded up to nearest multiple of 16
+	device->CreateBuffer(&bufferDescription, nullptr, lightConstantBuffer.GetAddressOf());
 }
 
 void DXCore::Resize(DirectX::XMINT2 windowDims, float viewAspectRatio) {

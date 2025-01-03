@@ -1,10 +1,12 @@
 #include "ShaderStructs.hlsli"
+#include "Lighting.hlsli"
 
 cbuffer Constants : register(b0) {
 	float4 tint;
 	float2 stretchFactor;
 	float2 startUV;
 	float2 endUV;
+	bool lit;
 }
 
 Texture2D Image : register(t0);
@@ -24,5 +26,8 @@ float4 main(VertexToPixel input) : SV_TARGET
 
 	float4 pixel = Image.SampleLevel(Sampler, sampleUV, 0) * tint;
 	clip(pixel.a - 0.01);
+	if(lit) {
+		pixel = ApplyLights(pixel, input.worldPosition);
+	}
 	return pixel;
 }

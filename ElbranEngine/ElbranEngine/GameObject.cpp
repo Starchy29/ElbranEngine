@@ -2,6 +2,7 @@
 #include "ColorRenderer.h"
 #include "SpriteRenderer.h"
 #include "TextRenderer.h"
+#include "LightRenderer.h"
 #include "Scene.h"
 #include "IBehavior.h"
 using namespace DirectX;
@@ -32,6 +33,11 @@ GameObject::GameObject(float zCoord, std::shared_ptr<Sprite> sprite, bool transl
 GameObject::GameObject(float zCoord, std::string text, std::shared_ptr<DirectX::DX11::SpriteFont> font, Color color)
 	: GameObject(zCoord, RenderMode::Text, new TextRenderer(text, font, color))
 { }
+
+GameObject::GameObject(float zCoord, float radius, float brightness, Color lightColor)
+	: GameObject(zCoord, RenderMode::Light, new LightRenderer(lightColor, radius, brightness))
+{
+}
 
 GameObject::~GameObject() {
 	for(IBehavior* behavior : behaviors) {

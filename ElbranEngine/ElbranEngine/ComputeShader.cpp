@@ -84,7 +84,7 @@ RWArrayBuffer ComputeShader::CreateReadWriteBuffer(UINT elements, UINT elementBy
 	return result;
 }
 
-void ComputeShader::WriteBuffer(void* data, RWArrayBuffer* buffer) {
+void ComputeShader::WriteBuffer(const void* data, RWArrayBuffer* buffer) {
 	Microsoft::WRL::ComPtr<ID3D11DeviceContext> context = APP->Graphics()->GetContext();
 
 	D3D11_MAPPED_SUBRESOURCE mappedResource = {};

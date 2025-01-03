@@ -11,6 +11,7 @@ public:
     Color tint;
     bool flipX;
     bool flipY;
+    bool useLights;
 
     SpriteRenderer(std::shared_ptr<Sprite> sprite);
     virtual ~SpriteRenderer() {}

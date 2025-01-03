@@ -160,6 +160,7 @@
     <ClCompile Include="HueSwapRenderer.cpp" />
     <ClCompile Include="InputManager.cpp" />
     <ClCompile Include="IRenderer.cpp" />
+    <ClCompile Include="LightRenderer.cpp" />
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="Menu.cpp" />
     <ClCompile Include="Mesh.cpp" />
@@ -202,6 +203,7 @@
     <ClInclude Include="InputManager.h" />
     <ClInclude Include="IPostProcess.h" />
     <ClInclude Include="IRenderer.h" />
+    <ClInclude Include="LightRenderer.h" />
     <ClInclude Include="Menu.h" />
     <ClInclude Include="Mesh.h" />
     <ClInclude Include="Game.h" />
@@ -308,6 +310,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="ColorConversion.hlsli" />
+    <None Include="Lighting.hlsli" />
     <None Include="packages.config" />
     <None Include="ShaderStructs.hlsli" />
   </ItemGroup>

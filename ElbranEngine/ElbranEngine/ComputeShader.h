@@ -24,7 +24,7 @@ public:
 
 	static ReadWriteTexture CreateReadWriteTexture(UINT width, UINT height);
 	static RWArrayBuffer CreateReadWriteBuffer(UINT elements, UINT elementBytes, ShaderDataType dataType);
-	static void WriteBuffer(void* data, RWArrayBuffer* buffer);
+	static void WriteBuffer(const void* data, RWArrayBuffer* buffer);
 	static void ReadBuffer(RWArrayBuffer* buffer, void* destination);
 
 	void SetSampler(Microsoft::WRL::ComPtr<ID3D11SamplerState> samplerState, int slot = 0);

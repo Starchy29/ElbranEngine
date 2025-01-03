@@ -18,6 +18,7 @@ struct ConstantBuffer {
 	Microsoft::WRL::ComPtr<ID3D11Buffer> cBuffer;
 	BYTE* localData;
 	UINT size;
+	UINT bindIndex;
 	bool needsUpdate;
 };
 
@@ -50,7 +51,7 @@ class Shader
 {
 public:
 	static ArrayBuffer CreateArrayBuffer(UINT elements, UINT elementBytes, ShaderDataType type);
-	static void WriteArray(void* data, ArrayBuffer* destination);
+	static void WriteArray(const void* data, ArrayBuffer* destination);
 
 	Shader(Microsoft::WRL::ComPtr<ID3D11Device> device, Microsoft::WRL::ComPtr<ID3D11DeviceContext> context);
 	virtual ~Shader();
