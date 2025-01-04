@@ -19,5 +19,4 @@ float4 main(VertexToPixel input) : SV_TARGET
 		pixel = ApplyLights(pixel, input.worldPosition);
 	}
 	return pixel;
-	pixel = float4(0, 0, 0, 0);
 }

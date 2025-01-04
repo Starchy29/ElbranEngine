@@ -13,7 +13,7 @@
 #include "Shader.h"
 
 #define MAX_POST_PROCESS_TEXTURES 3
-#define MAX_LIGHTS 16
+#define MAX_LIGHTS 32
 
 // these values match the buffers used in Lighting.hlsli
 #define LIGHT_CONSTANTS_REGISTER 13

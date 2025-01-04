@@ -12,6 +12,8 @@
 #include "BloomPostProcess.h"
 #include "StretchRenderer.h"
 
+#include <iostream>
+
 Game::Game(const AssetManager* assets) {
 	sampleScene = new Scene(10, Color(0.1f, 0.1f, 0.1f));
 
@@ -19,7 +21,7 @@ Game::Game(const AssetManager* assets) {
 	//APP->Graphics()->postProcesses.push_back(new BloomPostProcess(0.7f, 50));
 	//APP->Graphics()->postProcesses.push_back(new BlurPostProcess(10));
 
-	testObject = new GameObject(-20, 2, 2, Color::White);
+	testObject = new GameObject(1.5f, 1.f, Color::White);
 	sampleScene->Add(testObject);
 	//testObject->GetTransform()->Scale(0.6f);
 
@@ -27,6 +29,7 @@ Game::Game(const AssetManager* assets) {
 	//picture = new GameObject(0, RenderMode::Opaque, repeater);
 	//picture->GetTransform()->SetScale(3, 2);
 	//sampleScene->Add(picture);
+	//repeater->useLights = true;
 
 	GameObject* photo = new GameObject(0, std::make_shared<Sprite>(L"apple.jpeg"), false);
 	sampleScene->Add(photo);
@@ -43,6 +46,13 @@ Game::~Game() {
 void Game::Update(float deltaTime) {
 	//sampleScene->Update(deltaTime);
 	testObject->GetTransform()->SetPosition(APP->Input()->GetMousePosition(sampleScene->GetCamera()));
+
+	if(APP->Input()->KeyJustPressed(VK_MOUSE_LEFT)) {
+		const Random* rng = APP->RNG();
+		GameObject* newLight = new GameObject(1.5f, 1.f, Color(rng->Generate(0.f, 1.f), rng->Generate(0.f, 1.f), rng->Generate(0.f, 1.f)));
+		sampleScene->Add(newLight);
+		newLight->GetTransform()->SetPosition(APP->Input()->GetMousePosition(sampleScene->GetCamera()));
+	}
 
 	if(APP->Input()->IsKeyPressed(VK_UP)) {
 		picture->GetTransform()->Stretch(0, deltaTime);

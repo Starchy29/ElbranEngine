@@ -31,7 +31,7 @@ public:
 	GameObject(float zCoord, Color color, bool circle = false);
 	GameObject(float zCoord, std::shared_ptr<Sprite> sprite, bool translucent);
 	GameObject(float zCoord, std::string text, std::shared_ptr<DirectX::DX11::SpriteFont> font, Color color);
-	GameObject(float zCoord, float radius, float brightness, Color lightColor);
+	GameObject(float radius, float brightness, Color lightColor);
 	virtual ~GameObject();
 
 	virtual void Update(float deltaTime);

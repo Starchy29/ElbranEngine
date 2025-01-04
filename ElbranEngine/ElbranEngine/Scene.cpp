@@ -163,7 +163,7 @@ void Scene::Add(GameObject* object) {
 	}
 	else if(renderMode == RenderMode::Light) {
 		// lights are not sorted
-		assert(lightObjects.size() < MAX_LIGHTS && "attempted to add too many lights to the scene at once");
+		assert(lightObjects.size() <= MAX_LIGHTS && "attempted to add too many lights to the scene at once");
 		lightObjects.push_back(object);
 		return;
 	}

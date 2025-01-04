@@ -34,8 +34,8 @@ GameObject::GameObject(float zCoord, std::string text, std::shared_ptr<DirectX::
 	: GameObject(zCoord, RenderMode::Text, new TextRenderer(text, font, color))
 { }
 
-GameObject::GameObject(float zCoord, float radius, float brightness, Color lightColor)
-	: GameObject(zCoord, RenderMode::Light, new LightRenderer(lightColor, radius, brightness))
+GameObject::GameObject(float radius, float brightness, Color lightColor)
+	: GameObject(0, RenderMode::Light, new LightRenderer(lightColor, radius, brightness))
 {
 }
 

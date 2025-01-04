@@ -136,6 +136,9 @@
     <ClCompile Include="LightRenderer.cpp">
       <Filter>Engine\Game Objects\Rendering</Filter>
     </ClCompile>
+    <ClCompile Include="Random.cpp">
+      <Filter>Engine</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Shader.h">
@@ -258,6 +261,9 @@
     <ClInclude Include="resource.h" />
     <ClInclude Include="LightRenderer.h">
       <Filter>Engine\Game Objects\Rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="Random.h">
+      <Filter>Engine</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

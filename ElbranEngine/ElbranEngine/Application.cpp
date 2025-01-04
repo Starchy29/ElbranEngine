@@ -111,6 +111,10 @@ const AssetManager* Application::Assets() const {
 	return assets;
 }
 
+const Random* Application::RNG() const {
+	return rng;
+}
+
 float Application::GetViewAspectRatio() const {
 	return viewAspectRatio;
 }
@@ -154,6 +158,7 @@ Application::~Application() {
 	delete game;
 	delete input;
 	delete assets;
+	delete rng;
 }
 
 HRESULT Application::InitApp(WNDPROC procCallback) {
@@ -164,6 +169,7 @@ HRESULT Application::InitApp(WNDPROC procCallback) {
 	if (FAILED(result)) return result;
 	dxCore->SetupLighting();
 
+	rng = new Random();
 	input = new InputManager(windowHandle);
 	assets = new AssetManager();
 	game = new Game(assets);
