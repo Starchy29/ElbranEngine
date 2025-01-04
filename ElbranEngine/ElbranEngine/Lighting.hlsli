@@ -1,8 +1,12 @@
+#define PI 3.141592653
+
 struct Light {
 	float4 color;
 	float2 worldPosition;
 	float radius;
 	float brightness;
+	float coneSize;
+	float rotation;
 };
 
 cbuffer LightData : register(b13) {
@@ -16,9 +20,17 @@ float4 ApplyLights(float4 startColor, float2 worldPosition) {
 	float4 multiplier = ambientLight;
 	for(int i = 0; i < numLights; i++) {
 		Light light = Lights[i];
+		
 		float dist = distance(worldPosition, light.worldPosition);
 		float scalar = saturate(1.0 - dist * dist / (light.radius * light.radius));
 		scalar *= scalar;
+		
+		if(light.coneSize < 2 * PI) {
+			float2 lightToPixel = (worldPosition - light.worldPosition);
+			float2 lightDirection = float2(cos(light.rotation), sin(light.rotation));
+			scalar *= acos(dot(lightToPixel, lightDirection) / length(lightToPixel)) < light.coneSize / 2.0f; // become 0 light if out of cone
+		}
+		
 		multiplier += (scalar * light.brightness) * light.color;
 	}
 	

@@ -52,6 +52,7 @@ void Game::Update(float deltaTime) {
 		GameObject* newLight = new GameObject(1.5f, 1.f, Color(rng->Generate(0.f, 1.f), rng->Generate(0.f, 1.f), rng->Generate(0.f, 1.f)));
 		sampleScene->Add(newLight);
 		newLight->GetTransform()->SetPosition(APP->Input()->GetMousePosition(sampleScene->GetCamera()));
+		newLight->GetTransform()->SetRotation(rng->Generate(0.f, 6.f));
 	}
 
 	if(APP->Input()->IsKeyPressed(VK_UP)) {

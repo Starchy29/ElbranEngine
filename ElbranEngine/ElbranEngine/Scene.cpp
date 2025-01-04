@@ -105,11 +105,13 @@ void Scene::Draw() {
 	for(int i = 0; i < lightObjects.size(); i++) {
 		GameObject* lightObject = lightObjects[i];
 		lights[i].worldPosition = lightObject->GetTransform()->GetPosition(true);
+		lights[i].rotation = lightObject->GetTransform()->GetRotation(true);
 
 		LightRenderer* lightData = lightObject->GetRenderer<LightRenderer>();
 		lights[i].color = lightData->color;
 		lights[i].brightness = lightData->brightness;
 		lights[i].radius = lightData->radius;
+		lights[i].coneSize = lightData->coneSize;
 	}
 
 	directX->SetLights(lights, lightObjects.size(), ambientLight);
@@ -163,7 +165,7 @@ void Scene::Add(GameObject* object) {
 	}
 	else if(renderMode == RenderMode::Light) {
 		// lights are not sorted
-		assert(lightObjects.size() <= MAX_LIGHTS && "attempted to add too many lights to the scene at once");
+		assert(lightObjects.size() < MAX_LIGHTS && "attempted to add too many lights to the scene at once");
 		lightObjects.push_back(object);
 		return;
 	}

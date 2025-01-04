@@ -10,6 +10,7 @@ public:
     Color color;
     float radius;
     float brightness;
+    float coneSize;
 
     LightRenderer(Color color, float radius, float brightness);
 

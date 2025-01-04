@@ -25,6 +25,8 @@ struct Light {
 	Vector2 worldPosition;
 	float radius;
 	float brightness;
+	float coneSize;
+	float rotation;
 };
 
 class Game;
