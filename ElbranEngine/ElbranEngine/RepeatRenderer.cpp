@@ -18,6 +18,6 @@ void RepeatRenderer::Draw(Camera* camera, const Transform& transform) {
 	pixelShader->SetConstantVariable("stretchFactor", &stretchFactor);
 }
 
-IRenderer* RepeatRenderer::Clone() {
+IBehavior* RepeatRenderer::Clone() {
 	return new RepeatRenderer(*this);
 }

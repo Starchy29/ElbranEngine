@@ -21,6 +21,6 @@ void StretchRenderer::Draw(Camera* camera, const Transform& transform) {
 	SpriteRenderer::Draw(camera, transform);
 }
 
-IRenderer* StretchRenderer::Clone() {
+IBehavior* StretchRenderer::Clone() {
 	return new StretchRenderer(*this);
 }

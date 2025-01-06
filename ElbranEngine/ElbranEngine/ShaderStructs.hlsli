@@ -11,4 +11,13 @@ struct VertexToPixel {
 	float2 uv : TEXCOORD;
 	float2 worldPosition : POSITION;
 };
+
+struct Particle {
+	float2 worldPosition : POSITION;
+	float2 velocity : POSITION2;
+	float timeLeft : HELPER0;
+	float rotation : HELPER1;
+	float width : HELPER2;
+	uint animationFrame : HELPER3;
+};
 #endif

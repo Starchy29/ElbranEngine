@@ -12,6 +12,6 @@ public:
     RepeatRenderer(std::shared_ptr<Sprite> sprite, Vector2 baseScale);
 
     virtual void Draw(Camera* camera, const Transform& transform) override;
-    virtual IRenderer* Clone() override;
+    virtual IBehavior* Clone() override;
 };
 

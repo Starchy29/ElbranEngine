@@ -20,6 +20,6 @@ void AtlasRenderer::Draw(Camera * camera, const Transform & transform) {
 	SpriteRenderer::Draw(camera, transform);
 }
 
-IRenderer* AtlasRenderer::Clone() {
+IBehavior* AtlasRenderer::Clone() {
 	return new AtlasRenderer(*this);
 }

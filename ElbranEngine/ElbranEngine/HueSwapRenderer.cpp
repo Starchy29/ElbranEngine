@@ -14,6 +14,6 @@ void HueSwapRenderer::Draw(Camera* camera, const Transform& transform) {
 	SpriteRenderer::Draw(camera, transform);
 }
 
-IRenderer* HueSwapRenderer::Clone() {
+IBehavior* HueSwapRenderer::Clone() {
 	return new HueSwapRenderer(*this);
 }

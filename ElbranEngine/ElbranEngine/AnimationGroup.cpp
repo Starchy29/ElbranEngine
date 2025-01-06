@@ -1,4 +1,5 @@
 #include "AnimationGroup.h"
+#include <assert.h>
 
 AnimationGroup::AnimationGroup(std::vector<SpriteAnimator*> animations) {
 	assert(animations.size() > 0 && "animation group contained no animations");

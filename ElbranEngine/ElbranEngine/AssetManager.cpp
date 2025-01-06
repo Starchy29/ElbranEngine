@@ -57,6 +57,7 @@ AssetManager::AssetManager() {
 	cameraVS = std::make_shared<VertexShader>(dxDevice, dxContext, L"CameraVS.cso");
 	atlasVS = std::make_shared<VertexShader>(dxDevice, dxContext, L"TextureAtlasVS.cso");
 	backgroundVS = std::make_shared<VertexShader>(dxDevice, dxContext, L"FullscreenVS.cso");
+	particleVS = std::make_shared<VertexShader>(dxDevice, dxContext, L"ParticlePassVS.cso");
 
 	imagePS = std::make_shared<PixelShader>(dxDevice, dxContext, L"TexturePS.cso");
 	hueSwapPS = std::make_shared<PixelShader>(dxDevice, dxContext, L"HueSwapPS.cso");
@@ -70,6 +71,10 @@ AssetManager::AssetManager() {
 	screenSumPP = std::make_shared<PixelShader>(dxDevice, dxContext, L"ScreenSumPP.cso");
 
 	brightnessSumCS = std::make_shared<ComputeShader>(dxDevice, dxContext, L"BrightnessSumCS.cso");
+	particleMoveCS = std::make_shared<ComputeShader>(dxDevice, dxContext, L"ParticleMovementCS.cso");
+	particleSpawnCS = std::make_shared<ComputeShader>(dxDevice, dxContext, L"ParticleSpawnCS.cso");
+
+	particleGS = std::make_shared<GeometryShader>(dxDevice, dxContext, L"ParticleQuadGS.cso");
 
 	Vector2 oneVec = Vector2(1, 1);
 	imagePS->SetConstantVariable("stretchFactor", &oneVec); // this var is for repeating textures, should default to (1,1)

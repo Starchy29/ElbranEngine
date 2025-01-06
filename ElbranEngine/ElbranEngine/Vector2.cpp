@@ -102,14 +102,6 @@ Vector2 Vector2::operator/(const Vector2& other) const {
 	return Vector2(x / other.x, y / other.y);
 }
 
-Vector2 Vector2::operator*(const float& scalar) const {
-	return Vector2(x * scalar, y * scalar);
-}
-
-Vector2 Vector2::operator/(const float& scalar) const {
-	return Vector2(x / scalar, y / scalar);
-}
-
 Vector2& Vector2::operator+=(const Vector2& vec) {
 	*this = *this + vec;
 	return *this;
@@ -147,3 +139,8 @@ bool Vector2::operator==(const Vector2& other) const {
 bool Vector2::operator!=(const Vector2& other) const {
 	return x != other.x || y != other.y;
 }
+
+Vector2 operator*(const Vector2& vector, const float& scalar) { return Vector2(vector.x * scalar, vector.y * scalar); }
+Vector2 operator*(const float& scalar, const Vector2& vector) { return vector * scalar; }
+Vector2 operator/(const Vector2& vector, const float& scalar) { return Vector2(vector.x / scalar, vector.y / scalar); }
+Vector2 operator/(const float& scalar, const Vector2& vector) { return vector / scalar; }

@@ -12,6 +12,6 @@ public:
     AtlasRenderer(std::shared_ptr<SpriteAtlas> sprite);
 
     void Draw(Camera* camera, const Transform& transform) override;
-    IRenderer* Clone() override;
+    IBehavior* Clone() override;
 };
 

@@ -3,8 +3,9 @@
 #include "SpriteRenderer.h"
 #include "TextRenderer.h"
 #include "LightRenderer.h"
+#include "ParticleRenderer.h"
 #include "Scene.h"
-#include "IBehavior.h"
+#include "IRenderer.h"
 using namespace DirectX;
 
 GameObject::GameObject(float zCoord, RenderMode renderMode, IRenderer* renderer) {
@@ -17,6 +18,9 @@ GameObject::GameObject(float zCoord, RenderMode renderMode, IRenderer* renderer)
 	transform.SetZ(zCoord);
 	this->renderMode = renderMode;
 	this->renderer = renderer;
+	if(renderer) {
+		renderer->SetOwner(this);
+	}
 	type = ObjectTag::Default;
 }
 
@@ -36,8 +40,11 @@ GameObject::GameObject(float zCoord, std::string text, std::shared_ptr<DirectX::
 
 GameObject::GameObject(float radius, float brightness, Color lightColor)
 	: GameObject(0, RenderMode::Light, new LightRenderer(lightColor, radius, brightness))
-{
-}
+{ }
+
+GameObject::GameObject(float zCoord, unsigned int maxParticles, bool translucent)
+	: GameObject(zCoord, translucent ? RenderMode::Translucent : RenderMode::Opaque, new ParticleRenderer(maxParticles))
+{ }
 
 GameObject::~GameObject() {
 	for(IBehavior* behavior : behaviors) {
@@ -136,7 +143,8 @@ GameObject::GameObject(const GameObject& original) {
 
 	transform = original.transform;
 	if(original.renderer != nullptr) {
-		renderer = original.renderer->Clone();
+		renderer = (IRenderer*)(original.renderer->Clone());
+		renderer->SetOwner(this);
 	}
 
 	// scene joined in Clone()
@@ -160,6 +168,9 @@ void GameObject::RemoveParent() {
 }
 
 void GameObject::Update(float deltaTime) {
+	if(renderer != nullptr && renderer->enabled) {
+		renderer->Update(deltaTime);
+	}
 	for(IBehavior* behavior : behaviors) {
 		if(behavior->enabled) {
 			behavior->Update(deltaTime);
@@ -168,7 +179,7 @@ void GameObject::Update(float deltaTime) {
 }
 
 void GameObject::Draw(Camera* camera) {
-	if(renderer) {
+	if(renderer != nullptr && renderer->enabled) {
 		renderer->Draw(camera, transform);
 	}
 }

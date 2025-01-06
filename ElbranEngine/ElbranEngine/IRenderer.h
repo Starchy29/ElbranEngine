@@ -5,15 +5,17 @@
 #include "Mesh.h"
 #include "VertexShader.h"
 #include "PixelShader.h"
+#include "IBehavior.h"
 
 class IRenderer
+	: public IBehavior
 {
 public:
 	std::shared_ptr<Mesh> mesh;
 
-	virtual ~IRenderer() {}
+	virtual ~IRenderer() { }
+	virtual void Update(float deltaTime) { }
 	virtual void Draw(Camera* camera, const Transform& transform) = 0;
-	virtual IRenderer* Clone() = 0;
 
 protected:
 	std::shared_ptr<VertexShader> vertexShader;

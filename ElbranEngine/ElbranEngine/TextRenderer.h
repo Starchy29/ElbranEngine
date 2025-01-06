@@ -17,6 +17,6 @@ public:
     TextRenderer(std::string text, std::shared_ptr<DirectX::DX11::SpriteFont> font, Color color);
 
     void Draw(Camera* camera, const Transform& transform) override;
-    IRenderer* Clone() override;
+    IBehavior* Clone() override;
 };
 

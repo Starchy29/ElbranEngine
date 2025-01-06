@@ -14,6 +14,6 @@ public:
     StretchRenderer(std::shared_ptr<Sprite> sprite, Vector2 baseScale, Vector2 startUV, Vector2 endUV);
 
     void Draw(Camera* camera, const Transform& transform) override;
-    IRenderer* Clone() override;
+    IBehavior* Clone() override;
 };
 

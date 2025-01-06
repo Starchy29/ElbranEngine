@@ -13,6 +13,6 @@ LightRenderer::LightRenderer(Color color, float radius, float brightness) {
 
 void LightRenderer::Draw(Camera* camera, const Transform& transform) { }
 
-IRenderer* LightRenderer::Clone() {
+IBehavior* LightRenderer::Clone() {
 	return new LightRenderer(*this);
 }

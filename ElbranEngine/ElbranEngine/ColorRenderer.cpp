@@ -21,6 +21,6 @@ void ColorRenderer::Draw(Camera* camera, const Transform& transform) {
 	mesh->Draw();
 }
 
-IRenderer* ColorRenderer::Clone() {
+IBehavior* ColorRenderer::Clone() {
 	return new ColorRenderer(*this);
 }

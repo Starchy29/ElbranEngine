@@ -5,6 +5,7 @@
 #include "VertexShader.h"
 #include "PixelShader.h"
 #include "ComputeShader.h"
+#include "GeometryShader.h"
 #include "Mesh.h"
 #include "Sprite.h"
 #include <SpriteFont.h>
@@ -22,6 +23,7 @@ public:
 	std::shared_ptr<VertexShader> cameraVS;
 	std::shared_ptr<VertexShader> atlasVS;
 	std::shared_ptr<VertexShader> backgroundVS;
+	std::shared_ptr<VertexShader> particleVS;
 
 	std::shared_ptr<PixelShader> imagePS;
 	std::shared_ptr<PixelShader> hueSwapPS;
@@ -35,6 +37,10 @@ public:
 	std::shared_ptr<PixelShader> screenSumPP;
 
 	std::shared_ptr<ComputeShader> brightnessSumCS;
+	std::shared_ptr<ComputeShader> particleSpawnCS;
+	std::shared_ptr<ComputeShader> particleMoveCS;
+
+	std::shared_ptr<GeometryShader> particleGS;
 
 	Microsoft::WRL::ComPtr<ID3D11SamplerState> defaultSampler;
 #pragma endregion

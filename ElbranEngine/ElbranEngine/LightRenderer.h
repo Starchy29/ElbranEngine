@@ -15,6 +15,6 @@ public:
     LightRenderer(Color color, float radius, float brightness);
 
     virtual void Draw(Camera* camera, const Transform& transform) override;
-    virtual IRenderer* Clone() override;
+    virtual IBehavior* Clone() override;
 };
 

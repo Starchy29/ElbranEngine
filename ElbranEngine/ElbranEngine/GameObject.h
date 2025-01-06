@@ -10,6 +10,7 @@ class Sprite;
 class SpriteAtlas;
 class Camera;
 class IBehavior;
+class IRenderer;
 
 enum class RenderMode {
 	Opaque,
@@ -27,11 +28,12 @@ class GameObject {
 	friend class Scene;
 
 public:
-	GameObject(float zCoord, RenderMode renderMode, IRenderer* renderer);
-	GameObject(float zCoord, Color color, bool circle = false);
-	GameObject(float zCoord, std::shared_ptr<Sprite> sprite, bool translucent);
-	GameObject(float zCoord, std::string text, std::shared_ptr<DirectX::DX11::SpriteFont> font, Color color);
-	GameObject(float radius, float brightness, Color lightColor);
+	GameObject(float zCoord, RenderMode renderMode, IRenderer* renderer); // standard constructor
+	GameObject(float zCoord, Color color, bool circle = false); // solid color
+	GameObject(float zCoord, std::shared_ptr<Sprite> sprite, bool translucent); // sprite
+	GameObject(float zCoord, std::string text, std::shared_ptr<DirectX::DX11::SpriteFont> font, Color color); // text box
+	GameObject(float radius, float brightness, Color lightColor); // light
+	GameObject(float zCoord, unsigned int maxParticles, bool translucent); // particle system
 	virtual ~GameObject();
 
 	virtual void Update(float deltaTime);

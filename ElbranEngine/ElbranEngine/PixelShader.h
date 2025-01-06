@@ -16,6 +16,6 @@ private:
 
     void SetSpecificShader() override;
     void CreateShader(Microsoft::WRL::ComPtr<ID3DBlob> shaderBlob) override;
-    void SetConstantBuffer(int slot, Microsoft::WRL::ComPtr<ID3D11Buffer> cBuffer);
+    void SetConstantBuffer(int slot, Microsoft::WRL::ComPtr<ID3D11Buffer> cBuffer) override;
 };
 

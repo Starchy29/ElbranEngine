@@ -35,8 +35,6 @@ struct Vector2 : public DirectX::XMFLOAT2
 	Vector2 operator-(const Vector2& other) const;
 	Vector2 operator*(const Vector2& other) const;
 	Vector2 operator/(const Vector2& other) const;
-	Vector2 operator*(const float& scalar) const;
-	Vector2 operator/(const float& scalar) const;
 
 	Vector2& operator+= (const Vector2& vec);
 	Vector2& operator-= (const Vector2& vec);
@@ -49,3 +47,7 @@ struct Vector2 : public DirectX::XMFLOAT2
 	bool operator!=(const Vector2& other) const;
 };
 
+Vector2 operator*(const Vector2& vector, const float& scalar);
+Vector2 operator*(const float& scalar, const Vector2& vector);
+Vector2 operator/(const Vector2& vector, const float& scalar);
+Vector2 operator/(const float& scalar, const Vector2& vector);

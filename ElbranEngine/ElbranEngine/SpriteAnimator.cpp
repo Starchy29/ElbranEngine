@@ -1,5 +1,6 @@
 #include "SpriteAnimator.h"
 #include "AtlasRenderer.h"
+#include "GameObject.h"
 
 SpriteAnimator::SpriteAnimator(std::shared_ptr<SpriteAtlas> spriteSheet, int frames, float fps) {
     looped = false;

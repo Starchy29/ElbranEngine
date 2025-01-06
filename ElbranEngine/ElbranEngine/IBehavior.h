@@ -1,5 +1,6 @@
 #pragma once
-#include "GameObject.h"
+
+class GameObject;
 
 class IBehavior
 {
@@ -17,7 +18,7 @@ public:
 
 	virtual ~IBehavior() {}
 	virtual void SetOwner(GameObject* owner) { this->owner = owner; }
-	virtual void Update(float deltaTime) = 0;
+	virtual void Update(float deltaTime) { }
 	virtual IBehavior* Clone() = 0;
 
 protected:

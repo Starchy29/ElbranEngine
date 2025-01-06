@@ -34,6 +34,6 @@ void SpriteRenderer::Draw(Camera* camera, const Transform& transform) {
 	mesh->Draw();
 }
 
-IRenderer* SpriteRenderer::Clone() {
+IBehavior* SpriteRenderer::Clone() {
 	return new SpriteRenderer(*this);
 }

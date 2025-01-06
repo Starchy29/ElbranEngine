@@ -83,6 +83,6 @@ void TextRenderer::Draw(Camera* camera, const Transform& transform) {
 	);
 }
 
-IRenderer* TextRenderer::Clone() {
+IBehavior* TextRenderer::Clone() {
 	return new TextRenderer(*this);
 }

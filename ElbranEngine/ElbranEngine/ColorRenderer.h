@@ -11,6 +11,6 @@ public:
     ColorRenderer(Color color, bool circle = false);
 
     void Draw(Camera* camera, const Transform& transform) override;
-    IRenderer* Clone() override;
+    IBehavior* Clone() override;
 };
 

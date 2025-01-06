@@ -11,11 +11,17 @@
 #include "HSVPostProcess.h"
 #include "BloomPostProcess.h"
 #include "StretchRenderer.h"
-
-#include <iostream>
+#include "ParticleRenderer.h"
 
 Game::Game(const AssetManager* assets) {
 	sampleScene = new Scene(10, Color(0.1f, 0.1f, 0.1f));
+
+	GameObject* particles = new GameObject(-1, 200, false);
+	sampleScene->Add(particles);
+	ParticleRenderer* spawner = particles->GetRenderer<ParticleRenderer>();
+	spawner->spawnRadius = 2.0f;
+	spawner->lifespan = 1.0f;
+	spawner->Spawn(10);
 
 	//APP->Graphics()->postProcesses.push_back(new HSVPostProcess(0, -1, 0));
 	//APP->Graphics()->postProcesses.push_back(new BloomPostProcess(0.7f, 50));
@@ -44,7 +50,7 @@ Game::~Game() {
 }
 
 void Game::Update(float deltaTime) {
-	//sampleScene->Update(deltaTime);
+	sampleScene->Update(deltaTime);
 	testObject->GetTransform()->SetPosition(APP->Input()->GetMousePosition(sampleScene->GetCamera()));
 
 	if(APP->Input()->KeyJustPressed(VK_MOUSE_LEFT)) {

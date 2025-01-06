@@ -17,6 +17,6 @@ public:
     virtual ~SpriteRenderer() {}
 
     virtual void Draw(Camera* camera, const Transform& transform) override;
-    virtual IRenderer* Clone() override;
+    virtual IBehavior* Clone() override;
 };
 
