@@ -1,12 +1,14 @@
 #pragma once
+#include "Vector2.h"
 
 class Random
 {
 	friend class Application;
 
 public:
-	int Generate(int min, int max) const;
-	float Generate(float min, float max) const;
+	int GenerateInt(int min, int max) const;
+	float GenerateFloat(float min, float max) const;
+	Vector2 GenerateInCircle(float radius = 1.0f) const;
 
 	// prevent copying
 	Random(const Random&) = delete;

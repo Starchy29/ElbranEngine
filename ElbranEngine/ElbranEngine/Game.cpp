@@ -16,12 +16,14 @@
 Game::Game(const AssetManager* assets) {
 	sampleScene = new Scene(10, Color(0.1f, 0.1f, 0.1f));
 
-	GameObject* particles = new GameObject(-1, 200, false);
+	ParticleRenderer* spawner = new ParticleRenderer(200, 2.0f, assets->testImage);
+	GameObject* particles = new GameObject(-1, spawner, false);
 	sampleScene->Add(particles);
-	ParticleRenderer* spawner = particles->GetRenderer<ParticleRenderer>();
 	spawner->spawnRadius = 2.0f;
-	spawner->lifespan = 1.0f;
-	spawner->Spawn(10);
+	spawner->width = 0.4f;
+	//spawner->applyLights = true;
+	//spawner->Spawn(50, 0.5f);
+	spawner->SetSpawnRate(50.f);
 
 	//APP->Graphics()->postProcesses.push_back(new HSVPostProcess(0, -1, 0));
 	//APP->Graphics()->postProcesses.push_back(new BloomPostProcess(0.7f, 50));
@@ -55,10 +57,10 @@ void Game::Update(float deltaTime) {
 
 	if(APP->Input()->KeyJustPressed(VK_MOUSE_LEFT)) {
 		const Random* rng = APP->RNG();
-		GameObject* newLight = new GameObject(1.5f, 1.f, Color(rng->Generate(0.f, 1.f), rng->Generate(0.f, 1.f), rng->Generate(0.f, 1.f)));
+		GameObject* newLight = new GameObject(1.5f, 1.f, Color(rng->GenerateFloat(0.f, 1.f), rng->GenerateFloat(0.f, 1.f), rng->GenerateFloat(0.f, 1.f)));
 		sampleScene->Add(newLight);
 		newLight->GetTransform()->SetPosition(APP->Input()->GetMousePosition(sampleScene->GetCamera()));
-		newLight->GetTransform()->SetRotation(rng->Generate(0.f, 6.f));
+		newLight->GetTransform()->SetRotation(rng->GenerateFloat(0.f, 6.f));
 	}
 
 	if(APP->Input()->IsKeyPressed(VK_UP)) {

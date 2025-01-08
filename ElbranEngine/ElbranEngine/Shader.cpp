@@ -81,7 +81,7 @@ void Shader::LoadShader(std::wstring fileName) {
 		D3D11_SHADER_INPUT_BIND_DESC bindDescr;
 		reflection->GetResourceBindingDescByName(bufferDescr.Name, &bindDescr);
 
-		if(bindDescr.BindPoint == LIGHT_CONSTANTS_REGISTER || bindDescr.BindPoint == LIGHT_ARRAY_REGISTER) {
+		if(bindDescr.Type != D3D_SIT_CBUFFER || bindDescr.BindPoint == LIGHT_CONSTANTS_REGISTER || bindDescr.BindPoint == LIGHT_ARRAY_REGISTER) {
 			cBuffCount--;
 		}
 	}
@@ -96,7 +96,7 @@ void Shader::LoadShader(std::wstring fileName) {
 		D3D11_SHADER_INPUT_BIND_DESC bindDescr;
 		reflection->GetResourceBindingDescByName(bufferDescr.Name, &bindDescr);
 
-		if(bindDescr.BindPoint == LIGHT_CONSTANTS_REGISTER || bindDescr.BindPoint == LIGHT_ARRAY_REGISTER) {
+		if(bindDescr.Type != D3D_SIT_CBUFFER || bindDescr.BindPoint == LIGHT_CONSTANTS_REGISTER || bindDescr.BindPoint == LIGHT_ARRAY_REGISTER) {
 			continue;
 		}
 

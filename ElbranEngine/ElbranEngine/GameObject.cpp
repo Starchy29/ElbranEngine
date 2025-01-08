@@ -42,8 +42,8 @@ GameObject::GameObject(float radius, float brightness, Color lightColor)
 	: GameObject(0, RenderMode::Light, new LightRenderer(lightColor, radius, brightness))
 { }
 
-GameObject::GameObject(float zCoord, unsigned int maxParticles, bool translucent)
-	: GameObject(zCoord, translucent ? RenderMode::Translucent : RenderMode::Opaque, new ParticleRenderer(maxParticles))
+GameObject::GameObject(float zCoord, ParticleRenderer* particleSystem, bool translucent)
+	: GameObject(zCoord, translucent ? RenderMode::Translucent : RenderMode::Opaque, particleSystem)
 { }
 
 GameObject::~GameObject() {

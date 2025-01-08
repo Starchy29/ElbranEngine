@@ -2,22 +2,27 @@
 #include "Application.h"
 #include "Mesh.h"
 #include "ComputeShader.h"
+#include "SpriteAtlas.h"
 using namespace DirectX;
 
 #define CONTINUOUS_SPAWNS -1
 
-ParticleRenderer::ParticleRenderer(unsigned int maxParticles) {
+ParticleRenderer::ParticleRenderer(unsigned int maxParticles, float lifespan) {
 	const AssetManager* assets = APP->Assets();
 	mesh = nullptr;
 	vertexShader = assets->particleVS;
-	pixelShader = assets->colorPS;
 	geometryShader = assets->particleGS;
+	pixelShader = assets->imagePS;
 	spawnShader = assets->particleSpawnCS;
 	moveShader = assets->particleMoveCS;
 
+	this->lifespan = lifespan;
 	this->maxParticles = maxParticles;
-	particleCount = 0;
 	lastIndex = maxParticles - 1; // causes the first spawn to go in index 0
+
+	applyLights = false;
+	tint = Color::White;
+	width = 1.0f;
 
 	spawnsLeft = 0;
 	spawnInterval = 0.0f;
@@ -27,42 +32,63 @@ ParticleRenderer::ParticleRenderer(unsigned int maxParticles) {
 	dxDevice = directX->GetDevice();
 	dxContext = directX->GetContext();
 
-	// create a vertex buffer for the particles
+	// create a read/write buffer for the particles
 	D3D11_BUFFER_DESC bufferDescription = {};
 	bufferDescription.Usage = D3D11_USAGE_DEFAULT;
 	bufferDescription.ByteWidth = sizeof(Particle) * maxParticles;
-	bufferDescription.BindFlags = D3D11_BIND_VERTEX_BUFFER;
+	bufferDescription.BindFlags = D3D11_BIND_UNORDERED_ACCESS | D3D11_BIND_SHADER_RESOURCE;
 	bufferDescription.CPUAccessFlags = 0;
-	bufferDescription.MiscFlags = 0; // D3D11_RESOURCE_MISC_BUFFER_STRUCTURED;
-	bufferDescription.StructureByteStride = 0;
-
-	dxDevice->CreateBuffer(&bufferDescription, 0, vertexBuffer.GetAddressOf());
-
-	// create a read/write buffer for the particles that the compute shader can use
-	bufferDescription.BindFlags = D3D11_BIND_UNORDERED_ACCESS;
 	bufferDescription.MiscFlags = D3D11_RESOURCE_MISC_BUFFER_STRUCTURED;
 	bufferDescription.StructureByteStride = sizeof(Particle);
 
-	dxDevice->CreateBuffer(&bufferDescription, 0, computeParticleBuffer.GetAddressOf());
+	dxDevice->CreateBuffer(&bufferDescription, 0, particleBuffer.GetAddressOf());
 
-	// create the view for the read/write buffer
-	D3D11_UNORDERED_ACCESS_VIEW_DESC viewDescription = {};
-	viewDescription.Format = DXGI_FORMAT_UNKNOWN;
-	viewDescription.ViewDimension = D3D11_UAV_DIMENSION_BUFFER;
-	viewDescription.Buffer.FirstElement = 0;
-	viewDescription.Buffer.NumElements = maxParticles;
-	viewDescription.Buffer.Flags = 0;
+	// create the read/write view for the  buffer
+	D3D11_UNORDERED_ACCESS_VIEW_DESC uavDescription = {};
+	uavDescription.Format = DXGI_FORMAT_UNKNOWN;
+	uavDescription.ViewDimension = D3D11_UAV_DIMENSION_BUFFER;
+	uavDescription.Buffer.FirstElement = 0;
+	uavDescription.Buffer.NumElements = maxParticles;
+	uavDescription.Buffer.Flags = 0;
 
-	dxDevice->CreateUnorderedAccessView(computeParticleBuffer.Get(), &viewDescription, computeParticleView.GetAddressOf());
+	dxDevice->CreateUnorderedAccessView(particleBuffer.Get(), &uavDescription, readWriteView.GetAddressOf());
+
+	// create the read only view for the buffer
+	D3D11_SHADER_RESOURCE_VIEW_DESC srvDescription = {};
+	srvDescription.Format = DXGI_FORMAT_UNKNOWN;
+	srvDescription.ViewDimension = D3D11_SRV_DIMENSION_BUFFER;
+	srvDescription.Buffer.FirstElement = 0;
+	srvDescription.Buffer.NumElements = maxParticles;
+
+	dxDevice->CreateShaderResourceView(particleBuffer.Get(), &srvDescription, readOnlyView.GetAddressOf());
 
 	// create the buffer for setting initial positions
 	initalPosBuffer = Shader::CreateArrayBuffer(maxParticles, sizeof(Vector2), ShaderDataType::Float2);
 }
 
+ParticleRenderer::ParticleRenderer(unsigned int maxParticles, float lifespan, std::shared_ptr<Sprite> sprite)
+	: ParticleRenderer(maxParticles, lifespan)
+{
+	this->sprite = sprite;
+	animated = false;
+}
+
+ParticleRenderer::ParticleRenderer(unsigned int maxParticles, float lifespan, std::shared_ptr<SpriteAtlas> animation)
+	: ParticleRenderer(maxParticles, lifespan)
+{
+	sprite = std::static_pointer_cast<Sprite>(animation);
+	animated = true;
+}
+
 void ParticleRenderer::Update(float deltaTime) {
 	// update particles
+	ID3D11ShaderResourceView* nullSRV[1] = { nullptr };
+	dxContext->VSSetShaderResources(0, 1, nullSRV); // unbind from vertex shader
+	moveShader->SetReadWriteBuffer(readWriteView, 0);
 
-	
+	moveShader->SetConstantVariable("maxParticles", &maxParticles);
+	moveShader->SetConstantVariable("deltaTime", &deltaTime);
+	moveShader->Dispatch(maxParticles, 1);
 	
 	// update spawning
 	if(spawnsLeft == 0) {
@@ -81,8 +107,12 @@ void ParticleRenderer::Update(float deltaTime) {
 
 void ParticleRenderer::Draw(Camera* camera, const Transform& transform) {
 	// vertex shader
-	dxContext->CopyResource(vertexBuffer.Get(), computeParticleBuffer.Get());
-	dxContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_POINTLIST);
+	ID3D11UnorderedAccessView* nullUAV[1] = { nullptr };
+	dxContext->CSSetUnorderedAccessViews(0, 1, nullUAV, 0); // unbind from compute shader
+	ID3D11Buffer* nullVertices[1] = { nullptr };
+	UINT zero = 0;
+	dxContext->IASetVertexBuffers(0, 1, nullVertices, &zero, &zero);
+	vertexShader->SetArrayBuffer(readOnlyView, 0);
 	vertexShader->SetShader();
 
 	// geometry shader
@@ -93,16 +123,29 @@ void ParticleRenderer::Draw(Camera* camera, const Transform& transform) {
 	XMStoreFloat4x4(&matrix, product);
 
 	float z = transform.GetGlobalZ();
-	float aspectRatio = 1.0f;
+	float aspectRatio = sprite->GetAspectRatio();
 
+	Vector2 spriteDims = Vector2(1.f, 1.f);
+	int columns = 1;
+	if(animated) {
+		SpriteAtlas* atlas = (SpriteAtlas*)sprite.get();
+		columns = atlas->NumCols();
+		spriteDims = Vector2(1.0 / columns, 1.0f / atlas->NumRows());
+	}
+
+	dxContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_POINTLIST);
 	geometryShader->SetConstantVariable("viewProjection", &matrix);
 	geometryShader->SetConstantVariable("z", &z);
 	geometryShader->SetConstantVariable("spriteAspectRatio", &aspectRatio);
+	geometryShader->SetConstantVariable("spriteDims", &spriteDims);
+	geometryShader->SetConstantVariable("atlasCols", &columns);
 	geometryShader->SetShader();
 
 	// pixel shader
-	Color red = Color::Red;
-	pixelShader->SetConstantVariable("color", &red);
+	pixelShader->SetConstantVariable("tint", &tint);
+	pixelShader->SetConstantVariable("lit", &applyLights);
+	pixelShader->SetSampler(APP->Assets()->defaultSampler);
+	pixelShader->SetTexture(sprite->GetResourceView());
 	pixelShader->SetShader();
 
 	// draw
@@ -136,16 +179,8 @@ void ParticleRenderer::SetSpawnRate(float perSec) {
 	timer = spawnInterval;
 }
 
+// if there are too many particles, the oldest will be replaced
 void ParticleRenderer::Emit(int newParticles) {
-	// don't spawn too many
-	if(particleCount >= maxParticles) {
-		return;
-	}
-
-	if(particleCount + newParticles > maxParticles) {
-		newParticles = maxParticles - particleCount;
-	}
-
 	// determine the random start positions
 	const Random* rng = APP->RNG();
 	Vector2* positions = new Vector2[newParticles];
@@ -153,26 +188,25 @@ void ParticleRenderer::Emit(int newParticles) {
 	for(int i = 0; i < newParticles; i++) {
 		positions[i] = objectPosition;
 		if(spawnRadius > 0) {
-			float angle = rng->Generate(0.f, DirectX::XM_2PI);
-			positions[i] += rng->Generate(0.f, spawnRadius) * Vector2(cos(angle), sin(angle));
+			positions[i] += rng->GenerateInCircle(spawnRadius);
 		}
 	}
 
 	Shader::WriteArray(positions, &initalPosBuffer);
 
 	// dispatch the compute shader
-	spawnShader->SetReadWriteBuffer(computeParticleView, 0);
-	spawnShader->SetArrayBuffer(initalPosBuffer.view, 1);
+	spawnShader->SetReadWriteBuffer(readWriteView, 0);
+	spawnShader->SetArrayBuffer(initalPosBuffer.view, 0);
 
 	spawnShader->SetConstantVariable("spawnCount", &newParticles);
 	spawnShader->SetConstantVariable("lastParticle", &lastIndex);
 	spawnShader->SetConstantVariable("maxParticles", &maxParticles);
 	spawnShader->SetConstantVariable("lifespan", &lifespan);
+	spawnShader->SetConstantVariable("width", &width);
 
 	spawnShader->Dispatch(newParticles, 1);
 
 	// update trackers
-	particleCount += newParticles;
 	lastIndex += newParticles;
 	if(lastIndex >= maxParticles) {
 		lastIndex -= maxParticles;

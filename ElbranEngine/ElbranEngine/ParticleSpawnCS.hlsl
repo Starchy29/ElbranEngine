@@ -5,10 +5,11 @@ cbuffer Constants : register(b0) {
 	uint lastParticle;
 	uint maxParticles;
 	float lifespan;
+	float width;
 }
 
 RWStructuredBuffer<Particle> particles : register(u0);
-Buffer<float2> initialPositions : register(t1);
+Buffer<float2> initialPositions : register(t0);
 // inital velocity
 
 [numthreads(4, 1, 1)]
@@ -26,6 +27,6 @@ void main( uint3 DTid : SV_DispatchThreadID ) {
 	particles[spawnIndex].velocity = float2(0, 0);
 	particles[spawnIndex].timeLeft = lifespan;
 	particles[spawnIndex].rotation = 0;
-	particles[spawnIndex].width = 1;
+	particles[spawnIndex].width = width;
 	particles[spawnIndex].animationFrame = 0;
 }

@@ -11,6 +11,7 @@ class SpriteAtlas;
 class Camera;
 class IBehavior;
 class IRenderer;
+class ParticleRenderer;
 
 enum class RenderMode {
 	Opaque,
@@ -33,7 +34,7 @@ public:
 	GameObject(float zCoord, std::shared_ptr<Sprite> sprite, bool translucent); // sprite
 	GameObject(float zCoord, std::string text, std::shared_ptr<DirectX::DX11::SpriteFont> font, Color color); // text box
 	GameObject(float radius, float brightness, Color lightColor); // light
-	GameObject(float zCoord, unsigned int maxParticles, bool translucent); // particle system
+	GameObject(float zCoord, ParticleRenderer* particleSystem, bool translucent); // particle system
 	virtual ~GameObject();
 
 	virtual void Update(float deltaTime);

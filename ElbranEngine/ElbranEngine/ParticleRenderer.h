@@ -1,9 +1,12 @@
 #pragma once
 #include "IRenderer.h"
 #include "GeometryShader.h"
+#include "Color.h"
 
 class ComputeShader;
 class DXCore;
+class Sprite;
+class SpriteAtlas;
 
 // must match HLSL struct
 struct Particle {
@@ -19,10 +22,19 @@ class ParticleRenderer :
     public IRenderer
 {
 public:
+    // sprite settings
+    Color tint;
+    bool applyLights;
+
+    // spawn settings
     float lifespan;
     float spawnRadius;
 
-    ParticleRenderer(unsigned int maxParticles);
+    // movement settings
+    float width;
+
+    ParticleRenderer(unsigned int maxParticles, float lifespan, std::shared_ptr<Sprite> sprite);
+    ParticleRenderer(unsigned int maxParticles, float lifespan, std::shared_ptr<SpriteAtlas> animation);
 
     virtual void Update(float deltaTime) override;
     virtual void Draw(Camera* camera, const Transform& transform) override;
@@ -39,18 +51,22 @@ private:
     std::shared_ptr<ComputeShader> spawnShader;
     std::shared_ptr<ComputeShader> moveShader;
 
-    Microsoft::WRL::ComPtr<ID3D11Buffer> vertexBuffer;
-    Microsoft::WRL::ComPtr<ID3D11Buffer> computeParticleBuffer;
-    Microsoft::WRL::ComPtr<ID3D11UnorderedAccessView> computeParticleView;
+    Microsoft::WRL::ComPtr<ID3D11Buffer> particleBuffer;
+    Microsoft::WRL::ComPtr<ID3D11UnorderedAccessView> readWriteView;
+    Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> readOnlyView;
     ArrayBuffer initalPosBuffer;
 
     unsigned int maxParticles;
-    unsigned int particleCount;
     unsigned int lastIndex;
 
     float timer;
     int spawnsLeft;
     float spawnInterval;
+
+    bool animated; // if true, the below sprite stores a SpriteAtlas
+    std::shared_ptr<Sprite> sprite;
+
+    ParticleRenderer(unsigned int maxParticles, float lifespan);
 
     void Emit(int newParticles);
 };

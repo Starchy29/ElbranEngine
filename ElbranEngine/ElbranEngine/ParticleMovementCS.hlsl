@@ -1,7 +1,7 @@
-#include "ShaderStructs.hlsli"
+	#include "ShaderStructs.hlsli"
 
 cbuffer Constants : register(b0) {
-	int particleCount;
+	int maxParticles;
 	float deltaTime;
 }
 
@@ -13,7 +13,7 @@ RWStructuredBuffer<Particle> particles : register(u0);
 
 [numthreads(32, 1, 1)]
 void main(uint3 DTid : SV_DispatchThreadID) {
-	if(DTid.x >= particleCount) {
+	if(DTid.x >= maxParticles) {
 		return;
 	}
 	
@@ -23,9 +23,10 @@ void main(uint3 DTid : SV_DispatchThreadID) {
 	}
 	
 	particle.timeLeft -= deltaTime;
+	//particle.worldPosition.x += deltaTime;
 	
-	particle.velocity += acceleration * deltaTime;
-	particle.worldPosition += particle.velocity * deltaTime;
+	//particle.velocity += acceleration * deltaTime;
+	//particle.worldPosition += particle.velocity * deltaTime;
 	
 	particles[DTid.x] = particle;
 }
