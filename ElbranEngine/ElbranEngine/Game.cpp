@@ -16,14 +16,21 @@
 Game::Game(const AssetManager* assets) {
 	sampleScene = new Scene(10, Color(0.1f, 0.1f, 0.1f));
 
-	ParticleRenderer* spawner = new ParticleRenderer(200, 2.0f, assets->testImage);
-	GameObject* particles = new GameObject(-1, spawner, false);
+	ParticleRenderer* spawner = new ParticleRenderer(200, 0.8f, std::make_shared<SpriteAtlas>(L"animation.png", 3, 3, 8));
+	GameObject* particles = new GameObject(-1, spawner, true);
 	sampleScene->Add(particles);
-	spawner->spawnRadius = 2.0f;
+	spawner->spawnRadius = 1.0f;
 	spawner->width = 0.4f;
+	//spawner->secondsPerFrame = 0.1f;
+	//spawner->spinRate = -6.3f;
+	//spawner->growthRate = 0.1f;
 	//spawner->applyLights = true;
 	//spawner->Spawn(50, 0.5f);
-	spawner->SetSpawnRate(50.f);
+	spawner->speed = 1.0f;
+	spawner->moveStyle = ParticleMovement::Outward;
+	spawner->faceMoveDirection = true;
+	spawner->SetSpawnRate(30.f);
+	spawner->fadeDuration = 0.8f;
 
 	//APP->Graphics()->postProcesses.push_back(new HSVPostProcess(0, -1, 0));
 	//APP->Graphics()->postProcesses.push_back(new BloomPostProcess(0.7f, 50));

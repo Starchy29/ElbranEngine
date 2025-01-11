@@ -24,7 +24,7 @@ float4 main(VertexToPixel input) : SV_TARGET
 	sampleUV = ( min(sampleUV, startUV) + max(0, sampleUV - startUV) % (endUV - startUV) ) * (sampleUV <= endSpot)
 		+ (1.0 - stretchFactor + sampleUV) * (sampleUV > endSpot);
 
-	float4 pixel = Image.SampleLevel(Sampler, sampleUV, 0) * tint;
+	float4 pixel = Image.SampleLevel(Sampler, sampleUV, 0) * tint * input.color;
 	clip(pixel.a - 0.01);
 	if(lit) {
 		pixel = ApplyLights(pixel, input.worldPosition);

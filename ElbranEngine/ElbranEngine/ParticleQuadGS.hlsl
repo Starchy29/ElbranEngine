@@ -4,6 +4,8 @@ cbuffer Constants : register(b0) {
 	float4x4 viewProjection;
 	float z;
 	float spriteAspectRatio;
+	float frameDuration;
+	int animationFrames;
 	
 	// for atlases
 	float2 spriteDims;
@@ -34,13 +36,20 @@ void main(
 	uvs[2] = float2(1, 1);
 	uvs[3] = float2(1, 0);
 	
+	float2 atlasPosition = float2(0, 0);
+	if(animationFrames > 1 && frameDuration > 0) {
+		int frame = (int)(input[0].lifetime / frameDuration) % animationFrames;
+		atlasPosition = float2(frame % atlasCols, frame / atlasCols); // (col, row) to match with (x, y)
+	}
+	
 	VertexToPixel vertex;
 	
 	[unroll]
 	for(int i = 0; i < 4; i++) {
 		vertex.screenPosition = mul(viewProjection, corners[i]);
-		vertex.uv = uvs[i];
+		vertex.uv = spriteDims * (atlasPosition + uvs[i]);
 		vertex.worldPosition = corners[i];
+		vertex.color = float4(1, 1, 1, input[0].alpha);
 		output.Append(vertex);
 	}
 }

@@ -15,7 +15,7 @@ SamplerState Sampler : register(s0);
 
 float4 main(VertexToPixel input) : SV_TARGET
 {
-    float4 color = Image.Sample(Sampler, input.uv);
+    float4 color = Image.Sample(Sampler, input.uv) * input.color;
     clip(color.a - 0.01);
     
     float3 sampleHSV = toHSV(color.rgb);

@@ -6,7 +6,9 @@ cbuffer Constants : register(b0) {
 }
 
 cbuffer ParticleType : register(b1) {
-	float2 acceleration;
+	float growthRate;
+	float spinRate;
+	float fadeDuration;
 }
 
 RWStructuredBuffer<Particle> particles : register(u0);
@@ -23,10 +25,12 @@ void main(uint3 DTid : SV_DispatchThreadID) {
 	}
 	
 	particle.timeLeft -= deltaTime;
-	//particle.worldPosition.x += deltaTime;
+	particle.lifetime += deltaTime;
 	
-	//particle.velocity += acceleration * deltaTime;
-	//particle.worldPosition += particle.velocity * deltaTime;
+	particle.worldPosition += particle.velocity * deltaTime;
+	particle.width = max(0, particle.width + growthRate * deltaTime);
+	particle.rotation += spinRate * deltaTime;
+	particle.alpha = fadeDuration > 0 ? saturate(particle.timeLeft / fadeDuration) : 1;
 	
 	particles[DTid.x] = particle;
 }

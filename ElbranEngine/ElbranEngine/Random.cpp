@@ -20,6 +20,11 @@ Vector2 Random::GenerateInCircle(float radius) const {
 	return length * Vector2(cos(angle), sin(angle));
 }
 
+Vector2 Random::GenerateOnCircle() const {
+	float angle = GenerateFloat(0.f, DirectX::XM_2PI);
+	return Vector2(cos(angle), sin(angle));
+}
+
 Random::Random() {
 	std::random_device os_seed;
 	uint_least32_t seed = os_seed();

@@ -13,7 +13,7 @@ SamplerState Sampler : register(s0);
 float4 main(VertexToPixel input) : SV_TARGET
 {
 	input.uv *= stretchFactor;
-	float4 pixel = Image.Sample(Sampler, input.uv) * tint;
+	float4 pixel = Image.Sample(Sampler, input.uv) * tint * input.color;
 	clip(pixel.a - 0.01);
 	if(lit) {
 		pixel = ApplyLights(pixel, input.worldPosition);

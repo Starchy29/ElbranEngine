@@ -6,11 +6,12 @@ cbuffer Constants : register(b0) {
 	uint maxParticles;
 	float lifespan;
 	float width;
+	bool faceMoveDirection;
 }
 
 RWStructuredBuffer<Particle> particles : register(u0);
 Buffer<float2> initialPositions : register(t0);
-// inital velocity
+Buffer<float2> initialVelocities : register(t1);
 
 [numthreads(4, 1, 1)]
 void main( uint3 DTid : SV_DispatchThreadID ) {
@@ -24,9 +25,10 @@ void main( uint3 DTid : SV_DispatchThreadID ) {
 	}
 	
 	particles[spawnIndex].worldPosition = initialPositions[DTid.x];
-	particles[spawnIndex].velocity = float2(0, 0);
-	particles[spawnIndex].timeLeft = lifespan;
-	particles[spawnIndex].rotation = 0;
+	particles[spawnIndex].velocity = initialVelocities[DTid.x];
 	particles[spawnIndex].width = width;
-	particles[spawnIndex].animationFrame = 0;
+	particles[spawnIndex].timeLeft = lifespan;
+	particles[spawnIndex].lifetime = 0;
+	particles[spawnIndex].rotation = faceMoveDirection ? atan2(initialVelocities[DTid.x].y, initialVelocities[DTid.x].x) : 0;
+	particles[spawnIndex].alpha = 1;
 }

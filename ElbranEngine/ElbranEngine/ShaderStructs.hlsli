@@ -10,14 +10,16 @@ struct VertexToPixel {
 	float4 screenPosition : SV_POSITION;
 	float2 uv : TEXCOORD;
 	float2 worldPosition : POSITION;
+	float4 color : COLOR;
 };
 
 struct Particle {
 	float2 worldPosition : POSITION;
 	float2 velocity : POSITION2;
 	float timeLeft : HELPER0;
-	float rotation : HELPER1;
-	float width : HELPER2;
-	uint animationFrame : HELPER3;
+	float lifetime : HELPER1;
+	float rotation : HELPER2;
+	float width : HELPER3;
+	float alpha : HELPER4;
 };
 #endif

@@ -9,6 +9,7 @@ public:
 	int GenerateInt(int min, int max) const;
 	float GenerateFloat(float min, float max) const;
 	Vector2 GenerateInCircle(float radius = 1.0f) const;
+	Vector2 GenerateOnCircle() const;
 
 	// prevent copying
 	Random(const Random&) = delete;
