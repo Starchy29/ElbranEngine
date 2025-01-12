@@ -135,12 +135,7 @@ Vector2 Transform::GetPosition(bool global) const {
 		return position;
 	}
 
-	XMFLOAT4X4 transform = GetWorldMatrix();
-	XMVECTOR globalPos = XMVector2Transform(XMVectorSet(0, 0, 0, 0), XMLoadFloat4x4(&transform));
-
-	Vector2 result;
-	XMStoreFloat2(&result, globalPos);
-	return result;
+	return Vector2::Zero.Transform(GetWorldMatrix());
 }
 
 Vector2 Transform::GetScale(bool global) const {
@@ -149,13 +144,9 @@ Vector2 Transform::GetScale(bool global) const {
 	}
 
 	XMFLOAT4X4 transform = GetWorldMatrix();
-	XMMATRIX matrix = XMLoadFloat4x4(&transform);
-	Vector2 center;
-	Vector2 right;
-	Vector2 up;
-	XMStoreFloat2(&center, XMVector2Transform(XMVectorSet(0, 0, 0, 0), matrix));
-	XMStoreFloat2(&right, XMVector2Transform(XMVectorSet(0.5f, 0, 0, 0), matrix));
-	XMStoreFloat2(&up, XMVector2Transform(XMVectorSet(0, 0.5f, 0, 0), matrix));
+	Vector2 center = Vector2::Zero.Transform(transform);
+	Vector2 right = Vector2(0.5f, 0.f).Transform(transform);
+	Vector2 up = Vector2(0.f, 0.5f).Transform(transform);
 	
 	return Vector2(2.f * center.Distance(right), 2.f * center.Distance(up));
 }
@@ -166,11 +157,8 @@ float Transform::GetRotation(bool global) const {
 	}
 
 	XMFLOAT4X4 transform = GetWorldMatrix();
-	XMMATRIX matrix = XMLoadFloat4x4(&transform);
-	Vector2 center;
-	Vector2 right;
-	XMStoreFloat2(&center, XMVector2Transform(XMVectorSet(0, 0, 0, 0), matrix));
-	XMStoreFloat2(&right, XMVector2Transform(XMVectorSet(0.5f, 0, 0, 0), matrix));
+	Vector2 center = Vector2::Zero.Transform(transform);
+	Vector2 right = Vector2(0.5f, 0.f).Transform(transform);
 	right = right - center;
 
 	return right.Angle();

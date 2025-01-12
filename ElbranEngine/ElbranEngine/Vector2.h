@@ -18,7 +18,6 @@ struct Vector2 : public DirectX::XMFLOAT2
 	}
 
 	void Rotate(float radians);
-
 	float Length() const;
 	float Angle() const;
 	Vector2 GetPerpendicular(bool rightSide = true) const;
@@ -27,6 +26,8 @@ struct Vector2 : public DirectX::XMFLOAT2
 	float SqrDist(const Vector2& other) const;
 	float Dot(const Vector2 &other) const;
 	float AngleBetween(const Vector2& other) const;
+	Vector2 Transform(const DirectX::XMFLOAT4X4 matrix) const;
+	Vector2 Transform(const DirectX::XMMATRIX matrix) const;
 	
 	std::string ToString() const;
 

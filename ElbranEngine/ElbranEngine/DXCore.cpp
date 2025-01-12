@@ -2,8 +2,18 @@
 #include "Game.h"
 #include "Application.h"
 
-void DXCore::SetAlphaBlend(bool enabled) {
-	context->OMSetBlendState(enabled ? alphaBlendState.Get() : NULL, NULL, 0xffffffff);
+void DXCore::SetBlendMode(BlendState mode) {
+	switch(mode) {
+	case BlendState::None:
+		context->OMSetBlendState(NULL, NULL, 0xffffffff);
+		break;
+	case BlendState::AlphaBlend:
+		context->OMSetBlendState(alphaBlendState.Get(), NULL, 0xffffffff);
+		break;
+	case BlendState::Additive:
+		context->OMSetBlendState(additiveBlendState.Get(), NULL, 0xffffffff);
+		break;
+	}
 }
 
 void DXCore::StartTextBatch() {
@@ -213,20 +223,29 @@ DXCore::DXCore(HWND windowHandle, DirectX::XMINT2 windowDims, float viewAspectRa
 	device->CreateDepthStencilState(&stencilOMDesc, defaultStencil.GetAddressOf());
 	context->OMSetDepthStencilState(defaultStencil.Get(), 0);
 
-	// create the blend state for alpha blendig
+	// create the blend state for alpha blending
 	D3D11_BLEND_DESC blendDescription = {};
 	blendDescription.AlphaToCoverageEnable = false;
 	blendDescription.IndependentBlendEnable = false;
 	blendDescription.RenderTarget[0].BlendEnable = true;
-	blendDescription.RenderTarget[0].SrcBlend = D3D11_BLEND_SRC_ALPHA;
-	blendDescription.RenderTarget[0].DestBlend = D3D11_BLEND_INV_SRC_ALPHA;
-	blendDescription.RenderTarget[0].BlendOp = D3D11_BLEND_OP_ADD;
+	blendDescription.RenderTarget[0].RenderTargetWriteMask = D3D11_COLOR_WRITE_ENABLE_ALL;
+
 	blendDescription.RenderTarget[0].SrcBlendAlpha = D3D11_BLEND_ONE;
 	blendDescription.RenderTarget[0].DestBlendAlpha = D3D11_BLEND_ZERO;
 	blendDescription.RenderTarget[0].BlendOpAlpha = D3D11_BLEND_OP_ADD;
-	blendDescription.RenderTarget[0].RenderTargetWriteMask = D3D11_COLOR_WRITE_ENABLE_ALL;
+
+	blendDescription.RenderTarget[0].SrcBlend = D3D11_BLEND_SRC_ALPHA;
+	blendDescription.RenderTarget[0].DestBlend = D3D11_BLEND_INV_SRC_ALPHA;
+	blendDescription.RenderTarget[0].BlendOp = D3D11_BLEND_OP_ADD;
 
 	device->CreateBlendState(&blendDescription, alphaBlendState.GetAddressOf());
+
+	// create the additive blend state
+	blendDescription.RenderTarget[0].SrcBlend = D3D11_BLEND_SRC_ALPHA;
+	blendDescription.RenderTarget[0].DestBlend = D3D11_BLEND_ONE;
+	blendDescription.RenderTarget[0].BlendOp = D3D11_BLEND_OP_ADD;
+
+	device->CreateBlendState(&blendDescription, additiveBlendState.GetAddressOf());
 
 	// create viewport
 	Resize(windowDims, viewAspectRatio);

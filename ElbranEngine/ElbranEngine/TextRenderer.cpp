@@ -19,15 +19,10 @@ void TextRenderer::Draw(Camera* camera, const Transform& transform) {
 	// convert from model space to normalized screen coords [-1,1]
 	XMMATRIX worldViewProj = CreateWorldViewProjection(camera, transform);
 	Vector2 center = Vector2::Zero;
-	Vector2 right = Vector2(0.5f, 0.0f);
-	Vector2 top = Vector2(0.0f, 0.5f);
-	XMFLOAT3 center3D;
-	center3D.x = center.x;
-	center3D.y = center.y;
-	center3D.z = transform.GetGlobalZ();
+	Vector2 right = Vector2(0.5f, 0.0f).Transform(worldViewProj);
+	Vector2 top = Vector2(0.0f, 0.5f).Transform(worldViewProj);
+	XMFLOAT3 center3D = XMFLOAT3(center.x, center.y, transform.GetGlobalZ());
 	XMStoreFloat3(&center3D, XMVector3Transform(XMLoadFloat3(&center3D), worldViewProj));
-	XMStoreFloat2(&right, XMVector3Transform(XMLoadFloat2(&right), worldViewProj));
-	XMStoreFloat2(&top, XMVector3Transform(XMLoadFloat2(&top), worldViewProj));
 	center = Vector2(center3D.x, center3D.y);
 
 	// convert from [-1,1] range to [0-pixelWidth]

@@ -43,8 +43,10 @@ GameObject::GameObject(float radius, float brightness, Color lightColor)
 { }
 
 GameObject::GameObject(float zCoord, ParticleRenderer* particleSystem, bool translucent)
-	: GameObject(zCoord, translucent ? RenderMode::Translucent : RenderMode::Opaque, particleSystem)
-{ }
+	: GameObject(zCoord, translucent || particleSystem->BlendsAdditive() ? RenderMode::Translucent : RenderMode::Opaque, particleSystem)
+{ 
+	transform.SetScale(0, 0);
+}
 
 GameObject::~GameObject() {
 	for(IBehavior* behavior : behaviors) {
@@ -168,13 +170,14 @@ void GameObject::RemoveParent() {
 }
 
 void GameObject::Update(float deltaTime) {
-	if(renderer != nullptr && renderer->enabled) {
-		renderer->Update(deltaTime);
-	}
 	for(IBehavior* behavior : behaviors) {
 		if(behavior->enabled) {
 			behavior->Update(deltaTime);
 		}
+	}
+
+	if(renderer != nullptr && renderer->enabled) {
+		renderer->Update(deltaTime);
 	}
 }
 

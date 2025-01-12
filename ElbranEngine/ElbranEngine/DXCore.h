@@ -29,6 +29,12 @@ struct Light {
 	float rotation;
 };
 
+enum class BlendState {
+	None,
+	AlphaBlend,
+	Additive
+};
+
 class Game;
 
 class DXCore
@@ -38,7 +44,7 @@ class DXCore
 public:
 	std::vector<IPostProcess*> postProcesses;
 
-	void SetAlphaBlend(bool enabled);
+	void SetBlendMode(BlendState mode);
 	void StartTextBatch();
 	void FinishTextBatch();
 	void DrawScreen();
@@ -61,10 +67,13 @@ private:
 	Microsoft::WRL::ComPtr<ID3D11Device> device;
 	Microsoft::WRL::ComPtr<ID3D11DeviceContext> context;
 	Microsoft::WRL::ComPtr<IDXGISwapChain> swapChain;
+
 	Microsoft::WRL::ComPtr<ID3D11RenderTargetView> backBufferView;
 	Microsoft::WRL::ComPtr<ID3D11DepthStencilView> depthStencilView;
-	Microsoft::WRL::ComPtr<ID3D11BlendState> alphaBlendState;
 	Microsoft::WRL::ComPtr<ID3D11DepthStencilState> defaultStencil;
+
+	Microsoft::WRL::ComPtr<ID3D11BlendState> alphaBlendState;
+	Microsoft::WRL::ComPtr<ID3D11BlendState> additiveBlendState;
 
 	DirectX::SpriteBatch* spriteBatch;
 	PostProcessTexture ppTex1;

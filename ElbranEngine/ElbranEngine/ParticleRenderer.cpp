@@ -8,7 +8,7 @@ using namespace DirectX;
 #define PARTICLE_BYTES 36 // based on struct in ShaderStructs.hlsli
 #define CONTINUOUS_SPAWNS -1
 
-ParticleRenderer::ParticleRenderer(unsigned int maxParticles, float lifespan) {
+ParticleRenderer::ParticleRenderer(unsigned int maxParticles, float lifespan, bool blendAdditive) {
 	const AssetManager* assets = APP->Assets();
 	mesh = nullptr;
 	vertexShader = assets->particleVS;
@@ -20,23 +20,28 @@ ParticleRenderer::ParticleRenderer(unsigned int maxParticles, float lifespan) {
 	this->lifespan = lifespan;
 	this->maxParticles = maxParticles;
 	lastIndex = maxParticles - 1; // causes the first spawn to go in index 0
+	this->blendAdditive = blendAdditive;
 
 	applyLights = false;
 	tint = Color::White;
 	width = 1.0f;
-	growthRate = 0.f;
+	totalGrowth = 0.0f;
 	spinRate = 0.f;
 	secondsPerFrame = 0.f;
 	fadeDuration = 0.f;
 	speed = 0.f;
 	moveStyle = ParticleMovement::None;
 	faceMoveDirection = false;
+	spawnCircular = true;
+	moveDirection = Vector2::Zero;
+	scaleWithParent = false;
 
 	spawnsLeft = 0;
 	spawnInterval = 0.0f;
 	timer = 0.f;
+	spawnsPerInterval = 1;
 	
-	DXCore* directX = APP->Graphics();
+	directX = APP->Graphics();
 	dxDevice = directX->GetDevice();
 	dxContext = directX->GetContext();
 
@@ -75,15 +80,15 @@ ParticleRenderer::ParticleRenderer(unsigned int maxParticles, float lifespan) {
 	initialVelBuffer = Shader::CreateArrayBuffer(maxParticles, sizeof(Vector2), ShaderDataType::Float2);
 }
 
-ParticleRenderer::ParticleRenderer(unsigned int maxParticles, float lifespan, std::shared_ptr<Sprite> sprite)
-	: ParticleRenderer(maxParticles, lifespan)
+ParticleRenderer::ParticleRenderer(unsigned int maxParticles, float lifespan, bool blendAdditive, std::shared_ptr<Sprite> sprite)
+	: ParticleRenderer(maxParticles, lifespan, blendAdditive)
 {
 	this->sprite = sprite;
 	animated = false;
 }
 
-ParticleRenderer::ParticleRenderer(unsigned int maxParticles, float lifespan, std::shared_ptr<SpriteAtlas> animation)
-	: ParticleRenderer(maxParticles, lifespan)
+ParticleRenderer::ParticleRenderer(unsigned int maxParticles, float lifespan, bool blendAdditive, std::shared_ptr<SpriteAtlas> animation)
+	: ParticleRenderer(maxParticles, lifespan, blendAdditive)
 {
 	sprite = std::static_pointer_cast<Sprite>(animation);
 	animated = true;
@@ -95,6 +100,11 @@ void ParticleRenderer::Update(float deltaTime) {
 	dxContext->VSSetShaderResources(0, 1, nullSRV); // unbind from vertex shader
 	moveShader->SetReadWriteBuffer(readWriteView, 0);
 
+	float growthRate = totalGrowth / lifespan;
+	if(scaleWithParent) {
+		Vector2 size = owner->GetTransform()->GetScale(true);
+		growthRate *= (size.x + size.y) / 2.f;
+	}
 	moveShader->SetConstantVariable("maxParticles", &maxParticles);
 	moveShader->SetConstantVariable("deltaTime", &deltaTime);
 	moveShader->SetConstantVariable("growthRate", &growthRate);
@@ -113,11 +123,15 @@ void ParticleRenderer::Update(float deltaTime) {
 		if(spawnsLeft != CONTINUOUS_SPAWNS) {
 			spawnsLeft--;
 		}
-		Emit(1);
+		Emit(spawnsPerInterval);
 	}
 }
 
 void ParticleRenderer::Draw(Camera* camera, const Transform& transform) {
+	if(blendAdditive) {
+		directX->SetBlendMode(BlendState::Additive);
+	}
+
 	// vertex shader
 	ID3D11UnorderedAccessView* nullUAV[1] = { nullptr };
 	dxContext->CSSetUnorderedAccessViews(0, 1, nullUAV, 0); // unbind from compute shader
@@ -171,6 +185,10 @@ void ParticleRenderer::Draw(Camera* camera, const Transform& transform) {
 	dxContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 	GeometryShader::ClearShader();
 	Mesh::ClearLastDrawn();
+
+	if(blendAdditive) {
+		directX->SetBlendMode(BlendState::AlphaBlend);
+	}
 }
 
 IBehavior* ParticleRenderer::Clone() {
@@ -189,15 +207,15 @@ void ParticleRenderer::Spawn(int amount, float duration) {
 	}
 }
 
-void ParticleRenderer::SetSpawnRate(float perSec) {
+void ParticleRenderer::SetSpawnRate(float perSec, int groupSize) {
 	spawnsLeft = CONTINUOUS_SPAWNS;
 	spawnInterval = max(1.0f / perSec, 0);
 	timer = spawnInterval;
+	spawnsPerInterval = groupSize;
 }
 
-// sets the growth rate based on the current start width and duration
-void ParticleRenderer::SetEndWidth(float endWidth) {
-	growthRate = (endWidth - width) / lifespan;
+bool ParticleRenderer::BlendsAdditive() const {
+	return blendAdditive;
 }
 
 // if there are too many particles, the oldest will be replaced
@@ -205,13 +223,19 @@ void ParticleRenderer::Emit(int newParticles) {
 	SetSpawnData(newParticles);
 
 	// dispatch the compute shader
+	float trueWidth = width;
+	if(scaleWithParent) {
+		Vector2 size = owner->GetTransform()->GetScale(true);
+		trueWidth *= (size.x + size.y) / 2.f;
+	}
 	spawnShader->SetReadWriteBuffer(readWriteView, 0);
 	spawnShader->SetConstantVariable("spawnCount", &newParticles);
 	spawnShader->SetConstantVariable("lastParticle", &lastIndex);
 	spawnShader->SetConstantVariable("maxParticles", &maxParticles);
 	spawnShader->SetConstantVariable("lifespan", &lifespan);
-	spawnShader->SetConstantVariable("width", &width);
-	spawnShader->SetBool("faceMoveDirection", faceMoveDirection);
+	spawnShader->SetConstantVariable("width", &trueWidth);
+	bool moving = moveStyle != ParticleMovement::None && (moveStyle != ParticleMovement::Directional || moveDirection != Vector2::Zero);
+	spawnShader->SetBool("faceMoveDirection", moving && faceMoveDirection);
 
 	spawnShader->Dispatch(newParticles, 1);
 
@@ -227,20 +251,25 @@ void ParticleRenderer::SetSpawnData(int newParticles) {
 
 	// determine the random start positions
 	Vector2* positions = new Vector2[newParticles];
-	Vector2 objectPosition = owner->GetTransform()->GetPosition(true);
+	DirectX::XMFLOAT4X4 transform = owner->GetTransform()->GetWorldMatrix();
 	for(int i = 0; i < newParticles; i++) {
-		positions[i] = objectPosition;
-		if(spawnRadius > 0) {
-			positions[i] += rng->GenerateInCircle(spawnRadius);
-		}
+		Vector2 randPos = spawnCircular ? rng->GenerateInCircle(0.5f) : Vector2(rng->GenerateFloat(-0.5f, 0.5f), rng->GenerateFloat(-0.5f, 0.5f));
+		positions[i] = randPos.Transform(transform);
 	}
 
 	Shader::WriteArray(positions, &initalPosBuffer);
 	spawnShader->SetArrayBuffer(initalPosBuffer.view, 0);
 
 	// set the initial velocities
-	Vector2 forward = speed * Vector2::Right;
+	float rotation;
+	Vector2 vector;
 	Vector2* velocities = new Vector2[newParticles];
+	float trueSpeed = speed;
+	if(scaleWithParent) {
+		Vector2 size = owner->GetTransform()->GetScale(true);
+		trueSpeed *= (size.x + size.y) / 2.f;
+	}
+
 	switch(moveStyle) {
 	case ParticleMovement::None:
 		for(int i = 0; i < newParticles; i++) {
@@ -248,18 +277,27 @@ void ParticleRenderer::SetSpawnData(int newParticles) {
 		}
 		break;
 	case ParticleMovement::Forward:
+		rotation = owner->GetTransform()->GetRotation(true);
+		vector = Vector2(trueSpeed * cos(rotation), trueSpeed * sin(rotation));
 		for(int i = 0; i < newParticles; i++) {
-			velocities[i] = forward;
+			velocities[i] = vector;
+		}
+		break;
+	case ParticleMovement::Directional:
+		vector = trueSpeed * moveDirection;
+		for(int i = 0; i < newParticles; i++) {
+			velocities[i] = vector;
 		}
 		break;
 	case ParticleMovement::Outward:
+		vector = owner->GetTransform()->GetPosition(true);
 		for(int i = 0; i < newParticles; i++) {
-			velocities[i] = speed * (positions[i] - objectPosition).Normalize();
+			velocities[i] = trueSpeed * (positions[i] - vector).Normalize();
 		}
 		break;
 	case ParticleMovement::Random:
 		for(int i = 0; i < newParticles; i++) {
-			velocities[i] = rng->GenerateOnCircle();
+			velocities[i] = trueSpeed * rng->GenerateOnCircle();
 		}
 		break;
 	}

@@ -117,7 +117,7 @@ void Scene::Draw() {
 	directX->SetLights(lights, lightObjects.size(), ambientLight);
 
 	// draw opaques front to back
-	directX->SetAlphaBlend(false);
+	directX->SetBlendMode(BlendState::None);
 	for(GameObject* object : opaques) {
 		if(object->IsActive()) {
 			object->Draw(camera);
@@ -138,7 +138,7 @@ void Scene::Draw() {
 	}
 
 	// draw translucents back to front
-	directX->SetAlphaBlend(true);
+	directX->SetBlendMode(BlendState::AlphaBlend);
 	for(int i = translucents.size() - 1; i >= 0; i--) {
 		if(translucents[i]->IsActive()) {
 			translucents[i]->Draw(camera);
