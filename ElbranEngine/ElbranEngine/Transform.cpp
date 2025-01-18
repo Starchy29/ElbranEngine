@@ -104,28 +104,28 @@ void Transform::Scale(float multiplier) {
 
 void Transform::SetWidth(float width) {
 	MarkForUpdate();
-	float aspectRatio = scale.x / scale.y;
+	float aspectRatio = scale.y != 0 ? scale.x / scale.y : 1;
 	scale.x = width;
 	scale.y = width / aspectRatio;
 }
 
 void Transform::SetHeight(float height) {
 	MarkForUpdate();
-	float aspectRatio = scale.x / scale.y;
+	float aspectRatio = scale.y != 0 ? scale.x / scale.y : 1;
 	scale.y = height;
 	scale.x = height * aspectRatio;
 }
 
 void Transform::GrowWidth(float scaleAdditive) {
 	MarkForUpdate();
-	float aspectRatio = scale.x / scale.y;
+	float aspectRatio = scale.y != 0 ? scale.x / scale.y : 1;
 	scale.x += scaleAdditive;
 	scale.y = scale.x / aspectRatio;
 }
 
 void Transform::GrowHeight(float scaleAdditive) {
 	MarkForUpdate();
-	float aspectRatio = scale.x / scale.y;
+	float aspectRatio = scale.y != 0 ? scale.x / scale.y : 1;
 	scale.y += scaleAdditive;
 	scale.x = scale.y * aspectRatio;
 }

@@ -234,7 +234,7 @@ void ParticleRenderer::Emit(int newParticles) {
 	spawnShader->SetConstantVariable("maxParticles", &maxParticles);
 	spawnShader->SetConstantVariable("lifespan", &lifespan);
 	spawnShader->SetConstantVariable("width", &trueWidth);
-	bool moving = moveStyle != ParticleMovement::None && (moveStyle != ParticleMovement::Directional || moveDirection != Vector2::Zero);
+	bool moving = moveStyle != ParticleMovement::None && (moveStyle == ParticleMovement::Directional || moveDirection != Vector2::Zero);
 	spawnShader->SetBool("faceMoveDirection", moving && faceMoveDirection);
 
 	spawnShader->Dispatch(newParticles, 1);

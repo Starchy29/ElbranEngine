@@ -1,6 +1,8 @@
 #pragma once
 #include "Scene.h"
 
+#include "Sound.h" // delete this
+
 #define GAME_TITLE "Elbran Engine"
 #define MAX_FPS 60
 #define ASPECT_RATIO 16.f / 9.f
@@ -28,6 +30,7 @@ private:
 	GameObject* testObject;
 	GameObject* picture;
 	Scene* sampleScene;
+	Sound* testSound;
 
 	Game(const AssetManager* assets);
 	~Game();

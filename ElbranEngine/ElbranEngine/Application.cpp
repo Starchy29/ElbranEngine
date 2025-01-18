@@ -115,6 +115,10 @@ const Random* Application::RNG() const {
 	return rng;
 }
 
+SoundManager* Application::Audio() const {
+	return audio;
+}
+
 float Application::GetViewAspectRatio() const {
 	return viewAspectRatio;
 }
@@ -159,15 +163,19 @@ Application::~Application() {
 	delete input;
 	delete assets;
 	delete rng;
+	delete audio;
 }
 
 HRESULT Application::InitApp(WNDPROC procCallback) {
 	HRESULT result = InitWindow(procCallback);
-	if (FAILED(result)) return result;
+	if(FAILED(result)) return result;
 
 	dxCore = new DXCore(windowHandle, windowDims, viewAspectRatio, &result);
-	if (FAILED(result)) return result;
+	if(FAILED(result)) return result;
 	dxCore->SetupLighting();
+
+	audio = new SoundManager(&result);
+	if(FAILED(result)) return result;
 
 	rng = new Random();
 	input = new InputManager(windowHandle);

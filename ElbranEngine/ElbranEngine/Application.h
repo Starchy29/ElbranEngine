@@ -5,6 +5,7 @@
 #include "InputManager.h"
 #include "AssetManager.h"
 #include "Random.h"
+#include "SoundManager.h"
 
 #define APP Application::GetInstance()
 
@@ -24,6 +25,7 @@ public:
 	InputManager* Input() const;
 	const AssetManager* Assets() const;
 	const Random* RNG() const;
+	SoundManager* Audio() const;
 
 	float GetViewAspectRatio() const;
 	std::wstring ExePath() const;
@@ -52,7 +54,7 @@ private:
 	InputManager* input;
 	AssetManager* assets;
 	Random* rng;
-	// sounds
+	SoundManager* audio;
 
 	Application(HINSTANCE hInst);
 	~Application();

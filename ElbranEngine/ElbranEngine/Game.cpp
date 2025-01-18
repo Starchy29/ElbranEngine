@@ -13,33 +13,26 @@
 #include "StretchRenderer.h"
 #include "ParticleRenderer.h"
 
-GameObject* parent;
-
 Game::Game(const AssetManager* assets) {
 	sampleScene = new Scene(10, Color(0.1f, 0.1f, 0.1f));
+
+	testSound = new Sound(L"water plunk.wav");
 
 	ParticleRenderer* spawner = new ParticleRenderer(300, 0.8f, true, std::make_shared<Sprite>(L"spark.png") /*std::make_shared<SpriteAtlas>(L"animation.png", 3, 3, 8)*/);
 	GameObject* particles = new GameObject(-1, spawner, true);
 	sampleScene->Add(particles);
-	particles->GetTransform()->SetScale(2.f, 0.5f);
-	particles->GetTransform()->SetRotation(0.6f);
+	particles->GetTransform()->SetWidth(1);
 
 	spawner->width = 0.5f;
 	spawner->totalGrowth = -0.25f;
 
-	spawner->speed = 1.8f;
-	//spawner->moveStyle = ParticleMovement::Forward;
+	spawner->speed = -1.0f;
+	spawner->moveStyle = ParticleMovement::Outward;
 	
 	spawner->faceMoveDirection = true;
-	spawner->SetSpawnRate(5.f);
-	spawner->scaleWithParent = true;
+	spawner->SetSpawnRate(30.f);
+	//spawner->scaleWithParent = true;
 	//spawner->fadeDuration = 0.8f;
-
-	parent = new GameObject(0, assets->testImage, false);
-	particles->SetParent(parent);
-	particles->GetTransform()->SetPosition(Vector2(0.5, -0.5));
-	sampleScene->Add(parent);
-	parent->GetTransform()->SetScale(2.f, 2.f);
 
 	//APP->Graphics()->postProcesses.push_back(new HSVPostProcess(0, -1, 0));
 	//APP->Graphics()->postProcesses.push_back(new BloomPostProcess(0.7f, 50));
@@ -67,16 +60,15 @@ Game::Game(const AssetManager* assets) {
 
 Game::~Game() {
 	delete sampleScene;
+	delete testSound;
 }
 
 void Game::Update(float deltaTime) {
 	sampleScene->Update(deltaTime);
 	testObject->GetTransform()->SetPosition(APP->Input()->GetMousePosition(sampleScene->GetCamera()));
 
-	if(APP->Input()->IsKeyPressed(VK_UP)) {
-		parent->GetTransform()->GrowHeight(deltaTime);
-	} else if (APP->Input()->IsKeyPressed(VK_DOWN)) {
-		parent->GetTransform()->GrowHeight(-deltaTime);
+	if(APP->Input()->KeyJustPressed(VK_MOUSE_RIGHT)) {
+		testSound->Play();
 	}
 
 	if(APP->Input()->KeyJustPressed(VK_MOUSE_LEFT)) {
