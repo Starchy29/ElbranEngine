@@ -17,11 +17,11 @@
     <Filter Include="Engine\Shaders">
       <UniqueIdentifier>{f693115b-a982-4be8-a05d-d8748a39a2bd}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Engine\Game Objects\Rendering">
-      <UniqueIdentifier>{b1f0235e-0536-41d2-b0a1-0a470370775b}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Engine\Graphics\Post Processing">
       <UniqueIdentifier>{c4ddca6b-208f-44bb-8bec-554fe22d460a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\Graphics\Rendering">
+      <UniqueIdentifier>{b1f0235e-0536-41d2-b0a1-0a470370775b}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -86,31 +86,31 @@
       <Filter>Engine\Game Objects</Filter>
     </ClCompile>
     <ClCompile Include="AnimationGroup.cpp">
-      <Filter>Engine\Game Objects\Rendering</Filter>
+      <Filter>Engine\Graphics\Rendering</Filter>
     </ClCompile>
     <ClCompile Include="AtlasRenderer.cpp">
-      <Filter>Engine\Game Objects\Rendering</Filter>
+      <Filter>Engine\Graphics\Rendering</Filter>
     </ClCompile>
     <ClCompile Include="ColorRenderer.cpp">
-      <Filter>Engine\Game Objects\Rendering</Filter>
+      <Filter>Engine\Graphics\Rendering</Filter>
     </ClCompile>
     <ClCompile Include="HueSwapRenderer.cpp">
-      <Filter>Engine\Game Objects\Rendering</Filter>
+      <Filter>Engine\Graphics\Rendering</Filter>
     </ClCompile>
     <ClCompile Include="SpriteAnimator.cpp">
-      <Filter>Engine\Game Objects\Rendering</Filter>
+      <Filter>Engine\Graphics\Rendering</Filter>
     </ClCompile>
     <ClCompile Include="SpriteRenderer.cpp">
-      <Filter>Engine\Game Objects\Rendering</Filter>
+      <Filter>Engine\Graphics\Rendering</Filter>
     </ClCompile>
     <ClCompile Include="TextRenderer.cpp">
-      <Filter>Engine\Game Objects\Rendering</Filter>
+      <Filter>Engine\Graphics\Rendering</Filter>
     </ClCompile>
     <ClCompile Include="SpriteAtlas.cpp">
       <Filter>Engine\Graphics</Filter>
     </ClCompile>
     <ClCompile Include="IRenderer.cpp">
-      <Filter>Engine\Game Objects\Rendering</Filter>
+      <Filter>Engine\Graphics\Rendering</Filter>
     </ClCompile>
     <ClCompile Include="ComputeShader.cpp">
       <Filter>Engine\Graphics</Filter>
@@ -128,13 +128,13 @@
       <Filter>Engine\Graphics\Post Processing</Filter>
     </ClCompile>
     <ClCompile Include="RepeatRenderer.cpp">
-      <Filter>Engine\Game Objects\Rendering</Filter>
+      <Filter>Engine\Graphics\Rendering</Filter>
     </ClCompile>
     <ClCompile Include="StretchRenderer.cpp">
-      <Filter>Engine\Game Objects\Rendering</Filter>
+      <Filter>Engine\Graphics\Rendering</Filter>
     </ClCompile>
     <ClCompile Include="LightRenderer.cpp">
-      <Filter>Engine\Game Objects\Rendering</Filter>
+      <Filter>Engine\Graphics\Rendering</Filter>
     </ClCompile>
     <ClCompile Include="Random.cpp">
       <Filter>Engine</Filter>
@@ -143,12 +143,15 @@
       <Filter>Engine\Graphics</Filter>
     </ClCompile>
     <ClCompile Include="ParticleRenderer.cpp">
-      <Filter>Engine\Game Objects\Rendering</Filter>
+      <Filter>Engine\Graphics\Rendering</Filter>
     </ClCompile>
     <ClCompile Include="SoundManager.cpp">
       <Filter>Engine</Filter>
     </ClCompile>
-    <ClCompile Include="Sound.cpp">
+    <ClCompile Include="SoundEffect.cpp">
+      <Filter>Engine</Filter>
+    </ClCompile>
+    <ClCompile Include="MusicTrack.cpp">
       <Filter>Engine</Filter>
     </ClCompile>
   </ItemGroup>
@@ -217,31 +220,31 @@
       <Filter>Engine\Game Objects</Filter>
     </ClInclude>
     <ClInclude Include="AnimationGroup.h">
-      <Filter>Engine\Game Objects\Rendering</Filter>
+      <Filter>Engine\Graphics\Rendering</Filter>
     </ClInclude>
     <ClInclude Include="AtlasRenderer.h">
-      <Filter>Engine\Game Objects\Rendering</Filter>
+      <Filter>Engine\Graphics\Rendering</Filter>
     </ClInclude>
     <ClInclude Include="ColorRenderer.h">
-      <Filter>Engine\Game Objects\Rendering</Filter>
+      <Filter>Engine\Graphics\Rendering</Filter>
     </ClInclude>
     <ClInclude Include="HueSwapRenderer.h">
-      <Filter>Engine\Game Objects\Rendering</Filter>
+      <Filter>Engine\Graphics\Rendering</Filter>
     </ClInclude>
     <ClInclude Include="SpriteAnimator.h">
-      <Filter>Engine\Game Objects\Rendering</Filter>
+      <Filter>Engine\Graphics\Rendering</Filter>
     </ClInclude>
     <ClInclude Include="SpriteRenderer.h">
-      <Filter>Engine\Game Objects\Rendering</Filter>
+      <Filter>Engine\Graphics\Rendering</Filter>
     </ClInclude>
     <ClInclude Include="TextRenderer.h">
-      <Filter>Engine\Game Objects\Rendering</Filter>
+      <Filter>Engine\Graphics\Rendering</Filter>
     </ClInclude>
     <ClInclude Include="SpriteAtlas.h">
       <Filter>Engine\Graphics</Filter>
     </ClInclude>
     <ClInclude Include="IRenderer.h">
-      <Filter>Engine\Game Objects\Rendering</Filter>
+      <Filter>Engine\Graphics\Rendering</Filter>
     </ClInclude>
     <ClInclude Include="ComputeShader.h">
       <Filter>Engine\Graphics</Filter>
@@ -265,14 +268,14 @@
       <Filter>Engine\Graphics\Post Processing</Filter>
     </ClInclude>
     <ClInclude Include="RepeatRenderer.h">
-      <Filter>Engine\Game Objects\Rendering</Filter>
+      <Filter>Engine\Graphics\Rendering</Filter>
     </ClInclude>
     <ClInclude Include="StretchRenderer.h">
-      <Filter>Engine\Game Objects\Rendering</Filter>
+      <Filter>Engine\Graphics\Rendering</Filter>
     </ClInclude>
     <ClInclude Include="resource.h" />
     <ClInclude Include="LightRenderer.h">
-      <Filter>Engine\Game Objects\Rendering</Filter>
+      <Filter>Engine\Graphics\Rendering</Filter>
     </ClInclude>
     <ClInclude Include="Random.h">
       <Filter>Engine</Filter>
@@ -281,12 +284,15 @@
       <Filter>Engine\Graphics</Filter>
     </ClInclude>
     <ClInclude Include="ParticleRenderer.h">
-      <Filter>Engine\Game Objects\Rendering</Filter>
+      <Filter>Engine\Graphics\Rendering</Filter>
     </ClInclude>
     <ClInclude Include="SoundManager.h">
       <Filter>Engine</Filter>
     </ClInclude>
-    <ClInclude Include="Sound.h">
+    <ClInclude Include="SoundEffect.h">
+      <Filter>Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="MusicTrack.h">
       <Filter>Engine</Filter>
     </ClInclude>
   </ItemGroup>

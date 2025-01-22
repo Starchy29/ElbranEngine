@@ -1,7 +1,7 @@
 #pragma once
 #include "Scene.h"
 
-#include "Sound.h" // delete this
+#include "MusicTrack.h" // delete this
 
 #define GAME_TITLE "Elbran Engine"
 #define MAX_FPS 60
@@ -30,7 +30,9 @@ private:
 	GameObject* testObject;
 	GameObject* picture;
 	Scene* sampleScene;
-	Sound* testSound;
+
+	std::shared_ptr<MusicTrack> menu;
+	std::shared_ptr<MusicTrack> battle;
 
 	Game(const AssetManager* assets);
 	~Game();

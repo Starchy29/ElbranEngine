@@ -33,6 +33,7 @@ HRESULT Application::Run() {
 			lastPerfCount = currentCount;
 
 			input->Update();
+			audio->Update(deltaTime);
 			game->Update(deltaTime);
 			dxCore->Render(game);
 
