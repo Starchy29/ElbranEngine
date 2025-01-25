@@ -19,14 +19,15 @@ SoundEffect* sfx;
 Game::Game(const AssetManager* assets) {
 	sampleScene = new Scene(10, Color(0.1f, 0.1f, 0.1f));
 
-	menu = std::make_shared<MusicTrack>(L"Menu Song.wav");
+	menu = std::make_shared<MusicTrack>(L"Menu Song.wav", 0.5f);
 	//testSound->Play();
 
 	sfx = new SoundEffect(L"water plunk.wav");
-	
 
+	//APP->Input()->SetVibration(0, 1.0f);
+	
 	battle = std::make_shared<MusicTrack>(L"Battle music.wav");
-	APP->Audio()->StartSong(menu);
+	//APP->Audio()->StartSong(menu);
 	//battle->Play();
 
 	ParticleRenderer* spawner = new ParticleRenderer(300, 0.8f, true, std::make_shared<Sprite>(L"spark.png") /*std::make_shared<SpriteAtlas>(L"animation.png", 3, 3, 8)*/);
@@ -78,13 +79,20 @@ void Game::Update(float deltaTime) {
 	sampleScene->Update(deltaTime);
 	testObject->GetTransform()->SetPosition(APP->Input()->GetMousePosition(sampleScene->GetCamera()));
 
+	if(APP->Input()->ButtonJustReleased(0, GamepadButton::A)) {
+		APP->Input()->SetVibration(0, 1.0f);
+	}
+	if(APP->Input()->ButtonJustPressed(0, GamepadButton::B)) {
+		APP->Input()->SetVibration(0, 0.0f);
+	}
+
 	if(APP->Input()->KeyJustPressed(VK_MOUSE_LEFT)) {
 		
 		//APP->Audio()->StartSong(nullptr, 0.f, 0.f);
 	}
 	else if(APP->Input()->KeyJustPressed(VK_MOUSE_RIGHT)) {
 		//testSound->Pause();
-		sfx->Play(1.f, APP->RNG()->GenerateFloat(-0.5f, 0.5f));
+		//sfx->Play(1.f, APP->RNG()->GenerateFloat(-0.5f, 0.5f));
 	}
 
 	if(APP->Input()->KeyJustPressed(VK_MOUSE_LEFT)) {
@@ -93,13 +101,6 @@ void Game::Update(float deltaTime) {
 		sampleScene->Add(newLight);
 		newLight->GetTransform()->SetPosition(APP->Input()->GetMousePosition(sampleScene->GetCamera()));
 		newLight->GetTransform()->SetRotation(rng->GenerateFloat(0.f, 6.f));
-	}
-
-	if(APP->Input()->IsKeyPressed(VK_UP)) {
-		APP->Audio()->SetMusicVolume(APP->Audio()->GetMusicVolume() + deltaTime);
-	} 
-	else if(APP->Input()->IsKeyPressed(VK_DOWN)) {
-		APP->Audio()->SetMusicVolume(APP->Audio()->GetMusicVolume() - deltaTime);
 	}
 
 	//HSVPostProcess* poster = (HSVPostProcess*)APP->Graphics()->postProcesses[0];
