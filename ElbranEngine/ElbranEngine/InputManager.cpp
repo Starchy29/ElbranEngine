@@ -1,5 +1,6 @@
 #include "InputManager.h"
 #include "Application.h"
+#include "Tween.h"
 
 #pragma comment(lib,"XInput.lib")
 #pragma comment(lib,"Xinput9_1_0.lib")
@@ -296,7 +297,7 @@ void InputManager::SetVibration(int controllerIndex, float strength) {
 	}
 
 	XINPUT_VIBRATION vibeState = {};
-	vibeState.wRightMotorSpeed = min(max(0.0f, strength), 1.0f) * MAX_VIBRATION;
+	vibeState.wRightMotorSpeed = Tween::Clamp(strength, 0.f, 1.f) * MAX_VIBRATION;
 	vibeState.wLeftMotorSpeed = vibeState.wRightMotorSpeed;
 
 	XInputSetState(controllerIndex, &vibeState);
