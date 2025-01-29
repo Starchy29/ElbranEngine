@@ -27,7 +27,7 @@ Game::Game(const AssetManager* assets) {
 	//APP->Input()->SetVibration(0, 1.0f);
 	
 	battle = std::make_shared<MusicTrack>(L"Battle music.wav");
-	//APP->Audio()->StartSong(menu);
+	APP->Audio()->StartSong(menu);
 	//battle->Play();
 
 	ParticleRenderer* spawner = new ParticleRenderer(300, 0.8f, true, std::make_shared<Sprite>(L"spark.png") /*std::make_shared<SpriteAtlas>(L"animation.png", 3, 3, 8)*/);
@@ -92,7 +92,7 @@ void Game::Update(float deltaTime) {
 	}
 	else if(APP->Input()->KeyJustPressed(VK_MOUSE_RIGHT)) {
 		//testSound->Pause();
-		//sfx->Play(1.f, APP->RNG()->GenerateFloat(-0.5f, 0.5f));
+		sfx->Play(1.f, APP->RNG()->GenerateFloat(-0.5f, 0.5f));
 	}
 
 	if(APP->Input()->KeyJustPressed(VK_MOUSE_LEFT)) {

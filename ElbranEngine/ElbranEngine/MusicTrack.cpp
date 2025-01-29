@@ -7,7 +7,13 @@ MusicTrack::MusicTrack(std::wstring fileName, float baseVolume) {
 	WAVEFORMATEXTENSIBLE wfx = APP->Audio()->LoadAudio(&soundBuffer, fileName);
 	soundBuffer.LoopCount = XAUDIO2_LOOP_INFINITE;
 
-	APP->Audio()->GetAudioEngine()->CreateSourceVoice(&voice, (WAVEFORMATEX*)&wfx);
+	SoundManager* sounds = APP->Audio();
+	XAUDIO2_VOICE_SENDS outputData = {};
+	outputData.SendCount = 1;
+	XAUDIO2_SEND_DESCRIPTOR descriptor = { 0, sounds->GetMusicChannel() };
+	outputData.pSends = &descriptor;
+	sounds->GetAudioEngine()->CreateSourceVoice(&voice, (WAVEFORMATEX*)&wfx, 0, 2.0f, nullptr, &outputData);
+
 	voice->SubmitSourceBuffer(&soundBuffer);
 	SetVolume(1.0f);
 }
@@ -34,7 +40,7 @@ void MusicTrack::Restart() {
 }
 
 void MusicTrack::SetVolume(float volume) {
-	voice->SetVolume(baseVolume * volume * APP->Audio()->GetMusicVolume());
+	voice->SetVolume(baseVolume * volume);
 	currentVolume = volume;
 }
 

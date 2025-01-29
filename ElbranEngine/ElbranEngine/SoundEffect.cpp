@@ -8,8 +8,12 @@ SoundEffect::SoundEffect(std::wstring fileName) {
 	format = sounds->LoadAudio(&soundBuffer, fileName);
 	soundBuffer.LoopCount = XAUDIO2_NO_LOOP_REGION;
 
+	XAUDIO2_VOICE_SENDS outputData = {};
+	outputData.SendCount = 1;
+	XAUDIO2_SEND_DESCRIPTOR descriptor = { 0, sounds->GetEffectsChannel() };
+	outputData.pSends = &descriptor;
 	IXAudio2SourceVoice* firstVoice = nullptr;
-	sounds->GetAudioEngine()->CreateSourceVoice(&firstVoice, (WAVEFORMATEX*)&format);
+	sounds->GetAudioEngine()->CreateSourceVoice(&firstVoice, (WAVEFORMATEX*)&format, 0, 2.0f, nullptr, &outputData);
 	voices.push_back(firstVoice);
 	firstVoice->Start();
 }
@@ -37,13 +41,17 @@ void SoundEffect::Play(float volume, float pitchShift) {
 
 	// add a new voice if all are playing
 	if(usedVoice == nullptr) {
-		sounds->GetAudioEngine()->CreateSourceVoice(&usedVoice, (WAVEFORMATEX*)&format);
+		XAUDIO2_VOICE_SENDS outputData = {};
+		outputData.SendCount = 1;
+		XAUDIO2_SEND_DESCRIPTOR descriptor = { 0, sounds->GetEffectsChannel() };
+		outputData.pSends = &descriptor;
+		sounds->GetAudioEngine()->CreateSourceVoice(&usedVoice, (WAVEFORMATEX*)&format, 0, 2.0f, nullptr, &outputData);
 		voices.push_back(usedVoice);
 		usedVoice->Start();
 	}
 	
 	// start the sound
-	usedVoice->SetVolume(volume * baseVolume * sounds->GetEffectsVolume());
+	usedVoice->SetVolume(volume * baseVolume);
 	usedVoice->SetFrequencyRatio(pitchShift >= 0 ? 1.0f + pitchShift : 1.0f / (1.0f - pitchShift));
 	usedVoice->SubmitSourceBuffer(&soundBuffer);
 }

@@ -2,10 +2,6 @@
 #include "Application.h"
 
 SoundManager::SoundManager(HRESULT* outResult) {
-    masterVolume = 1.0f;
-    musicVolume = 1.0f;
-    sfxVolume = 1.0f;
-
     fadeOutTime = 0.f;
     fadeInTime = 0.f;
     state = FadeState::None;
@@ -13,8 +9,11 @@ SoundManager::SoundManager(HRESULT* outResult) {
 	*outResult = XAudio2Create(engine.GetAddressOf(), 0, XAUDIO2_DEFAULT_PROCESSOR);
 	if(FAILED(*outResult)) return;
 
-	*outResult = engine->CreateMasteringVoice(&masteringVoice);
+	*outResult = engine->CreateMasteringVoice(&masterChannel);
 	if(FAILED(*outResult)) return;
+
+    engine->CreateSubmixVoice(&musicChannel, 1, DEFAULT_SAMPLE_RATE);
+    engine->CreateSubmixVoice(&sfxChannel, 1, DEFAULT_SAMPLE_RATE);
 }
 
 SoundManager::~SoundManager() {
@@ -89,21 +88,15 @@ void SoundManager::StartSong(std::shared_ptr<MusicTrack> song, float fadeOutTime
 }
 
 void SoundManager::SetMasterVolume(float volume) {
-    masterVolume = max(0, volume);
-    if(currentSong != nullptr) {
-        currentSong->SetVolume(currentSong->GetCurrentVolume());
-    }
+    masterChannel->SetVolume(volume);
 }
 
 void SoundManager::SetMusicVolume(float volume) {
-    musicVolume = max(0, volume);
-    if(currentSong != nullptr) {
-        currentSong->SetVolume(currentSong->GetCurrentVolume());
-    }
+    musicChannel->SetVolume(volume);
 }
 
 void SoundManager::SetEffectsVolume(float volume) {
-    sfxVolume = max(0, volume);
+    sfxChannel->SetVolume(volume);
 }
 
 std::shared_ptr<MusicTrack> SoundManager::GetCurrentSong() const {
@@ -115,15 +108,29 @@ Microsoft::WRL::ComPtr<IXAudio2> SoundManager::GetAudioEngine() const {
 }
 
 float SoundManager::GetMasterVolume() const {
-    return masterVolume;
+    float volume;
+    masterChannel->GetVolume(&volume);
+    return volume;
 }
 
 float SoundManager::GetMusicVolume() const {
-    return musicVolume;
+    float volume;
+    musicChannel->GetVolume(&volume);
+    return volume;
 }
 
 float SoundManager::GetEffectsVolume() const {
-    return sfxVolume;
+    float volume;
+    sfxChannel->GetVolume(&volume);
+    return volume;
+}
+
+IXAudio2SubmixVoice* SoundManager::GetMusicChannel() const {
+    return musicChannel;
+}
+
+IXAudio2SubmixVoice* SoundManager::GetEffectsChannel() const {
+    return sfxChannel;
 }
 
 // https://learn.microsoft.com/en-us/windows/win32/xaudio2/how-to--load-audio-data-files-in-xaudio2
