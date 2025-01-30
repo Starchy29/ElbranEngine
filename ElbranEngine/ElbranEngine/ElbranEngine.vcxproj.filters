@@ -154,6 +154,7 @@
     <ClCompile Include="MusicTrack.cpp">
       <Filter>Engine</Filter>
     </ClCompile>
+    <ClCompile Include="Tween.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Shader.h">
@@ -295,6 +296,7 @@
     <ClInclude Include="MusicTrack.h">
       <Filter>Engine</Filter>
     </ClInclude>
+    <ClInclude Include="Tween.h" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="CameraVS.hlsl">

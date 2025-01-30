@@ -95,6 +95,7 @@ void Game::Update(float deltaTime) {
 		sfx->Play(1.f, APP->RNG()->GenerateFloat(-0.5f, 0.5f));
 	}
 
+
 	if(APP->Input()->KeyJustPressed(VK_MOUSE_LEFT)) {
 		const Random* rng = APP->RNG();
 		GameObject* newLight = new GameObject(1.5f, 1.f, Color(rng->GenerateFloat(0.f, 1.f), rng->GenerateFloat(0.f, 1.f), rng->GenerateFloat(0.f, 1.f)));
@@ -102,6 +103,7 @@ void Game::Update(float deltaTime) {
 		newLight->GetTransform()->SetPosition(APP->Input()->GetMousePosition(sampleScene->GetCamera()));
 		newLight->GetTransform()->SetRotation(rng->GenerateFloat(0.f, 6.f));
 	}
+
 
 	//HSVPostProcess* poster = (HSVPostProcess*)APP->Graphics()->postProcesses[0];
 	//if(APP->Input()->IsKeyPressed(VK_UP) /* && poster->contrast < 1.0f*/) {
