@@ -14,14 +14,14 @@
     <Filter Include="Engine\Graphics">
       <UniqueIdentifier>{50182185-1050-429b-b32d-05bbd1b6c375}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Engine\Shaders">
-      <UniqueIdentifier>{f693115b-a982-4be8-a05d-d8748a39a2bd}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Engine\Graphics\Post Processing">
       <UniqueIdentifier>{c4ddca6b-208f-44bb-8bec-554fe22d460a}</UniqueIdentifier>
     </Filter>
     <Filter Include="Engine\Graphics\Rendering">
       <UniqueIdentifier>{b1f0235e-0536-41d2-b0a1-0a470370775b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\Shaders">
+      <UniqueIdentifier>{f693115b-a982-4be8-a05d-d8748a39a2bd}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -154,7 +154,9 @@
     <ClCompile Include="MusicTrack.cpp">
       <Filter>Engine</Filter>
     </ClCompile>
-    <ClCompile Include="Tween.cpp" />
+    <ClCompile Include="Tween.cpp">
+      <Filter>Engine</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Shader.h">
@@ -296,7 +298,9 @@
     <ClInclude Include="MusicTrack.h">
       <Filter>Engine</Filter>
     </ClInclude>
-    <ClInclude Include="Tween.h" />
+    <ClInclude Include="Tween.h">
+      <Filter>Engine</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="CameraVS.hlsl">

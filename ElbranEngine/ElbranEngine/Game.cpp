@@ -12,12 +12,15 @@
 #include "BloomPostProcess.h"
 #include "StretchRenderer.h"
 #include "ParticleRenderer.h"
+#include "ComputeShader.h"
 
 #include "SoundEffect.h"
 SoundEffect* sfx;
 
 Game::Game(const AssetManager* assets) {
 	sampleScene = new Scene(10, Color(0.1f, 0.1f, 0.1f));
+
+	ReadWriteTexture testy = ComputeShader::CreateReadWriteTexture(20, 10);
 
 	menu = std::make_shared<MusicTrack>(L"Menu Song.wav", 0.5f);
 	//testSound->Play();

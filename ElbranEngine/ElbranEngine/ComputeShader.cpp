@@ -18,11 +18,14 @@ ReadWriteTexture ComputeShader::CreateReadWriteTexture(UINT width, UINT height) 
 	D3D11_TEXTURE2D_DESC textureDescription = {};
 	textureDescription.Width = width;
 	textureDescription.Height = height;
+	textureDescription.MipLevels = 0;
 	textureDescription.ArraySize = 1;
 	textureDescription.Format = DXGI_FORMAT_R32G32B32A32_FLOAT;
 	textureDescription.Usage = D3D11_USAGE_DEFAULT;
 	textureDescription.BindFlags = D3D11_BIND_SHADER_RESOURCE | D3D11_BIND_UNORDERED_ACCESS;
 	textureDescription.CPUAccessFlags = 0;
+	textureDescription.SampleDesc.Quality = 0;
+	textureDescription.SampleDesc.Count = 1;
 
 	device->CreateTexture2D(&textureDescription, 0, texture.GetAddressOf());
 
@@ -30,6 +33,8 @@ ReadWriteTexture ComputeShader::CreateReadWriteTexture(UINT width, UINT height) 
 	D3D11_SHADER_RESOURCE_VIEW_DESC inputDescription = {};
 	inputDescription.Format = DXGI_FORMAT_R32G32B32A32_FLOAT;
 	inputDescription.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
+	inputDescription.Texture2D.MipLevels = -1;
+	inputDescription.Texture2D.MostDetailedMip = 0;
 
 	device->CreateShaderResourceView(texture.Get(), &inputDescription, result.srv.GetAddressOf());
 
