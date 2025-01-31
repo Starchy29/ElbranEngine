@@ -102,19 +102,34 @@ void Scene::Update(float deltaTime) {
 
 void Scene::Draw() {
 	// set all the lights
+	int lightsOnScreen = 0;
+	RectangleBox screenArea = camera->GetVisibleArea();
 	for(int i = 0; i < lightObjects.size(); i++) {
 		GameObject* lightObject = lightObjects[i];
-		lights[i].worldPosition = lightObject->GetTransform()->GetPosition(true);
-		lights[i].rotation = lightObject->GetTransform()->GetRotation(true);
-
 		LightRenderer* lightData = lightObject->GetRenderer<LightRenderer>();
-		lights[i].color = lightData->color;
-		lights[i].brightness = lightData->brightness;
-		lights[i].radius = lightData->radius;
-		lights[i].coneSize = lightData->coneSize;
+
+		// ignore lights that are off screen
+		Vector2 lightCenter = lightObject->GetTransform()->GetPosition(true);
+		if(!screenArea.Expand(lightData->radius).Contains(lightCenter)) {
+			continue;
+		}
+
+		lights[lightsOnScreen].worldPosition = lightCenter;
+		lights[lightsOnScreen].rotation = lightObject->GetTransform()->GetRotation(true);
+
+		lights[lightsOnScreen].color = lightData->color;
+		lights[lightsOnScreen].brightness = lightData->brightness;
+		lights[lightsOnScreen].radius = lightData->radius;
+		lights[lightsOnScreen].coneSize = lightData->coneSize;
+
+		lightsOnScreen++;
+
+		if(lightsOnScreen >= MAX_LIGHTS_ONSCREEN) {
+			break;
+		}
 	}
 
-	directX->SetLights(lights, lightObjects.size(), ambientLight);
+	directX->SetLights(lights, lightsOnScreen, ambientLight);
 
 	// draw opaques front to back
 	directX->SetBlendMode(BlendState::None);
@@ -165,7 +180,6 @@ void Scene::Add(GameObject* object) {
 	}
 	else if(renderMode == RenderMode::Light) {
 		// lights are not sorted
-		assert(lightObjects.size() < MAX_LIGHTS && "attempted to add too many lights to the scene at once");
 		lightObjects.push_back(object);
 		return;
 	}

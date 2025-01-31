@@ -39,7 +39,7 @@ private:
 	std::shared_ptr<PixelShader> colorShader;
 	Microsoft::WRL::ComPtr<ID3D11SamplerState> defaultSampler;
 
-	Light lights[MAX_LIGHTS];
+	Light lights[MAX_LIGHTS_ONSCREEN];
 
 	std::vector<GameObject*> opaques;
 	std::vector<GameObject*> translucents;

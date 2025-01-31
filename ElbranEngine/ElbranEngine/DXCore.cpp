@@ -265,7 +265,7 @@ DXCore::~DXCore() {
 }
 
 void DXCore::SetupLighting() {
-	lightBuffer = Shader::CreateArrayBuffer(MAX_LIGHTS, sizeof(Light), ShaderDataType::Structured);
+	lightBuffer = Shader::CreateArrayBuffer(MAX_LIGHTS_ONSCREEN, sizeof(Light), ShaderDataType::Structured);
 
 	D3D11_BUFFER_DESC bufferDescription;
 	bufferDescription.Usage = D3D11_USAGE_DYNAMIC;

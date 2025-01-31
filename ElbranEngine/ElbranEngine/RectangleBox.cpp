@@ -39,11 +39,8 @@ void RectangleBox::SetSize(Vector2 size) {
 	SetCenterAndSize(GetCenter(), size);
 }
 
-void RectangleBox::Expand(float shiftPerSide) {
-	left -= shiftPerSide;
-	right += shiftPerSide;
-	top += shiftPerSide;
-	bottom -= shiftPerSide;
+RectangleBox RectangleBox::Expand(float shiftPerSide) {
+	return RectangleBox(left - shiftPerSide, right + shiftPerSide, top + shiftPerSide, bottom - shiftPerSide);
 }
 
 bool RectangleBox::Contains(const Vector2 &point) const {

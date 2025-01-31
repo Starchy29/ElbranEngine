@@ -112,9 +112,8 @@ void Game::Update(float deltaTime) {
 		GameObject* newLight = new GameObject(1.5f, 1.f, Color(rng->GenerateFloat(0.f, 1.f), rng->GenerateFloat(0.f, 1.f), rng->GenerateFloat(0.f, 1.f)));
 		sampleScene->Add(newLight);
 		newLight->GetTransform()->SetPosition(APP->Input()->GetMousePosition(sampleScene->GetCamera()));
-		newLight->GetTransform()->SetRotation(rng->GenerateFloat(0.f, 6.f));
-		newLight->GetTransform()->SetRotation(0.01f);
-		newLight->GetRenderer<LightRenderer>()->coneSize = 0.8f;
+		//newLight->GetTransform()->SetRotation(rng->GenerateFloat(0.f, 6.f));
+		//newLight->GetRenderer<LightRenderer>()->coneSize = 1.8f;
 	}
 
 

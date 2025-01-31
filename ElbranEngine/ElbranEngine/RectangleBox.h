@@ -20,7 +20,8 @@ struct RectangleBox
 	void SetWidth(float width);
 	void SetHeight(float height);
 	void SetSize(Vector2 size);
-	void Expand(float shiftPerSide);
+
+	RectangleBox Expand(float shiftPerSide);
 
 	bool Contains(const Vector2 &point) const;
 	bool Contains(const RectangleBox &other) const;
