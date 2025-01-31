@@ -1,12 +1,8 @@
 #include "IRenderer.h"
 using namespace DirectX;
 
-DirectX::XMMATRIX IRenderer::CreateWorldViewProjection(Camera* camera, const Transform& transform) {
-	XMFLOAT4X4 worldMat = transform.GetWorldMatrix();
-	XMFLOAT4X4 viewMat = camera->GetView();
-	XMFLOAT4X4 projMat = camera->GetProjection();
-	XMMATRIX product = XMLoadFloat4x4(&worldMat);
-	product = XMMatrixMultiply(product, XMLoadFloat4x4(&viewMat));
-	product = XMMatrixMultiply(product, XMLoadFloat4x4(&projMat));
-    return product;
+void IRenderer::GetScreenTransform(DirectX::XMFLOAT4X4* output, Camera* camera, const Transform& transform) {
+	// ignoring the view matrix causes it to be rendered relative to the camera
+	const XMFLOAT4X4* cameraMatrix = screenSpace ? camera->GetProjection() : camera->GetViewProjection();
+	XMStoreFloat4x4(output, XMMatrixMultiply(XMLoadFloat4x4(transform.GetWorldMatrix()), XMLoadFloat4x4(cameraMatrix)));
 }

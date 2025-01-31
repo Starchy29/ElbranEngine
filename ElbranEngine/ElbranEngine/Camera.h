@@ -12,13 +12,20 @@ public:
 	void SetPosition(Vector2 position);
 	void SetWorldWidth(float worldWidth);
 
+	void SetX(float x);
+	void SetY(float y);
+	void Translate(Vector2 displacement);
+	void Rotate(float radians);
+	void Zoom(float widthChange);
+
 	float GetRotation() const;
 	Vector2 GetPosition() const;
 	Vector2 GetWorldDimensions() const;
 	RectangleBox GetVisibleArea() const;
 
-	DirectX::XMFLOAT4X4 GetView() const;
-	DirectX::XMFLOAT4X4 GetProjection() const;
+	const DirectX::XMFLOAT4X4* GetView() const;
+	const DirectX::XMFLOAT4X4* GetProjection() const;
+	const DirectX::XMFLOAT4X4* GetViewProjection() const;
 
 private:
 	float worldWidth;
@@ -26,9 +33,11 @@ private:
 	Vector2 position;
 	mutable DirectX::XMFLOAT4X4 view;
 	mutable DirectX::XMFLOAT4X4 projection;
+	mutable DirectX::XMFLOAT4X4 viewProjection;
 
 	mutable bool projNeedsUpdate;
 	mutable bool viewNeedsUpdate;
+	mutable bool combinedNeedsUpdate;
 	void UpdateViewMatrix() const;
 	void UpdateProjectionMatrix() const;
 };

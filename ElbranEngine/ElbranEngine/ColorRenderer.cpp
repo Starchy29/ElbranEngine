@@ -12,7 +12,7 @@ ColorRenderer::ColorRenderer(Color color, bool circle) {
 
 void ColorRenderer::Draw(Camera* camera, const Transform& transform) {
 	DirectX::XMFLOAT4X4 worldViewProj;
-	DirectX::XMStoreFloat4x4(&worldViewProj, CreateWorldViewProjection(camera, transform));
+	GetScreenTransform(&worldViewProj, camera, transform);
 	vertexShader->SetConstantVariable("worldTransform", &transform);
 	vertexShader->SetConstantVariable("worldViewProj", &worldViewProj);
 	pixelShader->SetConstantVariable("color", &color);

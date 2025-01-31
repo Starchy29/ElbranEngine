@@ -13,14 +13,14 @@
 #include "StretchRenderer.h"
 #include "ParticleRenderer.h"
 #include "ComputeShader.h"
+#include "LightRenderer.h"
+#include <DirectXMath.h>
 
 #include "SoundEffect.h"
 SoundEffect* sfx;
 
 Game::Game(const AssetManager* assets) {
 	sampleScene = new Scene(10, Color(0.1f, 0.1f, 0.1f));
-
-	ReadWriteTexture testy = ComputeShader::CreateReadWriteTexture(20, 10);
 
 	menu = std::make_shared<MusicTrack>(L"Menu Song.wav", 0.5f);
 	//testSound->Play();
@@ -30,13 +30,15 @@ Game::Game(const AssetManager* assets) {
 	//APP->Input()->SetVibration(0, 1.0f);
 	
 	battle = std::make_shared<MusicTrack>(L"Battle music.wav");
-	APP->Audio()->StartSong(menu);
+	//APP->Audio()->StartSong(menu);
 	//battle->Play();
 
 	ParticleRenderer* spawner = new ParticleRenderer(300, 0.8f, true, std::make_shared<Sprite>(L"spark.png") /*std::make_shared<SpriteAtlas>(L"animation.png", 3, 3, 8)*/);
-	GameObject* particles = new GameObject(-1, spawner, true);
+	GameObject* particles = new GameObject(0, spawner, true);
 	sampleScene->Add(particles);
 	particles->GetTransform()->SetWidth(1);
+
+	spawner->screenSpace = true;
 
 	spawner->width = 0.5f;
 	spawner->totalGrowth = -0.25f;
@@ -67,7 +69,7 @@ Game::Game(const AssetManager* assets) {
 	GameObject* photo = new GameObject(0, std::make_shared<Sprite>(L"apple.jpeg"), false);
 	sampleScene->Add(photo);
 	photo->GetTransform()->GrowWidth(7.3f);
-	//photo->GetRenderer<IRenderer>()->enabled = false;
+	//photo->GetRenderer<IRenderer>()->screenSpace = true;
 
 	photo->GetRenderer<SpriteRenderer>()->useLights = true;
 	sampleScene->ambientLight = Color::Black;
@@ -82,11 +84,17 @@ void Game::Update(float deltaTime) {
 	sampleScene->Update(deltaTime);
 	testObject->GetTransform()->SetPosition(APP->Input()->GetMousePosition(sampleScene->GetCamera()));
 
-	if(APP->Input()->ButtonJustReleased(0, GamepadButton::A)) {
-		APP->Input()->SetVibration(0, 1.0f);
+	if(APP->Input()->IsKeyPressed(VK_UP)) {
+		sampleScene->GetCamera()->Translate(Vector2(0, 2.0 * deltaTime));
 	}
-	if(APP->Input()->ButtonJustPressed(0, GamepadButton::B)) {
-		APP->Input()->SetVibration(0, 0.0f);
+	if(APP->Input()->IsKeyPressed(VK_DOWN)) {
+		sampleScene->GetCamera()->Translate(Vector2(0, -2.0 * deltaTime));
+	}
+	if(APP->Input()->IsKeyPressed(VK_LEFT)) {
+		sampleScene->GetCamera()->Translate(Vector2(-2.0 * deltaTime, 0));
+	}
+	if(APP->Input()->IsKeyPressed(VK_RIGHT)) {
+		sampleScene->GetCamera()->Translate(Vector2(2.0 * deltaTime, 0));
 	}
 
 	if(APP->Input()->KeyJustPressed(VK_MOUSE_LEFT)) {
@@ -105,6 +113,8 @@ void Game::Update(float deltaTime) {
 		sampleScene->Add(newLight);
 		newLight->GetTransform()->SetPosition(APP->Input()->GetMousePosition(sampleScene->GetCamera()));
 		newLight->GetTransform()->SetRotation(rng->GenerateFloat(0.f, 6.f));
+		newLight->GetTransform()->SetRotation(0.01f);
+		newLight->GetRenderer<LightRenderer>()->coneSize = 0.8f;
 	}
 
 

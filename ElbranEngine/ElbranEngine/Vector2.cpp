@@ -59,9 +59,9 @@ float Vector2::AngleBetween(const Vector2& other) const {
 	return acos(Dot(other) / (Length() * other.Length()));
 }
 
-Vector2 Vector2::Transform(const DirectX::XMFLOAT4X4 matrix) const {
+Vector2 Vector2::Transform(const DirectX::XMFLOAT4X4* matrix) const {
 	Vector2 result;
-	XMStoreFloat2(&result, XMVector2Transform(XMLoadFloat2(this), XMLoadFloat4x4(&matrix)));
+	XMStoreFloat2(&result, XMVector2Transform(XMLoadFloat2(this), XMLoadFloat4x4(matrix)));
 	return result;
 }
 

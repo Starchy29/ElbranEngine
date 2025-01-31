@@ -10,14 +10,15 @@ TextRenderer::TextRenderer(std::string text, std::shared_ptr<DirectX::DX11::Spri
 	horizontalAlignment = Direction::Center;
 	verticalAlignment = Direction::Center;
 
-	mesh = nullptr;
 	vertexShader = nullptr;
 	pixelShader = nullptr;
 }
 
 void TextRenderer::Draw(Camera* camera, const Transform& transform) {
 	// convert from model space to normalized screen coords [-1,1]
-	XMMATRIX worldViewProj = CreateWorldViewProjection(camera, transform);
+	XMFLOAT4X4 screenMatrix;
+	GetScreenTransform(&screenMatrix, camera, transform);
+	XMMATRIX worldViewProj = XMLoadFloat4x4(&screenMatrix);
 	Vector2 center = Vector2::Zero;
 	Vector2 right = Vector2(0.5f, 0.0f).Transform(worldViewProj);
 	Vector2 top = Vector2(0.0f, 0.5f).Transform(worldViewProj);

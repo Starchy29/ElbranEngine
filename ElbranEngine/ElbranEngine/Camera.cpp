@@ -8,21 +8,55 @@ Camera::Camera(float worldWidth) {
 	rotation = 0;
 	UpdateViewMatrix();
 	UpdateProjectionMatrix();
+	combinedNeedsUpdate = true;
 }
 
 void Camera::SetRotation(float radians) {
 	viewNeedsUpdate = true;
+	combinedNeedsUpdate = true;
 	rotation = radians;
 }
 
 void Camera::SetPosition(Vector2 position) {
 	viewNeedsUpdate = true;
+	combinedNeedsUpdate = true;
 	this->position = position;
 }
 
 void Camera::SetWorldWidth(float worldWidth) {
 	projNeedsUpdate = true;
+	combinedNeedsUpdate = true;
 	this->worldWidth = worldWidth;
+}
+
+void Camera::SetX(float x) {
+	viewNeedsUpdate = true;
+	combinedNeedsUpdate = true;
+	position.x = x;
+}
+
+void Camera::SetY(float y) {
+	viewNeedsUpdate = true;
+	combinedNeedsUpdate = true;
+	position.y = y;
+}
+
+void Camera::Translate(Vector2 displacement) {
+	viewNeedsUpdate = true;
+	combinedNeedsUpdate = true;
+	position += displacement;
+}
+
+void Camera::Rotate(float radians) {
+	viewNeedsUpdate = true;
+	combinedNeedsUpdate = true;
+	rotation += radians;
+}
+
+void Camera::Zoom(float widthChange) {
+	projNeedsUpdate = true;
+	combinedNeedsUpdate = true;
+	worldWidth += widthChange;
 }
 
 float Camera::GetRotation() const {
@@ -41,18 +75,27 @@ RectangleBox Camera::GetVisibleArea() const {
 	return RectangleBox(position, GetWorldDimensions());
 }
 
-DirectX::XMFLOAT4X4 Camera::GetView() const {
+const DirectX::XMFLOAT4X4* Camera::GetView() const {
 	if(viewNeedsUpdate) {
 		UpdateViewMatrix();
 	}
-	return view;
+	return &view;
 }
 
-DirectX::XMFLOAT4X4 Camera::GetProjection() const {
+const DirectX::XMFLOAT4X4* Camera::GetProjection() const {
 	if(projNeedsUpdate) {
 		UpdateProjectionMatrix();
 	}
-	return projection;
+	return &projection;
+}
+
+const DirectX::XMFLOAT4X4* Camera::GetViewProjection() const {
+	if(combinedNeedsUpdate) {
+		combinedNeedsUpdate = false;
+		XMStoreFloat4x4(&viewProjection, XMMatrixMultiply(XMLoadFloat4x4(GetView()), XMLoadFloat4x4(GetProjection())));
+	}
+
+	return &viewProjection;
 }
 
 void Camera::UpdateViewMatrix() const {

@@ -34,7 +34,7 @@ public:
 	Vector2 GetScale(bool global) const;
 	float GetRotation(bool global) const;
 	float GetGlobalZ() const;
-	DirectX::XMFLOAT4X4 GetWorldMatrix() const;
+	const DirectX::XMFLOAT4X4* GetWorldMatrix() const;
 	RectangleBox GetArea() const;
 
 private:

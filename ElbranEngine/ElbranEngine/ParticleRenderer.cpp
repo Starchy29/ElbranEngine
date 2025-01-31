@@ -10,7 +10,6 @@ using namespace DirectX;
 
 ParticleRenderer::ParticleRenderer(unsigned int maxParticles, float lifespan, bool blendAdditive) {
 	const AssetManager* assets = APP->Assets();
-	mesh = nullptr;
 	vertexShader = assets->particleVS;
 	geometryShader = assets->particleGS;
 	pixelShader = assets->imagePS;
@@ -142,12 +141,6 @@ void ParticleRenderer::Draw(Camera* camera, const Transform& transform) {
 	vertexShader->SetShader();
 
 	// geometry shader
-	XMFLOAT4X4 matrix = camera->GetView();
-	XMMATRIX product = XMLoadFloat4x4(&matrix);
-	matrix = camera->GetProjection();
-	product = XMMatrixMultiply(product, XMLoadFloat4x4(&matrix));
-	XMStoreFloat4x4(&matrix, product);
-
 	float z = transform.GetGlobalZ();
 	float aspectRatio = sprite->GetAspectRatio();
 
@@ -162,7 +155,7 @@ void ParticleRenderer::Draw(Camera* camera, const Transform& transform) {
 	}
 
 	dxContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_POINTLIST);
-	geometryShader->SetConstantVariable("viewProjection", &matrix);
+	geometryShader->SetConstantVariable("viewProjection", screenSpace ? camera->GetProjection() : camera->GetViewProjection());
 	geometryShader->SetConstantVariable("z", &z);
 	geometryShader->SetConstantVariable("spriteAspectRatio", &aspectRatio);
 	geometryShader->SetConstantVariable("spriteDims", &spriteDims);
@@ -251,7 +244,7 @@ void ParticleRenderer::SetSpawnData(int newParticles) {
 
 	// determine the random start positions
 	Vector2* positions = new Vector2[newParticles];
-	DirectX::XMFLOAT4X4 transform = owner->GetTransform()->GetWorldMatrix();
+	const DirectX::XMFLOAT4X4* transform = owner->GetTransform()->GetWorldMatrix();
 	for(int i = 0; i < newParticles; i++) {
 		Vector2 randPos = spawnCircular ? rng->GenerateInCircle(0.5f) : Vector2(rng->GenerateFloat(-0.5f, 0.5f), rng->GenerateFloat(-0.5f, 0.5f));
 		positions[i] = randPos.Transform(transform);

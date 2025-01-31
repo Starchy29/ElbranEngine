@@ -26,8 +26,8 @@ struct Vector2 : public DirectX::XMFLOAT2
 	float SqrDist(const Vector2& other) const;
 	float Dot(const Vector2 &other) const;
 	float AngleBetween(const Vector2& other) const;
-	Vector2 Transform(const DirectX::XMFLOAT4X4 matrix) const;
-	Vector2 Transform(const DirectX::XMMATRIX matrix) const;
+	Vector2 Transform(const DirectX::XMFLOAT4X4* matrix) const;
+	Vector2 Transform(DirectX::XMMATRIX matrix) const;
 	
 	std::string ToString() const;
 

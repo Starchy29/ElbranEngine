@@ -143,7 +143,7 @@ Vector2 Transform::GetScale(bool global) const {
 		return scale;
 	}
 
-	XMFLOAT4X4 transform = GetWorldMatrix();
+	const XMFLOAT4X4* transform = GetWorldMatrix();
 	Vector2 center = Vector2::Zero.Transform(transform);
 	Vector2 right = Vector2(0.5f, 0.f).Transform(transform);
 	Vector2 up = Vector2(0.f, 0.5f).Transform(transform);
@@ -156,7 +156,7 @@ float Transform::GetRotation(bool global) const {
 		return rotation;
 	}
 
-	XMFLOAT4X4 transform = GetWorldMatrix();
+	const XMFLOAT4X4* transform = GetWorldMatrix();
 	Vector2 center = Vector2::Zero.Transform(transform);
 	Vector2 right = Vector2(0.5f, 0.f).Transform(transform);
 	right = right - center;
@@ -175,19 +175,18 @@ float Transform::GetGlobalZ() const {
 	return worldZ;
 }
 
-XMFLOAT4X4 Transform::GetWorldMatrix() const {
+const XMFLOAT4X4* Transform::GetWorldMatrix() const {
 	if(needsUpdate) {
 		UpdateMatrix();
 	}
-	return worldMatrix;
+	return &worldMatrix;
 }
 
 RectangleBox Transform::GetArea() const {
 	// does not work when rotated
 	if(parent) {
 		RectangleBox localArea = RectangleBox(position, scale);
-		XMFLOAT4X4 parentTransforms = parent->GetWorldMatrix();
-		XMMATRIX transMat = XMLoadFloat4x4(&parentTransforms);
+		XMMATRIX transMat = XMLoadFloat4x4(parent->GetWorldMatrix());
 		XMVECTOR bottomLeft = XMVectorSet(localArea.left, localArea.bottom, 0, 0);
 		XMVECTOR topRight = XMVectorSet(localArea.right, localArea.top, 0, 0);
 		bottomLeft = XMVector3Transform(bottomLeft, transMat);
@@ -220,8 +219,7 @@ void Transform::UpdateMatrix() const {
 	XMMATRIX worldMat = scaleMat * rotMat * translationMat;
 
 	if(parent != nullptr) {
-		XMFLOAT4X4 parentMat = parent->GetWorldMatrix();
-		worldMat = XMMatrixMultiply(worldMat, XMLoadFloat4x4(&parentMat));
+		worldMat = XMMatrixMultiply(worldMat, XMLoadFloat4x4(parent->GetWorldMatrix()));
 	}
 
 	XMStoreFloat4x4(&worldMatrix, worldMat);

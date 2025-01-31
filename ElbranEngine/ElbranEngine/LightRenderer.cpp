@@ -1,7 +1,6 @@
 #include "LightRenderer.h"
 
 LightRenderer::LightRenderer(Color color, float radius, float brightness) {
-	mesh = nullptr;
 	pixelShader = nullptr;
 	vertexShader = nullptr;
 
@@ -11,6 +10,7 @@ LightRenderer::LightRenderer(Color color, float radius, float brightness) {
 	coneSize = DirectX::XM_2PI;
 }
 
+// lights cannot be camera relative
 void LightRenderer::Draw(Camera* camera, const Transform& transform) { }
 
 IBehavior* LightRenderer::Clone() {
