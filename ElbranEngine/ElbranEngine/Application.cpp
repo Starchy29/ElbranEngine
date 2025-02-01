@@ -182,6 +182,7 @@ HRESULT Application::InitApp(WNDPROC procCallback) {
 	input = new InputManager(windowHandle);
 	assets = new AssetManager();
 	game = new Game(assets);
+
 	return S_OK;
 }
 

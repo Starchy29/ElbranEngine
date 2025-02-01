@@ -51,6 +51,9 @@ public:
 	void RunPostProcesses();
 	void SetLights(const Light* lights, int numLights, const Color& ambientColor);
 
+	void SetFullscreen(bool fullscreen);
+	bool IsFullscreen() const;
+
 	Microsoft::WRL::ComPtr<ID3D11Device> GetDevice() const;
 	Microsoft::WRL::ComPtr<ID3D11DeviceContext> GetContext() const;
 	DirectX::XMINT2 GetViewDimensions() const;

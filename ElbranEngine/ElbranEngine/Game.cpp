@@ -22,6 +22,8 @@ SoundEffect* sfx;
 Game::Game(const AssetManager* assets) {
 	sampleScene = new Scene(10, Color(0.1f, 0.1f, 0.1f));
 
+	//APP->ToggleFullscreen();
+
 	menu = std::make_shared<MusicTrack>(L"Menu Song.wav", 0.5f);
 	//testSound->Play();
 
@@ -56,7 +58,7 @@ Game::Game(const AssetManager* assets) {
 	//APP->Graphics()->postProcesses.push_back(new BlurPostProcess(10));
 
 	//testObject = new GameObject(1.5f, 1.f, Color::White);
-	testObject = new GameObject(0, Color(0.2f, 0.8f, 0.5f, 0.7f), ColorRenderer::Triangle);
+	testObject = new GameObject(0, Color(0.2f, 0.8f, 0.5f, 0.7f), ColorRenderer::Circle);
 	sampleScene->Add(testObject);
 	//testObject->GetTransform()->Scale(0.6f);
 
@@ -72,7 +74,7 @@ Game::Game(const AssetManager* assets) {
 	//photo->GetRenderer<IRenderer>()->screenSpace = true;
 
 	photo->GetRenderer<SpriteRenderer>()->useLights = true;
-	sampleScene->ambientLight = Color::Black;
+	//sampleScene->ambientLight = Color::Black;
 }
 
 Game::~Game() {
@@ -83,6 +85,10 @@ Game::~Game() {
 void Game::Update(float deltaTime) {
 	sampleScene->Update(deltaTime);
 	testObject->GetTransform()->SetPosition(APP->Input()->GetMousePosition(sampleScene->GetCamera()));
+
+	if(APP->Input()->KeyJustPressed(VK_SPACE)) {
+		APP->Graphics()->SetFullscreen(!APP->Graphics()->IsFullscreen());
+	}
 
 	if(APP->Input()->IsKeyPressed(VK_UP)) {
 		sampleScene->GetCamera()->Translate(Vector2(0, 2.0 * deltaTime));

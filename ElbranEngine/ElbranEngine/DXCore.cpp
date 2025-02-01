@@ -83,6 +83,16 @@ void DXCore::SetLights(const Light* lights, int numLights, const Color& ambientC
 	context->PSSetConstantBuffers(LIGHT_CONSTANTS_REGISTER, 1, lightConstantBuffer.GetAddressOf());
 }
 
+void DXCore::SetFullscreen(bool fullscreen) {
+	swapChain->SetFullscreenState(fullscreen, nullptr);
+}
+
+bool DXCore::IsFullscreen() const {
+	BOOL fullscreen;
+	swapChain->GetFullscreenState(&fullscreen, nullptr);
+	return fullscreen;
+}
+
 Microsoft::WRL::ComPtr<ID3D11Device> DXCore::GetDevice() const {
 	return device;
 }
@@ -109,6 +119,8 @@ PostProcessTexture* DXCore::GetPostProcessTexture(int index) {
 }
 
 DXCore::DXCore(HWND windowHandle, DirectX::XMINT2 windowDims, float viewAspectRatio, HRESULT* outResult) {
+	postProcessed = false;
+
 	D3D_FEATURE_LEVEL levels[] = {
 		D3D_FEATURE_LEVEL_11_1,
 		D3D_FEATURE_LEVEL_11_0,
