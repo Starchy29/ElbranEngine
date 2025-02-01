@@ -8,29 +8,26 @@
     <Filter Include="Engine">
       <UniqueIdentifier>{b8bf54d2-d564-4f6b-8add-54f5c5c79dae}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Engine\Game Objects">
-      <UniqueIdentifier>{74e19e2b-985e-400f-a71a-330651e101bf}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Engine\Graphics">
       <UniqueIdentifier>{50182185-1050-429b-b32d-05bbd1b6c375}</UniqueIdentifier>
     </Filter>
     <Filter Include="Engine\Graphics\Post Processing">
       <UniqueIdentifier>{c4ddca6b-208f-44bb-8bec-554fe22d460a}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Engine\Graphics\Rendering">
-      <UniqueIdentifier>{b1f0235e-0536-41d2-b0a1-0a470370775b}</UniqueIdentifier>
+    <Filter Include="Engine\Core">
+      <UniqueIdentifier>{aba0bffc-761b-424c-9dc7-f6bf256f3c28}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Engine\Shaders">
+    <Filter Include="Shaders">
       <UniqueIdentifier>{f693115b-a982-4be8-a05d-d8748a39a2bd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\Toolkit">
+      <UniqueIdentifier>{071141c6-8c6d-41ed-b1f0-351359f28f88}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\Graphics\Renderers">
+      <UniqueIdentifier>{b1f0235e-0536-41d2-b0a1-0a470370775b}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Camera.cpp">
-      <Filter>Engine\Graphics</Filter>
-    </ClCompile>
-    <ClCompile Include="DXCore.cpp">
-      <Filter>Engine\Graphics</Filter>
-    </ClCompile>
     <ClCompile Include="Mesh.cpp">
       <Filter>Engine\Graphics</Filter>
     </ClCompile>
@@ -46,71 +43,26 @@
     <ClCompile Include="VertexShader.cpp">
       <Filter>Engine\Graphics</Filter>
     </ClCompile>
-    <ClCompile Include="Application.cpp">
-      <Filter>Engine</Filter>
-    </ClCompile>
-    <ClCompile Include="AssetManager.cpp">
-      <Filter>Engine</Filter>
-    </ClCompile>
-    <ClCompile Include="Button.cpp">
-      <Filter>Engine</Filter>
-    </ClCompile>
-    <ClCompile Include="Color.cpp">
-      <Filter>Engine</Filter>
-    </ClCompile>
-    <ClCompile Include="Game.cpp">
-      <Filter>Engine</Filter>
-    </ClCompile>
-    <ClCompile Include="InputManager.cpp">
-      <Filter>Engine</Filter>
-    </ClCompile>
-    <ClCompile Include="Main.cpp">
-      <Filter>Engine</Filter>
-    </ClCompile>
-    <ClCompile Include="Menu.cpp">
-      <Filter>Engine</Filter>
-    </ClCompile>
-    <ClCompile Include="RectangleBox.cpp">
-      <Filter>Engine</Filter>
-    </ClCompile>
-    <ClCompile Include="Vector2.cpp">
-      <Filter>Engine</Filter>
-    </ClCompile>
-    <ClCompile Include="GameObject.cpp">
-      <Filter>Engine\Game Objects</Filter>
-    </ClCompile>
-    <ClCompile Include="Scene.cpp">
-      <Filter>Engine\Game Objects</Filter>
-    </ClCompile>
-    <ClCompile Include="Transform.cpp">
-      <Filter>Engine\Game Objects</Filter>
-    </ClCompile>
-    <ClCompile Include="AnimationGroup.cpp">
-      <Filter>Engine\Graphics\Rendering</Filter>
-    </ClCompile>
     <ClCompile Include="AtlasRenderer.cpp">
-      <Filter>Engine\Graphics\Rendering</Filter>
+      <Filter>Engine\Graphics\Renderers</Filter>
     </ClCompile>
     <ClCompile Include="ColorRenderer.cpp">
-      <Filter>Engine\Graphics\Rendering</Filter>
+      <Filter>Engine\Graphics\Renderers</Filter>
     </ClCompile>
     <ClCompile Include="HueSwapRenderer.cpp">
-      <Filter>Engine\Graphics\Rendering</Filter>
-    </ClCompile>
-    <ClCompile Include="SpriteAnimator.cpp">
-      <Filter>Engine\Graphics\Rendering</Filter>
+      <Filter>Engine\Graphics\Renderers</Filter>
     </ClCompile>
     <ClCompile Include="SpriteRenderer.cpp">
-      <Filter>Engine\Graphics\Rendering</Filter>
+      <Filter>Engine\Graphics\Renderers</Filter>
     </ClCompile>
     <ClCompile Include="TextRenderer.cpp">
-      <Filter>Engine\Graphics\Rendering</Filter>
+      <Filter>Engine\Graphics\Renderers</Filter>
     </ClCompile>
     <ClCompile Include="SpriteAtlas.cpp">
       <Filter>Engine\Graphics</Filter>
     </ClCompile>
     <ClCompile Include="IRenderer.cpp">
-      <Filter>Engine\Graphics\Rendering</Filter>
+      <Filter>Engine\Graphics\Renderers</Filter>
     </ClCompile>
     <ClCompile Include="ComputeShader.cpp">
       <Filter>Engine\Graphics</Filter>
@@ -128,34 +80,83 @@
       <Filter>Engine\Graphics\Post Processing</Filter>
     </ClCompile>
     <ClCompile Include="RepeatRenderer.cpp">
-      <Filter>Engine\Graphics\Rendering</Filter>
+      <Filter>Engine\Graphics\Renderers</Filter>
     </ClCompile>
     <ClCompile Include="StretchRenderer.cpp">
-      <Filter>Engine\Graphics\Rendering</Filter>
+      <Filter>Engine\Graphics\Renderers</Filter>
     </ClCompile>
     <ClCompile Include="LightRenderer.cpp">
-      <Filter>Engine\Graphics\Rendering</Filter>
-    </ClCompile>
-    <ClCompile Include="Random.cpp">
-      <Filter>Engine</Filter>
+      <Filter>Engine\Graphics\Renderers</Filter>
     </ClCompile>
     <ClCompile Include="GeometryShader.cpp">
       <Filter>Engine\Graphics</Filter>
     </ClCompile>
     <ClCompile Include="ParticleRenderer.cpp">
-      <Filter>Engine\Graphics\Rendering</Filter>
+      <Filter>Engine\Graphics\Renderers</Filter>
+    </ClCompile>
+    <ClCompile Include="Game.cpp" />
+    <ClCompile Include="Application.cpp">
+      <Filter>Engine\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="AssetManager.cpp">
+      <Filter>Engine\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="InputManager.cpp">
+      <Filter>Engine\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="Main.cpp">
+      <Filter>Engine\Core</Filter>
     </ClCompile>
     <ClCompile Include="SoundManager.cpp">
-      <Filter>Engine</Filter>
+      <Filter>Engine\Core</Filter>
     </ClCompile>
-    <ClCompile Include="SoundEffect.cpp">
-      <Filter>Engine</Filter>
+    <ClCompile Include="GameObject.cpp">
+      <Filter>Engine\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="Scene.cpp">
+      <Filter>Engine\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="Transform.cpp">
+      <Filter>Engine\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="DXCore.cpp">
+      <Filter>Engine\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="Camera.cpp">
+      <Filter>Engine\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="Button.cpp">
+      <Filter>Engine\Toolkit</Filter>
+    </ClCompile>
+    <ClCompile Include="Color.cpp">
+      <Filter>Engine\Toolkit</Filter>
+    </ClCompile>
+    <ClCompile Include="Menu.cpp">
+      <Filter>Engine\Toolkit</Filter>
     </ClCompile>
     <ClCompile Include="MusicTrack.cpp">
-      <Filter>Engine</Filter>
+      <Filter>Engine\Toolkit</Filter>
+    </ClCompile>
+    <ClCompile Include="Random.cpp">
+      <Filter>Engine\Toolkit</Filter>
+    </ClCompile>
+    <ClCompile Include="RectangleBox.cpp">
+      <Filter>Engine\Toolkit</Filter>
+    </ClCompile>
+    <ClCompile Include="SoundEffect.cpp">
+      <Filter>Engine\Toolkit</Filter>
     </ClCompile>
     <ClCompile Include="Tween.cpp">
-      <Filter>Engine</Filter>
+      <Filter>Engine\Toolkit</Filter>
+    </ClCompile>
+    <ClCompile Include="Vector2.cpp">
+      <Filter>Engine\Toolkit</Filter>
+    </ClCompile>
+    <ClCompile Include="SpriteAnimator.cpp">
+      <Filter>Engine\Toolkit</Filter>
+    </ClCompile>
+    <ClCompile Include="AnimationGroup.cpp">
+      <Filter>Engine\Toolkit</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -171,89 +172,32 @@
     <ClInclude Include="Mesh.h">
       <Filter>Engine\Graphics</Filter>
     </ClInclude>
-    <ClInclude Include="Camera.h">
-      <Filter>Engine\Graphics</Filter>
-    </ClInclude>
     <ClInclude Include="Sprite.h">
       <Filter>Engine\Graphics</Filter>
     </ClInclude>
-    <ClInclude Include="DXCore.h">
-      <Filter>Engine\Graphics</Filter>
-    </ClInclude>
-    <ClInclude Include="Application.h">
-      <Filter>Engine</Filter>
-    </ClInclude>
-    <ClInclude Include="AssetManager.h">
-      <Filter>Engine</Filter>
-    </ClInclude>
-    <ClInclude Include="Button.h">
-      <Filter>Engine</Filter>
-    </ClInclude>
-    <ClInclude Include="Circle.h">
-      <Filter>Engine</Filter>
-    </ClInclude>
-    <ClInclude Include="Color.h">
-      <Filter>Engine</Filter>
-    </ClInclude>
-    <ClInclude Include="Enums.h">
-      <Filter>Engine</Filter>
-    </ClInclude>
-    <ClInclude Include="InputManager.h">
-      <Filter>Engine</Filter>
-    </ClInclude>
-    <ClInclude Include="Menu.h">
-      <Filter>Engine</Filter>
-    </ClInclude>
-    <ClInclude Include="RectangleBox.h">
-      <Filter>Engine</Filter>
-    </ClInclude>
-    <ClInclude Include="Vector2.h">
-      <Filter>Engine</Filter>
-    </ClInclude>
-    <ClInclude Include="GameObject.h">
-      <Filter>Engine\Game Objects</Filter>
-    </ClInclude>
-    <ClInclude Include="IBehavior.h">
-      <Filter>Engine\Game Objects</Filter>
-    </ClInclude>
-    <ClInclude Include="Scene.h">
-      <Filter>Engine\Game Objects</Filter>
-    </ClInclude>
-    <ClInclude Include="Transform.h">
-      <Filter>Engine\Game Objects</Filter>
-    </ClInclude>
-    <ClInclude Include="AnimationGroup.h">
-      <Filter>Engine\Graphics\Rendering</Filter>
-    </ClInclude>
     <ClInclude Include="AtlasRenderer.h">
-      <Filter>Engine\Graphics\Rendering</Filter>
+      <Filter>Engine\Graphics\Renderers</Filter>
     </ClInclude>
     <ClInclude Include="ColorRenderer.h">
-      <Filter>Engine\Graphics\Rendering</Filter>
+      <Filter>Engine\Graphics\Renderers</Filter>
     </ClInclude>
     <ClInclude Include="HueSwapRenderer.h">
-      <Filter>Engine\Graphics\Rendering</Filter>
-    </ClInclude>
-    <ClInclude Include="SpriteAnimator.h">
-      <Filter>Engine\Graphics\Rendering</Filter>
+      <Filter>Engine\Graphics\Renderers</Filter>
     </ClInclude>
     <ClInclude Include="SpriteRenderer.h">
-      <Filter>Engine\Graphics\Rendering</Filter>
+      <Filter>Engine\Graphics\Renderers</Filter>
     </ClInclude>
     <ClInclude Include="TextRenderer.h">
-      <Filter>Engine\Graphics\Rendering</Filter>
+      <Filter>Engine\Graphics\Renderers</Filter>
     </ClInclude>
     <ClInclude Include="SpriteAtlas.h">
       <Filter>Engine\Graphics</Filter>
     </ClInclude>
     <ClInclude Include="IRenderer.h">
-      <Filter>Engine\Graphics\Rendering</Filter>
+      <Filter>Engine\Graphics\Renderers</Filter>
     </ClInclude>
     <ClInclude Include="ComputeShader.h">
       <Filter>Engine\Graphics</Filter>
-    </ClInclude>
-    <ClInclude Include="Game.h">
-      <Filter>Engine</Filter>
     </ClInclude>
     <ClInclude Include="BloomPostProcess.h">
       <Filter>Engine\Graphics\Post Processing</Filter>
@@ -271,100 +215,155 @@
       <Filter>Engine\Graphics\Post Processing</Filter>
     </ClInclude>
     <ClInclude Include="RepeatRenderer.h">
-      <Filter>Engine\Graphics\Rendering</Filter>
+      <Filter>Engine\Graphics\Renderers</Filter>
     </ClInclude>
     <ClInclude Include="StretchRenderer.h">
-      <Filter>Engine\Graphics\Rendering</Filter>
+      <Filter>Engine\Graphics\Renderers</Filter>
     </ClInclude>
     <ClInclude Include="resource.h" />
     <ClInclude Include="LightRenderer.h">
-      <Filter>Engine\Graphics\Rendering</Filter>
-    </ClInclude>
-    <ClInclude Include="Random.h">
-      <Filter>Engine</Filter>
+      <Filter>Engine\Graphics\Renderers</Filter>
     </ClInclude>
     <ClInclude Include="GeometryShader.h">
       <Filter>Engine\Graphics</Filter>
     </ClInclude>
     <ClInclude Include="ParticleRenderer.h">
-      <Filter>Engine\Graphics\Rendering</Filter>
+      <Filter>Engine\Graphics\Renderers</Filter>
+    </ClInclude>
+    <ClInclude Include="Game.h" />
+    <ClInclude Include="Application.h">
+      <Filter>Engine\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="AssetManager.h">
+      <Filter>Engine\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="InputManager.h">
+      <Filter>Engine\Core</Filter>
     </ClInclude>
     <ClInclude Include="SoundManager.h">
-      <Filter>Engine</Filter>
+      <Filter>Engine\Core</Filter>
     </ClInclude>
-    <ClInclude Include="SoundEffect.h">
-      <Filter>Engine</Filter>
+    <ClInclude Include="GameObject.h">
+      <Filter>Engine\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="IBehavior.h">
+      <Filter>Engine\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="Scene.h">
+      <Filter>Engine\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="Transform.h">
+      <Filter>Engine\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="DXCore.h">
+      <Filter>Engine\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="Camera.h">
+      <Filter>Engine\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="Button.h">
+      <Filter>Engine\Toolkit</Filter>
+    </ClInclude>
+    <ClInclude Include="Circle.h">
+      <Filter>Engine\Toolkit</Filter>
+    </ClInclude>
+    <ClInclude Include="Color.h">
+      <Filter>Engine\Toolkit</Filter>
+    </ClInclude>
+    <ClInclude Include="Enums.h">
+      <Filter>Engine\Toolkit</Filter>
+    </ClInclude>
+    <ClInclude Include="Menu.h">
+      <Filter>Engine\Toolkit</Filter>
     </ClInclude>
     <ClInclude Include="MusicTrack.h">
-      <Filter>Engine</Filter>
+      <Filter>Engine\Toolkit</Filter>
+    </ClInclude>
+    <ClInclude Include="Random.h">
+      <Filter>Engine\Toolkit</Filter>
+    </ClInclude>
+    <ClInclude Include="RectangleBox.h">
+      <Filter>Engine\Toolkit</Filter>
+    </ClInclude>
+    <ClInclude Include="SoundEffect.h">
+      <Filter>Engine\Toolkit</Filter>
     </ClInclude>
     <ClInclude Include="Tween.h">
-      <Filter>Engine</Filter>
+      <Filter>Engine\Toolkit</Filter>
+    </ClInclude>
+    <ClInclude Include="Vector2.h">
+      <Filter>Engine\Toolkit</Filter>
+    </ClInclude>
+    <ClInclude Include="SpriteAnimator.h">
+      <Filter>Engine\Toolkit</Filter>
+    </ClInclude>
+    <ClInclude Include="AnimationGroup.h">
+      <Filter>Engine\Toolkit</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="CameraVS.hlsl">
-      <Filter>Engine\Shaders</Filter>
+      <Filter>Shaders</Filter>
     </FxCompile>
     <FxCompile Include="ColorFillPS.hlsl">
-      <Filter>Engine\Shaders</Filter>
+      <Filter>Shaders</Filter>
     </FxCompile>
     <FxCompile Include="TexturePS.hlsl">
-      <Filter>Engine\Shaders</Filter>
+      <Filter>Shaders</Filter>
     </FxCompile>
     <FxCompile Include="FullscreenVS.hlsl">
-      <Filter>Engine\Shaders</Filter>
+      <Filter>Shaders</Filter>
     </FxCompile>
     <FxCompile Include="CirclePS.hlsl">
-      <Filter>Engine\Shaders</Filter>
+      <Filter>Shaders</Filter>
     </FxCompile>
     <FxCompile Include="TextureAtlasVS.hlsl">
-      <Filter>Engine\Shaders</Filter>
+      <Filter>Shaders</Filter>
     </FxCompile>
     <FxCompile Include="HueSwapPS.hlsl">
-      <Filter>Engine\Shaders</Filter>
+      <Filter>Shaders</Filter>
     </FxCompile>
     <FxCompile Include="BloomFilterPP.hlsl">
-      <Filter>Engine\Shaders</Filter>
+      <Filter>Shaders</Filter>
     </FxCompile>
     <FxCompile Include="BlurPP.hlsl">
-      <Filter>Engine\Shaders</Filter>
+      <Filter>Shaders</Filter>
     </FxCompile>
     <FxCompile Include="ConSatValPP.hlsl">
-      <Filter>Engine\Shaders</Filter>
+      <Filter>Shaders</Filter>
     </FxCompile>
     <FxCompile Include="ScreenSumPP.hlsl">
-      <Filter>Engine\Shaders</Filter>
+      <Filter>Shaders</Filter>
     </FxCompile>
     <FxCompile Include="StretchyPS.hlsl">
-      <Filter>Engine\Shaders</Filter>
+      <Filter>Shaders</Filter>
     </FxCompile>
     <FxCompile Include="BrightnessSumCS.hlsl">
-      <Filter>Engine\Shaders</Filter>
+      <Filter>Shaders</Filter>
     </FxCompile>
     <FxCompile Include="ParticleQuadGS.hlsl">
-      <Filter>Engine\Shaders</Filter>
+      <Filter>Shaders</Filter>
     </FxCompile>
     <FxCompile Include="ParticleMovementCS.hlsl">
-      <Filter>Engine\Shaders</Filter>
+      <Filter>Shaders</Filter>
     </FxCompile>
     <FxCompile Include="ParticleSpawnCS.hlsl">
-      <Filter>Engine\Shaders</Filter>
+      <Filter>Shaders</Filter>
     </FxCompile>
     <FxCompile Include="ParticlePassVS.hlsl">
-      <Filter>Engine\Shaders</Filter>
+      <Filter>Shaders</Filter>
     </FxCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="ShaderStructs.hlsli">
-      <Filter>Engine\Shaders</Filter>
+      <Filter>Shaders</Filter>
     </None>
     <None Include="packages.config" />
     <None Include="ColorConversion.hlsli">
-      <Filter>Engine\Shaders</Filter>
+      <Filter>Shaders</Filter>
     </None>
     <None Include="Lighting.hlsli">
-      <Filter>Engine\Shaders</Filter>
+      <Filter>Shaders</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>

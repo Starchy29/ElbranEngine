@@ -22,8 +22,6 @@ SoundEffect* sfx;
 Game::Game(const AssetManager* assets) {
 	sampleScene = new Scene(10, Color(0.1f, 0.1f, 0.1f));
 
-	//APP->ToggleFullscreen();
-
 	menu = std::make_shared<MusicTrack>(L"Menu Song.wav", 0.5f);
 	//testSound->Play();
 
