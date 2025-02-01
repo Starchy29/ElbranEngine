@@ -10,7 +10,6 @@ SpriteRenderer::SpriteRenderer(std::shared_ptr<Sprite> sprite) {
 	useLights = false;
 
 	const AssetManager* assets = APP->Assets();
-	mesh = assets->unitSquare;
 	vertexShader = assets->cameraVS;
 	pixelShader = assets->imagePS;
 }
@@ -23,14 +22,15 @@ void SpriteRenderer::Draw(Camera* camera, const Transform& transform) {
 	vertexShader->SetBool("flipX", flipX);
 	vertexShader->SetBool("flipY", flipY);
 
+	const AssetManager* assets = APP->Assets();
 	pixelShader->SetBool("lit", useLights);
 	pixelShader->SetConstantVariable("tint", &tint);
-	pixelShader->SetSampler(APP->Assets()->defaultSampler);
+	pixelShader->SetSampler(assets->defaultSampler);
 	pixelShader->SetTexture(sprite->GetResourceView());
 
 	vertexShader->SetShader();
 	pixelShader->SetShader();
-	mesh->Draw();
+	assets->unitSquare->Draw();
 }
 
 IBehavior* SpriteRenderer::Clone() {

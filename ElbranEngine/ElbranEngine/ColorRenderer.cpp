@@ -1,13 +1,13 @@
 #include "ColorRenderer.h"
 #include "Application.h"
 
-ColorRenderer::ColorRenderer(Color color, bool circle) {
+ColorRenderer::ColorRenderer(Color color, Shape shape = Square) {
 	this->color = color;
 
 	const AssetManager* assets = APP->Assets();
-	mesh = assets->unitSquare;
+	mesh = shape == Triangle ? assets->unitTriangle : assets->unitSquare;
 	vertexShader = assets->cameraVS;
-	pixelShader = circle ? assets->circlePS : assets->colorPS;
+	pixelShader = shape == Circle ? assets->circlePS : assets->colorPS;
 }
 
 void ColorRenderer::Draw(Camera* camera, const Transform& transform) {

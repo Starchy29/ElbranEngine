@@ -18,8 +18,5 @@ public:
 
     virtual void Draw(Camera* camera, const Transform& transform) override;
     virtual IBehavior* Clone() override;
-
-protected:
-    std::shared_ptr<Mesh> mesh;
 };
 

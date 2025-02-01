@@ -34,7 +34,7 @@ Game::Game(const AssetManager* assets) {
 	//battle->Play();
 
 	ParticleRenderer* spawner = new ParticleRenderer(300, 0.8f, true, std::make_shared<Sprite>(L"spark.png") /*std::make_shared<SpriteAtlas>(L"animation.png", 3, 3, 8)*/);
-	GameObject* particles = new GameObject(0, spawner, true);
+	GameObject* particles = new GameObject(1, spawner, true);
 	sampleScene->Add(particles);
 	particles->GetTransform()->SetWidth(1);
 
@@ -52,11 +52,11 @@ Game::Game(const AssetManager* assets) {
 	//spawner->fadeDuration = 0.8f;
 
 	//APP->Graphics()->postProcesses.push_back(new HSVPostProcess(0, -1, 0));
-	APP->Graphics()->postProcesses.push_back(new BloomPostProcess(2.0f, 50));
+	APP->Graphics()->postProcesses.push_back(new BloomPostProcess(0.5f, 50));
 	//APP->Graphics()->postProcesses.push_back(new BlurPostProcess(10));
 
 	//testObject = new GameObject(1.5f, 1.f, Color::White);
-	testObject = new GameObject(-10, Color(0.2f, 0.8f, 0.5f, 0.7f), true);
+	testObject = new GameObject(0, Color(0.2f, 0.8f, 0.5f, 0.7f), ColorRenderer::Triangle);
 	sampleScene->Add(testObject);
 	//testObject->GetTransform()->Scale(0.6f);
 
@@ -66,7 +66,7 @@ Game::Game(const AssetManager* assets) {
 	//sampleScene->Add(picture);
 	//repeater->useLights = true;
 
-	GameObject* photo = new GameObject(0, std::make_shared<Sprite>(L"apple.jpeg"), false);
+	GameObject* photo = new GameObject(10, std::make_shared<Sprite>(L"apple.jpeg"), false);
 	sampleScene->Add(photo);
 	photo->GetTransform()->GrowWidth(7.3f);
 	//photo->GetRenderer<IRenderer>()->screenSpace = true;

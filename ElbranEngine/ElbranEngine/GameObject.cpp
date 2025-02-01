@@ -24,8 +24,8 @@ GameObject::GameObject(float zCoord, RenderMode renderMode, IRenderer* renderer)
 	type = ObjectTag::Default;
 }
 
-GameObject::GameObject(float zCoord, Color color, bool circle)
-	: GameObject(zCoord, color.alpha < 1 ? RenderMode::Translucent : RenderMode::Opaque, new ColorRenderer(color, circle))
+GameObject::GameObject(float zCoord, Color color, ColorRenderer::Shape shape)
+	: GameObject(zCoord, color.alpha < 1 ? RenderMode::Translucent : RenderMode::Opaque, new ColorRenderer(color, shape))
 { }
 
 GameObject::GameObject(float zCoord, std::shared_ptr<Sprite> sprite, bool translucent)

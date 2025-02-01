@@ -3,6 +3,7 @@
 #include "Transform.h"
 #include "IRenderer.h"
 #include <SpriteFont.h>
+#include "ColorRenderer.h"
 
 class Scene;
 struct Color;
@@ -30,7 +31,7 @@ class GameObject {
 
 public:
 	GameObject(float zCoord, RenderMode renderMode, IRenderer* renderer); // standard constructor
-	GameObject(float zCoord, Color color, bool circle = false); // solid color
+	GameObject(float zCoord, Color color, ColorRenderer::Shape shape = ColorRenderer::Square); // solid colored shape
 	GameObject(float zCoord, std::shared_ptr<Sprite> sprite, bool translucent); // sprite
 	GameObject(float zCoord, std::string text, std::shared_ptr<DirectX::DX11::SpriteFont> font, Color color); // text box
 	GameObject(float radius, float brightness, Color lightColor); // light

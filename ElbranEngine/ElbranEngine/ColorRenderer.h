@@ -6,9 +6,15 @@ class ColorRenderer :
     public IRenderer
 {
 public:
+    enum Shape {
+        Square,
+        Circle,
+        Triangle
+    };
+
     Color color;
 
-    ColorRenderer(Color color, bool circle = false);
+    ColorRenderer(Color color, Shape shape);
 
     void Draw(Camera* camera, const Transform& transform) override;
     IBehavior* Clone() override;

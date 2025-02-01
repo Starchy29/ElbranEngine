@@ -1,7 +1,7 @@
 #pragma once
 #include "Transform.h"
-#define CAMERA_Z -100.0f
-#define CAMERA_DEPTH 200
+#define CAMERA_Z 0.0f
+#define CAMERA_DEPTH 100
 #define CAMERA_MAX_Z CAMERA_Z + CAMERA_DEPTH // objects at this Z are behind the background
 
 class Camera {
