@@ -52,7 +52,7 @@ Game::Game(const AssetManager* assets) {
 	//spawner->fadeDuration = 0.8f;
 
 	//APP->Graphics()->postProcesses.push_back(new HSVPostProcess(0, -1, 0));
-	//APP->Graphics()->postProcesses.push_back(new BloomPostProcess(0.7f, 50));
+	APP->Graphics()->postProcesses.push_back(new BloomPostProcess(2.0f, 50));
 	//APP->Graphics()->postProcesses.push_back(new BlurPostProcess(10));
 
 	//testObject = new GameObject(1.5f, 1.f, Color::White);
@@ -105,7 +105,6 @@ void Game::Update(float deltaTime) {
 		//testSound->Pause();
 		sfx->Play(1.f, APP->RNG()->GenerateFloat(-0.5f, 0.5f));
 	}
-
 
 	if(APP->Input()->KeyJustPressed(VK_MOUSE_LEFT)) {
 		const Random* rng = APP->RNG();

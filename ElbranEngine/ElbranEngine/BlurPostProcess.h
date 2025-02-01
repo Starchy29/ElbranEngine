@@ -12,6 +12,7 @@ public:
     BlurPostProcess(int blurRadius);
 
     void Render(Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> inputTexture, Microsoft::WRL::ComPtr<ID3D11RenderTargetView> outputTexture) override;
+    bool IsActive() override;
 
 private:
     std::shared_ptr<PixelShader> shader;

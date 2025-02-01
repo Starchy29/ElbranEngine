@@ -17,7 +17,6 @@ void PostProcessTexture::Resize(Microsoft::WRL::ComPtr<ID3D11Device> device, flo
 	textureDesc.SampleDesc.Quality = 0;
 	textureDesc.Usage = D3D11_USAGE_DEFAULT;
 
-	Microsoft::WRL::ComPtr<ID3D11Texture2D> texture;
 	device->CreateTexture2D(&textureDesc, 0, texture.GetAddressOf());
 	device->CreateRenderTargetView(texture.Get(), 0, renderTargetView.GetAddressOf());
 	device->CreateShaderResourceView(texture.Get(), 0, shaderResourceView.GetAddressOf());
@@ -29,4 +28,8 @@ Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> PostProcessTexture::GetShaderRe
 
 Microsoft::WRL::ComPtr<ID3D11RenderTargetView> PostProcessTexture::GetRenderTarget() {
     return renderTargetView;
+}
+
+Microsoft::WRL::ComPtr<ID3D11Texture2D> PostProcessTexture::GetTexture() {
+	return texture;
 }

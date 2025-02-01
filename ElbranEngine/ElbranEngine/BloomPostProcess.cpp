@@ -38,3 +38,7 @@ void BloomPostProcess::Render(Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> i
 	combiner->SetShader();
 	directX->DrawScreen();
 }
+
+bool BloomPostProcess::IsActive() {
+	return threshold <= 1.0f;
+}

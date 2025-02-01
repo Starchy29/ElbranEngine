@@ -9,8 +9,10 @@ public:
 
 	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> GetShaderResource();
 	Microsoft::WRL::ComPtr<ID3D11RenderTargetView> GetRenderTarget();
+	Microsoft::WRL::ComPtr<ID3D11Texture2D> GetTexture();
 
 private:
+	Microsoft::WRL::ComPtr<ID3D11Texture2D> texture;
 	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> shaderResourceView;
 	Microsoft::WRL::ComPtr<ID3D11RenderTargetView> renderTargetView;
 };

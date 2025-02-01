@@ -43,13 +43,29 @@ void DXCore::RunPostProcesses() {
 	postProcessed = true;
 
 	for(int i = 0; i < postProcesses.size(); i++) {
-		Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> input = i % 2 == 0 ? ppTex1.GetShaderResource() : ppTex2.GetShaderResource();
-		Microsoft::WRL::ComPtr<ID3D11RenderTargetView> output = i % 2 == 0 ? ppTex2.GetRenderTarget() : ppTex1.GetRenderTarget();
-		if(i == postProcesses.size() - 1) {
-			output = backBufferView;
+		PostProcessTexture* input;
+		PostProcessTexture* output;
+		if(i % 2 == 0) {
+			input = &ppTex1;
+			output = &ppTex2;
+		} else {
+			input = &ppTex2;
+			output = &ppTex1;
 		}
 
-		postProcesses[i]->Render(input, output);
+		if(postProcesses[i]->IsActive()) {
+			postProcesses[i]->Render(input->GetShaderResource(), i == postProcesses.size() - 1 ? backBufferView : output->GetRenderTarget());
+		} else {
+			// if the post process makes no changes, copying the pixels is faster
+			ID3D11Resource* outputResource;
+			if(i == postProcesses.size() - 1) {
+				backBufferView->GetResource(&outputResource);
+			} else {
+				outputResource = output->GetTexture().Get();
+			}
+			context->CopyResource(outputResource, input->GetTexture().Get());
+			outputResource->Release();
+		}
 	}
 
 	context->OMSetRenderTargets(1, backBufferView.GetAddressOf(), depthStencilView.Get());

@@ -51,3 +51,7 @@ void HSVPostProcess::Render(Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> inp
 
 	graphics->DrawScreen();
 }
+
+bool HSVPostProcess::IsActive() {
+	return contrast != 0.f || saturation != 0.f || brightness != 0.f;
+}

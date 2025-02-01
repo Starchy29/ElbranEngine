@@ -31,3 +31,7 @@ void BlurPostProcess::Render(Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> in
 	shader->SetShader();
 	directX->DrawScreen();
 }
+
+bool BlurPostProcess::IsActive() {
+	return blurRadius > 0;
+}
