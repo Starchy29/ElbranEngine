@@ -4,6 +4,9 @@
 ComputeShader::ComputeShader(Microsoft::WRL::ComPtr<ID3D11Device> device, Microsoft::WRL::ComPtr<ID3D11DeviceContext> context, std::wstring fileName) 
 	: Shader(device, context)
 {
+	xGroupSize = 0;
+	yGroupSize = 0;
+	zGroupSize = 0;
 	LoadShader(fileName);
 }
 

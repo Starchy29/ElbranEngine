@@ -17,7 +17,7 @@ VertexToPixel main(VertexShaderInput input)
 
 	float4 fullPosition = float4(input.position, 0, 1);
 	output.screenPosition = mul(worldViewProj, fullPosition);
-	output.worldPosition = mul(worldTransform, fullPosition);
+	output.worldPosition = mul(worldTransform, fullPosition).xy;
 	output.color = 1;
 	
 	if(flipX) {

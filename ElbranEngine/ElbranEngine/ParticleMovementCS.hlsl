@@ -1,7 +1,7 @@
 	#include "ShaderStructs.hlsli"
 
 cbuffer Constants : register(b0) {
-	int maxParticles;
+	uint maxParticles;
 	float deltaTime;
 }
 

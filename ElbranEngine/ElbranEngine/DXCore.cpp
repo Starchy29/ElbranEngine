@@ -101,11 +101,11 @@ Microsoft::WRL::ComPtr<ID3D11DeviceContext> DXCore::GetContext() const {
 	return context;
 }
 
-DirectX::XMINT2 DXCore::GetViewDimensions() const {
+DirectX::XMUINT2 DXCore::GetViewDimensions() const {
 	return viewportDims;
 }
 
-DirectX::XMINT2 DXCore::GetViewOffset() const {
+DirectX::XMUINT2 DXCore::GetViewOffset() const {
 	return viewportShift;
 }
 
@@ -120,6 +120,10 @@ PostProcessTexture* DXCore::GetPostProcessTexture(int index) {
 
 DXCore::DXCore(HWND windowHandle, DirectX::XMINT2 windowDims, float viewAspectRatio, HRESULT* outResult) {
 	postProcessed = false;
+	featureLevel = D3D_FEATURE_LEVEL_11_1;
+	spriteBatch = nullptr;
+	viewportDims = DirectX::XMUINT2();
+	viewportShift = DirectX::XMUINT2();
 
 	D3D_FEATURE_LEVEL levels[] = {
 		D3D_FEATURE_LEVEL_11_1,
@@ -357,8 +361,8 @@ void DXCore::Resize(DirectX::XMINT2 windowDims, float viewAspectRatio) {
 
 	// set viewport
 	float windowAspectRatio = (float)windowDims.x / windowDims.y;
-	viewportShift = DirectX::XMINT2(0, 0);
-	viewportDims = windowDims;
+	viewportShift = DirectX::XMUINT2(0, 0);
+	viewportDims = DirectX::XMUINT2(windowDims.x, windowDims.y);
 	if(windowAspectRatio > viewAspectRatio) {
 		viewportDims.x = windowDims.y * viewAspectRatio;
 		viewportShift.x = (windowDims.x - viewportDims.x) / 2;

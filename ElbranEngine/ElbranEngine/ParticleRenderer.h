@@ -78,7 +78,7 @@ protected:
 
     ParticleRenderer(unsigned int maxParticles, float lifespan, bool blendAdditive);
 
-    void Emit(int newParticles);
-    virtual void SetSpawnData(int newParticles);
+    void Emit(unsigned int newParticles);
+    virtual void SetSpawnData(unsigned int newParticles);
 };
 

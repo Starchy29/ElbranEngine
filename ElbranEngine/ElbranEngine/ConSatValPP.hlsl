@@ -7,9 +7,6 @@ cbuffer Constants : register(b0)
     float saturation;
     float brightness;
     float averageBrightness;
-    
-    int2 viewMin;
-    int2 viewMax;
 }
 
 Texture2D Screen : register(t0);

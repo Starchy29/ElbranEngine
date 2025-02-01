@@ -32,16 +32,18 @@ HRESULT Application::Run() {
 			}
 			lastPerfCount = currentCount;
 
+			float fDeltaTime = (float)deltaTime;
+
 			input->Update();
-			audio->Update(deltaTime);
-			game->Update(deltaTime);
+			audio->Update(fDeltaTime);
+			game->Update(fDeltaTime);
 			dxCore->Render(game);
 
 			input->mouseWheelDelta = 0.0f;
 
 			#if defined(DEBUG) | defined(_DEBUG)
 			if(SHOW_FPS) {
-				timeSinceFPSUpdate += deltaTime;
+				timeSinceFPSUpdate += fDeltaTime;
 				if(timeSinceFPSUpdate >= 0.5) {
 					timeSinceFPSUpdate = 0.0f;
 					SetWindowText(windowHandle, (_T(GAME_TITLE) + std::wstring(L" FPS: ") + std::to_wstring(1.0 / deltaTime)).c_str());

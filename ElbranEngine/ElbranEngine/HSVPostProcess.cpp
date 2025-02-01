@@ -23,11 +23,7 @@ void HSVPostProcess::Render(Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> inp
 	DXCore* graphics = APP->Graphics();
 	graphics->GetContext()->OMSetRenderTargets(1, outputTexture.GetAddressOf(), nullptr);
 
-	DirectX::XMINT2 viewMin = graphics->GetViewOffset();
-	DirectX::XMINT2 viewDims = graphics->GetViewDimensions();;
-	DirectX::XMINT2 viewMax = DirectX::XMINT2(viewMin.x + viewDims.x, viewMin.y + viewDims.y);
-	shader->SetConstantVariable("viewMin", &viewMin);
-	shader->SetConstantVariable("viewMax", &viewMax);
+	DirectX::XMUINT2 viewDims = graphics->GetViewDimensions();
 
 	if(contrast != 0) {
 		brightComputer->SetArrayBuffer(inputTexture, 0);

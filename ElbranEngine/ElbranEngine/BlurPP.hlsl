@@ -2,8 +2,8 @@
 
 cbuffer Constants : register(b0)
 {
-    int2 viewMin;
-    int2 viewMax;
+    uint2 viewMin;
+    uint2 viewMax;
     bool horizontal;
     int blurRadius;
 }

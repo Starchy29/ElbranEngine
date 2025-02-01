@@ -1,7 +1,7 @@
 #include "ColorConversion.hlsli"
 
 Texture2D Image : register(t0);
-int2 screenDims : register(b0);
+uint2 screenDims : register(b0);
 RWBuffer<uint> totalBrightnes : register(u0);
 
 [numthreads(8, 8, 1)]

@@ -65,11 +65,11 @@ void InputManager::Update() {
 	GetCursorPos(&mousePos);
 	ScreenToClient(windowHandle, &mousePos);
 
-	XMINT2 viewShift = APP->Graphics()->GetViewOffset();
+	XMUINT2 viewShift = APP->Graphics()->GetViewOffset();
 	mousePos.x -= viewShift.x;
 	mousePos.y -= viewShift.y;
 
-	XMINT2 viewDims = APP->Graphics()->GetViewDimensions();
+	XMUINT2 viewDims = APP->Graphics()->GetViewDimensions();
 	mouseScreenPos.x = (float)mousePos.x / viewDims.x * 2.0f - 1.0f;
 	mouseScreenPos.y = (float)mousePos.y / viewDims.y * 2.0f - 1.0f;
 	mouseScreenPos.y *= -1.0f;
@@ -297,7 +297,7 @@ void InputManager::SetVibration(int controllerIndex, float strength) {
 	}
 
 	XINPUT_VIBRATION vibeState = {};
-	vibeState.wRightMotorSpeed = Tween::Clamp(strength, 0.f, 1.f) * MAX_VIBRATION;
+	vibeState.wRightMotorSpeed = (unsigned short)(Tween::Clamp(strength, 0.f, 1.f) * MAX_VIBRATION);
 	vibeState.wLeftMotorSpeed = vibeState.wRightMotorSpeed;
 
 	XInputSetState(controllerIndex, &vibeState);

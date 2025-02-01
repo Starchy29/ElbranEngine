@@ -48,7 +48,7 @@ void main(
 	for(int i = 0; i < 4; i++) {
 		vertex.screenPosition = mul(viewProjection, corners[i]);
 		vertex.uv = spriteDims * (atlasPosition + uvs[i]);
-		vertex.worldPosition = corners[i];
+		vertex.worldPosition = corners[i].xy;
 		vertex.color = float4(1, 1, 1, input[0].alpha);
 		output.Append(vertex);
 	}

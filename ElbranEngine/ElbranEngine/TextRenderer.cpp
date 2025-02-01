@@ -27,8 +27,8 @@ void TextRenderer::Draw(Camera* camera, const Transform& transform) {
 	center = Vector2(center3D.x, center3D.y);
 
 	// convert from [-1,1] range to [0-pixelWidth]
-	XMINT2 halfScreen = APP->Graphics()->GetViewDimensions();
-	halfScreen = XMINT2(halfScreen.x / 2, halfScreen.y / 2);
+	XMUINT2 halfScreen = APP->Graphics()->GetViewDimensions();
+	halfScreen = XMUINT2(halfScreen.x / 2, halfScreen.y / 2);
 	center = Vector2(halfScreen.x + halfScreen.x * center.x, halfScreen.y + halfScreen.y * -center.y);
 	right = Vector2(halfScreen.x + halfScreen.x * right.x, halfScreen.y + halfScreen.y * -right.y);
 	top = Vector2(halfScreen.x + halfScreen.x * top.x, halfScreen.y + halfScreen.y * -top.y);
@@ -39,8 +39,8 @@ void TextRenderer::Draw(Camera* camera, const Transform& transform) {
 	float angle = toRight.Angle();
 
 	RECT textSize = font->MeasureDrawBounds(text.c_str(), XMFLOAT2(0, 0));
-	float textWidth = textSize.right - textSize.left;
-	float textHeight = textSize.bottom - textSize.top;
+	float textWidth = (float)(textSize.right - textSize.left);
+	float textHeight = (float)(textSize.bottom - textSize.top);
 
 	float horiScale = 2 * toRight.Length() / textWidth;
 	float vertScale = 2 * toTop.Length() / textHeight;

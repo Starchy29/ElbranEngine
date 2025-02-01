@@ -56,8 +56,8 @@ public:
 
 	Microsoft::WRL::ComPtr<ID3D11Device> GetDevice() const;
 	Microsoft::WRL::ComPtr<ID3D11DeviceContext> GetContext() const;
-	DirectX::XMINT2 GetViewDimensions() const;
-	DirectX::XMINT2 GetViewOffset() const;
+	DirectX::XMUINT2 GetViewDimensions() const;
+	DirectX::XMUINT2 GetViewOffset() const;
 	DirectX::SpriteBatch* GetSpriteBatch() const;
 	PostProcessTexture* GetPostProcessTexture(int index);
 
@@ -83,8 +83,8 @@ private:
 	PostProcessTexture ppTex2;
 	PostProcessTexture ppHelpers[MAX_POST_PROCESS_TEXTURES];
 
-	DirectX::XMINT2 viewportDims;
-	DirectX::XMINT2 viewportShift;
+	DirectX::XMUINT2 viewportDims;
+	DirectX::XMUINT2 viewportShift;
 
 	bool postProcessed;
 

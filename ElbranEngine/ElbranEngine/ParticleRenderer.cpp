@@ -150,7 +150,7 @@ void ParticleRenderer::Draw(Camera* camera, const Transform& transform) {
 	if(animated) {
 		SpriteAtlas* atlas = (SpriteAtlas*)sprite.get();
 		columns = atlas->NumCols();
-		spriteDims = Vector2(1.0 / columns, 1.0f / atlas->NumRows());
+		spriteDims = Vector2(1.0f / columns, 1.0f / atlas->NumRows());
 		frameCount = atlas->SpriteCount();
 	}
 
@@ -212,7 +212,7 @@ bool ParticleRenderer::BlendsAdditive() const {
 }
 
 // if there are too many particles, the oldest will be replaced
-void ParticleRenderer::Emit(int newParticles) {
+void ParticleRenderer::Emit(unsigned int newParticles) {
 	SetSpawnData(newParticles);
 
 	// dispatch the compute shader
@@ -239,13 +239,13 @@ void ParticleRenderer::Emit(int newParticles) {
 	}
 }
 
-void ParticleRenderer::SetSpawnData(int newParticles) {
+void ParticleRenderer::SetSpawnData(unsigned int newParticles) {
 	const Random* rng = APP->RNG();
 
 	// determine the random start positions
 	Vector2* positions = new Vector2[newParticles];
 	const DirectX::XMFLOAT4X4* transform = owner->GetTransform()->GetWorldMatrix();
-	for(int i = 0; i < newParticles; i++) {
+	for(unsigned int i = 0; i < newParticles; i++) {
 		Vector2 randPos = spawnCircular ? rng->GenerateInCircle(0.5f) : Vector2(rng->GenerateFloat(-0.5f, 0.5f), rng->GenerateFloat(-0.5f, 0.5f));
 		positions[i] = randPos.Transform(transform);
 	}
@@ -265,31 +265,31 @@ void ParticleRenderer::SetSpawnData(int newParticles) {
 
 	switch(moveStyle) {
 	case ParticleMovement::None:
-		for(int i = 0; i < newParticles; i++) {
+		for(unsigned int i = 0; i < newParticles; i++) {
 			velocities[i] = Vector2::Zero;
 		}
 		break;
 	case ParticleMovement::Forward:
 		rotation = owner->GetTransform()->GetRotation(true);
 		vector = Vector2(trueSpeed * cos(rotation), trueSpeed * sin(rotation));
-		for(int i = 0; i < newParticles; i++) {
+		for(unsigned int i = 0; i < newParticles; i++) {
 			velocities[i] = vector;
 		}
 		break;
 	case ParticleMovement::Directional:
 		vector = trueSpeed * moveDirection;
-		for(int i = 0; i < newParticles; i++) {
+		for(unsigned int i = 0; i < newParticles; i++) {
 			velocities[i] = vector;
 		}
 		break;
 	case ParticleMovement::Outward:
 		vector = owner->GetTransform()->GetPosition(true);
-		for(int i = 0; i < newParticles; i++) {
+		for(unsigned int i = 0; i < newParticles; i++) {
 			velocities[i] = trueSpeed * (positions[i] - vector).Normalize();
 		}
 		break;
 	case ParticleMovement::Random:
-		for(int i = 0; i < newParticles; i++) {
+		for(unsigned int i = 0; i < newParticles; i++) {
 			velocities[i] = trueSpeed * rng->GenerateOnCircle();
 		}
 		break;

@@ -10,9 +10,9 @@ void BlurPostProcess::Render(Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> in
 	DXCore* directX = APP->Graphics();
 	PostProcessTexture* midTex = directX->GetPostProcessTexture(0);
 
-	DirectX::XMINT2 viewMin = directX->GetViewOffset();
-	DirectX::XMINT2 viewDims = directX->GetViewDimensions();;
-	DirectX::XMINT2 viewMax = DirectX::XMINT2(viewMin.x + viewDims.x, viewMin.y + viewDims.y);
+	DirectX::XMUINT2 viewMin = directX->GetViewOffset();
+	DirectX::XMUINT2 viewDims = directX->GetViewDimensions();
+	DirectX::XMUINT2 viewMax = DirectX::XMUINT2(viewMin.x + viewDims.x, viewMin.y + viewDims.y);
 	shader->SetConstantVariable("viewMin", &viewMin);
 	shader->SetConstantVariable("viewMax", &viewMax);
 	shader->SetConstantVariable("blurRadius", &blurRadius);

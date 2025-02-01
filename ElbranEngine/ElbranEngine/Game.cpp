@@ -89,16 +89,16 @@ void Game::Update(float deltaTime) {
 	}
 
 	if(APP->Input()->IsKeyPressed(VK_UP)) {
-		sampleScene->GetCamera()->Translate(Vector2(0, 2.0 * deltaTime));
+		sampleScene->GetCamera()->Translate(Vector2(0, 2.0f * deltaTime));
 	}
 	if(APP->Input()->IsKeyPressed(VK_DOWN)) {
-		sampleScene->GetCamera()->Translate(Vector2(0, -2.0 * deltaTime));
+		sampleScene->GetCamera()->Translate(Vector2(0, -2.0f * deltaTime));
 	}
 	if(APP->Input()->IsKeyPressed(VK_LEFT)) {
-		sampleScene->GetCamera()->Translate(Vector2(-2.0 * deltaTime, 0));
+		sampleScene->GetCamera()->Translate(Vector2(-2.0f * deltaTime, 0));
 	}
 	if(APP->Input()->IsKeyPressed(VK_RIGHT)) {
-		sampleScene->GetCamera()->Translate(Vector2(2.0 * deltaTime, 0));
+		sampleScene->GetCamera()->Translate(Vector2(2.0f * deltaTime, 0));
 	}
 
 	if(APP->Input()->KeyJustPressed(VK_MOUSE_LEFT)) {

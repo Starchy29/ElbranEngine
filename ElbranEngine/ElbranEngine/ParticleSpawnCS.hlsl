@@ -1,7 +1,7 @@
 #include "ShaderStructs.hlsli"
 
 cbuffer Constants : register(b0) {
-	int spawnCount;
+	uint spawnCount;
 	uint lastParticle;
 	uint maxParticles;
 	float lifespan;
