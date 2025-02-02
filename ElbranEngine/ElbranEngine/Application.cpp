@@ -224,13 +224,14 @@ HRESULT Application::InitWindow(WNDPROC procCallback) {
 		return 1;
 	}
 
+	int barHeight = GetSystemMetrics(SM_CYFRAME) + GetSystemMetrics(SM_CYCAPTION) + GetSystemMetrics(SM_CXPADDEDBORDER);
 	windowHandle = CreateWindowEx(
 		WS_EX_OVERLAPPEDWINDOW,
 		szWindowClass,
 		szTitle,
 		WS_OVERLAPPEDWINDOW,
 		CW_USEDEFAULT, CW_USEDEFAULT, // start position
-		windowDims.x, windowDims.y + 32, // title bar is 32px tall by default
+		windowDims.x, windowDims.y + barHeight,
 		NULL,
 		NULL,
 		hInstance,
