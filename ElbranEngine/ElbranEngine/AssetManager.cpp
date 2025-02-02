@@ -1,5 +1,12 @@
 #include "AssetManager.h"
 #include "Application.h"
+#include "VertexShader.h"
+#include "PixelShader.h"
+#include "ComputeShader.h"
+#include "GeometryShader.h"
+#include "Mesh.h"
+#include "Sprite.h"
+#include "DXCore.h"
 #include <WICTextureLoader.h>
 
 void AssetManager::LoadTexture(std::wstring fileName, ID3D11ShaderResourceView** destination) const {

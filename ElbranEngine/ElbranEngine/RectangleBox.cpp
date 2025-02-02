@@ -57,11 +57,11 @@ bool RectangleBox::Intersects(const RectangleBox &other) const {
 
 bool RectangleBox::Intersects(const Circle& circle) const {
 	if(circle.center.x >= left && circle.center.x <= right) {
-		return fabs(circle.center.y - GetCenter().y) < circle.radius + (top - bottom) / 2.0f;
+		return std::abs(circle.center.y - GetCenter().y) < circle.radius + (top - bottom) / 2.0f;
 	}
 
 	if(circle.center.y >= bottom && circle.center.y <= top) {
-		return fabs(circle.center.x - GetCenter().x) < circle.radius + (right - left) / 2.0f;
+		return std::abs(circle.center.x - GetCenter().x) < circle.radius + (right - left) / 2.0f;
 	}
 
 	Vector2 corner = Vector2(circle.center.x < left ? left : right, circle.center.y < bottom ? bottom : top);

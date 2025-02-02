@@ -1,7 +1,7 @@
 #pragma once
 #include "SpriteRenderer.h"
 #include "Color.h"
-#include "Sprite.h"
+#include "Vector2.h"
 
 class StretchRenderer :
     public SpriteRenderer

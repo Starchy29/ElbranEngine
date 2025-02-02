@@ -1,5 +1,6 @@
 #include "Button.h"
 #include "Application.h"
+#include "AssetManager.h"
 #include "ColorRenderer.h"
 #include "SpriteRenderer.h"
 #include "Menu.h"

@@ -1,13 +1,13 @@
 #include "Scene.h"
 #include "Application.h"
+#include "DXCore.h"
 #include "LightRenderer.h"
+#include "AssetManager.h"
+#include "Sprite.h"
+#include "PixelShader.h"
 
 Scene::Scene(float cameraWidth, Color backgroundColor) {
 	camera = new Camera(cameraWidth);
-	directX = APP->Graphics();
-	imageShader = APP->Assets()->imagePS;
-	colorShader = APP->Assets()->colorPS;
-	defaultSampler = APP->Assets()->defaultSampler;
 	ambientLight = Color(0.4f, 0.4f, 0.4f);
 
 	backColor = backgroundColor;
@@ -16,10 +16,6 @@ Scene::Scene(float cameraWidth, Color backgroundColor) {
 
 Scene::Scene(float cameraWidth, std::shared_ptr<Sprite> backgroundImage) {
 	camera = new Camera(cameraWidth);
-	directX = APP->Graphics();
-	imageShader = APP->Assets()->imagePS;
-	colorShader = APP->Assets()->colorPS;
-	defaultSampler = APP->Assets()->defaultSampler;
 	ambientLight = Color(0.4f, 0.4f, 0.4f);
 
 	backColor = Color::White;
@@ -70,28 +66,28 @@ void Scene::Update(float deltaTime) {
 	}
 
 	// remove objects that need to be deleted
-	for(int i = opaques.size() - 1; i >= 0; i--) {
+	for(int i = (int)opaques.size() - 1; i >= 0; i--) {
 		if(opaques[i]->toBeDeleted) {
 			Remove(opaques[i]);
 			delete opaques[i];
 			opaques.erase(std::next(opaques.begin(), i));
 		}
 	}
-	for(int i = translucents.size() - 1; i >= 0; i--) {
+	for(int i = (int)translucents.size() - 1; i >= 0; i--) {
 		if(translucents[i]->toBeDeleted) {
 			Remove(translucents[i]);
 			delete translucents[i];
 			translucents.erase(std::next(translucents.begin(), i));
 		}
 	}
-	for(int i = texts.size() - 1; i >= 0; i--) {
+	for(int i = (int)texts.size() - 1; i >= 0; i--) {
 		if(texts[i]->toBeDeleted) {
 			Remove(texts[i]);
 			delete texts[i];
 			texts.erase(std::next(texts.begin(), i));
 		}
 	}
-	for(int i = lightObjects.size() - 1; i >= 0; i--) {
+	for(int i = (int)lightObjects.size() - 1; i >= 0; i--) {
 		if(lightObjects[i]->toBeDeleted) {
 			Remove(lightObjects[i]);
 			delete lightObjects[i];
@@ -101,6 +97,8 @@ void Scene::Update(float deltaTime) {
 }
 
 void Scene::Draw() {
+	DXCore* directX = APP->Graphics();
+
 	// set all the lights
 	int lightsOnScreen = 0;
 	RectangleBox screenArea = camera->GetVisibleArea();
@@ -154,7 +152,7 @@ void Scene::Draw() {
 
 	// draw translucents back to front
 	directX->SetBlendMode(BlendState::AlphaBlend);
-	for(int i = translucents.size() - 1; i >= 0; i--) {
+	for(int i = (int)translucents.size() - 1; i >= 0; i--) {
 		if(translucents[i]->IsActive()) {
 			translucents[i]->Draw(camera);
 		}
@@ -209,17 +207,19 @@ void Scene::DrawBackground() {
 		return;
 	}
 
+	const AssetManager* assets = APP->Assets();
+
 	if(backImage != nullptr) {
-		imageShader->SetConstantVariable("color", &backColor);
-		imageShader->SetTexture(backImage->GetResourceView());
-		imageShader->SetSampler(defaultSampler);
-		imageShader->SetShader();
+		assets->imagePS->SetConstantVariable("color", &backColor);
+		assets->imagePS->SetTexture(backImage->GetResourceView());
+		assets->imagePS->SetSampler(assets->defaultSampler);
+		assets->imagePS->SetShader();
 	} else {
-		colorShader->SetConstantVariable("color", &backColor);
-		colorShader->SetShader();
+		assets->colorPS->SetConstantVariable("color", &backColor);
+		assets->colorPS->SetShader();
 	}
 	
-	directX->DrawScreen();
+	APP->Graphics()->DrawScreen();
 }
 
 void Scene::SortInto(GameObject* sceneMember, std::vector<GameObject*>* objectList) {

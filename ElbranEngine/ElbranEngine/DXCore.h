@@ -5,29 +5,13 @@
 #include <wrl/client.h>
 #include <DirectXMath.h>
 #include <SpriteBatch.h>
+#include <vector>
 #include "PostProcessTexture.h"
 #include "IPostProcess.h"
-#include <vector>
-#include "Color.h"
-#include "Vector2.h"
+#include "Light.h"
 #include "Shader.h"
 
 #define MAX_POST_PROCESS_TEXTURES 3
-#define MAX_LIGHTS_ONSCREEN 16
-
-// these values match the buffers used in Lighting.hlsli
-#define LIGHT_CONSTANTS_REGISTER 13
-#define LIGHT_ARRAY_REGISTER 127
-
-// this must match the struct in Lighting.hlsli
-struct Light {
-	Color color;
-	Vector2 worldPosition;
-	float radius;
-	float brightness;
-	float coneSize;
-	float rotation;
-};
 
 enum class BlendState {
 	None,

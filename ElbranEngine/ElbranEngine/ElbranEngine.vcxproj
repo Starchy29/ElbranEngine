@@ -211,6 +211,7 @@
     <ClInclude Include="InputManager.h" />
     <ClInclude Include="IPostProcess.h" />
     <ClInclude Include="IRenderer.h" />
+    <ClInclude Include="Light.h" />
     <ClInclude Include="LightRenderer.h" />
     <ClInclude Include="Menu.h" />
     <ClInclude Include="Mesh.h" />

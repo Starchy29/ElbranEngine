@@ -1,5 +1,7 @@
 #include "HSVPostProcess.h"
 #include "Application.h"
+#include "AssetManager.h"
+#include "DXCore.h"
 
 HSVPostProcess::HSVPostProcess() {
 	shader = APP->Assets()->conSatValPP;

@@ -1,5 +1,7 @@
 #include "TextRenderer.h"
 #include "Application.h"
+#include "DXCore.h"
+#include "Transform.h"
 using namespace DirectX;
 
 TextRenderer::TextRenderer(std::string text, std::shared_ptr<DirectX::DX11::SpriteFont> font, Color color) {

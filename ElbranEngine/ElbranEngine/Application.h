@@ -1,11 +1,13 @@
 #pragma once
 #include <Windows.h>
-#include "DXCore.h"
-#include "Game.h"
-#include "InputManager.h"
-#include "AssetManager.h"
-#include "Random.h"
-#include "SoundManager.h"
+#include <string>
+
+class DXCore;
+class Game;
+class InputManager;
+class AssetManager;
+class Random;
+class SoundManager;
 
 #define APP Application::GetInstance()
 
@@ -44,7 +46,8 @@ private:
 	HWND windowHandle;
 
 	float viewAspectRatio;
-	DirectX::XMINT2 windowDims;
+	int windowWidth;
+	int windowHeight;
 
 	double minSecsPerFrame; // inverse of max fps
 	double perfCountSecs;

@@ -2,13 +2,15 @@
 #include <wrl/client.h>
 #include <d3d11.h>
 #include <memory>
-#include "VertexShader.h"
-#include "PixelShader.h"
-#include "ComputeShader.h"
-#include "GeometryShader.h"
-#include "Mesh.h"
-#include "Sprite.h"
 #include <SpriteFont.h>
+#include <string>
+
+class VertexShader;
+class PixelShader;
+class GeometryShader;
+class ComputeShader;
+class Mesh;
+class Sprite;
 
 // container for all assets
 class AssetManager

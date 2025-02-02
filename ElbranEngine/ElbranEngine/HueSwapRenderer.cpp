@@ -1,5 +1,7 @@
 #include "HueSwapRenderer.h"
 #include "Application.h"
+#include "AssetManager.h"
+#include "PixelShader.h"
 
 HueSwapRenderer::HueSwapRenderer(std::shared_ptr<Sprite> sprite) 
 	: SpriteRenderer(sprite)

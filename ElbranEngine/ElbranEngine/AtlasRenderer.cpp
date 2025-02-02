@@ -1,5 +1,7 @@
 #include "AtlasRenderer.h"
 #include "Application.h"
+#include "AssetManager.h"
+#include "VertexShader.h"
 
 AtlasRenderer::AtlasRenderer(std::shared_ptr<SpriteAtlas> sprite)
 	: SpriteRenderer(sprite)

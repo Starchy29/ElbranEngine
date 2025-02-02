@@ -1,4 +1,8 @@
 #include "IRenderer.h"
+#include "Camera.h"
+#include "Transform.h"
+#include "VertexShader.h"
+#include "PixelShader.h"
 using namespace DirectX;
 
 void IRenderer::GetScreenTransform(DirectX::XMFLOAT4X4* output, Camera* camera, const Transform& transform) {

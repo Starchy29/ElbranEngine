@@ -1,8 +1,16 @@
 #include "ParticleRenderer.h"
 #include "Application.h"
+#include "AssetManager.h"
+#include "DXCore.h"
+#include "Random.h"
+#include "VertexShader.h"
+#include "PixelShader.h"
+#include "Camera.h"
 #include "Mesh.h"
 #include "ComputeShader.h"
+#include "GeometryShader.h"
 #include "SpriteAtlas.h"
+#include "GameObject.h"
 using namespace DirectX;
 
 #define PARTICLE_BYTES 36 // based on struct in ShaderStructs.hlsli

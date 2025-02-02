@@ -1,17 +1,18 @@
 #pragma once
-#include "Camera.h"
 #include <memory>
-#include "Transform.h"
-#include "Mesh.h"
-#include "VertexShader.h"
-#include "PixelShader.h"
 #include "IBehavior.h"
+
+class Camera;
+class Transform;
+class VertexShader;
+class PixelShader;
+namespace DirectX { struct XMFLOAT4X4; }
 
 class IRenderer
 	: public IBehavior
 {
 public:
-	bool screenSpace; // if true, render relative to the camera (including z position)
+	bool screenSpace; // if true, render relative to the camera
 
 	IRenderer() { screenSpace = false; }
 	virtual ~IRenderer() { }

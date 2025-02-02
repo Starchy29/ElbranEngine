@@ -1,6 +1,12 @@
 #include "Application.h"
 #include "resource.h"
 #include <tchar.h>
+#include "DXCore.h"
+#include "Game.h"
+#include "InputManager.h"
+#include "AssetManager.h"
+#include "Random.h"
+#include "SoundManager.h"
 
 Application* Application::instance;
 
@@ -75,11 +81,11 @@ LRESULT Application::ProcessMessage(HWND hWnd, UINT message, WPARAM wParam, LPAR
 			return 0;
 
 		// Save the new client area dimensions.
-		windowDims.x = LOWORD(lParam);
-		windowDims.y = HIWORD(lParam);
+		windowWidth = LOWORD(lParam);
+		windowHeight = HIWORD(lParam);
 
 		if(dxCore) {
-			dxCore->Resize(windowDims, viewAspectRatio);
+			dxCore->Resize(DirectX::XMINT2(windowWidth, windowHeight), viewAspectRatio);
 		}
 
 		return 0;
@@ -139,8 +145,8 @@ Application::Application(HINSTANCE hInst) {
 
 	// window size
 	viewAspectRatio = ASPECT_RATIO;
-	windowDims.x = 960;
-	windowDims.y = (float)windowDims.x / viewAspectRatio;
+	windowWidth = 960;
+	windowHeight = (float)windowWidth / viewAspectRatio;
 
 	// set timing data
 	minSecsPerFrame = 1.0f / MAX_FPS;
@@ -173,7 +179,7 @@ HRESULT Application::InitApp(WNDPROC procCallback) {
 	HRESULT result = InitWindow(procCallback);
 	if(FAILED(result)) return result;
 
-	dxCore = new DXCore(windowHandle, windowDims, viewAspectRatio, &result);
+	dxCore = new DXCore(windowHandle, DirectX::XMINT2(windowWidth, windowHeight), viewAspectRatio, &result);
 	if(FAILED(result)) return result;
 	dxCore->SetupLighting();
 
@@ -231,7 +237,7 @@ HRESULT Application::InitWindow(WNDPROC procCallback) {
 		szTitle,
 		WS_OVERLAPPEDWINDOW,
 		CW_USEDEFAULT, CW_USEDEFAULT, // start position
-		windowDims.x, windowDims.y + barHeight,
+		windowWidth, windowHeight + barHeight,
 		NULL,
 		NULL,
 		hInstance,

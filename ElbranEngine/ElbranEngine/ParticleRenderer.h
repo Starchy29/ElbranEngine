@@ -1,9 +1,12 @@
 #pragma once
 #include "IRenderer.h"
-#include "GeometryShader.h"
 #include "Color.h"
+#include "Vector2.h"
+#include "Shader.h"
+#include <wrl/client.h>
 
 class ComputeShader;
+class GeometryShader;
 class DXCore;
 class Sprite;
 class SpriteAtlas;

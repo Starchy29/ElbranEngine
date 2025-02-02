@@ -20,7 +20,6 @@ protected:
     virtual void Remove(GameObject* removed) override;
 
 private:
-    InputManager* input;
     Vector2 lastMousePos;
     Button* hovered;
     std::vector<Button*> buttons;

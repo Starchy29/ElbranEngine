@@ -4,7 +4,7 @@
 #include "Camera.h"
 #include "GameObject.h"
 #include "Color.h"
-#include "DXCore.h"
+#include "Light.h"
 
 class PixelShader;
 struct ID3D11SamplerState;
@@ -34,11 +34,6 @@ protected:
 	virtual void Remove(GameObject* removed) {}
 
 private:
-	DXCore* directX;
-	std::shared_ptr<PixelShader> imageShader;
-	std::shared_ptr<PixelShader> colorShader;
-	Microsoft::WRL::ComPtr<ID3D11SamplerState> defaultSampler;
-
 	Light lights[MAX_LIGHTS_ONSCREEN];
 
 	std::vector<GameObject*> opaques;

@@ -1,5 +1,7 @@
 #include "RepeatRenderer.h"
 #include "Application.h"
+#include "PixelShader.h"
+#include "Transform.h"
 
 RepeatRenderer::RepeatRenderer(std::shared_ptr<Sprite> sprite, Vector2 baseScale) 
 	: SpriteRenderer(sprite)

@@ -23,8 +23,6 @@ void PostProcessTexture::Resize(Microsoft::WRL::ComPtr<ID3D11Device> device, flo
 	device->CreateTexture2D(&textureDesc, 0, texture.GetAddressOf());
 	device->CreateRenderTargetView(texture.Get(), 0, renderTargetView.GetAddressOf());
 	device->CreateShaderResourceView(texture.Get(), 0, shaderResourceView.GetAddressOf());
-
-	//texture->
 }
 
 Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> PostProcessTexture::GetShaderResource() {

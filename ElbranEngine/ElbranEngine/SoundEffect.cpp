@@ -1,5 +1,6 @@
 #include "SoundEffect.h"
 #include "Application.h"
+#include "SoundManager.h"
 
 SoundEffect::SoundEffect(std::wstring fileName) {
 	baseVolume = 1.0f;

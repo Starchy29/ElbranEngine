@@ -1,5 +1,6 @@
 #include "SoundManager.h"
 #include "Application.h"
+#include <assert.h>
 
 SoundManager::SoundManager(HRESULT* outResult) {
     fadeOutTime = 0.f;

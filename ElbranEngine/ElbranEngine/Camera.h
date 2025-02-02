@@ -1,5 +1,7 @@
 #pragma once
-#include "Transform.h"
+#include <DirectXMath.h>
+#include "Vector2.h"
+#include "RectangleBox.h"
 #define CAMERA_Z 0.0f
 #define CAMERA_DEPTH 100
 #define CAMERA_MAX_Z CAMERA_Z + CAMERA_DEPTH // objects at this Z are behind the background

@@ -1,5 +1,6 @@
 #include "MusicTrack.h"
 #include "Application.h"
+#include "SoundManager.h"
 
 MusicTrack::MusicTrack(std::wstring fileName, float baseVolume) {
 	this->baseVolume = baseVolume;

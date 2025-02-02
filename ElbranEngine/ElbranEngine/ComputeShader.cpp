@@ -1,5 +1,6 @@
 #include "ComputeShader.h"
 #include "Application.h"
+#include "DXCore.h"
 
 ComputeShader::ComputeShader(Microsoft::WRL::ComPtr<ID3D11Device> device, Microsoft::WRL::ComPtr<ID3D11DeviceContext> context, std::wstring fileName) 
 	: Shader(device, context)

@@ -3,6 +3,7 @@
 #include <SpriteFont.h>
 #include "Color.h"
 #include "Enums.h"
+#include <string>
 
 class TextRenderer :
     public IRenderer

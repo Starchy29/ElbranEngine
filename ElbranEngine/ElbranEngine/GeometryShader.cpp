@@ -1,5 +1,6 @@
 #include "GeometryShader.h"
 #include "Application.h"
+#include "DXCore.h"
 
 void GeometryShader::ClearShader() {
 	APP->Graphics()->GetContext()->GSSetShader(NULL, 0, 0);

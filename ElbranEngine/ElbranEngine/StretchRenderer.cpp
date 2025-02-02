@@ -1,5 +1,8 @@
 #include "StretchRenderer.h"
 #include "Application.h"
+#include "AssetManager.h"
+#include "PixelShader.h"
+#include "Transform.h"
 
 StretchRenderer::StretchRenderer(std::shared_ptr<Sprite> sprite, Vector2 baseScale, Vector2 startUV, Vector2 endUV) 
 	: SpriteRenderer(sprite)

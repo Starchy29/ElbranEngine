@@ -1,8 +1,10 @@
 #pragma once
 #include <memory>
+#include <vector>
+#include <list>
+#include <SpriteFont.h>
 #include "Transform.h"
 #include "IRenderer.h"
-#include <SpriteFont.h>
 #include "ColorRenderer.h"
 
 class Scene;

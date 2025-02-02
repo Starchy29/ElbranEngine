@@ -1,5 +1,8 @@
 #include "Game.h"
 #include "Application.h"
+#include "InputManager.h"
+#include "DXCore.h"
+#include "Random.h"
 #include "Enums.h"
 
 #include "TextRenderer.h"
@@ -26,8 +29,6 @@ Game::Game(const AssetManager* assets) {
 	//testSound->Play();
 
 	sfx = new SoundEffect(L"water plunk.wav");
-
-	//APP->Input()->SetVibration(0, 1.0f);
 	
 	battle = std::make_shared<MusicTrack>(L"Battle music.wav");
 	//APP->Audio()->StartSong(menu);

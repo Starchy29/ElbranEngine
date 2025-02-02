@@ -1,6 +1,7 @@
 #pragma once
 #include "IRenderer.h"
 #include "Color.h"
+#include "Mesh.h"
 
 class ColorRenderer :
     public IRenderer

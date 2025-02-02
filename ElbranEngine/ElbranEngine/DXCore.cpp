@@ -1,6 +1,8 @@
 #include "DXCore.h"
 #include "Game.h"
 #include "Application.h"
+#include "AssetManager.h"
+#include "VertexShader.h"
 
 void DXCore::SetBlendMode(BlendState mode) {
 	switch(mode) {

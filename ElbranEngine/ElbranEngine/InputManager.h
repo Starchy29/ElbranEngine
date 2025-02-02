@@ -1,9 +1,11 @@
 #pragma once
 #include <Windows.h>
 #include <DirectXMath.h>
-#include "Camera.h"
 #include <vector>
 #include <Xinput.h>
+#include "Vector2.h"
+
+class Camera;
 
 #define VK_MOUSE_LEFT VK_LBUTTON
 #define VK_MOUSE_RIGHT VK_RBUTTON

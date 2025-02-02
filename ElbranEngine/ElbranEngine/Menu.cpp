@@ -1,5 +1,6 @@
 #include "Menu.h"
 #include "Application.h"
+
 #define MENU_WIDTH 100
 
 Menu::Menu(Color backgroundColor)
@@ -8,7 +9,6 @@ Menu::Menu(Color backgroundColor)
 	mouseEnabled = true;
 	keysEnabled = true;
 	hovered = nullptr;
-	input = APP->Input();
 }
 
 Menu::Menu(std::shared_ptr<Sprite> backgroundImage)
@@ -17,11 +17,11 @@ Menu::Menu(std::shared_ptr<Sprite> backgroundImage)
 	mouseEnabled = true;
 	keysEnabled = true;
 	hovered = nullptr;
-	input = APP->Input();
 }
 
 void Menu::Update(float deltaTime) {
 	Scene::Update(deltaTime);
+	InputManager* input = APP->Input();
 
 	if(keysEnabled) {
 		for(int i = 0; i < 4; i++) {

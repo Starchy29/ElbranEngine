@@ -8,18 +8,18 @@
 #include <d3dcompiler.h>
 #include <unordered_map>
 
-struct ConstantVariable {
-	UINT bufferIndex;
-	UINT byteOffset;
-	UINT size;
-};
-
 struct ConstantBuffer {
 	Microsoft::WRL::ComPtr<ID3D11Buffer> cBuffer;
 	BYTE* localData;
 	UINT size;
 	UINT bindIndex;
 	bool needsUpdate;
+};
+
+struct ConstantVariable {
+	UINT bufferIndex;
+	UINT byteOffset;
+	UINT size;
 };
 
 // represents a Buffer<> or StucturedBuffer<>

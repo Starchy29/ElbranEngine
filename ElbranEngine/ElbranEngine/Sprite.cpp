@@ -1,5 +1,7 @@
 #include "Sprite.h"
 #include "Application.h"
+#include "AssetManager.h"
+#include <assert.h>
 
 Sprite::Sprite(std::wstring fileName) {
 	APP->Assets()->LoadTexture(fileName, resourceView.GetAddressOf());

@@ -1,5 +1,7 @@
 #include "BlurPostProcess.h"
 #include "Application.h"
+#include "AssetManager.h"
+#include "DXCore.h"
 
 BlurPostProcess::BlurPostProcess(int blurRadius) {
 	this->blurRadius = blurRadius;

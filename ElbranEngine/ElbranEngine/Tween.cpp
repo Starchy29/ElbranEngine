@@ -14,17 +14,17 @@ Vector2 Tween::Lerp(Vector2 start, Vector2 end, float t) {
 }
 
 float Tween::SlowToFast(float t, float strength) {
-	return pow(t, strength);
+	return (float)pow(t, strength);
 }
 
 float Tween::FastToSlow(float t, float strength) {
-	return pow(t, 1.0f / strength);
+	return (float)pow(t, 1.0f / strength);
 }
 
 float Tween::EaseInOut(float t) {
 	return t < 0.5 ? 
 		4.f * t * t * t :
-		1.f - pow(-2.f * t + 2.f, 3.f) / 2.f;
+		1.f - (float)pow(-2.f * t + 2.f, 3.f) / 2.f;
 }
 
 float Tween::Arc(float t) {

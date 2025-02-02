@@ -1,5 +1,8 @@
 #include "ColorRenderer.h"
 #include "Application.h"
+#include "AssetManager.h"
+#include "VertexShader.h"
+#include "PixelShader.h"
 
 ColorRenderer::ColorRenderer(Color color, Shape shape = Square) {
 	this->color = color;

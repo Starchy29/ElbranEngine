@@ -1,5 +1,7 @@
 #include "InputManager.h"
 #include "Application.h"
+#include "DXCore.h"
+#include "Camera.h"
 #include "Tween.h"
 
 #pragma comment(lib,"XInput.lib")

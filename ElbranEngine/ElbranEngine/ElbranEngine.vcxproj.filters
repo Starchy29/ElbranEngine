@@ -300,6 +300,9 @@
     <ClInclude Include="AnimationGroup.h">
       <Filter>Engine\Toolkit</Filter>
     </ClInclude>
+    <ClInclude Include="Light.h">
+      <Filter>Engine\Toolkit</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="CameraVS.hlsl">

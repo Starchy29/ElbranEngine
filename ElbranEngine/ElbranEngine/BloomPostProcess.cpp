@@ -1,5 +1,7 @@
 #include "BloomPostProcess.h"
 #include "Application.h"
+#include "AssetManager.h"
+#include "DXCore.h"
 
 BloomPostProcess::BloomPostProcess(float threshold, int blurRadius) {
 	this->threshold = threshold;

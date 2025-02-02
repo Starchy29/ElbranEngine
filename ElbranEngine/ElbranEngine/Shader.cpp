@@ -1,5 +1,8 @@
 #include "Shader.h"
 #include "Application.h"
+#include "DXCore.h"
+#include <assert.h>
+#include "Light.h"
 
 Shader::Shader(Microsoft::WRL::ComPtr<ID3D11Device> device, Microsoft::WRL::ComPtr<ID3D11DeviceContext> context) {
 	this->dxDevice = device;

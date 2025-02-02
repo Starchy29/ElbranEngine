@@ -1,5 +1,10 @@
 #include "SpriteRenderer.h"
 #include "Application.h"
+#include "AssetManager.h"
+#include "VertexShader.h"
+#include "PixelShader.h"
+#include "Mesh.h"
+#include "Transform.h"
 
 SpriteRenderer::SpriteRenderer(std::shared_ptr<Sprite> sprite) {
 	this->sprite = sprite; 
