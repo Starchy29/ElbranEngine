@@ -10,5 +10,8 @@ namespace Tween {
 	float SlowToFast(float t, float strength = 2.0f);
 	float FastToSlow(float t, float strength = 2.0f);
 	float EaseInOut(float t);
+
+	float Rebound(float t); // upside down v
+	float Bounce(float t);
 	float Arc(float t); // inverse parabola
 }

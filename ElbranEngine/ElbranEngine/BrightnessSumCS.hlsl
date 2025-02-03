@@ -8,5 +8,5 @@ RWBuffer<uint> totalBrightnes : register(u0);
 void main( uint3 DTid : SV_DispatchThreadID )
 {
 	if(DTid.x >= screenDims.x || DTid.y >= screenDims.y) return;
-	InterlockedAdd(totalBrightnes[0], (uint)(toHSV(Image.Load(DTid).rgb).z * 100));
+	InterlockedAdd(totalBrightnes[DTid.x % 4], (uint)(toHSV(Image.Load(DTid).rgb).z * 100));
 }

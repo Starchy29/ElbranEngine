@@ -27,6 +27,15 @@ float Tween::EaseInOut(float t) {
 		1.f - (float)pow(-2.f * t + 2.f, 3.f) / 2.f;
 }
 
+float Tween::Rebound(float t) {
+	return 1.0f - 2.0f * std::abs(t - 0.5f);
+}
+
+float Tween::Bounce(float t) {
+	float v = Rebound(t);
+	return v * v;
+}
+
 float Tween::Arc(float t) {
 	return -4 * t * t + 4 * t;
 }

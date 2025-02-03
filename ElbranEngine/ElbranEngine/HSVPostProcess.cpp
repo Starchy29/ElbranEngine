@@ -10,7 +10,7 @@ HSVPostProcess::HSVPostProcess() {
 	contrast = 0;
 	saturation = 0;
 
-	totalBrightnessBuffer = ComputeShader::CreateReadWriteBuffer(1, sizeof(UINT), ShaderDataType::UInt);
+	totalBrightnessBuffer = ComputeShader::CreateReadWriteBuffer(4, sizeof(UINT), ShaderDataType::UInt);
 }
 
 HSVPostProcess::HSVPostProcess(float contrast, float saturation, float brightness)
@@ -27,18 +27,22 @@ void HSVPostProcess::Render(Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> inp
 
 	DirectX::XMUINT2 viewDims = graphics->GetViewDimensions();
 
-	if(contrast != 0) {
+	if (contrast != 0) {
 		brightComputer->SetArrayBuffer(inputTexture, 0);
 		brightComputer->SetConstantVariable("screenDims", &viewDims);
 
-		UINT totalBright = 0;
-		ComputeShader::WriteBuffer(&totalBright, &totalBrightnessBuffer);
+		UINT brightSums[4] = { 0, 0, 0, 0};
+		ComputeShader::WriteBuffer(&brightSums, &totalBrightnessBuffer);
 		brightComputer->SetReadWriteBuffer(totalBrightnessBuffer.view, 0);
 		brightComputer->Dispatch(viewDims.x, viewDims.y);
-		ComputeShader::ReadBuffer(&totalBrightnessBuffer, &totalBright);
+		ComputeShader::ReadBuffer(&totalBrightnessBuffer, &brightSums);
 
-		float average = totalBright / (100.f * viewDims.x * viewDims.y); // BrightnessSumCS.hlsl multiplies brightness by 100
+		float totalBrightness = (brightSums[0] + brightSums[1] + brightSums[2] + brightSums[3]) / 100.f; // BrightnessSumCS.hlsl multiplies brightness by 100
+		float average = totalBrightness / (viewDims.x * viewDims.y);
 		shader->SetConstantVariable("averageBrightness", &average);
+
+		ID3D11ShaderResourceView* nullSRV = nullptr;
+		graphics->GetContext()->CSSetShaderResources(0, 1, &nullSRV);
 	}
 
 	shader->SetConstantVariable("contrast", &contrast);

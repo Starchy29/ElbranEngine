@@ -29,6 +29,7 @@ Game::Game(const AssetManager* assets) {
 	//testSound->Play();
 
 	sfx = new SoundEffect(L"water plunk.wav");
+
 	
 	battle = std::make_shared<MusicTrack>(L"Battle music.wav");
 	//APP->Audio()->StartSong(menu);
@@ -51,8 +52,9 @@ Game::Game(const AssetManager* assets) {
 	spawner->SetSpawnRate(30.f);
 	//spawner->scaleWithParent = true;
 	//spawner->fadeDuration = 0.8f;
+	spawner->enabled = false;
 
-	//APP->Graphics()->postProcesses.push_back(new HSVPostProcess(0, -1, 0));
+	APP->Graphics()->postProcesses.push_back(new HSVPostProcess(0.5f, 0, 0));
 	APP->Graphics()->postProcesses.push_back(new BloomPostProcess(0.5f, 50));
 	//APP->Graphics()->postProcesses.push_back(new BlurPostProcess(10));
 
