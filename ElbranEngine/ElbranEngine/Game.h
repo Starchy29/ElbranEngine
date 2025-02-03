@@ -1,8 +1,6 @@
 #pragma once
 #include "Scene.h"
 
-#include "MusicTrack.h"
-
 #define GAME_TITLE "Elbran Engine"
 #define MAX_FPS 60
 #define ASPECT_RATIO 16.f / 9.f
@@ -27,12 +25,7 @@ public:
 	void operator=(const Game&) = delete;
 
 private:
-	GameObject* testObject;
-	GameObject* picture;
 	Scene* sampleScene;
-
-	std::shared_ptr<MusicTrack> menu;
-	std::shared_ptr<MusicTrack> battle;
 
 	Game(const AssetManager* assets);
 	~Game();
