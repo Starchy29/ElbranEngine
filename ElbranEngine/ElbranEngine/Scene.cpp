@@ -5,10 +5,16 @@
 #include "AssetManager.h"
 #include "Sprite.h"
 #include "PixelShader.h"
+#include "ObjectList.h"
 
 Scene::Scene(float cameraWidth, Color backgroundColor) {
 	camera = new Camera(cameraWidth);
 	ambientLight = Color(0.4f, 0.4f, 0.4f);
+	sceneMembers = new ObjectList();
+	opaques = new ObjectList();
+	translucents = new ObjectList();
+	texts = new ObjectList();
+	lightObjects = new ObjectList();
 
 	backColor = backgroundColor;
 	backImage = nullptr;
@@ -17,6 +23,11 @@ Scene::Scene(float cameraWidth, Color backgroundColor) {
 Scene::Scene(float cameraWidth, std::shared_ptr<Sprite> backgroundImage) {
 	camera = new Camera(cameraWidth);
 	ambientLight = Color(0.4f, 0.4f, 0.4f);
+	sceneMembers = new ObjectList();
+	opaques = new ObjectList();
+	translucents = new ObjectList();
+	texts = new ObjectList();
+	lightObjects = new ObjectList();
 
 	backColor = Color::White;
 	backImage = backgroundImage;
@@ -24,18 +35,16 @@ Scene::Scene(float cameraWidth, std::shared_ptr<Sprite> backgroundImage) {
 
 Scene::~Scene() {
 	delete camera;
-	for(GameObject* object : opaques) {
-		delete object;
+	ObjectNode* node = sceneMembers->GetFirst();
+	while(node != nullptr) {
+		delete node->object;
+		node = node->next;
 	}
-	for(GameObject* object : translucents) {
-		delete object;
-	}
-	for(GameObject* object : texts) {
-		delete object;
-	}
-	for(GameObject* object : lightObjects) {
-		delete object;
-	}
+	delete sceneMembers;
+	delete opaques;
+	delete translucents;
+	delete texts;
+	delete lightObjects;
 }
 
 Camera* Scene::GetCamera() {
@@ -43,57 +52,19 @@ Camera* Scene::GetCamera() {
 }
 
 void Scene::Update(float deltaTime) {
-	// update all game objects
-	for(GameObject* object : opaques) {
-		if(object->IsActive()) {
-			object->Update(deltaTime);
+	ObjectNode* node = sceneMembers->GetFirst();
+	while(node) {
+		if(node->object->IsActive()) {
+			node->object->Update(deltaTime);
 		}
-	}
-	for(GameObject* object : translucents) {
-		if(object->IsActive()) {
-			object->Update(deltaTime);
-		}
-	}
-	for(GameObject* object : texts) {
-		if(object->IsActive()) {
-			object->Update(deltaTime);
-		}
-	}
-	for(GameObject* object : lightObjects) {
-		if(object->IsActive()) {
-			object->Update(deltaTime);
-		}
+		node = node->next;
 	}
 
-	// remove objects that need to be deleted
-	for(int i = (int)opaques.size() - 1; i >= 0; i--) {
-		if(opaques[i]->toBeDeleted) {
-			Remove(opaques[i]);
-			delete opaques[i];
-			opaques.erase(std::next(opaques.begin(), i));
-		}
+	// delay deletion in case an object wants to delete itself
+	for(GameObject* deleter : toBeDeleted) {
+		delete deleter;
 	}
-	for(int i = (int)translucents.size() - 1; i >= 0; i--) {
-		if(translucents[i]->toBeDeleted) {
-			Remove(translucents[i]);
-			delete translucents[i];
-			translucents.erase(std::next(translucents.begin(), i));
-		}
-	}
-	for(int i = (int)texts.size() - 1; i >= 0; i--) {
-		if(texts[i]->toBeDeleted) {
-			Remove(texts[i]);
-			delete texts[i];
-			texts.erase(std::next(texts.begin(), i));
-		}
-	}
-	for(int i = (int)lightObjects.size() - 1; i >= 0; i--) {
-		if(lightObjects[i]->toBeDeleted) {
-			Remove(lightObjects[i]);
-			delete lightObjects[i];
-			lightObjects.erase(std::next(lightObjects.begin(), i));
-		}
-	}
+	toBeDeleted.clear();
 }
 
 void Scene::Draw() {
@@ -102,8 +73,9 @@ void Scene::Draw() {
 	// set all the lights
 	int lightsOnScreen = 0;
 	RectangleBox screenArea = camera->GetVisibleArea();
-	for(int i = 0; i < lightObjects.size(); i++) {
-		GameObject* lightObject = lightObjects[i];
+	ObjectNode* node = lightObjects->GetFirst();
+	while(node) {
+		GameObject* lightObject = node->object;
 		LightRenderer* lightData = lightObject->GetRenderer<LightRenderer>();
 
 		// ignore lights that are off screen
@@ -131,30 +103,35 @@ void Scene::Draw() {
 
 	// draw opaques front to back
 	directX->SetBlendMode(BlendState::None);
-	for(GameObject* object : opaques) {
-		if(object->IsActive()) {
-			object->Draw(camera);
+	node = opaques->GetFirst();
+	while(node) {
+		if(node->object->IsActive()) {
+			node->object->Draw(camera);
 		}
+		node = node->next;
 	}
 
 	DrawBackground();
 
 	// draw all text
-	if(texts.size() > 0) {
+	node = texts->GetFirst();
+	if(node != nullptr) {
 		directX->StartTextBatch();
-		for(GameObject* text : texts) {
-			if(text->IsActive()) {
-				text->Draw(camera);
+		while(node) {
+			if(node->object->IsActive()) {
+				node->object->Draw(camera);
 			}
+			node = node->next;
 		}
 		directX->FinishTextBatch();
 	}
 
 	// draw translucents back to front
 	directX->SetBlendMode(BlendState::AlphaBlend);
-	for(int i = (int)translucents.size() - 1; i >= 0; i--) {
-		if(translucents[i]->IsActive()) {
-			translucents[i]->Draw(camera);
+	node = translucents->GetFirst();
+	while(node) {
+		if(node->object->IsActive()) {
+			node->object->Draw(camera);
 		}
 	}
 }
@@ -164,42 +141,65 @@ void Scene::Add(GameObject* object) {
 		return;
 	}
 
+	// add it to the scene
 	object->scene = this;
+	sceneMembers->AddToFront(object);
 
+	// sort it into the correct render list
+	switch(object->renderMode) {
+	case RenderMode::Opaque:
+		opaques->SortInto(object, true);
+		break;
+	case RenderMode::Translucent:
+		translucents->SortInto(object, false);
+		break;
+	case RenderMode::Text:
+		texts->AddToFront(object);
+		break;
+	case RenderMode::Light:
+		lightObjects->AddToFront(object);
+		break;
+	}
+
+	// add all of its children to the same scene
 	for(GameObject* child : object->children) {
 		Add(child);
 	}
+}
 
-	RenderMode renderMode = object->renderMode;
-	if(renderMode == RenderMode::Text) {
-		// text ordering is done by the spriteBatch
-		texts.push_back(object);
-		return;
-	}
-	else if(renderMode == RenderMode::Light) {
-		// lights are not sorted
-		lightObjects.push_back(object);
-		return;
+void Scene::Remove(GameObject* removed) {
+	sceneMembers->Remove(removed);
+
+	switch(removed->renderMode) {
+	case RenderMode::Opaque:
+		opaques->Remove(removed);
+		break;
+	case RenderMode::Translucent:
+		translucents->Remove(removed);
+		break;
+	case RenderMode::Text:
+		texts->Remove(removed);
+		break;
+	case RenderMode::Light:
+		lightObjects->Remove(removed);
+		break;
 	}
 
-	SortInto(object, renderMode == RenderMode::Translucent ? &translucents : &opaques);
+	toBeDeleted.push_back(removed);
 }
 
 // called by a game object when it changes its Z coordinate
 void Scene::UpdateDrawOrder(GameObject* sceneMember) {
-	RenderMode renderMode = sceneMember->renderMode;
-	std::vector<GameObject*>* list = &opaques;
-	if(renderMode == RenderMode::Translucent) {
-		list = &translucents;
+	switch(sceneMember->renderMode) {
+	case RenderMode::Opaque:
+		opaques->Remove(sceneMember);
+		opaques->SortInto(sceneMember, true);
+		break;
+	case RenderMode::Translucent:
+		translucents->Remove(sceneMember);
+		translucents->SortInto(sceneMember, false);
+		break;
 	}
-	else if(renderMode == RenderMode::Text) {
-		list = &texts;
-	}
-	else if(renderMode == RenderMode::Light) {
-		list = &lightObjects;
-	}
-	list->erase(std::find(list->begin(), list->end(), sceneMember));
-	SortInto(sceneMember, list);
 }
 
 void Scene::DrawBackground() {
@@ -220,18 +220,4 @@ void Scene::DrawBackground() {
 	}
 	
 	APP->Graphics()->DrawScreen();
-}
-
-void Scene::SortInto(GameObject* sceneMember, std::vector<GameObject*>* objectList) {
-	if(objectList->size() == 0) {
-		objectList->push_back(sceneMember);
-		return;
-	}
-
-	float newZ = sceneMember->GetTransform()->GetGlobalZ();
-	int insertIndex = 0;
-	while(insertIndex < objectList->size() && newZ > (*objectList)[insertIndex]->GetTransform()->GetGlobalZ()) {
-		insertIndex++;
-	}
-	objectList->insert(std::next(objectList->begin(), insertIndex), sceneMember);
 }

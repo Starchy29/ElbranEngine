@@ -158,6 +158,9 @@
     <ClCompile Include="AnimationGroup.cpp">
       <Filter>Engine\Toolkit</Filter>
     </ClCompile>
+    <ClCompile Include="ObjectList.cpp">
+      <Filter>Engine\Core</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Shader.h">
@@ -302,6 +305,9 @@
     </ClInclude>
     <ClInclude Include="Light.h">
       <Filter>Engine\Toolkit</Filter>
+    </ClInclude>
+    <ClInclude Include="ObjectList.h">
+      <Filter>Engine\Core</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

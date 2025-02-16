@@ -1,6 +1,5 @@
 #pragma once
 #include <memory>
-#include <vector>
 #include "Camera.h"
 #include "GameObject.h"
 #include "Color.h"
@@ -8,6 +7,7 @@
 
 class PixelShader;
 struct ID3D11SamplerState;
+class ObjectList;
 
 class Scene
 {
@@ -23,6 +23,7 @@ public:
 	virtual void Update(float deltaTime);
 	virtual void Draw();
 	virtual void Add(GameObject* object);
+	virtual void Remove(GameObject* removed);
 	void UpdateDrawOrder(GameObject* sceneMember);
 
 protected:
@@ -31,16 +32,16 @@ protected:
 	Camera* camera;
 	
 	virtual void DrawBackground();
-	virtual void Remove(GameObject* removed) {}
 
 private:
 	Light lights[MAX_LIGHTS_ONSCREEN];
 
-	std::vector<GameObject*> opaques;
-	std::vector<GameObject*> translucents;
-	std::vector<GameObject*> texts;
-	std::vector<GameObject*> lightObjects;
+	ObjectList* sceneMembers;
+	std::vector<GameObject*> toBeDeleted;
 
-	void SortInto(GameObject* sceneMember, std::vector<GameObject*>* objectList);
+	ObjectList* opaques;
+	ObjectList* translucents;
+	ObjectList* texts;
+	ObjectList* lightObjects;
 };
 

@@ -71,7 +71,6 @@ protected:
 
 private:
 	RenderMode renderMode;
-	bool toBeDeleted;
 
 	void RemoveParent();
 };

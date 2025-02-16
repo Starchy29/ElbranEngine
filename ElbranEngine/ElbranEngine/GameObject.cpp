@@ -10,7 +10,6 @@ using namespace DirectX;
 
 GameObject::GameObject(float zCoord, RenderMode renderMode, IRenderer* renderer) {
 	active = true;
-	toBeDeleted = false;
 	parent = nullptr;
 	children = std::list<GameObject*>();
 	behaviors = std::vector<IBehavior*>();
@@ -107,7 +106,7 @@ Scene* GameObject::GetScene() const {
 bool GameObject::IsActive() const {
 	const GameObject* current = this;
 	while(current != nullptr) {
-		if(!current->active || current->toBeDeleted) {
+		if(!current->active) {
 			return false;
 		}
 
@@ -159,7 +158,6 @@ GameObject::GameObject(const GameObject& original) {
 	}
 
 	renderMode = original.renderMode;
-	toBeDeleted = original.toBeDeleted;
 }
 
 void GameObject::RemoveParent() {
@@ -188,8 +186,9 @@ void GameObject::Draw(Camera* camera) {
 }
 
 void GameObject::Delete(bool keepChildren) {
-	toBeDeleted = true;
-	if(parent != nullptr && !parent->toBeDeleted) {
+	scene->Remove(this);
+
+	if(parent != nullptr) {
 		RemoveParent();
 	}
 
