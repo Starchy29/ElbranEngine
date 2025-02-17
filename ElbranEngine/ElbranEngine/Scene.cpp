@@ -97,6 +97,8 @@ void Scene::Draw() {
 		if(lightsOnScreen >= MAX_LIGHTS_ONSCREEN) {
 			break;
 		}
+
+		node = node->next;
 	}
 
 	directX->SetLights(lights, lightsOnScreen, ambientLight);
@@ -133,6 +135,7 @@ void Scene::Draw() {
 		if(node->object->IsActive()) {
 			node->object->Draw(camera);
 		}
+		node = node->next;
 	}
 }
 
@@ -165,6 +168,27 @@ void Scene::Add(GameObject* object) {
 	for(GameObject* child : object->children) {
 		Add(child);
 	}
+}
+
+void Scene::Remove(GameObject* removed) {
+	sceneMembers->Remove(removed);
+
+	switch(removed->renderMode) {
+	case RenderMode::Opaque:
+		opaques->Remove(removed);
+		break;
+	case RenderMode::Translucent:
+		translucents->Remove(removed);
+		break;
+	case RenderMode::Text:
+		texts->Remove(removed);
+		break;
+	case RenderMode::Light:
+		lightObjects->Remove(removed);
+		break;
+	}
+
+	toBeDeleted.push_back(removed);
 }
 
 void Scene::Remove(GameObject* removed) {
