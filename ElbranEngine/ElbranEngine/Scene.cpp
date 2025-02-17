@@ -60,9 +60,25 @@ void Scene::Update(float deltaTime) {
 		node = node->next;
 	}
 
-	// delay deletion in case an object wants to delete itself
-	for(GameObject* deleter : toBeDeleted) {
-		delete deleter;
+	for(GameObject* deleted : toBeDeleted) {
+		sceneMembers->Remove(deleted);
+
+		switch(deleted->renderMode) {
+		case RenderMode::Opaque:
+			opaques->Remove(deleted);
+			break;
+		case RenderMode::Translucent:
+			translucents->Remove(deleted);
+			break;
+		case RenderMode::Text:
+			texts->Remove(deleted);
+			break;
+		case RenderMode::Light:
+			lightObjects->Remove(deleted);
+			break;
+		}
+
+		delete deleted;
 	}
 	toBeDeleted.clear();
 }
@@ -192,23 +208,6 @@ void Scene::Remove(GameObject* removed) {
 }
 
 void Scene::Remove(GameObject* removed) {
-	sceneMembers->Remove(removed);
-
-	switch(removed->renderMode) {
-	case RenderMode::Opaque:
-		opaques->Remove(removed);
-		break;
-	case RenderMode::Translucent:
-		translucents->Remove(removed);
-		break;
-	case RenderMode::Text:
-		texts->Remove(removed);
-		break;
-	case RenderMode::Light:
-		lightObjects->Remove(removed);
-		break;
-	}
-
 	toBeDeleted.push_back(removed);
 }
 

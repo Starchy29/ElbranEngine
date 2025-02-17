@@ -72,5 +72,5 @@ protected:
 private:
 	RenderMode renderMode;
 
-	void RemoveParent();
+	void DeleteChildren();
 };

@@ -70,7 +70,10 @@ void GameObject::SetParent(GameObject* newParent) {
 	assert(newParent != this && "attempted to make a game object its own parent");
 
 	if(parent != nullptr) {
-		RemoveParent();
+		parent->children.remove(this);
+		parent->transform.children.remove(&transform);
+		parent = nullptr;
+		transform.parent = nullptr;
 	}
 
 	if(newParent == nullptr) {
@@ -160,13 +163,6 @@ GameObject::GameObject(const GameObject& original) {
 	renderMode = original.renderMode;
 }
 
-void GameObject::RemoveParent() {
-	parent->children.remove(this);
-	parent->transform.children.remove(&transform);
-	parent = nullptr;
-	transform.parent = nullptr;
-}
-
 void GameObject::Update(float deltaTime) {
 	for(IBehavior* behavior : behaviors) {
 		if(behavior->enabled) {
@@ -188,17 +184,22 @@ void GameObject::Draw(Camera* camera) {
 void GameObject::Delete(bool keepChildren) {
 	scene->Remove(this);
 
-	if(parent != nullptr) {
-		RemoveParent();
-	}
-
 	if(keepChildren) {
 		for(GameObject* child : children) {
 			child->SetParent(nullptr);
 		}
 	} else {
-		for(GameObject* child : children) {
-			child->Delete();
-		}
+		DeleteChildren();
+	}
+
+	if(parent != nullptr) {
+		SetParent(nullptr);
+	}
+}
+
+void GameObject::DeleteChildren() {
+	for(GameObject* child : children) {
+		child->DeleteChildren();
+		scene->Remove(child);
 	}
 }
