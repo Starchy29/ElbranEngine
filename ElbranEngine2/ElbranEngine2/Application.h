@@ -1,11 +1,12 @@
 #pragma once
+class GraphicsAPI;
 
 #define MAX_FPS 60.f
 
 class Application
 {
 public:
-	// GraphicsAPI* graphics;
+	GraphicsAPI* graphics;
 	// InputManager* input;
 	// SoundMixer* sounds;
 	// AssetContainer* assets;

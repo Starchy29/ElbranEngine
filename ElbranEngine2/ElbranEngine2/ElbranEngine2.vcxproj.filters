@@ -10,9 +10,13 @@
     <ClCompile Include="WindowsMain.cpp" />
     <ClCompile Include="GameObject.cpp" />
     <ClCompile Include="Application.cpp" />
+    <ClCompile Include="GraphicsAPI.cpp" />
+    <ClCompile Include="Math.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="GameObject.h" />
     <ClInclude Include="Application.h" />
+    <ClInclude Include="GraphicsAPI.h" />
+    <ClInclude Include="Math.h" />
   </ItemGroup>
 </Project>
