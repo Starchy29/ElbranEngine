@@ -1,7 +1,9 @@
 #pragma once
 class GraphicsAPI;
+class Game;
 
 #define MAX_FPS 60.f
+#define ASPECT_RATIO 16.f / 9.f
 
 class Application
 {
@@ -10,10 +12,10 @@ public:
 	// InputManager* input;
 	// SoundMixer* sounds;
 	// AssetContainer* assets;
-	// Game* game;
+	Game* game;
 	// Random* rng;
 
-	Application();
+	Application(GraphicsAPI* graphics);
 	~Application();
 
 	void Update(float deltaTime);

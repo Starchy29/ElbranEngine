@@ -1,23 +1,24 @@
 #include "Application.h"
 #include "GraphicsAPI.h"
+#include "Game.h"
 
 Application* app;
 
-Application::Application() {
+Application::Application(GraphicsAPI* graphics) {
 	// rng = new Random();
-	// graphics = ;
+	this->graphics = graphics;
 	// sounds = new SoundMixer();
 	// InputManager* input;
 	// assets = new AssetContainer();
-	// game = new Game();
+	game = new Game();
 }
 
 Application::~Application() {
-	// delete graphics;
+	delete graphics;
 	// delete input;
 	// delete sounds;
 	// delete assets;
-	// delete game;
+	delete game;
 	// delete rng;
 }
 
@@ -25,7 +26,7 @@ void Application::Update(float deltaTime) {
 	//input->Update();
 	//audio->Update(fDeltaTime);
 	//game->Update(fDeltaTime);
-	//dxCore->Render(game);
+	graphics->Render(game);
 
 	//input->mouseWheelDelta = 0.0f;
 }

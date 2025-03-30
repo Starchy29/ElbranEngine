@@ -5,18 +5,30 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="Windows">
+      <UniqueIdentifier>{c3edae81-f80c-40fe-81ee-7823aef5c0e3}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="WindowsMain.cpp" />
     <ClCompile Include="GameObject.cpp" />
     <ClCompile Include="Application.cpp" />
     <ClCompile Include="GraphicsAPI.cpp" />
     <ClCompile Include="Math.cpp" />
+    <ClCompile Include="WindowsMain.cpp">
+      <Filter>Windows</Filter>
+    </ClCompile>
+    <ClCompile Include="DirectXAPI.cpp" />
+    <ClCompile Include="Tween.cpp" />
+    <ClCompile Include="Game.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="GameObject.h" />
     <ClInclude Include="Application.h" />
     <ClInclude Include="GraphicsAPI.h" />
     <ClInclude Include="Math.h" />
+    <ClInclude Include="Common.h" />
+    <ClInclude Include="DirectXAPI.h" />
+    <ClInclude Include="Tween.h" />
+    <ClInclude Include="Game.h" />
   </ItemGroup>
 </Project>

@@ -2,6 +2,7 @@
 #include <tchar.h>
 #include <memory>
 #include "Application.h"
+#include "DirectXAPI.h"
 
 #define START_WINDOW_WIDTH 960
 #define START_WINDOW_HEIGHT 600
@@ -10,6 +11,7 @@ HWND windowHandle;
 __int64 lastPerfCount;
 double perfCountSecs;
 double minSecsPerFrame; // inverse of max fps
+DirectXAPI* directX;
 
 void RunApp() {
 	// main message loop
@@ -24,9 +26,9 @@ void RunApp() {
 			__int64 currentCount;
 			QueryPerformanceCounter((LARGE_INTEGER*) &currentCount);
 			double deltaTime = (currentCount - lastPerfCount) * perfCountSecs;
-			/*if (deltaTime < minSecsPerFrame) {
+			if(deltaTime < minSecsPerFrame) {
 				continue;
-			}*/
+			}
 			lastPerfCount = currentCount;
 
 			float fDeltaTime = (float)deltaTime;
@@ -70,7 +72,7 @@ LRESULT CALLBACK WndProc(_In_ HWND hWnd, _In_ UINT message, _In_ WPARAM wParam, 
 		//windowHeight = HIWORD(lParam);
 
 		/*if (dxCore) {
-			dxCore->Resize(DirectX::XMINT2(windowWidth, windowHeight), viewAspectRatio);
+			directX->Resize(DirectX::XMINT2(windowWidth, windowHeight), viewAspectRatio);
 		}*/
 
 		return 0;
@@ -160,7 +162,8 @@ int WINAPI WinMain(
 	QueryPerformanceCounter((LARGE_INTEGER*)&lastPerfCount);
 
 	InitWindow(hInstance);
-	app = new Application();
+	directX = new DirectXAPI(windowHandle, Int2(START_WINDOW_WIDTH, START_WINDOW_HEIGHT), ASPECT_RATIO);
+	app = new Application(directX);
 	RunApp();
 	delete app;
 	return 0;
