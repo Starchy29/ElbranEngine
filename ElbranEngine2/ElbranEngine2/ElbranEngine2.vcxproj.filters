@@ -8,27 +8,44 @@
     <Filter Include="Windows">
       <UniqueIdentifier>{c3edae81-f80c-40fe-81ee-7823aef5c0e3}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Graphics">
+      <UniqueIdentifier>{9ebd3444-6fe7-460c-af14-cf731178eaf7}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="GameObject.cpp" />
     <ClCompile Include="Application.cpp" />
-    <ClCompile Include="GraphicsAPI.cpp" />
     <ClCompile Include="Math.cpp" />
     <ClCompile Include="WindowsMain.cpp">
       <Filter>Windows</Filter>
     </ClCompile>
-    <ClCompile Include="DirectXAPI.cpp" />
     <ClCompile Include="Tween.cpp" />
     <ClCompile Include="Game.cpp" />
+    <ClCompile Include="DirectXAPI.cpp">
+      <Filter>Windows</Filter>
+    </ClCompile>
+    <ClCompile Include="GraphicsAPI.cpp">
+      <Filter>Graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="Texture.cpp">
+      <Filter>Graphics</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="GameObject.h" />
     <ClInclude Include="Application.h" />
-    <ClInclude Include="GraphicsAPI.h" />
     <ClInclude Include="Math.h" />
     <ClInclude Include="Common.h" />
-    <ClInclude Include="DirectXAPI.h" />
     <ClInclude Include="Tween.h" />
     <ClInclude Include="Game.h" />
+    <ClInclude Include="DirectXAPI.h">
+      <Filter>Windows</Filter>
+    </ClInclude>
+    <ClInclude Include="GraphicsAPI.h">
+      <Filter>Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="Texture.h">
+      <Filter>Graphics</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

@@ -16,6 +16,7 @@ public:
 	virtual ~GraphicsAPI();
 
 	void Render(Game* game);
+	void ApplyPostProcesses();
 
 	Int2 GetViewDimensions() const;
 	Int2 GetViewOffset() const;
@@ -25,7 +26,6 @@ public:
 	void FinishTextBatch();
 	void DrawFullscreen();
 	void DrawIndices(int numIndices);
-	void ApplyPostProcesses();
 	//void SetLights(const Light* lights, int numLights, const Color& ambientColor);
 
 	void SetFullscreen(bool fullscreen);
