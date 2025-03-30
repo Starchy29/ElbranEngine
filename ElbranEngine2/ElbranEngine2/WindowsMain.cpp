@@ -1,11 +1,10 @@
+#ifdef WINDOWS
 #include <Windows.h>
 #include <tchar.h>
 #include <memory>
 #include "Application.h"
 #include "DirectXAPI.h"
-
-#define START_WINDOW_WIDTH 960
-#define START_WINDOW_HEIGHT 600
+#include "Configs.h"
 
 HWND windowHandle;
 __int64 lastPerfCount;
@@ -103,7 +102,8 @@ void InitWindow(HINSTANCE hInstance) {
 	wcex.lpszClassName = szWindowClass;
 
 	// make an icon resource, then find its code in resource.h. 
-	HICON icon;// = LoadIcon(hInstance, MAKEINTRESOURCE(IDI_ICON1));
+	//HICON icon;
+	// = LoadIcon(hInstance, MAKEINTRESOURCE(IDI_ICON1));
 	//wcex.hIcon = icon;
 	//wcex.hIconSm = icon;
 
@@ -168,3 +168,4 @@ int WINAPI WinMain(
 	delete app;
 	return 0;
 }
+#endif

@@ -1,3 +1,4 @@
+#ifdef WINDOWS
 #include "DirectXAPI.h"
 
 DirectXAPI::DirectXAPI(HWND windowHandle, Int2 windowDims, float viewAspectRatio) {
@@ -131,7 +132,11 @@ DirectXAPI::DirectXAPI(HWND windowHandle, Int2 windowDims, float viewAspectRatio
 }
 
 DirectXAPI::~DirectXAPI() {
-
+	ReleaseTexture(&postProcessTargets[0]);
+	ReleaseTexture(&postProcessTargets[1]);
+	for (int i = 0; i < MAX_POST_PROCESS_HELPER_TEXTURES; i++) {
+		ReleaseTexture(&postProcessHelpers[i]);
+	}
 }
 
 void DirectXAPI::Resize(Int2 windowDims, float viewAspectRatio) {
@@ -193,11 +198,67 @@ void DirectXAPI::Resize(Int2 windowDims, float viewAspectRatio) {
 	context->RSSetViewports(1, &viewport);
 
 	// resize post process textures
-	//ppTex1.Resize(device, windowDims.x, windowDims.y);
-	//ppTex2.Resize(device, windowDims.x, windowDims.y);
-	//for(int i = 0; i < MAX_POST_PROCESS_TEXTURES; i++) {
-	//	ppHelpers[i].Resize(device, windowDims.x, windowDims.y);
-	//}
+	ReleaseTexture(&postProcessTargets[0]);
+	ReleaseTexture(&postProcessTargets[1]);
+	postProcessTargets[0] = CreateTexture(viewportDims.x, viewportDims.y, Texture2D::WriteAccess::RenderTarget);
+	postProcessTargets[1] = CreateTexture(viewportDims.x, viewportDims.y, Texture2D::WriteAccess::RenderTarget);
+	for(int i = 0; i < MAX_POST_PROCESS_HELPER_TEXTURES; i++) {
+		ReleaseTexture(&postProcessHelpers[i]);
+		postProcessHelpers[i] = CreateTexture(viewportDims.x, viewportDims.y, Texture2D::WriteAccess::RenderTarget);
+	}
+}
+
+Texture2D DirectXAPI::CreateTexture(unsigned int width, int unsigned height, Texture2D::WriteAccess writability) {
+	Texture2D output = {};
+
+	D3D11_TEXTURE2D_DESC textureDesc;
+	textureDesc.Width = width;
+	textureDesc.Height = height;
+	textureDesc.MipLevels = 0; // include all mip levels
+	textureDesc.ArraySize = 1;
+	textureDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
+	textureDesc.SampleDesc.Count = 1;
+	textureDesc.SampleDesc.Quality = 0;
+	textureDesc.MiscFlags = 0;
+	textureDesc.Usage = D3D11_USAGE_DEFAULT;
+	textureDesc.CPUAccessFlags = 0;
+	textureDesc.BindFlags = D3D11_BIND_SHADER_RESOURCE;
+	if(writability == Texture2D::WriteAccess::RenderTarget) {
+		textureDesc.BindFlags |= D3D11_BIND_RENDER_TARGET;
+	}
+	else if(writability == Texture2D::WriteAccess::UnorderedAccess) {
+		textureDesc.BindFlags |= D3D11_BIND_UNORDERED_ACCESS;
+	}
+	
+	device->CreateTexture2D(&textureDesc, 0, &(output.data));
+	device->CreateShaderResourceView(output.data, 0, &(output.srv));
+	if(writability == Texture2D::WriteAccess::RenderTarget) {
+		device->CreateRenderTargetView(output.data, 0, &(output.rtv));
+	}
+	else if(writability == Texture2D::WriteAccess::UnorderedAccess) {
+		device->CreateUnorderedAccessView(output.data, 0, &(output.uav));
+	}
+
+	return output;
+}
+
+void DirectXAPI::CopyTexture(const Texture2D* source, Texture2D* destination) {
+	context->CopyResource(destination->data, source->data);
+}
+
+void DirectXAPI::ReleaseTexture(Texture2D* texture) {
+	if(texture->data) {
+		texture->data->Release();
+	}
+	if(texture->rtv) {
+		texture->rtv->Release();
+	}
+	if(texture->srv) {
+		texture->srv->Release();
+	}
+	if(texture->uav) {
+		texture->uav->Release();
+	}
 }
 
 void DirectXAPI::SetBlendMode(BlendState mode) {
@@ -214,6 +275,10 @@ void DirectXAPI::SetBlendMode(BlendState mode) {
 	}
 }
 
+void DirectXAPI::SetRenderTarget(const Texture2D* renderTarget) {
+	context->OMSetRenderTargets(1, &(renderTarget->rtv), nullptr);
+}
+
 void DirectXAPI::ClearRenderTarget() {
 	float black[4] { 0.f, 0.f, 1.f, 0.f };
 	context->ClearRenderTargetView(backBufferView.Get(), black);
@@ -225,5 +290,14 @@ void DirectXAPI::ClearDepthStencil() {
 
 void DirectXAPI::PresentSwapChain() {
 	swapChain->Present(0, 0);
-	// context->OMSetRenderTargets(1, backBufferView.GetAddressOf(), depthStencilView.Get());
 }
+
+void DirectXAPI::ResetRenderTarget() {
+	context->OMSetRenderTargets(1, backBufferView.GetAddressOf(), depthStencilView.Get());
+}
+Texture2D DirectXAPI::GetBackBufferView() {
+	Texture2D result = {};
+	result.rtv = backBufferView.Get();
+	return result;
+}
+#endif

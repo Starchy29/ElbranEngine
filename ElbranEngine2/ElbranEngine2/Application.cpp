@@ -11,6 +11,10 @@ Application::Application(GraphicsAPI* graphics) {
 	// InputManager* input;
 	// assets = new AssetContainer();
 	game = new Game();
+
+#ifdef WINDOWS
+	float test = 2.0f;
+#endif
 }
 
 Application::~Application() {

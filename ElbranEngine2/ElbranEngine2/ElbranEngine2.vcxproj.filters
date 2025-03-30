@@ -27,9 +27,6 @@
     <ClCompile Include="GraphicsAPI.cpp">
       <Filter>Graphics</Filter>
     </ClCompile>
-    <ClCompile Include="Texture.cpp">
-      <Filter>Graphics</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="GameObject.h" />
@@ -44,7 +41,11 @@
     <ClInclude Include="GraphicsAPI.h">
       <Filter>Graphics</Filter>
     </ClInclude>
-    <ClInclude Include="Texture.h">
+    <ClInclude Include="Configs.h" />
+    <ClInclude Include="Texture2D.h">
+      <Filter>Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="IPostProcess.h">
       <Filter>Graphics</Filter>
     </ClInclude>
   </ItemGroup>

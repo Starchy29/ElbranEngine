@@ -9,7 +9,9 @@ GraphicsAPI::GraphicsAPI() {
 }
 
 GraphicsAPI::~GraphicsAPI() {
-
+	for(IPostProcess* pp : postProcesses) {
+		delete pp;
+	}
 }
 
 void GraphicsAPI::Render(Game* game) {
@@ -17,51 +19,45 @@ void GraphicsAPI::Render(Game* game) {
 	ClearRenderTarget();
 	ClearDepthStencil();
 
-	//if(postProcesses.size() > 0) {
-		// SetRenderTarget(ppTex1);
-	//}
+	if(postProcesses.size() > 0) {
+		SetRenderTarget(&postProcessTargets[0]);
+	}
 
 	//game->Draw();
 
-	//if(!postProcessed && postProcesses.size() > 0) {
-		//ApplyPostProcesses();
-	//}
+	if(!postProcessed && postProcesses.size() > 0) {
+		ApplyPostProcesses();
+	}
 
 	PresentSwapChain();
+	ResetRenderTarget();
 }
 
 void GraphicsAPI::ApplyPostProcesses() {
 	assert(!postProcessed && "attempted to run post processes twice");
-
 	postProcessed = true;
 
-	/*for (int i = 0; i < postProcesses.size(); i++) {
-		PostProcessTexture* input;
-		PostProcessTexture* output;
-		if(i % 2 == 0) {
-			input = &ppTex1;
-			output = &ppTex2;
-		} else {
-			input = &ppTex2;
-			output = &ppTex1;
+	for(int i = 0; i < postProcesses.size(); i++) {
+		Texture2D* input = &postProcessTargets[i%2];
+		Texture2D* output = &postProcessTargets[1 - (i%2)];
+		if(i == postProcesses.size() - 1) {
+			Texture2D backBuffer = GetBackBufferView();
+			output = &backBuffer;
 		}
 
 		if(postProcesses[i]->IsActive()) {
-			postProcesses[i]->Render(input->GetShaderResource(), i == postProcesses.size() - 1 ? backBufferView : output->GetRenderTarget());
+			postProcesses[i]->Render(input, output);
 		} else {
-			// if the post process makes no changes, copying the pixels is faster
-			ID3D11Resource* outputResource;
-			if(i == postProcesses.size() - 1) {
-				backBufferView->GetResource(&outputResource);
-			} else {
-				outputResource = output->GetTexture().Get();
-			}
-			context->CopyResource(outputResource, input->GetTexture().Get());
-			outputResource->Release();
+			CopyTexture(input, output); // if the post process makes no changes, copying the pixels is fastest
 		}
-	}*/
+	}
 
-	//context->OMSetRenderTargets(1, backBufferView.GetAddressOf(), depthStencilView.Get());
+	ResetRenderTarget();
+}
+
+const Texture2D* GraphicsAPI::GetPostProcessHelper(int slot) {
+	assert(slot >= 0 && slot < MAX_POST_PROCESS_HELPER_TEXTURES && "index was out of range");
+	return &postProcessHelpers[slot];
 }
 
 Int2 GraphicsAPI::GetViewDimensions() const {
