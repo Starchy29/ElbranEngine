@@ -62,21 +62,19 @@ LRESULT CALLBACK WndProc(_In_ HWND hWnd, _In_ UINT message, _In_ WPARAM wParam, 
 		((MINMAXINFO*)lParam)->ptMinTrackSize.y = 200;
 		return 0;
 	case WM_SIZE:
-		if (wParam == SIZE_MINIMIZED)
+		if(wParam == SIZE_MINIMIZED) {
 			// dont update when minimized
 			return 0;
+		}
 
 		// Save the new client area dimensions.
-		//windowWidth = LOWORD(lParam);
-		//windowHeight = HIWORD(lParam);
-
-		/*if (dxCore) {
-			directX->Resize(DirectX::XMINT2(windowWidth, windowHeight), viewAspectRatio);
-		}*/
+		if(directX) {
+			directX->Resize(Int2(LOWORD(lParam), HIWORD(lParam)), ASPECT_RATIO);
+		}
 
 		return 0;
 	case WM_MOUSEWHEEL:
-		//input->mouseWheelDelta = GET_WHEEL_DELTA_WPARAM(wParam) / (float)WHEEL_DELTA;
+		//input->mouseWheelDelta += GET_WHEEL_DELTA_WPARAM(wParam) / (float)WHEEL_DELTA;
 		return 0;
 	default:
 		return DefWindowProc(hWnd, message, wParam, lParam);

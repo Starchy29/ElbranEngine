@@ -168,67 +168,67 @@ bool Circle::Intersects(const Circle& other) const {
 	return center.SquareDistance(other.center) <= radSum * radSum;
 }
 
-bool Circle::Intersects(const Rectangle& rectangle) const {
+bool Circle::Intersects(const AlignedRect& rectangle) const {
 	return rectangle.Intersects(*this);
 }
 #pragma endregion
 
-#pragma region Rectangle
-Rectangle::Rectangle(Vector2 center, Vector2 size) {
+#pragma region AlignedRect
+AlignedRect::AlignedRect(Vector2 center, Vector2 size) {
 	left = center.x - size.x / 2.0f;
 	right = center.x + size.x / 2.0f;
 	top = center.y + size.y / 2.0f;
 	bottom = center.y - size.y / 2.0f;
 }
 
-Rectangle::Rectangle(float left, float right, float top, float bottom) {
+AlignedRect::AlignedRect(float left, float right, float top, float bottom) {
 	this->left = left;
 	this->right = right;
 	this->top = top;
 	this->bottom = bottom;
 }
 
-Vector2 Rectangle::Center() const {
+Vector2 AlignedRect::Center() const {
 	return Vector2((right + left) / 2.0f, (top + bottom) / 2.0f);
 }
 
-Vector2 Rectangle::Size() const {
+Vector2 AlignedRect::Size() const {
 	return Vector2(right - left, top - bottom);
 }
 
-Rectangle Rectangle::SetCenter(Vector2 center) const {
-	return Rectangle(center, Size());
+AlignedRect AlignedRect::SetCenter(Vector2 center) const {
+	return AlignedRect(center, Size());
 }
 
-Rectangle Rectangle::SetWidth(float width) const {
-	return Rectangle(Center(), Vector2(width, top - bottom));
+AlignedRect AlignedRect::SetWidth(float width) const {
+	return AlignedRect(Center(), Vector2(width, top - bottom));
 }
 
-Rectangle Rectangle::SetHeight(float height) const {
-	return Rectangle(Center(), Vector2(right - left, height));
+AlignedRect AlignedRect::SetHeight(float height) const {
+	return AlignedRect(Center(), Vector2(right - left, height));
 }
 
-Rectangle Rectangle::SetSize(Vector2 size) const {
-	return Rectangle(Center(), size);
+AlignedRect AlignedRect::SetSize(Vector2 size) const {
+	return AlignedRect(Center(), size);
 }
 
-Rectangle Rectangle::Expand(float shiftPerSide) const {
-	return Rectangle(left - shiftPerSide, right + shiftPerSide, top + shiftPerSide, bottom - shiftPerSide);
+AlignedRect AlignedRect::Expand(float shiftPerSide) const {
+	return AlignedRect(left - shiftPerSide, right + shiftPerSide, top + shiftPerSide, bottom - shiftPerSide);
 }
 
-bool Rectangle::Contains(const Vector2& point) const {
+bool AlignedRect::Contains(const Vector2& point) const {
 	return point.x >= left && point.x <= right && point.y <= top && point.y >= bottom;
 }
 
-bool Rectangle::Contains(const Rectangle& other) const {
+bool AlignedRect::Contains(const AlignedRect& other) const {
 	return other.left >= left && other.right <= right && other.top <= top && other.bottom >= bottom;
 }
 
-bool Rectangle::Intersects(const Rectangle& other) const {
+bool AlignedRect::Intersects(const AlignedRect& other) const {
 	return !(right < other.left || left > other.right || top < other.bottom || bottom > other.top);
 }
 
-bool Rectangle::Intersects(const Circle& circle) const {
+bool AlignedRect::Intersects(const Circle& circle) const {
 	if(circle.center.x >= left && circle.center.x <= right) {
 		return fabsf(circle.center.y - Center().y) < circle.radius + (top - bottom) / 2.0f;
 	}

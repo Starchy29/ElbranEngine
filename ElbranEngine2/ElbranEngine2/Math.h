@@ -2,7 +2,7 @@
 struct Vector2;
 struct Matrix;
 struct Circle;
-struct Rectangle;
+struct AlignedRect;
 
 #define PI 3.1415927f
 
@@ -64,30 +64,30 @@ struct Circle {
 	bool Contains(const Vector2& point) const;
 	bool Contains(const Circle& other) const;
 	bool Intersects(const Circle& other) const;
-	bool Intersects(const Rectangle& rectangle) const;
+	bool Intersects(const AlignedRect& rectangle) const;
 };
 
-struct Rectangle {
+struct AlignedRect {
 	float left;
 	float right;
 	float top;
 	float bottom;
 
-	Rectangle(Vector2 center, Vector2 size);
-	Rectangle(float left, float right, float top, float bottom);
+	AlignedRect(Vector2 center, Vector2 size);
+	AlignedRect(float left, float right, float top, float bottom);
 
 	Vector2 Center() const;
 	Vector2 Size() const;
 
-	Rectangle SetCenter(Vector2 center) const;
-	Rectangle SetWidth(float width) const;
-	Rectangle SetHeight(float height) const;
-	Rectangle SetSize(Vector2 size) const;
-	Rectangle Expand(float shiftPerSide) const;
+	AlignedRect SetCenter(Vector2 center) const;
+	AlignedRect SetWidth(float width) const;
+	AlignedRect SetHeight(float height) const;
+	AlignedRect SetSize(Vector2 size) const;
+	AlignedRect Expand(float shiftPerSide) const;
 
 	bool Contains(const Vector2& point) const;
-	bool Contains(const Rectangle& other) const;
-	bool Intersects(const Rectangle& other) const;
+	bool Contains(const AlignedRect& other) const;
+	bool Intersects(const AlignedRect& other) const;
 	bool Intersects(const Circle& circle) const;
 };
 

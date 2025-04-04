@@ -16,22 +16,27 @@ public:
 
     void Resize(Int2 windowDims, float viewAspectRatio);
 
-    //Texture2D LoadTexture(std::wstring fileName) override;
-    Texture2D CreateTexture(unsigned int width, unsigned int height, Texture2D::WriteAccess writability) override;
-    void CopyTexture(const Texture2D* source, Texture2D* destination) override;
-    void ReleaseTexture(Texture2D* texture) override;
+    //Texture2D CreateTexture(unsigned int width, unsigned int height, Texture2D::WriteAccess writability) override;
+    RenderTarget CreateRenderTarget(unsigned int width, unsigned int height) override;
+    ComputeTexture CreateComputeTexture(unsigned int width, unsigned int height) override;
+    void CopyTexture(Texture2D* source, Texture2D* destination) override;
+    void ReleaseData(void* gpuData) override;
     //Int2 DetermineDimensions(const Texture2D* texture) override;
+
+    void WriteBuffer(const void* data, int byteLength, Buffer* buffer) override;
+    void SetOutputBuffer(OutputBuffer* buffer, int slot, const void* initialData) override;
+    void ReadBuffer(const OutputBuffer* buffer, void* destination) override;
 
     void SetBlendMode(BlendState mode) override;
 
-    void SetRenderTarget(const Texture2D* renderTarget) override;
+    void SetRenderTarget(const RenderTarget* renderTarget) override;
 
 protected:
     void ClearRenderTarget() override;
     void ClearDepthStencil() override;
     void PresentSwapChain() override;
     void ResetRenderTarget() override;
-    Texture2D GetBackBufferView() override;
+    RenderTarget GetBackBufferView() override;
 
 private:
     Microsoft::WRL::ComPtr<ID3D11Device> device;
@@ -44,5 +49,7 @@ private:
 
     Microsoft::WRL::ComPtr<ID3D11BlendState> alphaBlendState;
     Microsoft::WRL::ComPtr<ID3D11BlendState> additiveBlendState;
+
+    Texture2D* CreateTexture(unsigned int width, unsigned int height, bool renderTarget, bool computeWritable);
 };
 #endif

@@ -2,13 +2,13 @@
 class GameObject
 {
 public:
-	// Transform transform;
+	// Transform transform; this should have parent, not the game object
 	bool active;
 
 	void Update();
 
 protected:
-	// Scene* scene?
+	// Scene* scene? pls no
 	// renderer?
 	// behaviors?
 

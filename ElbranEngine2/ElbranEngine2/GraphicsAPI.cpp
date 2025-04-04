@@ -38,24 +38,24 @@ void GraphicsAPI::ApplyPostProcesses() {
 	postProcessed = true;
 
 	for(int i = 0; i < postProcesses.size(); i++) {
-		Texture2D* input = &postProcessTargets[i%2];
-		Texture2D* output = &postProcessTargets[1 - (i%2)];
+		RenderTarget* input = &postProcessTargets[i%2];
+		RenderTarget* output = &postProcessTargets[1 - (i%2)];
 		if(i == postProcesses.size() - 1) {
-			Texture2D backBuffer = GetBackBufferView();
+			RenderTarget backBuffer = GetBackBufferView();
 			output = &backBuffer;
 		}
 
 		if(postProcesses[i]->IsActive()) {
-			postProcesses[i]->Render(input, output);
+			postProcesses[i]->Render(this, input, output);
 		} else {
-			CopyTexture(input, output); // if the post process makes no changes, copying the pixels is fastest
+			CopyTexture(input->texture, output->texture); // if the post process makes no changes, copying the pixels is fastest
 		}
 	}
 
 	ResetRenderTarget();
 }
 
-const Texture2D* GraphicsAPI::GetPostProcessHelper(int slot) {
+const RenderTarget* GraphicsAPI::GetPostProcessHelper(int slot) {
 	assert(slot >= 0 && slot < MAX_POST_PROCESS_HELPER_TEXTURES && "index was out of range");
 	return &postProcessHelpers[slot];
 }

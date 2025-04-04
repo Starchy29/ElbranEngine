@@ -1,5 +1,6 @@
 #ifdef WINDOWS
 #include "DirectXAPI.h"
+#include <cassert>
 
 DirectXAPI::DirectXAPI(HWND windowHandle, Int2 windowDims, float viewAspectRatio) {
 	D3D_FEATURE_LEVEL levels[] = {
@@ -132,10 +133,10 @@ DirectXAPI::DirectXAPI(HWND windowHandle, Int2 windowDims, float viewAspectRatio
 }
 
 DirectXAPI::~DirectXAPI() {
-	ReleaseTexture(&postProcessTargets[0]);
-	ReleaseTexture(&postProcessTargets[1]);
-	for (int i = 0; i < MAX_POST_PROCESS_HELPER_TEXTURES; i++) {
-		ReleaseTexture(&postProcessHelpers[i]);
+	postProcessTargets[0].Release(this);
+	postProcessTargets[1].Release(this);
+	for(int i = 0; i < MAX_POST_PROCESS_HELPER_TEXTURES; i++) {
+		postProcessHelpers[i].Release(this);
 	}
 }
 
@@ -198,18 +199,18 @@ void DirectXAPI::Resize(Int2 windowDims, float viewAspectRatio) {
 	context->RSSetViewports(1, &viewport);
 
 	// resize post process textures
-	ReleaseTexture(&postProcessTargets[0]);
-	ReleaseTexture(&postProcessTargets[1]);
-	postProcessTargets[0] = CreateTexture(viewportDims.x, viewportDims.y, Texture2D::WriteAccess::RenderTarget);
-	postProcessTargets[1] = CreateTexture(viewportDims.x, viewportDims.y, Texture2D::WriteAccess::RenderTarget);
+	postProcessTargets[0].Release(this);
+	postProcessTargets[1].Release(this);
+	postProcessTargets[0] = CreateRenderTarget(viewportDims.x, viewportDims.y);
+	postProcessTargets[1] = CreateRenderTarget(viewportDims.x, viewportDims.y);
 	for(int i = 0; i < MAX_POST_PROCESS_HELPER_TEXTURES; i++) {
-		ReleaseTexture(&postProcessHelpers[i]);
-		postProcessHelpers[i] = CreateTexture(viewportDims.x, viewportDims.y, Texture2D::WriteAccess::RenderTarget);
+		postProcessHelpers[i].Release(this);
+		postProcessHelpers[i] = CreateRenderTarget(viewportDims.x, viewportDims.y);
 	}
 }
 
-Texture2D DirectXAPI::CreateTexture(unsigned int width, int unsigned height, Texture2D::WriteAccess writability) {
-	Texture2D output = {};
+Texture2D* DirectXAPI::CreateTexture(unsigned int width, int unsigned height, bool renderTarget, bool computeWritable) {
+	Texture2D* output;
 
 	D3D11_TEXTURE2D_DESC textureDesc;
 	textureDesc.Width = width;
@@ -223,42 +224,71 @@ Texture2D DirectXAPI::CreateTexture(unsigned int width, int unsigned height, Tex
 	textureDesc.Usage = D3D11_USAGE_DEFAULT;
 	textureDesc.CPUAccessFlags = 0;
 	textureDesc.BindFlags = D3D11_BIND_SHADER_RESOURCE;
-	if(writability == Texture2D::WriteAccess::RenderTarget) {
+	if(renderTarget) {
 		textureDesc.BindFlags |= D3D11_BIND_RENDER_TARGET;
 	}
-	else if(writability == Texture2D::WriteAccess::UnorderedAccess) {
+	else if(computeWritable) {
 		textureDesc.BindFlags |= D3D11_BIND_UNORDERED_ACCESS;
 	}
 	
-	device->CreateTexture2D(&textureDesc, 0, &(output.data));
-	device->CreateShaderResourceView(output.data, 0, &(output.srv));
-	if(writability == Texture2D::WriteAccess::RenderTarget) {
-		device->CreateRenderTargetView(output.data, 0, &(output.rtv));
-	}
-	else if(writability == Texture2D::WriteAccess::UnorderedAccess) {
-		device->CreateUnorderedAccessView(output.data, 0, &(output.uav));
-	}
+	device->CreateTexture2D(&textureDesc, 0, &output);
 
 	return output;
 }
 
-void DirectXAPI::CopyTexture(const Texture2D* source, Texture2D* destination) {
-	context->CopyResource(destination->data, source->data);
+RenderTarget DirectXAPI::CreateRenderTarget(unsigned int width, unsigned int height) {
+	RenderTarget result = {};
+	result.texture = CreateTexture(width, height, true, false);
+
+	device->CreateShaderResourceView(result.texture, 0, &(result.inputView));
+	device->CreateRenderTargetView(result.texture, 0, &(result.outputView));
+
+	return result;
 }
 
-void DirectXAPI::ReleaseTexture(Texture2D* texture) {
-	if(texture->data) {
-		texture->data->Release();
+ComputeTexture DirectXAPI::CreateComputeTexture(unsigned int width, unsigned int height) {
+	ComputeTexture result = {};
+	result.texture = CreateTexture(width, height, false, true);
+
+	device->CreateShaderResourceView(result.texture, 0, &(result.inputView));
+	device->CreateUnorderedAccessView(result.texture, 0, &(result.outputView));
+
+	return result;
+}
+
+void DirectXAPI::CopyTexture(Texture2D* source, Texture2D* destination) {
+	context->CopyResource(destination, source);
+}
+
+void DirectXAPI::ReleaseData(void* gpuData) {
+	if(gpuData) {
+		((IUnknown*)gpuData)->Release();
 	}
-	if(texture->rtv) {
-		texture->rtv->Release();
+}
+
+void DirectXAPI::WriteBuffer(const void* data, int byteLength, Buffer* buffer) {
+	D3D11_MAPPED_SUBRESOURCE mappedResource = {};
+	context->Map(buffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
+	memcpy(mappedResource.pData, data, byteLength);
+	context->Unmap(buffer, 0);
+}
+
+void DirectXAPI::SetOutputBuffer(OutputBuffer* buffer, int slot, const void* initialData) {
+	if(initialData) {
+		WriteBuffer(initialData, buffer->byteLength, buffer->cpuBuffer);
+		context->CopyResource(buffer->gpuBuffer, buffer->cpuBuffer);
 	}
-	if(texture->srv) {
-		texture->srv->Release();
-	}
-	if(texture->uav) {
-		texture->uav->Release();
-	}
+
+	context->CSSetUnorderedAccessViews(slot, 0, &(buffer->view), nullptr);
+}
+
+void DirectXAPI::ReadBuffer(const OutputBuffer* buffer, void* destination) {
+	context->CopyResource(buffer->cpuBuffer, buffer->gpuBuffer);
+
+	D3D11_MAPPED_SUBRESOURCE mappedResource = {};
+	context->Map(buffer->cpuBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
+	memcpy(destination, mappedResource.pData, buffer->byteLength);
+	context->Unmap(buffer->cpuBuffer, 0);
 }
 
 void DirectXAPI::SetBlendMode(BlendState mode) {
@@ -275,8 +305,8 @@ void DirectXAPI::SetBlendMode(BlendState mode) {
 	}
 }
 
-void DirectXAPI::SetRenderTarget(const Texture2D* renderTarget) {
-	context->OMSetRenderTargets(1, &(renderTarget->rtv), nullptr);
+void DirectXAPI::SetRenderTarget(const RenderTarget* renderTarget) {
+	context->OMSetRenderTargets(1, &(renderTarget->outputView), nullptr);
 }
 
 void DirectXAPI::ClearRenderTarget() {
@@ -295,9 +325,9 @@ void DirectXAPI::PresentSwapChain() {
 void DirectXAPI::ResetRenderTarget() {
 	context->OMSetRenderTargets(1, backBufferView.GetAddressOf(), depthStencilView.Get());
 }
-Texture2D DirectXAPI::GetBackBufferView() {
-	Texture2D result = {};
-	result.rtv = backBufferView.Get();
+RenderTarget DirectXAPI::GetBackBufferView() {
+	RenderTarget result = {};
+	result.outputView = backBufferView.Get();
 	return result;
 }
 #endif

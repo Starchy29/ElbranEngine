@@ -1,10 +1,12 @@
 #pragma once
-#include "Texture2D.h"
+#include "Buffers.h"
+
+class GraphicsAPI;
 
 class IPostProcess
 {
 public:
 	~IPostProcess() {}
-	virtual void Render(const Texture2D* input, Texture2D* output) = 0;
+	virtual void Render(GraphicsAPI* graphics, const RenderTarget* input, RenderTarget* output) = 0;
 	virtual bool IsActive() const = 0;
 };

@@ -22,4 +22,3 @@ private:
 };
 
 extern Application* app; // pointer to the app singleton, created and destroyed by the platform
-

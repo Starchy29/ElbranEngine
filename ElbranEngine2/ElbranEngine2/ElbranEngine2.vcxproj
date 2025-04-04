@@ -132,6 +132,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Application.cpp" />
+    <ClCompile Include="Buffers.cpp" />
     <ClCompile Include="DirectXAPI.cpp" />
     <ClCompile Include="Game.cpp" />
     <ClCompile Include="GameObject.cpp" />
@@ -142,6 +143,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Application.h" />
+    <ClInclude Include="Buffers.h" />
     <ClInclude Include="Common.h" />
     <ClInclude Include="Configs.h" />
     <ClInclude Include="DirectXAPI.h" />
@@ -150,7 +152,7 @@
     <ClInclude Include="GraphicsAPI.h" />
     <ClInclude Include="IPostProcess.h" />
     <ClInclude Include="Math.h" />
-    <ClInclude Include="Texture2D.h" />
+    <ClInclude Include="Shaders.h" />
     <ClInclude Include="Tween.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
