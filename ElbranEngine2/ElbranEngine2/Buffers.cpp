@@ -12,7 +12,7 @@ void ConstantBuffer::Release(GraphicsAPI* graphics) {
 }
 
 void ArrayBuffer::Release(GraphicsAPI* graphics) {
-	graphics->ReleaseData(buffer);
+	ConstantBuffer::Release(graphics);
 	graphics->ReleaseData(view);
 }
 
@@ -37,4 +37,9 @@ void ComputeTexture::Release(GraphicsAPI* graphics) {
 	graphics->ReleaseData(texture);
 	graphics->ReleaseData(inputView);
 	graphics->ReleaseData(outputView);
+}
+
+void EditBuffer::Release(GraphicsAPI* graphics) {
+	graphics->ReleaseData(buffer);
+	graphics->ReleaseData(view);
 }

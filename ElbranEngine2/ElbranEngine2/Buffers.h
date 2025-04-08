@@ -48,18 +48,27 @@ struct Mesh {
 
 struct ConstantBuffer {
 	Buffer* buffer;
-	int inputSlot;
+	unsigned int inputSlot;
+	unsigned int byteLength;
 
 	void Release(GraphicsAPI* graphics);
 };
 
-struct ArrayBuffer {
-	Buffer* buffer;
+struct ArrayBuffer : ConstantBuffer {
 	ShaderResourceView* view;
 
 	void Release(GraphicsAPI* graphics);
 };
 
+// a gpu-writable buffer that gets copied to the render pipeline
+struct EditBuffer {
+	Buffer* buffer;
+	UnorderedAccessView* view;
+
+	void Release(GraphicsAPI* graphics);
+};
+
+// a gpu-writable buffer that the cpu can read back from
 struct OutputBuffer {
 	Buffer* gpuBuffer;
 	Buffer* cpuBuffer;

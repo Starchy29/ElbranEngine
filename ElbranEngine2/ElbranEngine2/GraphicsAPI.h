@@ -8,6 +8,7 @@
 #include <vector>
 
 #define MAX_POST_PROCESS_HELPER_TEXTURES 2
+#define GPU_BOOL int // bools are 4 bytes on the gpu
 
 class Game;
 
@@ -15,6 +16,13 @@ enum class BlendState {
 	None,
 	AlphaBlend,
 	Additive
+};
+
+enum class ShaderStage {
+	Vertex,
+	Geometry,
+	Pixel,
+	Compute
 };
 
 struct Vertex {
@@ -37,6 +45,19 @@ public:
 	Int2 GetViewDimensions() const;
 	Int2 GetViewOffset() const;
 
+	virtual void SetBlendMode(BlendState mode) = 0;
+	//void StartTextBatch();
+	// DirectX::SpriteBatch* GetSpriteBatch() const;
+	//void FinishTextBatch();
+	virtual void DrawVertices(unsigned int numVertices) = 0;
+	//void DrawFullscreen();
+	//void DrawSquare();
+	virtual void DrawMesh(const Mesh* mesh) = 0;
+	//void SetLights(const Light* lights, int numLights, const Color& ambientColor);
+	//void SetFullscreen(bool fullscreen);
+
+	virtual Mesh CreateMesh(const Vertex* vertices, int vertexCount, const int* indices, int indexCount, bool editable) = 0;
+	//virtual OutputBuffer CreateOutputBuffer() = 0;
 	//virtual Sprite LoadSprite(std::wstring fileName) = 0;
 	virtual RenderTarget CreateRenderTarget(unsigned int width, unsigned int height) = 0;
 	virtual ComputeTexture CreateComputeTexture(unsigned int width, unsigned int height) = 0;
@@ -44,22 +65,11 @@ public:
 	virtual void ReleaseData(void* gpuData) = 0;
 	//virtual Int2 DetermineDimensions(const Texture2D* texture) = 0;
 
-	virtual void SetBlendMode(BlendState mode) = 0;
-	//void StartTextBatch();
-	// DirectX::SpriteBatch* GetSpriteBatch() const;
-	//void FinishTextBatch();
-	//void DrawVertices(unsigned int numVertices);
-	//void DrawFullscreen();
-	//void DrawSquare();
-	//void DrawMesh(const Mesh* mesh);
-	//void SetLights(const Light* lights, int numLights, const Color& ambientColor);
-	//void SetFullscreen(bool fullscreen);
-
-	//virtual Mesh CreateMesh(const Vertex* vertices, int vertexCount, const int* indices, int indexCount, bool editable);
-
-	//virtual OutputBuffer CreateOutputArrayBuffer(bool cpuAccessible);
 	virtual void WriteBuffer(const void* data, int byteLength, Buffer* buffer) = 0; // fails if the buffer was not created with cpu write access
-	virtual void SetOutputBuffer(OutputBuffer* buffer, int slot, const void* initialData) = 0;
+	
+	virtual void SetComputeTexture(const ComputeTexture* texture, unsigned int slot) = 0;
+	virtual void SetEditBuffer(EditBuffer* buffer, unsigned int slot) = 0;
+	virtual void SetOutputBuffer(OutputBuffer* buffer, unsigned int slot, const void* initialData = nullptr) = 0;
 	virtual void ReadBuffer(const OutputBuffer* buffer, void* destination) = 0;
 	
 	//virtual VertexShader LoadVertexShader(std::wstring fileName);
@@ -67,10 +77,16 @@ public:
 	//virtual PixelShader LoadPixelShader(std::wstring fileName);
 	//virtual ComputeShader LoadComputeShader(std::wstring fileName);
 
-	//virtual void SetVertexShader(const VertexShader* shader);
-	//virtual void SetGeometryShader(const GeometryShader* shader);
-	//virtual void SetPixelShader(const PixelShader* shader);
-	//virtual void SetComputeShader(const ComputeShader* shader);
+	virtual void SetVertexShader(const VertexShader* shader) = 0;
+	virtual void SetGeometryShader(const GeometryShader* shader) = 0;
+	virtual void SetPixelShader(const PixelShader* shader) = 0;
+	virtual void SetComputeShader(const ComputeShader* shader) = 0;
+
+	void SetConstants(Shader* shader, const void* data, unsigned int slot = 0);
+	void SetArray(Shader* shader, const void* data, unsigned int slot);
+	virtual void LoadArray(Shader* shader, const EditBuffer* source, unsigned int slot) = 0;
+	//virtual void SetTexture(ShaderStage stage, const Sprite* sprite, unsigned int slot);
+	// SetSampler
 
 	virtual void SetRenderTarget(const RenderTarget* renderTarget) = 0;
 	virtual void ResetRenderTarget() = 0;

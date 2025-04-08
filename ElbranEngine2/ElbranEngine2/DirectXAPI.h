@@ -16,19 +16,31 @@ public:
 
     void Resize(Int2 windowDims, float viewAspectRatio);
 
-    //Texture2D CreateTexture(unsigned int width, unsigned int height, Texture2D::WriteAccess writability) override;
+    void DrawVertices(unsigned int numVertices) override;
+    void DrawMesh(const Mesh* mesh) override;
+
+    Mesh CreateMesh(const Vertex* vertices, int vertexCount, const int* indices, int indexCount, bool editable) override;
+    OutputBuffer CreateOutputBuffer(bool cpuAccessible) = 0;
     RenderTarget CreateRenderTarget(unsigned int width, unsigned int height) override;
     ComputeTexture CreateComputeTexture(unsigned int width, unsigned int height) override;
     void CopyTexture(Texture2D* source, Texture2D* destination) override;
     void ReleaseData(void* gpuData) override;
     //Int2 DetermineDimensions(const Texture2D* texture) override;
 
+    void SetEditBuffer(EditBuffer* buffer, unsigned int slot) override;
     void WriteBuffer(const void* data, int byteLength, Buffer* buffer) override;
-    void SetOutputBuffer(OutputBuffer* buffer, int slot, const void* initialData) override;
+    void SetOutputBuffer(OutputBuffer* buffer, unsigned int slot, const void* initialData) override;
     void ReadBuffer(const OutputBuffer* buffer, void* destination) override;
+    void LoadArray(Shader* shader, const EditBuffer* source, unsigned int slot) override;
 
     void SetBlendMode(BlendState mode) override;
 
+    void SetComputeTexture(const ComputeTexture* texture, unsigned int slot) override;
+
+    void SetVertexShader(const VertexShader* shader) override;
+    void SetGeometryShader(const GeometryShader* shader) override;
+    void SetPixelShader(const PixelShader* shader) override;
+    void SetComputeShader(const ComputeShader* shader) override;
     void SetRenderTarget(const RenderTarget* renderTarget) override;
 
 protected:

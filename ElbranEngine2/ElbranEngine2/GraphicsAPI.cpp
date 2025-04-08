@@ -67,3 +67,11 @@ Int2 GraphicsAPI::GetViewDimensions() const {
 Int2 GraphicsAPI::GetViewOffset() const {
 	return viewportOffset;
 }
+
+void GraphicsAPI::SetConstants(Shader* shader, const void* data, unsigned int slot) {
+	WriteBuffer(data, shader->constantBuffers[slot].byteLength, shader->constantBuffers[slot].buffer);
+}
+
+void GraphicsAPI::SetArray(Shader* shader, const void* data, unsigned int slot) {
+	WriteBuffer(data, shader->arrayBuffers[slot].byteLength, shader->arrayBuffers[slot].buffer);
+}

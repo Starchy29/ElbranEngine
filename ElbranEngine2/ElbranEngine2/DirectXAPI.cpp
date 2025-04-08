@@ -209,6 +209,18 @@ void DirectXAPI::Resize(Int2 windowDims, float viewAspectRatio) {
 	}
 }
 
+void DirectXAPI::DrawVertices(unsigned int numVertices) {
+	context->Draw(numVertices, 0);
+}
+
+void DirectXAPI::DrawMesh(const Mesh* mesh) {
+	UINT stride = sizeof(Vertex);
+	UINT offset = 0;
+	context->IASetVertexBuffers(0, 1, &(mesh->vertices), &stride, &offset);
+	context->IASetIndexBuffer(mesh->indices, DXGI_FORMAT_R32_UINT, 0);
+	context->DrawIndexed(mesh->indexCount, 0, 0);
+}
+
 Texture2D* DirectXAPI::CreateTexture(unsigned int width, int unsigned height, bool renderTarget, bool computeWritable) {
 	Texture2D* output;
 
@@ -221,7 +233,7 @@ Texture2D* DirectXAPI::CreateTexture(unsigned int width, int unsigned height, bo
 	textureDesc.SampleDesc.Count = 1;
 	textureDesc.SampleDesc.Quality = 0;
 	textureDesc.MiscFlags = 0;
-	textureDesc.Usage = D3D11_USAGE_DEFAULT;
+	textureDesc.Usage = (renderTarget || computeWritable ? D3D11_USAGE_DEFAULT : D3D11_USAGE_IMMUTABLE);
 	textureDesc.CPUAccessFlags = 0;
 	textureDesc.BindFlags = D3D11_BIND_SHADER_RESOURCE;
 	if(renderTarget) {
@@ -234,6 +246,40 @@ Texture2D* DirectXAPI::CreateTexture(unsigned int width, int unsigned height, bo
 	device->CreateTexture2D(&textureDesc, 0, &output);
 
 	return output;
+}
+
+Mesh DirectXAPI::CreateMesh(const Vertex* vertices, int vertexCount, const int* indices, int indexCount, bool editable) {
+	Mesh result = {};
+	result.indexCount = indexCount;
+
+	// create the vertex buffer
+	D3D11_BUFFER_DESC vertexDescription = {};
+	vertexDescription.Usage = editable ? D3D11_USAGE_DYNAMIC : D3D11_USAGE_IMMUTABLE;
+	vertexDescription.ByteWidth = sizeof(Vertex) * vertexCount;
+	vertexDescription.BindFlags = D3D11_BIND_VERTEX_BUFFER;
+	vertexDescription.CPUAccessFlags = editable ? D3D11_CPU_ACCESS_WRITE : 0;
+	vertexDescription.MiscFlags = 0;
+	vertexDescription.StructureByteStride = 0;
+
+	D3D11_SUBRESOURCE_DATA initialData = {};
+	initialData.pSysMem = vertices;
+
+	device->CreateBuffer(&vertexDescription, &initialData, &(result.vertices));
+
+	// create the index buffer
+	D3D11_BUFFER_DESC indexDescription = {};
+	indexDescription.Usage = D3D11_USAGE_IMMUTABLE;
+	indexDescription.ByteWidth = sizeof(unsigned int) * indexCount;
+	indexDescription.BindFlags = D3D11_BIND_INDEX_BUFFER;
+	indexDescription.CPUAccessFlags = 0;
+	indexDescription.MiscFlags = 0;
+	indexDescription.StructureByteStride = 0;
+
+	initialData.pSysMem = indices;
+
+	device->CreateBuffer(&indexDescription, &initialData, &(result.indices));
+
+	return result;
 }
 
 RenderTarget DirectXAPI::CreateRenderTarget(unsigned int width, unsigned int height) {
@@ -266,6 +312,10 @@ void DirectXAPI::ReleaseData(void* gpuData) {
 	}
 }
 
+void DirectXAPI::SetEditBuffer(EditBuffer* buffer, unsigned int slot) {
+	context->CSSetUnorderedAccessViews(slot, 0, &(buffer->view), nullptr);
+}
+
 void DirectXAPI::WriteBuffer(const void* data, int byteLength, Buffer* buffer) {
 	D3D11_MAPPED_SUBRESOURCE mappedResource = {};
 	context->Map(buffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
@@ -273,7 +323,7 @@ void DirectXAPI::WriteBuffer(const void* data, int byteLength, Buffer* buffer) {
 	context->Unmap(buffer, 0);
 }
 
-void DirectXAPI::SetOutputBuffer(OutputBuffer* buffer, int slot, const void* initialData) {
+void DirectXAPI::SetOutputBuffer(OutputBuffer* buffer, unsigned int slot, const void* initialData) {
 	if(initialData) {
 		WriteBuffer(initialData, buffer->byteLength, buffer->cpuBuffer);
 		context->CopyResource(buffer->gpuBuffer, buffer->cpuBuffer);
@@ -291,6 +341,10 @@ void DirectXAPI::ReadBuffer(const OutputBuffer* buffer, void* destination) {
 	context->Unmap(buffer->cpuBuffer, 0);
 }
 
+void DirectXAPI::LoadArray(Shader* shader, const EditBuffer* source, unsigned int slot) {
+	context->CopyResource(shader->arrayBuffers[slot].buffer, source->buffer);
+}
+
 void DirectXAPI::SetBlendMode(BlendState mode) {
 	switch (mode) {
 	case BlendState::None:
@@ -303,6 +357,58 @@ void DirectXAPI::SetBlendMode(BlendState mode) {
 		context->OMSetBlendState(additiveBlendState.Get(), NULL, 0xffffffff);
 		break;
 	}
+}
+
+void DirectXAPI::SetComputeTexture(const ComputeTexture* texture, unsigned int slot) {
+	context->CSSetUnorderedAccessViews(slot, 1, &(texture->outputView), nullptr);
+}
+
+void DirectXAPI::SetVertexShader(const VertexShader* shader) {
+	for(unsigned int i = 0; i < shader->numConstBuffers; i++) {
+		context->VSSetConstantBuffers(shader->constantBuffers[i].inputSlot, 1, &shader->constantBuffers[i].buffer);
+	}
+
+	for(unsigned int i = 0; i < shader->numArrayBuffers; i++) {
+		context->VSSetShaderResources(shader->arrayBuffers[i].inputSlot, 1, &shader->arrayBuffers[i].view);
+	}
+
+	context->VSSetShader(shader->shader, 0, 0);
+}
+
+void DirectXAPI::SetGeometryShader(const GeometryShader* shader) {
+	for(unsigned int i = 0; i < shader->numConstBuffers; i++) {
+		context->GSSetConstantBuffers(shader->constantBuffers[i].inputSlot, 1, &shader->constantBuffers[i].buffer);
+	}
+
+	for(unsigned int i = 0; i < shader->numArrayBuffers; i++) {
+		context->GSSetShaderResources(shader->arrayBuffers[i].inputSlot, 1, &shader->arrayBuffers[i].view);
+	}
+
+	context->GSSetShader(shader->shader, 0, 0);
+}
+
+void DirectXAPI::SetPixelShader(const PixelShader* shader) {
+	for(unsigned int i = 0; i < shader->numConstBuffers; i++) {
+		context->PSSetConstantBuffers(shader->constantBuffers[i].inputSlot, 1, &shader->constantBuffers[i].buffer);
+	}
+
+	for(unsigned int i = 0; i < shader->numArrayBuffers; i++) {
+		context->PSSetShaderResources(shader->arrayBuffers[i].inputSlot, 1, &shader->arrayBuffers[i].view);
+	}
+
+	context->PSSetShader(shader->shader, 0, 0);
+}
+
+void DirectXAPI::SetComputeShader(const ComputeShader* shader) {
+	for(unsigned int i = 0; i < shader->numConstBuffers; i++) {
+		context->CSSetConstantBuffers(shader->constantBuffers[i].inputSlot, 1, &shader->constantBuffers[i].buffer);
+	}
+
+	for(unsigned int i = 0; i < shader->numArrayBuffers; i++) {
+		context->CSSetShaderResources(shader->arrayBuffers[i].inputSlot, 1, &shader->arrayBuffers[i].view);
+	}
+
+	context->CSSetShader(shader->shader, 0, 0);
 }
 
 void DirectXAPI::SetRenderTarget(const RenderTarget* renderTarget) {
@@ -325,6 +431,7 @@ void DirectXAPI::PresentSwapChain() {
 void DirectXAPI::ResetRenderTarget() {
 	context->OMSetRenderTargets(1, backBufferView.GetAddressOf(), depthStencilView.Get());
 }
+
 RenderTarget DirectXAPI::GetBackBufferView() {
 	RenderTarget result = {};
 	result.outputView = backBufferView.Get();

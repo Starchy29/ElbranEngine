@@ -12,18 +12,25 @@ typedef ID3D11PixelShader PSData;
 typedef ID3D11ComputeShader CSData;
 #endif
 
-struct VertexShader {
+struct Shader {
+	int numConstBuffers;
+	int numArrayBuffers;
+	ConstantBuffer* constantBuffers;
+	ArrayBuffer* arrayBuffers;
+};
+
+struct VertexShader : Shader {
 	VSData* shader;
 };
 
-struct GeometryShader {
+struct GeometryShader : Shader {
 	GSData* shader;
 };
 
-struct PixelShader {
+struct PixelShader : Shader {
 	PSData* shader;
 };
 
-struct ComputeShader {
+struct ComputeShader : Shader {
 	CSData* shader;
 };
