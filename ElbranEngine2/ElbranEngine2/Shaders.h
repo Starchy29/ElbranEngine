@@ -14,9 +14,7 @@ typedef ID3D11ComputeShader CSData;
 
 struct Shader {
 	int numConstBuffers;
-	int numArrayBuffers;
 	ConstantBuffer* constantBuffers;
-	ArrayBuffer* arrayBuffers;
 };
 
 struct VertexShader : Shader {

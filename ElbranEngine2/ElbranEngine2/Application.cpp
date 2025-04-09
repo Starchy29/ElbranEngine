@@ -4,7 +4,7 @@
 
 Application* app;
 
-Application::Application(GraphicsAPI* graphics) {
+Application::Application(std::wstring filePath, GraphicsAPI* graphics) {
 	// rng = new Random();
 	this->graphics = graphics;
 	// sounds = new SoundMixer();
@@ -12,9 +12,7 @@ Application::Application(GraphicsAPI* graphics) {
 	// assets = new AssetContainer();
 	game = new Game();
 
-#ifdef WINDOWS
-	float test = 2.0f;
-#endif
+	this->filePath = filePath;
 }
 
 Application::~Application() {

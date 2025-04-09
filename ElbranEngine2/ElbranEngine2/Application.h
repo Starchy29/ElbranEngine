@@ -1,4 +1,5 @@
 #pragma once
+#include <string>
 class GraphicsAPI;
 class Game;
 
@@ -12,13 +13,12 @@ public:
 	Game* game;
 	// Random* rng;
 
-	Application(GraphicsAPI* graphics);
+	std::wstring filePath;
+
+	Application(std::wstring filePath, GraphicsAPI* graphics);
 	~Application();
 
 	void Update(float deltaTime);
-
-private:
-
 };
 
 extern Application* app; // pointer to the app singleton, created and destroyed by the platform

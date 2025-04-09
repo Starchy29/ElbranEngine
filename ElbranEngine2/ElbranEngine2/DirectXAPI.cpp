@@ -1,5 +1,8 @@
 #ifdef WINDOWS
+#pragma comment(lib, "d3dcompiler.lib")
+#include <d3dcompiler.h>
 #include "DirectXAPI.h"
+#include "Application.h"
 #include <cassert>
 
 DirectXAPI::DirectXAPI(HWND windowHandle, Int2 windowDims, float viewAspectRatio) {
@@ -221,8 +224,48 @@ void DirectXAPI::DrawMesh(const Mesh* mesh) {
 	context->DrawIndexed(mesh->indexCount, 0, 0);
 }
 
-Texture2D* DirectXAPI::CreateTexture(unsigned int width, int unsigned height, bool renderTarget, bool computeWritable) {
-	Texture2D* output;
+VertexShader DirectXAPI::LoadVertexShader(std::wstring fileName) {
+	ID3DBlob* shaderBlob = LoadShader(fileName);
+	VertexShader newShader = {};
+	CreateBuffers(shaderBlob, &newShader);
+	HRESULT result = device->CreateVertexShader(shaderBlob->GetBufferPointer(), shaderBlob->GetBufferSize(), 0, &newShader.shader);
+	assert(result == S_OK && "failed to create vertex shader");
+	shaderBlob->Release();
+	return newShader;
+}
+
+GeometryShader DirectXAPI::LoadGeometryShader(std::wstring fileName) {
+	ID3DBlob* shaderBlob = LoadShader(fileName);
+	GeometryShader newShader = {};
+	CreateBuffers(shaderBlob, &newShader);
+	HRESULT result = device->CreateGeometryShader(shaderBlob->GetBufferPointer(), shaderBlob->GetBufferSize(), 0, &newShader.shader);
+	assert(result == S_OK && "failed to create geometry shader");
+	shaderBlob->Release();
+	return newShader;
+}
+
+PixelShader DirectXAPI::LoadPixelShader(std::wstring fileName) {
+	ID3DBlob* shaderBlob = LoadShader(fileName);
+	PixelShader newShader = {};
+	CreateBuffers(shaderBlob, &newShader);
+	HRESULT result = device->CreatePixelShader(shaderBlob->GetBufferPointer(), shaderBlob->GetBufferSize(), 0, &newShader.shader);
+	assert(result == S_OK && "failed to create pixel shader");
+	shaderBlob->Release();
+	return newShader;
+}
+
+ComputeShader DirectXAPI::LoadComputeShader(std::wstring fileName) {
+	ID3DBlob* shaderBlob = LoadShader(fileName);
+	ComputeShader newShader = {};
+	CreateBuffers(shaderBlob, &newShader);
+	HRESULT result = device->CreateComputeShader(shaderBlob->GetBufferPointer(), shaderBlob->GetBufferSize(), 0, &newShader.shader);
+	assert(result == S_OK && "failed to create compute shader");
+	shaderBlob->Release();
+	return newShader;
+}
+
+TextureData* DirectXAPI::CreateTexture(unsigned int width, int unsigned height, bool renderTarget, bool computeWritable) {
+	TextureData* output;
 
 	D3D11_TEXTURE2D_DESC textureDesc;
 	textureDesc.Width = width;
@@ -282,28 +325,51 @@ Mesh DirectXAPI::CreateMesh(const Vertex* vertices, int vertexCount, const int* 
 	return result;
 }
 
+ArrayBuffer DirectXAPI::CreateArrayBuffer(unsigned int elements, unsigned int elementBytes, bool structured) {
+	ArrayBuffer result = {};
+	result.buffer = CreateIndexedBuffer(elements, elementBytes, structured, true, false);
+	device->CreateShaderResourceView(result.buffer, 0, &result.view);
+	return result;
+}
+
+EditBuffer DirectXAPI::CreateEditBuffer(unsigned int elements, unsigned int elementBytes, bool structured) {
+	EditBuffer result = {};
+	result.buffer = CreateIndexedBuffer(elements, elementBytes, structured, false, true);
+	device->CreateShaderResourceView(result.buffer, 0, &result.view);
+	device->CreateUnorderedAccessView(result.buffer, 0, &result.computeView);
+	return result;
+}
+
+OutputBuffer DirectXAPI::CreateOutputBuffer(unsigned int elements, unsigned int elementBytes, bool structured) {
+	OutputBuffer result = {};
+	result.gpuBuffer = CreateIndexedBuffer(elements, elementBytes, structured, false, false);
+	device->CreateUnorderedAccessView(result.gpuBuffer, 0, &result.view);
+	result.cpuBuffer = CreateIndexedBuffer(elements, elementBytes, structured, true, true);
+	return result;
+}
+
 RenderTarget DirectXAPI::CreateRenderTarget(unsigned int width, unsigned int height) {
 	RenderTarget result = {};
-	result.texture = CreateTexture(width, height, true, false);
+	result.data = CreateTexture(width, height, true, false);
 
-	device->CreateShaderResourceView(result.texture, 0, &(result.inputView));
-	device->CreateRenderTargetView(result.texture, 0, &(result.outputView));
+	device->CreateShaderResourceView(result.data, 0, &(result.inputView));
+	device->CreateRenderTargetView(result.data, 0, &(result.outputView));
 
 	return result;
 }
 
 ComputeTexture DirectXAPI::CreateComputeTexture(unsigned int width, unsigned int height) {
 	ComputeTexture result = {};
-	result.texture = CreateTexture(width, height, false, true);
+	result.data = CreateTexture(width, height, false, true);
 
-	device->CreateShaderResourceView(result.texture, 0, &(result.inputView));
-	device->CreateUnorderedAccessView(result.texture, 0, &(result.outputView));
+	device->CreateShaderResourceView(result.data, 0, &(result.inputView));
+	device->CreateUnorderedAccessView(result.data, 0, &(result.outputView));
 
 	return result;
 }
 
 void DirectXAPI::CopyTexture(Texture2D* source, Texture2D* destination) {
-	context->CopyResource(destination, source);
+	context->CopyResource(destination->data, source->data);
 }
 
 void DirectXAPI::ReleaseData(void* gpuData) {
@@ -313,7 +379,7 @@ void DirectXAPI::ReleaseData(void* gpuData) {
 }
 
 void DirectXAPI::SetEditBuffer(EditBuffer* buffer, unsigned int slot) {
-	context->CSSetUnorderedAccessViews(slot, 0, &(buffer->view), nullptr);
+	context->CSSetUnorderedAccessViews(slot, 0, &(buffer->computeView), nullptr);
 }
 
 void DirectXAPI::WriteBuffer(const void* data, int byteLength, Buffer* buffer) {
@@ -341,10 +407,6 @@ void DirectXAPI::ReadBuffer(const OutputBuffer* buffer, void* destination) {
 	context->Unmap(buffer->cpuBuffer, 0);
 }
 
-void DirectXAPI::LoadArray(Shader* shader, const EditBuffer* source, unsigned int slot) {
-	context->CopyResource(shader->arrayBuffers[slot].buffer, source->buffer);
-}
-
 void DirectXAPI::SetBlendMode(BlendState mode) {
 	switch (mode) {
 	case BlendState::None:
@@ -359,6 +421,40 @@ void DirectXAPI::SetBlendMode(BlendState mode) {
 	}
 }
 
+void DirectXAPI::SetArray(ShaderStage stage, const ArrayBuffer* buffer, unsigned int slot) {
+	switch(stage) {
+	case ShaderStage::Vertex:
+		context->VSSetShaderResources(slot, 1, &buffer->view);
+		break;
+	case ShaderStage::Geometry:
+		context->GSSetShaderResources(slot, 1, &buffer->view);
+		break;
+	case ShaderStage::Pixel:
+		context->PSSetShaderResources(slot, 1, &buffer->view);
+		break;
+	case ShaderStage::Compute:
+		context->CSSetShaderResources(slot, 1, &buffer->view);
+		break;
+	}
+}
+
+void DirectXAPI::SetTexture(ShaderStage stage, const Texture2D* texture, unsigned int slot) {
+	switch(stage) {
+	case ShaderStage::Vertex:
+		context->VSSetShaderResources(slot, 1, &texture->inputView);
+		break;
+	case ShaderStage::Geometry:
+		context->GSSetShaderResources(slot, 1, &texture->inputView);
+		break;
+	case ShaderStage::Pixel:
+		context->PSSetShaderResources(slot, 1, &texture->inputView);
+		break;
+	case ShaderStage::Compute:
+		context->CSSetShaderResources(slot, 1, &texture->inputView);
+		break;
+	}
+}
+
 void DirectXAPI::SetComputeTexture(const ComputeTexture* texture, unsigned int slot) {
 	context->CSSetUnorderedAccessViews(slot, 1, &(texture->outputView), nullptr);
 }
@@ -366,10 +462,6 @@ void DirectXAPI::SetComputeTexture(const ComputeTexture* texture, unsigned int s
 void DirectXAPI::SetVertexShader(const VertexShader* shader) {
 	for(unsigned int i = 0; i < shader->numConstBuffers; i++) {
 		context->VSSetConstantBuffers(shader->constantBuffers[i].inputSlot, 1, &shader->constantBuffers[i].buffer);
-	}
-
-	for(unsigned int i = 0; i < shader->numArrayBuffers; i++) {
-		context->VSSetShaderResources(shader->arrayBuffers[i].inputSlot, 1, &shader->arrayBuffers[i].view);
 	}
 
 	context->VSSetShader(shader->shader, 0, 0);
@@ -380,10 +472,6 @@ void DirectXAPI::SetGeometryShader(const GeometryShader* shader) {
 		context->GSSetConstantBuffers(shader->constantBuffers[i].inputSlot, 1, &shader->constantBuffers[i].buffer);
 	}
 
-	for(unsigned int i = 0; i < shader->numArrayBuffers; i++) {
-		context->GSSetShaderResources(shader->arrayBuffers[i].inputSlot, 1, &shader->arrayBuffers[i].view);
-	}
-
 	context->GSSetShader(shader->shader, 0, 0);
 }
 
@@ -392,20 +480,12 @@ void DirectXAPI::SetPixelShader(const PixelShader* shader) {
 		context->PSSetConstantBuffers(shader->constantBuffers[i].inputSlot, 1, &shader->constantBuffers[i].buffer);
 	}
 
-	for(unsigned int i = 0; i < shader->numArrayBuffers; i++) {
-		context->PSSetShaderResources(shader->arrayBuffers[i].inputSlot, 1, &shader->arrayBuffers[i].view);
-	}
-
 	context->PSSetShader(shader->shader, 0, 0);
 }
 
 void DirectXAPI::SetComputeShader(const ComputeShader* shader) {
 	for(unsigned int i = 0; i < shader->numConstBuffers; i++) {
 		context->CSSetConstantBuffers(shader->constantBuffers[i].inputSlot, 1, &shader->constantBuffers[i].buffer);
-	}
-
-	for(unsigned int i = 0; i < shader->numArrayBuffers; i++) {
-		context->CSSetShaderResources(shader->arrayBuffers[i].inputSlot, 1, &shader->arrayBuffers[i].view);
 	}
 
 	context->CSSetShader(shader->shader, 0, 0);
@@ -436,5 +516,100 @@ RenderTarget DirectXAPI::GetBackBufferView() {
 	RenderTarget result = {};
 	result.outputView = backBufferView.Get();
 	return result;
+}
+
+Buffer* DirectXAPI::CreateIndexedBuffer(unsigned int elements, unsigned int elementBytes, bool structured, bool cpuWrite, bool gpuWrite) {
+	Buffer* result;
+
+	D3D11_BUFFER_DESC bufferDescription = {};
+	bufferDescription.ByteWidth = elements * elementBytes;
+	bufferDescription.BindFlags = D3D11_BIND_SHADER_RESOURCE;
+	if(gpuWrite) {
+		bufferDescription.BindFlags |= D3D11_BIND_UNORDERED_ACCESS;
+	}
+
+	bufferDescription.Usage = D3D11_USAGE_DEFAULT;
+	if(cpuWrite && gpuWrite) {
+		bufferDescription.Usage = D3D11_USAGE_STAGING;
+	}
+	else if(cpuWrite) {
+		bufferDescription.Usage = D3D11_USAGE_DYNAMIC;
+	}
+
+	bufferDescription.CPUAccessFlags = 0;
+	if(cpuWrite) {
+		bufferDescription.CPUAccessFlags |= D3D11_CPU_ACCESS_WRITE;
+	}
+	if(cpuWrite && gpuWrite) {
+		bufferDescription.CPUAccessFlags |= D3D11_CPU_ACCESS_READ;
+	}
+
+	if(structured) {
+		bufferDescription.StructureByteStride = elementBytes;
+		bufferDescription.MiscFlags = D3D11_RESOURCE_MISC_BUFFER_STRUCTURED;
+	}
+
+	device->CreateBuffer(&bufferDescription, 0, &result);
+
+	return result;
+}
+
+ID3DBlob* DirectXAPI::LoadShader(std::wstring fileName) {
+	std::wstring fileString = app->filePath + fileName;
+	LPCWSTR filePath = fileString.c_str();
+	ID3DBlob* shaderBlob;
+	HRESULT hr = D3DReadFileToBlob(filePath, &shaderBlob);
+	assert(hr == S_OK && "failed to read shader file");
+	return shaderBlob;
+}
+
+void DirectXAPI::CreateBuffers(ID3DBlob* shaderBlob, Shader* output) {
+	// get the info of this shader
+	Microsoft::WRL::ComPtr<ID3D11ShaderReflection> reflection;
+	D3DReflect(shaderBlob->GetBufferPointer(), shaderBlob->GetBufferSize(), IID_ID3D11ShaderReflection, (void**)reflection.GetAddressOf());
+
+	D3D11_SHADER_DESC shaderDescr;
+	reflection->GetDesc(&shaderDescr);
+
+	// create the constant buffers
+	ID3D11ShaderReflectionConstantBuffer* bufferReflection;
+	D3D11_SHADER_BUFFER_DESC bufferDescr;
+	D3D11_SHADER_INPUT_BIND_DESC bindDescr;
+	output->numConstBuffers = shaderDescr.ConstantBuffers;
+	for(UINT i = 0; i < shaderDescr.ConstantBuffers; i++) {
+		// filter out certain buffers
+		bufferReflection = reflection->GetConstantBufferByIndex(i);
+		bufferReflection->GetDesc(&bufferDescr);
+		reflection->GetResourceBindingDescByName(bufferDescr.Name, &bindDescr);
+		if(bindDescr.Type != D3D_SIT_CBUFFER) {
+			output->numConstBuffers--;
+		}
+	}
+
+	D3D11_BUFFER_DESC creationDescr;
+	creationDescr.Usage = D3D11_USAGE_DYNAMIC;
+	creationDescr.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
+	creationDescr.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
+	creationDescr.MiscFlags = 0;
+	creationDescr.StructureByteStride = 0;
+
+	output->constantBuffers = new ConstantBuffer[output->numConstBuffers];
+	int nextIndex = 0;
+	for(UINT i = 0; i < shaderDescr.ConstantBuffers; i++) {
+		bufferReflection = reflection->GetConstantBufferByIndex(i);
+		bufferReflection->GetDesc(&bufferDescr);
+		reflection->GetResourceBindingDescByName(bufferDescr.Name, &bindDescr);
+		if(bindDescr.Type != D3D_SIT_CBUFFER) {
+			continue;
+		}
+
+		// create the constant buffer
+		ConstantBuffer* newBuffer = &(output->constantBuffers[nextIndex]);
+		newBuffer->inputSlot = bindDescr.BindPoint;
+		newBuffer->byteLength = bufferDescr.Size;
+		creationDescr.ByteWidth = bufferDescr.Size;
+		device->CreateBuffer(&creationDescr, 0, &newBuffer->buffer);
+		nextIndex++;
+	}
 }
 #endif

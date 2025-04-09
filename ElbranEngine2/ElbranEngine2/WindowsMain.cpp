@@ -152,6 +152,7 @@ int WINAPI WinMain(
 	// enable memory leak detection
 	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
 #endif
+
 	// set timing data
 	minSecsPerFrame = 1.0f / MAX_FPS;
 	__int64 perfFreq;
@@ -159,9 +160,18 @@ int WINAPI WinMain(
 	perfCountSecs = 1.0 / (double)perfFreq;
 	QueryPerformanceCounter((LARGE_INTEGER*)&lastPerfCount);
 
+	// determine file path
+	wchar_t directory[1024] = {};
+	GetModuleFileNameW(0, directory, 1024);
+	wchar_t* lastSlash = wcsrchr(directory, '\\');
+	if(lastSlash) {
+		// null terminate here to eliminate .exe name and leave the directory
+		*(lastSlash + 1) = 0;
+	}
+
 	InitWindow(hInstance);
 	directX = new DirectXAPI(windowHandle, Int2(START_WINDOW_WIDTH, START_WINDOW_HEIGHT), ASPECT_RATIO);
-	app = new Application(directX);
+	app = new Application(directory, directX);
 	RunApp();
 	delete app;
 	return 0;

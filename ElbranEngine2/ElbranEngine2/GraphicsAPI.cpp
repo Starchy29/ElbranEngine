@@ -48,7 +48,7 @@ void GraphicsAPI::ApplyPostProcesses() {
 		if(postProcesses[i]->IsActive()) {
 			postProcesses[i]->Render(this, input, output);
 		} else {
-			CopyTexture(input->texture, output->texture); // if the post process makes no changes, copying the pixels is fastest
+			CopyTexture(input, output); // if the post process makes no changes, copying the pixels is fastest
 		}
 	}
 
@@ -70,8 +70,4 @@ Int2 GraphicsAPI::GetViewOffset() const {
 
 void GraphicsAPI::SetConstants(Shader* shader, const void* data, unsigned int slot) {
 	WriteBuffer(data, shader->constantBuffers[slot].byteLength, shader->constantBuffers[slot].buffer);
-}
-
-void GraphicsAPI::SetArray(Shader* shader, const void* data, unsigned int slot) {
-	WriteBuffer(data, shader->arrayBuffers[slot].byteLength, shader->arrayBuffers[slot].buffer);
 }

@@ -19,8 +19,15 @@ public:
     void DrawVertices(unsigned int numVertices) override;
     void DrawMesh(const Mesh* mesh) override;
 
+    VertexShader LoadVertexShader(std::wstring fileName) override;
+    GeometryShader LoadGeometryShader(std::wstring fileName) override;
+    PixelShader LoadPixelShader(std::wstring fileName) override;
+    ComputeShader LoadComputeShader(std::wstring fileName) override;
+
     Mesh CreateMesh(const Vertex* vertices, int vertexCount, const int* indices, int indexCount, bool editable) override;
-    OutputBuffer CreateOutputBuffer(bool cpuAccessible) = 0;
+    ArrayBuffer CreateArrayBuffer(unsigned int elements, unsigned int elementBytes, bool structured) override;
+    EditBuffer CreateEditBuffer(unsigned int elements, unsigned int elementBytes, bool structured) override;
+    OutputBuffer CreateOutputBuffer(unsigned int elements, unsigned int elementBytes, bool structured) override;
     RenderTarget CreateRenderTarget(unsigned int width, unsigned int height) override;
     ComputeTexture CreateComputeTexture(unsigned int width, unsigned int height) override;
     void CopyTexture(Texture2D* source, Texture2D* destination) override;
@@ -31,9 +38,11 @@ public:
     void WriteBuffer(const void* data, int byteLength, Buffer* buffer) override;
     void SetOutputBuffer(OutputBuffer* buffer, unsigned int slot, const void* initialData) override;
     void ReadBuffer(const OutputBuffer* buffer, void* destination) override;
-    void LoadArray(Shader* shader, const EditBuffer* source, unsigned int slot) override;
 
     void SetBlendMode(BlendState mode) override;
+
+    void SetArray(ShaderStage stage, const ArrayBuffer* buffer, unsigned int slot) override;
+    void SetTexture(ShaderStage stage, const Texture2D* texture, unsigned int slot) override;
 
     void SetComputeTexture(const ComputeTexture* texture, unsigned int slot) override;
 
@@ -62,6 +71,10 @@ private:
     Microsoft::WRL::ComPtr<ID3D11BlendState> alphaBlendState;
     Microsoft::WRL::ComPtr<ID3D11BlendState> additiveBlendState;
 
-    Texture2D* CreateTexture(unsigned int width, unsigned int height, bool renderTarget, bool computeWritable);
+    TextureData* CreateTexture(unsigned int width, unsigned int height, bool renderTarget, bool computeWritable);
+    Buffer* CreateIndexedBuffer(unsigned int elements, unsigned int elementBytes, bool structured, bool cpuWrite, bool gpuWrite);
+
+    ID3DBlob* LoadShader(std::wstring fileName);
+    void CreateBuffers(ID3DBlob* shaderBlob, Shader* output);
 };
 #endif

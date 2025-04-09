@@ -12,7 +12,7 @@ void ConstantBuffer::Release(GraphicsAPI* graphics) {
 }
 
 void ArrayBuffer::Release(GraphicsAPI* graphics) {
-	ConstantBuffer::Release(graphics);
+	graphics->ReleaseData(buffer);
 	graphics->ReleaseData(view);
 }
 
@@ -22,24 +22,22 @@ void OutputBuffer::Release(GraphicsAPI* graphics) {
 	graphics->ReleaseData(view);
 }
 
-void Sprite::Release(GraphicsAPI* graphics) {
-	graphics->ReleaseData(texture);
-	graphics->ReleaseData(view);
+void Texture2D::Release(GraphicsAPI* graphics) {
+	graphics->ReleaseData(data);
+	graphics->ReleaseData(inputView);
 }
 
 void RenderTarget::Release(GraphicsAPI* graphics) {
-	graphics->ReleaseData(texture);
-	graphics->ReleaseData(inputView);
+	Texture2D::Release(graphics);
 	graphics->ReleaseData(outputView);
 }
 
 void ComputeTexture::Release(GraphicsAPI* graphics) {
-	graphics->ReleaseData(texture);
-	graphics->ReleaseData(inputView);
+	Texture2D::Release(graphics);
 	graphics->ReleaseData(outputView);
 }
 
 void EditBuffer::Release(GraphicsAPI* graphics) {
-	graphics->ReleaseData(buffer);
-	graphics->ReleaseData(view);
+	ArrayBuffer::Release(graphics);
+	graphics->ReleaseData(computeView);
 }

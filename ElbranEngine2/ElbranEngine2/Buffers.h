@@ -7,7 +7,7 @@ struct ID3D11RenderTargetView;
 struct ID3D11UnorderedAccessView;
 
 typedef ID3D11Buffer Buffer;
-typedef ID3D11Texture2D Texture2D;
+typedef ID3D11Texture2D TextureData;
 typedef ID3D11ShaderResourceView ShaderResourceView;
 typedef ID3D11RenderTargetView RenderTargetView;
 typedef ID3D11UnorderedAccessView UnorderedAccessView;
@@ -15,24 +15,20 @@ typedef ID3D11UnorderedAccessView UnorderedAccessView;
 
 class GraphicsAPI;
 
-struct Sprite {
-	Texture2D* texture;
-	ShaderResourceView* view;
+struct Texture2D {
+	TextureData* data;
+	ShaderResourceView* inputView;
 
 	void Release(GraphicsAPI* graphics);
 };
 
-struct RenderTarget {
-	Texture2D* texture;
-	ShaderResourceView* inputView;
+struct RenderTarget : Texture2D {
 	RenderTargetView* outputView;
 
 	void Release(GraphicsAPI* graphics);
 };
 
-struct ComputeTexture {
-	Texture2D* texture;
-	ShaderResourceView* inputView;
+struct ComputeTexture : Texture2D {
 	UnorderedAccessView* outputView;
 
 	void Release(GraphicsAPI* graphics);
@@ -54,16 +50,16 @@ struct ConstantBuffer {
 	void Release(GraphicsAPI* graphics);
 };
 
-struct ArrayBuffer : ConstantBuffer {
+struct ArrayBuffer {
+	Buffer* buffer;
 	ShaderResourceView* view;
 
 	void Release(GraphicsAPI* graphics);
 };
 
-// a gpu-writable buffer that gets copied to the render pipeline
-struct EditBuffer {
-	Buffer* buffer;
-	UnorderedAccessView* view;
+// a gpu-writable buffer that gets bound to the render pipeline
+struct EditBuffer : ArrayBuffer {
+	UnorderedAccessView* computeView;
 
 	void Release(GraphicsAPI* graphics);
 };
