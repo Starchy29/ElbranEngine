@@ -5,7 +5,7 @@
 #include "Application.h"
 #include <cassert>
 
-DirectXAPI::DirectXAPI(HWND windowHandle, Int2 windowDims, float viewAspectRatio) {
+DirectXAPI::DirectXAPI(HWND windowHandle, Int2 windowDims, float viewAspectRatio, std::wstring gameDirectory) {
 	D3D_FEATURE_LEVEL levels[] = {
 		D3D_FEATURE_LEVEL_11_1,
 		D3D_FEATURE_LEVEL_11_0,
@@ -74,11 +74,7 @@ DirectXAPI::DirectXAPI(HWND windowHandle, Int2 windowDims, float viewAspectRatio
 		D3D11_BIND_DEPTH_STENCIL
 	);
 
-	device->CreateTexture2D(
-		&depthStencilDesc,
-		nullptr,
-		&depthStencil
-	);
+	device->CreateTexture2D(&depthStencilDesc, nullptr, &depthStencil);
 
 	CD3D11_DEPTH_STENCIL_VIEW_DESC depthStencilViewDesc(D3D11_DSV_DIMENSION_TEXTURE2D);
 	device->CreateDepthStencilView(depthStencil, &depthStencilViewDesc, &depthStencilView);
@@ -130,17 +126,28 @@ DirectXAPI::DirectXAPI(HWND windowHandle, Int2 windowDims, float viewAspectRatio
 	// create the viewport
 	Resize(windowDims, viewAspectRatio);
 
+	// set the input layout to match the Vertex struct in GraphicsAPI.h
+	D3D11_INPUT_ELEMENT_DESC inputDescriptions[2];
+	inputDescriptions[0] = { "POSITION", 0, DXGI_FORMAT_R32G32_FLOAT };
+	inputDescriptions[1] = { "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT };
+
+	Microsoft::WRL::ComPtr<ID3DBlob> shaderBlob;
+	std::wstring fileString = gameDirectory + L"CameraVS.cso";
+	HRESULT hr = D3DReadFileToBlob(fileString.c_str(), shaderBlob.GetAddressOf()); // read a specific shader to validate input layout
+	assert(hr == S_OK && "failed to read shader for input layout creation");
+
+	ID3D11InputLayout* defaultLayout;
+	device->CreateInputLayout(inputDescriptions, 2, shaderBlob->GetBufferPointer(), shaderBlob->GetBufferSize(), &defaultLayout);
+	context->IASetInputLayout(defaultLayout);
+	defaultLayout->Release();
+
 	// set other defaults
 	context->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 	//spriteBatch = new DirectX::SpriteBatch(context.Get());
 }
 
 DirectXAPI::~DirectXAPI() {
-	postProcessTargets[0].Release(this);
-	postProcessTargets[1].Release(this);
-	for(int i = 0; i < MAX_POST_PROCESS_HELPER_TEXTURES; i++) {
-		postProcessHelpers[i].Release(this);
-	}
+	
 }
 
 void DirectXAPI::Resize(Int2 windowDims, float viewAspectRatio) {
@@ -202,12 +209,12 @@ void DirectXAPI::Resize(Int2 windowDims, float viewAspectRatio) {
 	context->RSSetViewports(1, &viewport);
 
 	// resize post process textures
-	postProcessTargets[0].Release(this);
-	postProcessTargets[1].Release(this);
+	postProcessTargets[0].Release();
+	postProcessTargets[1].Release();
 	postProcessTargets[0] = CreateRenderTarget(viewportDims.x, viewportDims.y);
 	postProcessTargets[1] = CreateRenderTarget(viewportDims.x, viewportDims.y);
 	for(int i = 0; i < MAX_POST_PROCESS_HELPER_TEXTURES; i++) {
-		postProcessHelpers[i].Release(this);
+		postProcessHelpers[i].Release();
 		postProcessHelpers[i] = CreateRenderTarget(viewportDims.x, viewportDims.y);
 	}
 }
@@ -260,6 +267,11 @@ ComputeShader DirectXAPI::LoadComputeShader(std::wstring fileName) {
 	CreateBuffers(shaderBlob, &newShader);
 	HRESULT result = device->CreateComputeShader(shaderBlob->GetBufferPointer(), shaderBlob->GetBufferSize(), 0, &newShader.shader);
 	assert(result == S_OK && "failed to create compute shader");
+
+	Microsoft::WRL::ComPtr<ID3D11ShaderReflection> reflection;
+	D3DReflect(shaderBlob->GetBufferPointer(), shaderBlob->GetBufferSize(), IID_ID3D11ShaderReflection, (void**)reflection.GetAddressOf());
+	reflection->GetThreadGroupSize(&newShader.xGroupSize, &newShader.yGroupSize, &newShader.zGroupSize);
+
 	shaderBlob->Release();
 	return newShader;
 }
@@ -291,7 +303,7 @@ TextureData* DirectXAPI::CreateTexture(unsigned int width, int unsigned height, 
 	return output;
 }
 
-Mesh DirectXAPI::CreateMesh(const Vertex* vertices, int vertexCount, const int* indices, int indexCount, bool editable) {
+Mesh DirectXAPI::CreateMesh(const Vertex* vertices, int vertexCount, const unsigned int* indices, int indexCount, bool editable) {
 	Mesh result = {};
 	result.indexCount = indexCount;
 
@@ -372,12 +384,6 @@ void DirectXAPI::CopyTexture(Texture2D* source, Texture2D* destination) {
 	context->CopyResource(destination->data, source->data);
 }
 
-void DirectXAPI::ReleaseData(void* gpuData) {
-	if(gpuData) {
-		((IUnknown*)gpuData)->Release();
-	}
-}
-
 void DirectXAPI::SetEditBuffer(EditBuffer* buffer, unsigned int slot) {
 	context->CSSetUnorderedAccessViews(slot, 0, &(buffer->computeView), nullptr);
 }
@@ -455,6 +461,23 @@ void DirectXAPI::SetTexture(ShaderStage stage, const Texture2D* texture, unsigne
 	}
 }
 
+void DirectXAPI::SetSampler(ShaderStage stage, Sampler* sampler, unsigned int slot) {
+	switch(stage) {
+	case ShaderStage::Vertex:
+		context->VSSetSamplers(slot, 1, &sampler->state);
+		break;
+	case ShaderStage::Geometry:
+		context->GSSetSamplers(slot, 1, &sampler->state);
+		break;
+	case ShaderStage::Pixel:
+		context->PSSetSamplers(slot, 1, &sampler->state);
+		break;
+	case ShaderStage::Compute:
+		context->CSSetSamplers(slot, 1, &sampler->state);
+		break;
+	}
+}
+
 void DirectXAPI::SetComputeTexture(const ComputeTexture* texture, unsigned int slot) {
 	context->CSSetUnorderedAccessViews(slot, 1, &(texture->outputView), nullptr);
 }
@@ -483,19 +506,20 @@ void DirectXAPI::SetPixelShader(const PixelShader* shader) {
 	context->PSSetShader(shader->shader, 0, 0);
 }
 
-void DirectXAPI::SetComputeShader(const ComputeShader* shader) {
+void DirectXAPI::RunComputeShader(const ComputeShader* shader, unsigned int xThreads, unsigned int yThreads, unsigned int zThreads) {
 	for(unsigned int i = 0; i < shader->numConstBuffers; i++) {
 		context->CSSetConstantBuffers(shader->constantBuffers[i].inputSlot, 1, &shader->constantBuffers[i].buffer);
 	}
 
 	context->CSSetShader(shader->shader, 0, 0);
+	context->Dispatch(ceil((double)xThreads / shader->xGroupSize), ceil((double)yThreads / shader->yGroupSize), ceil((double)zThreads / shader->zGroupSize));
 }
 
 void DirectXAPI::SetRenderTarget(const RenderTarget* renderTarget) {
 	context->OMSetRenderTargets(1, &(renderTarget->outputView), nullptr);
 }
 
-void DirectXAPI::ClearRenderTarget() {
+void DirectXAPI::ClearBackBuffer() {
 	float black[4] { 0.f, 0.f, 1.f, 0.f };
 	context->ClearRenderTargetView(backBufferView.Get(), black);
 }
@@ -515,6 +539,21 @@ void DirectXAPI::ResetRenderTarget() {
 RenderTarget DirectXAPI::GetBackBufferView() {
 	RenderTarget result = {};
 	result.outputView = backBufferView.Get();
+	return result;
+}
+
+Sampler DirectXAPI::CreateDefaultSampler() {
+	Sampler result;
+
+	D3D11_SAMPLER_DESC descriptiom = {};
+	descriptiom.AddressU = D3D11_TEXTURE_ADDRESS_WRAP;
+	descriptiom.AddressV = D3D11_TEXTURE_ADDRESS_WRAP;
+	descriptiom.AddressW = D3D11_TEXTURE_ADDRESS_WRAP;
+	descriptiom.Filter = D3D11_FILTER_MIN_MAG_MIP_LINEAR;
+	descriptiom.MaxLOD = D3D11_FLOAT32_MAX;
+
+	device->CreateSamplerState(&descriptiom, &result.state);
+
 	return result;
 }
 

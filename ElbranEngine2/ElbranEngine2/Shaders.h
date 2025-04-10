@@ -1,4 +1,5 @@
 #pragma once
+#include "Buffers.h"
 
 #ifdef WINDOWS
 struct ID3D11VertexShader;
@@ -15,20 +16,33 @@ typedef ID3D11ComputeShader CSData;
 struct Shader {
 	int numConstBuffers;
 	ConstantBuffer* constantBuffers;
+
+	void Release();
 };
 
 struct VertexShader : Shader {
 	VSData* shader;
+
+	void Release();
 };
 
 struct GeometryShader : Shader {
 	GSData* shader;
+
+	void Release();
 };
 
 struct PixelShader : Shader {
 	PSData* shader;
+
+	void Release();
 };
 
 struct ComputeShader : Shader {
 	CSData* shader;
+	unsigned int xGroupSize;
+	unsigned int yGroupSize;
+	unsigned int zGroupSize;
+
+	void Release();
 };

@@ -1,43 +1,52 @@
 #pragma once
 #include "Buffers.h"
-#include "GraphicsAPI.h"
 
-void Mesh::Release(GraphicsAPI* graphics) {
-	graphics->ReleaseData(vertices);
-	graphics->ReleaseData(indices);
+#ifdef WINDOWS
+#include <unknwn.h>
+#define RELEASE(x) if(x) ((IUnknown*)x)->Release();
+#endif
+
+
+void Mesh::Release() {
+	RELEASE(vertices);
+	RELEASE(indices);
 }
 
-void ConstantBuffer::Release(GraphicsAPI* graphics) {
-	graphics->ReleaseData(buffer);
+void ConstantBuffer::Release() {
+	RELEASE(buffer);
 }
 
-void ArrayBuffer::Release(GraphicsAPI* graphics) {
-	graphics->ReleaseData(buffer);
-	graphics->ReleaseData(view);
+void ArrayBuffer::Release() {
+	RELEASE(buffer);
+	RELEASE(view);
 }
 
-void OutputBuffer::Release(GraphicsAPI* graphics) {
-	graphics->ReleaseData(gpuBuffer);
-	graphics->ReleaseData(cpuBuffer);
-	graphics->ReleaseData(view);
+void OutputBuffer::Release() {
+	RELEASE(gpuBuffer);
+	RELEASE(cpuBuffer);
+	RELEASE(view);
 }
 
-void Texture2D::Release(GraphicsAPI* graphics) {
-	graphics->ReleaseData(data);
-	graphics->ReleaseData(inputView);
+void Texture2D::Release() {
+	RELEASE(data);
+	RELEASE(inputView);
 }
 
-void RenderTarget::Release(GraphicsAPI* graphics) {
-	Texture2D::Release(graphics);
-	graphics->ReleaseData(outputView);
+void RenderTarget::Release() {
+	Texture2D::Release();
+	RELEASE(outputView);
 }
 
-void ComputeTexture::Release(GraphicsAPI* graphics) {
-	Texture2D::Release(graphics);
-	graphics->ReleaseData(outputView);
+void ComputeTexture::Release() {
+	Texture2D::Release();
+	RELEASE(outputView);
 }
 
-void EditBuffer::Release(GraphicsAPI* graphics) {
-	ArrayBuffer::Release(graphics);
-	graphics->ReleaseData(computeView);
+void EditBuffer::Release() {
+	ArrayBuffer::Release();
+	RELEASE(computeView);
+}
+
+void Sampler::Release() {
+	RELEASE(state);
 }

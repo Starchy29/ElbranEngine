@@ -12,6 +12,10 @@ double perfCountSecs;
 double minSecsPerFrame; // inverse of max fps
 DirectXAPI* directX;
 
+#if defined(DEBUG) | defined(_DEBUG)
+float timeSinceFPSUpdate = 0.f;
+#endif
+
 void RunApp() {
 	// main message loop
 	bool hasMsg;
@@ -35,13 +39,13 @@ void RunApp() {
 			app->Update(fDeltaTime);
 
 			#if defined(DEBUG) | defined(_DEBUG)
-			/*if (SHOW_FPS) {
+			if(SHOW_FPS) {
 				timeSinceFPSUpdate += fDeltaTime;
 				if(timeSinceFPSUpdate >= 0.5) {
 					timeSinceFPSUpdate = 0.0f;
 					SetWindowText(windowHandle, (_T(GAME_TITLE) + std::wstring(L" FPS: ") + std::to_wstring(1.0 / deltaTime)).c_str());
 				}
-			}*/
+			}
 			#endif
 		}
 	}
@@ -85,7 +89,7 @@ LRESULT CALLBACK WndProc(_In_ HWND hWnd, _In_ UINT message, _In_ WPARAM wParam, 
 
 void InitWindow(HINSTANCE hInstance) {
 	static TCHAR szWindowClass[] = _T("ElbranEngineWindow");
-	static TCHAR szTitle[] = _T("Elbran Engine");
+	static TCHAR szTitle[] = _T(GAME_TITLE);
 
 	WNDCLASSEX wcex = {};
 	wcex.cbSize = sizeof(WNDCLASSEX);
@@ -170,7 +174,7 @@ int WINAPI WinMain(
 	}
 
 	InitWindow(hInstance);
-	directX = new DirectXAPI(windowHandle, Int2(START_WINDOW_WIDTH, START_WINDOW_HEIGHT), ASPECT_RATIO);
+	directX = new DirectXAPI(windowHandle, Int2(START_WINDOW_WIDTH, START_WINDOW_HEIGHT), ASPECT_RATIO, directory);
 	app = new Application(directory, directX);
 	RunApp();
 	delete app;

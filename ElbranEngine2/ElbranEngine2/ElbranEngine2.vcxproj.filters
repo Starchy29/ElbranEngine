@@ -14,6 +14,9 @@
     <Filter Include="Toolkit">
       <UniqueIdentifier>{862adbcb-99d1-4afb-af83-73b3acd70105}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Shaders">
+      <UniqueIdentifier>{a8bf3d93-ad3e-49f5-ad0f-c13762326d2d}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="GameObject.cpp" />
@@ -37,6 +40,10 @@
     <ClCompile Include="Buffers.cpp">
       <Filter>Graphics</Filter>
     </ClCompile>
+    <ClCompile Include="Shaders.cpp">
+      <Filter>Graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="AssetContainer.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="GameObject.h" />
@@ -67,5 +74,16 @@
     <ClInclude Include="Common.h">
       <Filter>Toolkit</Filter>
     </ClInclude>
+    <ClInclude Include="AssetContainer.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <FxCompile Include="CameraVS.hlsl">
+      <Filter>Shaders</Filter>
+    </FxCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="ShaderStructs.hlsli">
+      <Filter>Shaders</Filter>
+    </None>
   </ItemGroup>
 </Project>

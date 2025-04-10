@@ -2,6 +2,7 @@
 #include <string>
 class GraphicsAPI;
 class Game;
+class AssetContainer;
 
 class Application
 {
@@ -9,7 +10,7 @@ public:
 	GraphicsAPI* graphics;
 	// InputManager* input;
 	// SoundMixer* sounds;
-	// AssetContainer* assets;
+	AssetContainer* assets;
 	Game* game;
 	// Random* rng;
 

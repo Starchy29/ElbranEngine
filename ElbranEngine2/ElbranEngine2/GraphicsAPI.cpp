@@ -1,5 +1,7 @@
 #include "GraphicsAPI.h"
 #include "Game.h"
+#include "Application.h"
+#include "AssetContainer.h"
 #include <cassert>
 
 GraphicsAPI::GraphicsAPI() {
@@ -12,11 +14,16 @@ GraphicsAPI::~GraphicsAPI() {
 	for(IPostProcess* pp : postProcesses) {
 		delete pp;
 	}
+	postProcessTargets[0].Release();
+	postProcessTargets[1].Release();
+	for(int i = 0; i < MAX_POST_PROCESS_HELPER_TEXTURES; i++) {
+		postProcessHelpers[i].Release();
+	}
 }
 
 void GraphicsAPI::Render(Game* game) {
 	postProcessed = false;
-	ClearRenderTarget();
+	ClearBackBuffer();
 	ClearDepthStencil();
 
 	if(postProcesses.size() > 0) {
@@ -34,7 +41,7 @@ void GraphicsAPI::Render(Game* game) {
 }
 
 void GraphicsAPI::ApplyPostProcesses() {
-	assert(!postProcessed && "attempted to run post processes twice");
+	assert(!postProcessed && "attempted to run post processes twice in the same frame");
 	postProcessed = true;
 
 	for(int i = 0; i < postProcesses.size(); i++) {
@@ -70,4 +77,13 @@ Int2 GraphicsAPI::GetViewOffset() const {
 
 void GraphicsAPI::SetConstants(Shader* shader, const void* data, unsigned int slot) {
 	WriteBuffer(data, shader->constantBuffers[slot].byteLength, shader->constantBuffers[slot].buffer);
+}
+
+void GraphicsAPI::DrawFullscreen() {
+	SetVertexShader(&app->assets->fullscreenShader);
+	DrawVertices(3); // fullscreen triangle
+}
+
+void GraphicsAPI::DrawSquare() {
+	DrawMesh(&app->assets->unitSquare);
 }

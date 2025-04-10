@@ -2,6 +2,7 @@
 #pragma once
 #include "GraphicsAPI.h"
 #pragma comment(lib,"d3d11.lib")
+#pragma comment(lib, "dxguid.lib")
 #include <d3d11.h>
 #include <dxgi1_3.h>
 #include <wrl/client.h>
@@ -11,7 +12,7 @@ class DirectXAPI :
     public GraphicsAPI
 {
 public:
-    DirectXAPI(HWND windowHandle, Int2 windowDims, float viewAspectRatio);
+    DirectXAPI(HWND windowHandle, Int2 windowDims, float viewAspectRatio, std::wstring gameDirectory);
     ~DirectXAPI();
 
     void Resize(Int2 windowDims, float viewAspectRatio);
@@ -24,14 +25,14 @@ public:
     PixelShader LoadPixelShader(std::wstring fileName) override;
     ComputeShader LoadComputeShader(std::wstring fileName) override;
 
-    Mesh CreateMesh(const Vertex* vertices, int vertexCount, const int* indices, int indexCount, bool editable) override;
+    Sampler CreateDefaultSampler() override;
+    Mesh CreateMesh(const Vertex* vertices, int vertexCount, const unsigned int* indices, int indexCount, bool editable) override;
     ArrayBuffer CreateArrayBuffer(unsigned int elements, unsigned int elementBytes, bool structured) override;
     EditBuffer CreateEditBuffer(unsigned int elements, unsigned int elementBytes, bool structured) override;
     OutputBuffer CreateOutputBuffer(unsigned int elements, unsigned int elementBytes, bool structured) override;
     RenderTarget CreateRenderTarget(unsigned int width, unsigned int height) override;
     ComputeTexture CreateComputeTexture(unsigned int width, unsigned int height) override;
     void CopyTexture(Texture2D* source, Texture2D* destination) override;
-    void ReleaseData(void* gpuData) override;
     //Int2 DetermineDimensions(const Texture2D* texture) override;
 
     void SetEditBuffer(EditBuffer* buffer, unsigned int slot) override;
@@ -43,17 +44,18 @@ public:
 
     void SetArray(ShaderStage stage, const ArrayBuffer* buffer, unsigned int slot) override;
     void SetTexture(ShaderStage stage, const Texture2D* texture, unsigned int slot) override;
+    void SetSampler(ShaderStage stage, Sampler* sampler, unsigned int slot) override;
 
     void SetComputeTexture(const ComputeTexture* texture, unsigned int slot) override;
 
     void SetVertexShader(const VertexShader* shader) override;
     void SetGeometryShader(const GeometryShader* shader) override;
     void SetPixelShader(const PixelShader* shader) override;
-    void SetComputeShader(const ComputeShader* shader) override;
+    void RunComputeShader(const ComputeShader* shader, unsigned int xThreads, unsigned int yThreads, unsigned int zThreads = 0) override;
     void SetRenderTarget(const RenderTarget* renderTarget) override;
 
 protected:
-    void ClearRenderTarget() override;
+    void ClearBackBuffer() override;
     void ClearDepthStencil() override;
     void PresentSwapChain() override;
     void ResetRenderTarget() override;
