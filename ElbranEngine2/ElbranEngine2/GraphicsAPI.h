@@ -7,6 +7,7 @@
 #include <string>
 #include <vector>
 
+#define OBJECT_CONSTANT_REGISTER 0 // shaders with per-object constant buffers should use register 0
 #define MAX_POST_PROCESS_HELPER_TEXTURES 2
 
 class Game;
@@ -59,17 +60,18 @@ public:
 	virtual Texture2D LoadSprite(std::wstring directory, std::wstring fileName) = 0;
 	virtual Sampler CreateDefaultSampler() = 0;
 	virtual Mesh CreateMesh(const Vertex* vertices, int vertexCount, const unsigned int* indices, int indexCount, bool editable) = 0;
+	virtual ConstantBuffer CreateConstantBuffer(unsigned int byteLength) = 0;
 	virtual ArrayBuffer CreateArrayBuffer(unsigned int elements, unsigned int elementBytes, bool structured) = 0;
 	virtual EditBuffer CreateEditBuffer(unsigned int elements, unsigned int elementBytes, bool structured) = 0;
 	virtual OutputBuffer CreateOutputBuffer(unsigned int elements, unsigned int elementBytes, bool structured) = 0;
 	virtual RenderTarget CreateRenderTarget(unsigned int width, unsigned int height) = 0;
 	virtual ComputeTexture CreateComputeTexture(unsigned int width, unsigned int height) = 0;
 	
-	void SetConstants(Shader* shader, const void* data, unsigned int slot = 0);
+	virtual void WriteBuffer(const void* data, int byteLength, Buffer* buffer) = 0; // fails if the buffer was not created with cpu write access
+	virtual void SetConstants(ShaderStage stage, const ConstantBuffer* buffer, unsigned int slot) = 0;
 	virtual void SetArray(ShaderStage stage, const ArrayBuffer* buffer, unsigned int slot) = 0;
 	virtual void SetTexture(ShaderStage stage, const Texture2D* texture, unsigned int slot) = 0;
 	virtual void SetSampler(ShaderStage stage, Sampler* sampler, unsigned int slot) = 0;
-	virtual void WriteBuffer(const void* data, int byteLength, Buffer* buffer) = 0; // fails if the buffer was not created with cpu write access
 	virtual void CopyTexture(Texture2D* source, Texture2D* destination) = 0;
 
 	virtual void SetVertexShader(const VertexShader* shader) = 0;
@@ -83,7 +85,6 @@ public:
 	virtual void DrawVertices(unsigned int numVertices) = 0;
 	virtual void DrawMesh(const Mesh* mesh) = 0;
 	void DrawFullscreen();
-	void DrawSquare();
 
 	// compute shader functions
 	virtual void SetComputeTexture(const ComputeTexture* texture, unsigned int slot) = 0;

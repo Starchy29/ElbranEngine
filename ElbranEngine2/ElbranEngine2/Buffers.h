@@ -50,9 +50,7 @@ struct Mesh {
 };
 
 struct ConstantBuffer {
-	Buffer* buffer;
-	unsigned int inputSlot;
-	unsigned int byteLength;
+	Buffer* data;
 
 	void Release();
 };

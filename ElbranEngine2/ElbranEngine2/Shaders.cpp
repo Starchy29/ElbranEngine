@@ -5,29 +5,22 @@
 #define RELEASE(x) if(x) ((IUnknown*)x)->Release();
 #endif
 
-void Shader::Release() {
-	for(int i = 0; i < numConstBuffers; i++) {
-		constantBuffers[i].Release();
-	}
-	delete[] constantBuffers;
-}
-
 void VertexShader::Release() {
-	Shader::Release();
 	RELEASE(shader);
+	constants.Release();
 }
 
 void GeometryShader::Release() {
-	Shader::Release();
 	RELEASE(shader);
+	constants.Release();
 }
 
 void PixelShader::Release() {
-	Shader::Release();
 	RELEASE(shader);
+	constants.Release();
 }
 
 void ComputeShader::Release() {
-	Shader::Release();
 	RELEASE(shader);
+	constants.Release();
 }

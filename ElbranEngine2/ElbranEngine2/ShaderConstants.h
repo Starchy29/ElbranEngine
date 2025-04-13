@@ -6,7 +6,6 @@
 
 struct CameraVSConstants {
 	Matrix worldTransform;
-	Matrix viewProjection;
 	GPU_BOOL flipX;
 	GPU_BOOL flipY;
 };

@@ -13,7 +13,7 @@ void Mesh::Release() {
 }
 
 void ConstantBuffer::Release() {
-	RELEASE(buffer);
+	RELEASE(data)
 }
 
 void ArrayBuffer::Release() {

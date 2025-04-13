@@ -87,15 +87,7 @@ float GraphicsAPI::GetViewAspectRatio() const {
 	return viewAspectRatio;
 }
 
-void GraphicsAPI::SetConstants(Shader* shader, const void* data, unsigned int slot) {
-	WriteBuffer(data, shader->constantBuffers[slot].byteLength, shader->constantBuffers[slot].buffer);
-}
-
 void GraphicsAPI::DrawFullscreen() {
 	SetVertexShader(&app->assets->fullscreenVS);
 	DrawVertices(3); // fullscreen triangle
-}
-
-void GraphicsAPI::DrawSquare() {
-	DrawMesh(&app->assets->unitSquare);
 }

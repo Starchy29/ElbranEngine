@@ -1,5 +1,6 @@
 #pragma once
 #include "Transform.h"
+#include "Buffers.h"
 
 #define CAMERA_Z 0
 #define CAMERA_DEPTH 100
@@ -22,6 +23,7 @@ public:
 	virtual void Draw();
 
 private:
+	ConstantBuffer projectionBuffer;
 	Transform transforms[10];
 };
 

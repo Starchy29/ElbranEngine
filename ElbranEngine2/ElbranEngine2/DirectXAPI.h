@@ -28,6 +28,7 @@ public:
     Texture2D LoadSprite(std::wstring directory, std::wstring fileName) override;
     Sampler CreateDefaultSampler() override;
     Mesh CreateMesh(const Vertex* vertices, int vertexCount, const unsigned int* indices, int indexCount, bool editable) override;
+    ConstantBuffer CreateConstantBuffer(unsigned int byteLength) override;
     ArrayBuffer CreateArrayBuffer(unsigned int elements, unsigned int elementBytes, bool structured) override;
     EditBuffer CreateEditBuffer(unsigned int elements, unsigned int elementBytes, bool structured) override;
     OutputBuffer CreateOutputBuffer(unsigned int elements, unsigned int elementBytes, bool structured) override;
@@ -42,6 +43,7 @@ public:
 
     void SetBlendMode(BlendState mode) override;
 
+    void SetConstants(ShaderStage stage, const ConstantBuffer* buffer, unsigned int slot) override;
     void SetArray(ShaderStage stage, const ArrayBuffer* buffer, unsigned int slot) override;
     void SetTexture(ShaderStage stage, const Texture2D* texture, unsigned int slot) override;
     void SetSampler(ShaderStage stage, Sampler* sampler, unsigned int slot) override;
@@ -77,6 +79,6 @@ private:
     Buffer* CreateIndexedBuffer(unsigned int elements, unsigned int elementBytes, bool structured, bool cpuWrite, bool gpuWrite);
 
     ID3DBlob* LoadShader(std::wstring directory, std::wstring fileName);
-    void CreateBuffers(ID3DBlob* shaderBlob, Shader* output);
+    ConstantBuffer LoadConstantBuffer(ID3DBlob* shaderBlob);
 };
 #endif

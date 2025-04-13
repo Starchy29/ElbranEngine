@@ -236,9 +236,9 @@ void DirectXAPI::DrawMesh(const Mesh* mesh) {
 VertexShader DirectXAPI::LoadVertexShader(std::wstring directory, std::wstring fileName) {
 	ID3DBlob* shaderBlob = LoadShader(directory, fileName);
 	VertexShader newShader = {};
-	CreateBuffers(shaderBlob, &newShader);
 	HRESULT result = device->CreateVertexShader(shaderBlob->GetBufferPointer(), shaderBlob->GetBufferSize(), 0, &newShader.shader);
 	assert(result == S_OK && "failed to create vertex shader");
+	newShader.constants = LoadConstantBuffer(shaderBlob);
 	shaderBlob->Release();
 	return newShader;
 }
@@ -246,9 +246,9 @@ VertexShader DirectXAPI::LoadVertexShader(std::wstring directory, std::wstring f
 GeometryShader DirectXAPI::LoadGeometryShader(std::wstring directory, std::wstring fileName) {
 	ID3DBlob* shaderBlob = LoadShader(directory, fileName);
 	GeometryShader newShader = {};
-	CreateBuffers(shaderBlob, &newShader);
 	HRESULT result = device->CreateGeometryShader(shaderBlob->GetBufferPointer(), shaderBlob->GetBufferSize(), 0, &newShader.shader);
 	assert(result == S_OK && "failed to create geometry shader");
+	newShader.constants = LoadConstantBuffer(shaderBlob);
 	shaderBlob->Release();
 	return newShader;
 }
@@ -256,9 +256,9 @@ GeometryShader DirectXAPI::LoadGeometryShader(std::wstring directory, std::wstri
 PixelShader DirectXAPI::LoadPixelShader(std::wstring directory, std::wstring fileName) {
 	ID3DBlob* shaderBlob = LoadShader(directory, fileName);
 	PixelShader newShader = {};
-	CreateBuffers(shaderBlob, &newShader);
 	HRESULT result = device->CreatePixelShader(shaderBlob->GetBufferPointer(), shaderBlob->GetBufferSize(), 0, &newShader.shader);
 	assert(result == S_OK && "failed to create pixel shader");
+	newShader.constants = LoadConstantBuffer(shaderBlob);
 	shaderBlob->Release();
 	return newShader;
 }
@@ -266,9 +266,9 @@ PixelShader DirectXAPI::LoadPixelShader(std::wstring directory, std::wstring fil
 ComputeShader DirectXAPI::LoadComputeShader(std::wstring directory, std::wstring fileName) {
 	ID3DBlob* shaderBlob = LoadShader(directory, fileName);
 	ComputeShader newShader = {};
-	CreateBuffers(shaderBlob, &newShader);
 	HRESULT result = device->CreateComputeShader(shaderBlob->GetBufferPointer(), shaderBlob->GetBufferSize(), 0, &newShader.shader);
 	assert(result == S_OK && "failed to create compute shader");
+	newShader.constants = LoadConstantBuffer(shaderBlob);
 
 	Microsoft::WRL::ComPtr<ID3D11ShaderReflection> reflection;
 	D3DReflect(shaderBlob->GetBufferPointer(), shaderBlob->GetBufferSize(), IID_ID3D11ShaderReflection, (void**)reflection.GetAddressOf());
@@ -336,6 +336,21 @@ Mesh DirectXAPI::CreateMesh(const Vertex* vertices, int vertexCount, const unsig
 
 	device->CreateBuffer(&indexDescription, &initialData, &(result.indices));
 
+	return result;
+}
+
+ConstantBuffer DirectXAPI::CreateConstantBuffer(unsigned int byteLength) {
+	ConstantBuffer result = {};
+
+	D3D11_BUFFER_DESC description;
+	description.Usage = D3D11_USAGE_DYNAMIC;
+	description.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
+	description.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
+	description.MiscFlags = 0;
+	description.StructureByteStride = 0;
+	description.ByteWidth = byteLength;
+
+	device->CreateBuffer(&description, 0, &result.data);
 	return result;
 }
 
@@ -431,6 +446,23 @@ void DirectXAPI::SetBlendMode(BlendState mode) {
 	}
 }
 
+void DirectXAPI::SetConstants(ShaderStage stage, const ConstantBuffer* constantBuffer, unsigned int slot) {
+	switch (stage) {
+	case ShaderStage::Vertex:
+		context->VSSetConstantBuffers(slot, 1, &constantBuffer->data);
+		break;
+	case ShaderStage::Geometry:
+		context->GSSetConstantBuffers(slot, 1, &constantBuffer->data);
+		break;
+	case ShaderStage::Pixel:
+		context->PSSetConstantBuffers(slot, 1, &constantBuffer->data);
+		break;
+	case ShaderStage::Compute:
+		context->CSSetConstantBuffers(slot, 1, &constantBuffer->data);
+		break;
+	}
+}
+
 void DirectXAPI::SetArray(ShaderStage stage, const ArrayBuffer* buffer, unsigned int slot) {
 	switch(stage) {
 	case ShaderStage::Vertex:
@@ -487,34 +519,18 @@ void DirectXAPI::SetComputeTexture(const ComputeTexture* texture, unsigned int s
 }
 
 void DirectXAPI::SetVertexShader(const VertexShader* shader) {
-	for(unsigned int i = 0; i < shader->numConstBuffers; i++) {
-		context->VSSetConstantBuffers(shader->constantBuffers[i].inputSlot, 1, &shader->constantBuffers[i].buffer);
-	}
-
 	context->VSSetShader(shader->shader, 0, 0);
 }
 
 void DirectXAPI::SetGeometryShader(const GeometryShader* shader) {
-	for(unsigned int i = 0; i < shader->numConstBuffers; i++) {
-		context->GSSetConstantBuffers(shader->constantBuffers[i].inputSlot, 1, &shader->constantBuffers[i].buffer);
-	}
-
 	context->GSSetShader(shader->shader, 0, 0);
 }
 
 void DirectXAPI::SetPixelShader(const PixelShader* shader) {
-	for(unsigned int i = 0; i < shader->numConstBuffers; i++) {
-		context->PSSetConstantBuffers(shader->constantBuffers[i].inputSlot, 1, &shader->constantBuffers[i].buffer);
-	}
-
 	context->PSSetShader(shader->shader, 0, 0);
 }
 
 void DirectXAPI::RunComputeShader(const ComputeShader* shader, unsigned int xThreads, unsigned int yThreads, unsigned int zThreads) {
-	for(unsigned int i = 0; i < shader->numConstBuffers; i++) {
-		context->CSSetConstantBuffers(shader->constantBuffers[i].inputSlot, 1, &shader->constantBuffers[i].buffer);
-	}
-
 	context->CSSetShader(shader->shader, 0, 0);
 	context->Dispatch(ceil((double)xThreads / shader->xGroupSize), ceil((double)yThreads / shader->yGroupSize), ceil((double)zThreads / shader->zGroupSize));
 }
@@ -615,53 +631,19 @@ ID3DBlob* DirectXAPI::LoadShader(std::wstring directory, std::wstring fileName) 
 	return shaderBlob;
 }
 
-void DirectXAPI::CreateBuffers(ID3DBlob* shaderBlob, Shader* output) {
-	// get the info of this shader
+ConstantBuffer DirectXAPI::LoadConstantBuffer(ID3DBlob* shaderBlob) {
+	// determine the byte length of the buffer
 	Microsoft::WRL::ComPtr<ID3D11ShaderReflection> reflection;
 	D3DReflect(shaderBlob->GetBufferPointer(), shaderBlob->GetBufferSize(), IID_ID3D11ShaderReflection, (void**)reflection.GetAddressOf());
-
 	D3D11_SHADER_DESC shaderDescr;
 	reflection->GetDesc(&shaderDescr);
+	ID3D11ShaderReflectionConstantBuffer* bufferReflection = reflection->GetConstantBufferByIndex(OBJECT_CONSTANT_REGISTER);
+	if(!bufferReflection) {
+		return {};
+	}
 
-	// create the constant buffers
-	ID3D11ShaderReflectionConstantBuffer* bufferReflection;
 	D3D11_SHADER_BUFFER_DESC bufferDescr;
-	D3D11_SHADER_INPUT_BIND_DESC bindDescr;
-	output->numConstBuffers = shaderDescr.ConstantBuffers;
-	for(UINT i = 0; i < shaderDescr.ConstantBuffers; i++) {
-		// filter out certain buffers
-		bufferReflection = reflection->GetConstantBufferByIndex(i);
-		bufferReflection->GetDesc(&bufferDescr);
-		reflection->GetResourceBindingDescByName(bufferDescr.Name, &bindDescr);
-		if(bindDescr.Type != D3D_SIT_CBUFFER) {
-			output->numConstBuffers--;
-		}
-	}
-
-	D3D11_BUFFER_DESC creationDescr;
-	creationDescr.Usage = D3D11_USAGE_DYNAMIC;
-	creationDescr.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
-	creationDescr.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
-	creationDescr.MiscFlags = 0;
-	creationDescr.StructureByteStride = 0;
-
-	output->constantBuffers = new ConstantBuffer[output->numConstBuffers];
-	int nextIndex = 0;
-	for(UINT i = 0; i < shaderDescr.ConstantBuffers; i++) {
-		bufferReflection = reflection->GetConstantBufferByIndex(i);
-		bufferReflection->GetDesc(&bufferDescr);
-		reflection->GetResourceBindingDescByName(bufferDescr.Name, &bindDescr);
-		if(bindDescr.Type != D3D_SIT_CBUFFER) {
-			continue;
-		}
-
-		// create the constant buffer
-		ConstantBuffer* newBuffer = &(output->constantBuffers[nextIndex]);
-		newBuffer->inputSlot = bindDescr.BindPoint;
-		newBuffer->byteLength = bufferDescr.Size;
-		creationDescr.ByteWidth = bufferDescr.Size;
-		device->CreateBuffer(&creationDescr, 0, &newBuffer->buffer);
-		nextIndex++;
-	}
+	bufferReflection->GetDesc(&bufferDescr);
+	return CreateConstantBuffer(bufferDescr.Size);
 }
 #endif

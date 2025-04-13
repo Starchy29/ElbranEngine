@@ -1,13 +1,13 @@
 #include "ShaderStructs.hlsli"
 
-cbuffer Scene : register(b0) {
-	matrix viewProjection;
-}
-
-cbuffer Object : register(b1) {
+cbuffer Object : register(b0) {
 	matrix worldTransform;
 	bool flipX;
 	bool flipY;
+}
+
+cbuffer Scene : register(b1) {
+	matrix viewProjection;
 }
 
 VertexToPixel main(Vertex input) {
