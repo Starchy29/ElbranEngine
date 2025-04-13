@@ -9,7 +9,7 @@ Application::Application(std::wstring filePath, GraphicsAPI* graphics) {
 	this->graphics = graphics;
 	// sounds = new SoundMixer();
 	// InputManager* input;
-	assets = new AssetContainer(graphics);
+	assets = new AssetContainer(filePath, graphics);
 	game = new Game();
 	// rng = new Random();
 

@@ -344,4 +344,17 @@ Matrix Matrix::Translate(float x, float y) {
 		{ 0.f, 0.f, 0.f, 1.f }
 	} };
 }
+
+Matrix Matrix::View(Vector2 eyePosition, float rotation) {
+	return Rotation(-rotation) * Translate(-eyePosition.x, -eyePosition.y);
+}
+
+Matrix Matrix::ProjectOrthographic(float viewWidth, float viewHeight, float viewRange) {
+	return Matrix{ {
+		{ 1.f/viewWidth, 0.f, 0.f, 0.f },
+		{ 0.f, 1.f/viewHeight, 0.f, 0.f },
+		{ 0.f, 0.f, 1.f/viewRange, 0.f },
+		{ 0.f, 0.f, 0.f, 1.f }
+	} };
+}
 #pragma endregion

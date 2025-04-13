@@ -12,7 +12,7 @@ class DirectXAPI :
     public GraphicsAPI
 {
 public:
-    DirectXAPI(HWND windowHandle, Int2 windowDims, float viewAspectRatio, std::wstring gameDirectory);
+    DirectXAPI(HWND windowHandle, Int2 windowDims, float viewAspectRatio, std::wstring directory);
     ~DirectXAPI();
 
     void Resize(Int2 windowDims, float viewAspectRatio);
@@ -20,11 +20,12 @@ public:
     void DrawVertices(unsigned int numVertices) override;
     void DrawMesh(const Mesh* mesh) override;
 
-    VertexShader LoadVertexShader(std::wstring fileName) override;
-    GeometryShader LoadGeometryShader(std::wstring fileName) override;
-    PixelShader LoadPixelShader(std::wstring fileName) override;
-    ComputeShader LoadComputeShader(std::wstring fileName) override;
+    VertexShader LoadVertexShader(std::wstring directory, std::wstring fileName) override;
+    GeometryShader LoadGeometryShader(std::wstring directory, std::wstring fileName) override;
+    PixelShader LoadPixelShader(std::wstring directory, std::wstring fileName) override;
+    ComputeShader LoadComputeShader(std::wstring directory, std::wstring fileName) override;
 
+    Texture2D LoadSprite(std::wstring directory, std::wstring fileName) override;
     Sampler CreateDefaultSampler() override;
     Mesh CreateMesh(const Vertex* vertices, int vertexCount, const unsigned int* indices, int indexCount, bool editable) override;
     ArrayBuffer CreateArrayBuffer(unsigned int elements, unsigned int elementBytes, bool structured) override;
@@ -33,7 +34,6 @@ public:
     RenderTarget CreateRenderTarget(unsigned int width, unsigned int height) override;
     ComputeTexture CreateComputeTexture(unsigned int width, unsigned int height) override;
     void CopyTexture(Texture2D* source, Texture2D* destination) override;
-    //Int2 DetermineDimensions(const Texture2D* texture) override;
 
     void SetEditBuffer(EditBuffer* buffer, unsigned int slot) override;
     void WriteBuffer(const void* data, int byteLength, Buffer* buffer) override;
@@ -76,7 +76,7 @@ private:
     TextureData* CreateTexture(unsigned int width, unsigned int height, bool renderTarget, bool computeWritable);
     Buffer* CreateIndexedBuffer(unsigned int elements, unsigned int elementBytes, bool structured, bool cpuWrite, bool gpuWrite);
 
-    ID3DBlob* LoadShader(std::wstring fileName);
+    ID3DBlob* LoadShader(std::wstring directory, std::wstring fileName);
     void CreateBuffers(ID3DBlob* shaderBlob, Shader* output);
 };
 #endif

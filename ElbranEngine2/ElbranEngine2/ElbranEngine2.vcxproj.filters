@@ -44,6 +44,9 @@
       <Filter>Graphics</Filter>
     </ClCompile>
     <ClCompile Include="AssetContainer.cpp" />
+    <ClCompile Include="Scene.cpp" />
+    <ClCompile Include="Transform.cpp" />
+    <ClCompile Include="SpriteRenderer.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="GameObject.h" />
@@ -75,14 +78,27 @@
       <Filter>Toolkit</Filter>
     </ClInclude>
     <ClInclude Include="AssetContainer.h" />
+    <ClInclude Include="Scene.h" />
+    <ClInclude Include="Transform.h" />
+    <ClInclude Include="SpriteRenderer.h" />
+    <ClInclude Include="ShaderConstants.h">
+      <Filter>Graphics</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="CameraVS.hlsl">
       <Filter>Shaders</Filter>
     </FxCompile>
+    <FxCompile Include="TexturePS.hlsl">
+      <Filter>Shaders</Filter>
+    </FxCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="ShaderStructs.hlsli">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="packages.config" />
+    <None Include="Lighting.hlsli">
       <Filter>Shaders</Filter>
     </None>
   </ItemGroup>

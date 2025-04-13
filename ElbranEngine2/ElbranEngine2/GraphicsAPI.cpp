@@ -8,6 +8,13 @@ GraphicsAPI::GraphicsAPI() {
 	postProcessed = false;
 	viewportDims = { 0, 0 };
 	viewportOffset = { 0, 0 };
+	viewAspectRatio = 0.f;
+
+	postProcessTargets[0] = {};
+	postProcessTargets[1] = {};
+	for(int i = 0; i < MAX_POST_PROCESS_HELPER_TEXTURES; i++) {
+		postProcessHelpers[i] = {};
+	}
 }
 
 GraphicsAPI::~GraphicsAPI() {
@@ -55,7 +62,8 @@ void GraphicsAPI::ApplyPostProcesses() {
 		if(postProcesses[i]->IsActive()) {
 			postProcesses[i]->Render(this, input, output);
 		} else {
-			CopyTexture(input, output); // if the post process makes no changes, copying the pixels is fastest
+			// if the post process makes no changes, copying the pixels is fastest
+			CopyTexture(input, output);
 		}
 	}
 
@@ -75,12 +83,16 @@ Int2 GraphicsAPI::GetViewOffset() const {
 	return viewportOffset;
 }
 
+float GraphicsAPI::GetViewAspectRatio() const {
+	return viewAspectRatio;
+}
+
 void GraphicsAPI::SetConstants(Shader* shader, const void* data, unsigned int slot) {
 	WriteBuffer(data, shader->constantBuffers[slot].byteLength, shader->constantBuffers[slot].buffer);
 }
 
 void GraphicsAPI::DrawFullscreen() {
-	SetVertexShader(&app->assets->fullscreenShader);
+	SetVertexShader(&app->assets->fullscreenVS);
 	DrawVertices(3); // fullscreen triangle
 }
 

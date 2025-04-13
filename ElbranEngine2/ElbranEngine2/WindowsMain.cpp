@@ -33,7 +33,7 @@ void RunApp() {
 				continue;
 			}
 			lastPerfCount = currentCount;
-
+			
 			float fDeltaTime = (float)deltaTime;
 
 			app->Update(fDeltaTime);

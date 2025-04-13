@@ -114,6 +114,9 @@
     <FxCompile>
       <ShaderModel>5.0</ShaderModel>
     </FxCompile>
+    <PostBuildEvent>
+      <Command>(robocopy "$(SolutionDir)Assets" "$(TargetDir)Assets" /mir) ^&amp; IF %ERRORLEVEL% LSS 8 SET ERRORLEVEL = 0</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
@@ -135,6 +138,9 @@
     <FxCompile>
       <ShaderModel>5.0</ShaderModel>
     </FxCompile>
+    <PostBuildEvent>
+      <Command>(robocopy "$(SolutionDir)Assets" "$(TargetDir)Assets" /mir) ^&amp; IF %ERRORLEVEL% LSS 8 SET ERRORLEVEL = 0</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Application.cpp" />
@@ -145,7 +151,10 @@
     <ClCompile Include="GameObject.cpp" />
     <ClCompile Include="GraphicsAPI.cpp" />
     <ClCompile Include="Math.cpp" />
+    <ClCompile Include="Scene.cpp" />
     <ClCompile Include="Shaders.cpp" />
+    <ClCompile Include="SpriteRenderer.cpp" />
+    <ClCompile Include="Transform.cpp" />
     <ClCompile Include="Tween.cpp" />
     <ClCompile Include="WindowsMain.cpp" />
   </ItemGroup>
@@ -161,7 +170,11 @@
     <ClInclude Include="GraphicsAPI.h" />
     <ClInclude Include="IPostProcess.h" />
     <ClInclude Include="Math.h" />
+    <ClInclude Include="Scene.h" />
+    <ClInclude Include="ShaderConstants.h" />
     <ClInclude Include="Shaders.h" />
+    <ClInclude Include="SpriteRenderer.h" />
+    <ClInclude Include="Transform.h" />
     <ClInclude Include="Tween.h" />
   </ItemGroup>
   <ItemGroup>
@@ -169,11 +182,26 @@
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Vertex</ShaderType>
     </FxCompile>
+    <FxCompile Include="TexturePS.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
+    </FxCompile>
   </ItemGroup>
   <ItemGroup>
+    <None Include="Lighting.hlsli" />
+    <None Include="packages.config" />
     <None Include="ShaderStructs.hlsli" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
+    <Import Project="..\packages\directxtk_uwp.2025.3.21.2\build\native\directxtk_uwp.targets" Condition="Exists('..\packages\directxtk_uwp.2025.3.21.2\build\native\directxtk_uwp.targets')" />
   </ImportGroup>
+  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
+    <PropertyGroup>
+      <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
+    </PropertyGroup>
+    <Error Condition="!Exists('..\packages\directxtk_uwp.2025.3.21.2\build\native\directxtk_uwp.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\directxtk_uwp.2025.3.21.2\build\native\directxtk_uwp.targets'))" />
+  </Target>
 </Project>

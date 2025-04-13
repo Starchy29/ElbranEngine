@@ -94,13 +94,15 @@ struct AlignedRect {
 struct Matrix {
 	float values[4][4];
 
-	Matrix operator-() const;
+	static const Matrix Identity;
 	
 	static Matrix Rotation(float radians);
 	static Matrix Scale(float x, float y);
 	static Matrix Translate(float x, float y);
+	static Matrix View(Vector2 eyePosition, float rotation);
+	static Matrix ProjectOrthographic(float viewWidth, float viewHeight, float viewRange);
 
-	static const Matrix Identity;
+	Matrix operator-() const;
 };
 
 Vector2 operator*(const Matrix& transform, const Vector2& vector);

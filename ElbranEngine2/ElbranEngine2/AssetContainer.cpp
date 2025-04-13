@@ -2,14 +2,12 @@
 #include "GraphicsAPI.h"
 #include "Application.h"
 
-AssetContainer::AssetContainer(GraphicsAPI* graphics) {
+AssetContainer::AssetContainer(std::wstring filePath, GraphicsAPI* graphics) {
 	defaultSampler = graphics->CreateDefaultSampler();
 	graphics->SetSampler(ShaderStage::Vertex, &defaultSampler, 0);
 	graphics->SetSampler(ShaderStage::Geometry, &defaultSampler, 0);
 	graphics->SetSampler(ShaderStage::Pixel, &defaultSampler, 0);
 	graphics->SetSampler(ShaderStage::Compute, &defaultSampler, 0);
-
-	fullscreenShader = {}; //graphics->LoadVertexShader();
 
 	// create unit square
 	Vertex vertices[] = {
@@ -25,12 +23,26 @@ AssetContainer::AssetContainer(GraphicsAPI* graphics) {
 	};
 
 	unitSquare = graphics->CreateMesh(vertices, 4, indices, 6, false);
+
+	// load shaders
+	fullscreenVS = {}; //graphics->LoadVertexShader();
+	cameraVS = graphics->LoadVertexShader(filePath, L"CameraVS.cso");
+
+	texturePS = graphics->LoadPixelShader(filePath, L"TexturePS.cso");
+
+	testSprite = graphics->LoadSprite(filePath, L"elbran.png");
 }
 
 AssetContainer::~AssetContainer() {
 	GraphicsAPI* graphics = app->graphics;
 
 	unitSquare.Release();
-	fullscreenShader.Release();
 	defaultSampler.Release();
+
+	fullscreenVS.Release();
+	cameraVS.Release();
+
+	texturePS.Release();
+
+	testSprite.Release();
 }

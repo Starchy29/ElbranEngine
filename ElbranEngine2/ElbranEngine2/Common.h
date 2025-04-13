@@ -22,3 +22,36 @@ struct Int2 {
 		this->y = y;
 	}
 };
+
+struct Color {
+	float red;
+	float green;
+	float blue;
+	float alpha;
+
+	Color() {
+		red = 0.f;
+		green = 0.f;
+		blue = 0.f;
+		alpha = 1.0f;
+	}
+
+	Color(float r, float g, float b, float a = 1.f) {
+		red = r;
+		green = g;
+		blue = b;
+		alpha = a;
+	}
+};
+
+namespace Colors {
+	const Color Clear = Color(0, 0, 0, 0);
+	const Color Black = Color(0, 0, 0, 1);
+	const Color Red = Color(1, 0, 0, 1);
+	const Color Green = Color(0, 1, 0, 1);
+	const Color Blue = Color(0, 0, 1, 1);
+	const Color Cyan = Color(0, 1, 1, 1);
+	const Color Magenta = Color(1, 0, 1, 1);
+	const Color Yellow = Color(1, 1, 0, 1);
+	const Color White = Color(1, 1, 1, 1);
+}

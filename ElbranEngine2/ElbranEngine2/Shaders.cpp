@@ -9,6 +9,7 @@ void Shader::Release() {
 	for(int i = 0; i < numConstBuffers; i++) {
 		constantBuffers[i].Release();
 	}
+	delete[] constantBuffers;
 }
 
 void VertexShader::Release() {

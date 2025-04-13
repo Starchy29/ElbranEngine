@@ -1,19 +1,22 @@
 #include "ShaderStructs.hlsli"
 
-cbuffer Constants : register(b0) {
-	matrix worldViewProj;
+cbuffer Scene : register(b0) {
+	matrix viewProjection;
+}
+
+cbuffer Object : register(b1) {
 	matrix worldTransform;
 	bool flipX;
 	bool flipY;
 }
 
-VertexToPixel main(Vertex input)
-{
+VertexToPixel main(Vertex input) {
 	VertexToPixel output;
 
-	float4 fullPosition = float4(input.position, 0, 1);
-	output.screenPosition = mul(worldViewProj, fullPosition);
-	output.worldPosition = mul(worldTransform, fullPosition).xy;
+	float4 fullPosition = float4(input.position, 0, 1); // w must be 1 for translation to work
+	fullPosition = mul(worldTransform, fullPosition);
+	output.worldPosition = fullPosition.xy;
+	output.screenPosition = mul(viewProjection, fullPosition);
 	output.color = float4(1, 1, 1, 1);
 
 	output.uv = input.uv;

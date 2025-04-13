@@ -24,6 +24,7 @@ struct Sampler {
 struct Texture2D {
 	TextureData* data;
 	ShaderResourceView* inputView;
+	float aspectRatio;
 
 	void Release();
 };

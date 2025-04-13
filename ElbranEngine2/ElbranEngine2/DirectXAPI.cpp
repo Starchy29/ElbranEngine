@@ -4,8 +4,9 @@
 #include "DirectXAPI.h"
 #include "Application.h"
 #include <cassert>
+#include <WICTextureLoader.h>
 
-DirectXAPI::DirectXAPI(HWND windowHandle, Int2 windowDims, float viewAspectRatio, std::wstring gameDirectory) {
+DirectXAPI::DirectXAPI(HWND windowHandle, Int2 windowDims, float viewAspectRatio, std::wstring directory) {
 	D3D_FEATURE_LEVEL levels[] = {
 		D3D_FEATURE_LEVEL_11_1,
 		D3D_FEATURE_LEVEL_11_0,
@@ -132,7 +133,7 @@ DirectXAPI::DirectXAPI(HWND windowHandle, Int2 windowDims, float viewAspectRatio
 	inputDescriptions[1] = { "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT };
 
 	Microsoft::WRL::ComPtr<ID3DBlob> shaderBlob;
-	std::wstring fileString = gameDirectory + L"CameraVS.cso";
+	std::wstring fileString = directory + L"CameraVS.cso";
 	HRESULT hr = D3DReadFileToBlob(fileString.c_str(), shaderBlob.GetAddressOf()); // read a specific shader to validate input layout
 	assert(hr == S_OK && "failed to read shader for input layout creation");
 
@@ -151,6 +152,7 @@ DirectXAPI::~DirectXAPI() {
 }
 
 void DirectXAPI::Resize(Int2 windowDims, float viewAspectRatio) {
+	this->viewAspectRatio = viewAspectRatio;
 	backBufferView.Reset();
 	depthStencilView.Reset();
 	swapChain->ResizeBuffers(2, windowDims.x, windowDims.y, DXGI_FORMAT_R8G8B8A8_UNORM, 0);
@@ -231,8 +233,8 @@ void DirectXAPI::DrawMesh(const Mesh* mesh) {
 	context->DrawIndexed(mesh->indexCount, 0, 0);
 }
 
-VertexShader DirectXAPI::LoadVertexShader(std::wstring fileName) {
-	ID3DBlob* shaderBlob = LoadShader(fileName);
+VertexShader DirectXAPI::LoadVertexShader(std::wstring directory, std::wstring fileName) {
+	ID3DBlob* shaderBlob = LoadShader(directory, fileName);
 	VertexShader newShader = {};
 	CreateBuffers(shaderBlob, &newShader);
 	HRESULT result = device->CreateVertexShader(shaderBlob->GetBufferPointer(), shaderBlob->GetBufferSize(), 0, &newShader.shader);
@@ -241,8 +243,8 @@ VertexShader DirectXAPI::LoadVertexShader(std::wstring fileName) {
 	return newShader;
 }
 
-GeometryShader DirectXAPI::LoadGeometryShader(std::wstring fileName) {
-	ID3DBlob* shaderBlob = LoadShader(fileName);
+GeometryShader DirectXAPI::LoadGeometryShader(std::wstring directory, std::wstring fileName) {
+	ID3DBlob* shaderBlob = LoadShader(directory, fileName);
 	GeometryShader newShader = {};
 	CreateBuffers(shaderBlob, &newShader);
 	HRESULT result = device->CreateGeometryShader(shaderBlob->GetBufferPointer(), shaderBlob->GetBufferSize(), 0, &newShader.shader);
@@ -251,8 +253,8 @@ GeometryShader DirectXAPI::LoadGeometryShader(std::wstring fileName) {
 	return newShader;
 }
 
-PixelShader DirectXAPI::LoadPixelShader(std::wstring fileName) {
-	ID3DBlob* shaderBlob = LoadShader(fileName);
+PixelShader DirectXAPI::LoadPixelShader(std::wstring directory, std::wstring fileName) {
+	ID3DBlob* shaderBlob = LoadShader(directory, fileName);
 	PixelShader newShader = {};
 	CreateBuffers(shaderBlob, &newShader);
 	HRESULT result = device->CreatePixelShader(shaderBlob->GetBufferPointer(), shaderBlob->GetBufferSize(), 0, &newShader.shader);
@@ -261,8 +263,8 @@ PixelShader DirectXAPI::LoadPixelShader(std::wstring fileName) {
 	return newShader;
 }
 
-ComputeShader DirectXAPI::LoadComputeShader(std::wstring fileName) {
-	ID3DBlob* shaderBlob = LoadShader(fileName);
+ComputeShader DirectXAPI::LoadComputeShader(std::wstring directory, std::wstring fileName) {
+	ID3DBlob* shaderBlob = LoadShader(directory, fileName);
 	ComputeShader newShader = {};
 	CreateBuffers(shaderBlob, &newShader);
 	HRESULT result = device->CreateComputeShader(shaderBlob->GetBufferPointer(), shaderBlob->GetBufferSize(), 0, &newShader.shader);
@@ -362,6 +364,7 @@ OutputBuffer DirectXAPI::CreateOutputBuffer(unsigned int elements, unsigned int 
 
 RenderTarget DirectXAPI::CreateRenderTarget(unsigned int width, unsigned int height) {
 	RenderTarget result = {};
+	result.aspectRatio = (float)width / height;
 	result.data = CreateTexture(width, height, true, false);
 
 	device->CreateShaderResourceView(result.data, 0, &(result.inputView));
@@ -372,6 +375,7 @@ RenderTarget DirectXAPI::CreateRenderTarget(unsigned int width, unsigned int hei
 
 ComputeTexture DirectXAPI::CreateComputeTexture(unsigned int width, unsigned int height) {
 	ComputeTexture result = {};
+	result.aspectRatio = (float)width / height;
 	result.data = CreateTexture(width, height, false, true);
 
 	device->CreateShaderResourceView(result.data, 0, &(result.inputView));
@@ -542,6 +546,15 @@ RenderTarget DirectXAPI::GetBackBufferView() {
 	return result;
 }
 
+Texture2D DirectXAPI::LoadSprite(std::wstring directory, std::wstring fileName) {
+	Texture2D result;
+	std::wstring fullPath = directory + L"Assets\\" + fileName;
+	ID3D11Resource* textureResource;
+	DirectX::CreateWICTextureFromFile(device.Get(), context.Get(), fullPath.c_str(), &textureResource, &result.inputView);
+	result.data = (TextureData*)textureResource;
+	return result;
+}
+
 Sampler DirectXAPI::CreateDefaultSampler() {
 	Sampler result;
 
@@ -593,8 +606,8 @@ Buffer* DirectXAPI::CreateIndexedBuffer(unsigned int elements, unsigned int elem
 	return result;
 }
 
-ID3DBlob* DirectXAPI::LoadShader(std::wstring fileName) {
-	std::wstring fileString = app->filePath + fileName;
+ID3DBlob* DirectXAPI::LoadShader(std::wstring directory, std::wstring fileName) {
+	std::wstring fileString = directory + fileName;
 	LPCWSTR filePath = fileString.c_str();
 	ID3DBlob* shaderBlob;
 	HRESULT hr = D3DReadFileToBlob(filePath, &shaderBlob);

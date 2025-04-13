@@ -8,7 +8,6 @@
 #include <vector>
 
 #define MAX_POST_PROCESS_HELPER_TEXTURES 2
-#define GPU_BOOL int // bools are 4 bytes on the gpu
 
 class Game;
 
@@ -44,6 +43,7 @@ public:
 
 	Int2 GetViewDimensions() const;
 	Int2 GetViewOffset() const;
+	float GetViewAspectRatio() const;
 
 	//void StartTextBatch();
 	// DirectX::SpriteBatch* GetSpriteBatch() const;
@@ -51,12 +51,12 @@ public:
 	//void SetLights(const Light* lights, int numLights, const Color& ambientColor);
 	//void SetFullscreen(bool fullscreen);
 
-	virtual VertexShader LoadVertexShader(std::wstring fileName) = 0;
-	virtual GeometryShader LoadGeometryShader(std::wstring fileName) = 0;
-	virtual PixelShader LoadPixelShader(std::wstring fileName) = 0;
-	virtual ComputeShader LoadComputeShader(std::wstring fileName) = 0;
+	virtual VertexShader LoadVertexShader(std::wstring directory, std::wstring fileName) = 0;
+	virtual GeometryShader LoadGeometryShader(std::wstring directory, std::wstring fileName) = 0;
+	virtual PixelShader LoadPixelShader(std::wstring directory, std::wstring fileName) = 0;
+	virtual ComputeShader LoadComputeShader(std::wstring directory, std::wstring fileName) = 0;
 
-	//virtual Sprite LoadSprite(std::wstring fileName) = 0;
+	virtual Texture2D LoadSprite(std::wstring directory, std::wstring fileName) = 0;
 	virtual Sampler CreateDefaultSampler() = 0;
 	virtual Mesh CreateMesh(const Vertex* vertices, int vertexCount, const unsigned int* indices, int indexCount, bool editable) = 0;
 	virtual ArrayBuffer CreateArrayBuffer(unsigned int elements, unsigned int elementBytes, bool structured) = 0;
@@ -95,6 +95,7 @@ public:
 protected:
 	Int2 viewportDims;
 	Int2 viewportOffset;
+	float viewAspectRatio;
 	RenderTarget postProcessTargets[2];
 	RenderTarget postProcessHelpers[MAX_POST_PROCESS_HELPER_TEXTURES];
 
