@@ -2,6 +2,8 @@
 #include "Transform.h"
 #include "Buffers.h"
 
+#include "SpriteRenderer.h"
+
 #define CAMERA_Z 0
 #define CAMERA_DEPTH 100
 
@@ -16,7 +18,7 @@ class Scene
 public:
 	Camera camera;
 
-	Scene();
+	Scene(float cameraWidth);
 	virtual ~Scene();
 
 	virtual void Update(float deltaTime);
@@ -25,5 +27,8 @@ public:
 private:
 	ConstantBuffer projectionBuffer;
 	Transform transforms[10];
+
+	float t = 0.f;
+	SpriteRenderer* testRenderer;
 };
 

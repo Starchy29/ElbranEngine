@@ -8,5 +8,5 @@
 
 #ifdef WINDOWS
 #define START_WINDOW_WIDTH 960
-#define START_WINDOW_HEIGHT 600
+#define START_WINDOW_HEIGHT 540
 #endif

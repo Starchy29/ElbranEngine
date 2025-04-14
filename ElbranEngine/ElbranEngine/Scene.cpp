@@ -187,27 +187,6 @@ void Scene::Add(GameObject* object) {
 }
 
 void Scene::Remove(GameObject* removed) {
-	sceneMembers->Remove(removed);
-
-	switch(removed->renderMode) {
-	case RenderMode::Opaque:
-		opaques->Remove(removed);
-		break;
-	case RenderMode::Translucent:
-		translucents->Remove(removed);
-		break;
-	case RenderMode::Text:
-		texts->Remove(removed);
-		break;
-	case RenderMode::Light:
-		lightObjects->Remove(removed);
-		break;
-	}
-
-	toBeDeleted.push_back(removed);
-}
-
-void Scene::Remove(GameObject* removed) {
 	toBeDeleted.push_back(removed);
 }
 

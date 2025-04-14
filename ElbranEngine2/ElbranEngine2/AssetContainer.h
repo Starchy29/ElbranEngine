@@ -14,6 +14,7 @@ public:
 	VertexShader fullscreenVS;
 	VertexShader cameraVS;
 
+	PixelShader solidColorPS;
 	PixelShader texturePS;
 
 	Texture2D testSprite;

@@ -10,7 +10,6 @@ Application::Application(std::wstring filePath, GraphicsAPI* graphics) {
 	// sounds = new SoundMixer();
 	// InputManager* input;
 	assets = new AssetContainer(filePath, graphics);
-	game = new Game();
 	// rng = new Random();
 
 	this->filePath = filePath;
@@ -18,17 +17,22 @@ Application::Application(std::wstring filePath, GraphicsAPI* graphics) {
 
 Application::~Application() {
 	// delete rng;
+	delete game;
 	// delete input;
 	// delete sounds;
-	delete game;
 	delete assets;
 	delete graphics;
+}
+
+void Application::SetupGame() {
+	// called after the constructor, when all assets are loaded
+	game = new Game();
 }
 
 void Application::Update(float deltaTime) {
 	//input->Update();
 	//audio->Update(fDeltaTime);
-	//game->Update(fDeltaTime);
+	game->Update(deltaTime);
 	graphics->Render(game);
 
 	//input->mouseWheelDelta = 0.0f;

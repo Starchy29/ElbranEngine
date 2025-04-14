@@ -12,12 +12,12 @@ SpriteRenderer::SpriteRenderer(const Texture2D* sprite) {
 	lit = false;
 }
 
-void SpriteRenderer::Draw() {
+void SpriteRenderer::Draw(Vector2 position) {
 	GraphicsAPI* graphics = app->graphics;
 
 	VertexShader* vertexShader = &app->assets->cameraVS;
 	CameraVSConstants vsInput;
-	vsInput.worldTransform = Matrix::Identity;
+	vsInput.worldTransform = Matrix::Translate(position.x, position.y);
 	vsInput.flipX = flipX;
 	vsInput.flipY = flipY;
 	graphics->WriteBuffer(&vsInput, sizeof(CameraVSConstants), vertexShader->constants.data);

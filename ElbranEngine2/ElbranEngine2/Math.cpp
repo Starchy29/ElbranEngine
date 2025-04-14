@@ -351,8 +351,8 @@ Matrix Matrix::View(Vector2 eyePosition, float rotation) {
 
 Matrix Matrix::ProjectOrthographic(float viewWidth, float viewHeight, float viewRange) {
 	return Matrix{ {
-		{ 1.f/viewWidth, 0.f, 0.f, 0.f },
-		{ 0.f, 1.f/viewHeight, 0.f, 0.f },
+		{ 2.f/viewWidth, 0.f, 0.f, 0.f },
+		{ 0.f, 2.f/viewHeight, 0.f, 0.f },
 		{ 0.f, 0.f, 1.f/viewRange, 0.f },
 		{ 0.f, 0.f, 0.f, 1.f }
 	} };

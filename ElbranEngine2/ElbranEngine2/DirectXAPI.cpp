@@ -129,8 +129,8 @@ DirectXAPI::DirectXAPI(HWND windowHandle, Int2 windowDims, float viewAspectRatio
 
 	// set the input layout to match the Vertex struct in GraphicsAPI.h
 	D3D11_INPUT_ELEMENT_DESC inputDescriptions[2];
-	inputDescriptions[0] = { "POSITION", 0, DXGI_FORMAT_R32G32_FLOAT };
-	inputDescriptions[1] = { "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT };
+	inputDescriptions[0] = { "POSITION", 0, DXGI_FORMAT_R32G32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT };
+	inputDescriptions[1] = { "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT };
 
 	Microsoft::WRL::ComPtr<ID3DBlob> shaderBlob;
 	std::wstring fileString = directory + L"CameraVS.cso";
@@ -348,7 +348,7 @@ ConstantBuffer DirectXAPI::CreateConstantBuffer(unsigned int byteLength) {
 	description.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
 	description.MiscFlags = 0;
 	description.StructureByteStride = 0;
-	description.ByteWidth = byteLength;
+	description.ByteWidth = (byteLength + 15) / 16 * 16; // must be a multiple of 16
 
 	device->CreateBuffer(&description, 0, &result.data);
 	return result;
@@ -540,7 +540,7 @@ void DirectXAPI::SetRenderTarget(const RenderTarget* renderTarget) {
 }
 
 void DirectXAPI::ClearBackBuffer() {
-	float black[4] { 0.f, 0.f, 1.f, 0.f };
+	float black[4] { 0.f, 0.f, 0.f, 0.f };
 	context->ClearRenderTargetView(backBufferView.Get(), black);
 }
 

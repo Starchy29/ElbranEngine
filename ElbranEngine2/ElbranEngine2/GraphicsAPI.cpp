@@ -37,7 +37,7 @@ void GraphicsAPI::Render(Game* game) {
 		SetRenderTarget(&postProcessTargets[0]);
 	}
 
-	//game->Draw();
+	game->Draw();
 
 	if(!postProcessed && postProcesses.size() > 0) {
 		ApplyPostProcesses();

@@ -13,6 +13,6 @@ public:
 
 	SpriteRenderer(const Texture2D* sprite);
 	
-	void Draw();
+	void Draw(Vector2 position);
 };
 

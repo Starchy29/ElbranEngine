@@ -19,6 +19,7 @@ public:
 	Application(std::wstring filePath, GraphicsAPI* graphics);
 	~Application();
 
+	void SetupGame();
 	void Update(float deltaTime);
 };
 

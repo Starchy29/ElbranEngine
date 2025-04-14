@@ -25,9 +25,10 @@ AssetContainer::AssetContainer(std::wstring filePath, GraphicsAPI* graphics) {
 	unitSquare = graphics->CreateMesh(vertices, 4, indices, 6, false);
 
 	// load shaders
-	fullscreenVS = {}; //graphics->LoadVertexShader();
+	fullscreenVS = graphics->LoadVertexShader(filePath, L"FullscreenVS.cso");
 	cameraVS = graphics->LoadVertexShader(filePath, L"CameraVS.cso");
 
+	solidColorPS = graphics->LoadPixelShader(filePath, L"SolidColorPS.cso");
 	texturePS = graphics->LoadPixelShader(filePath, L"TexturePS.cso");
 
 	testSprite = graphics->LoadSprite(filePath, L"elbran.png");
@@ -42,6 +43,7 @@ AssetContainer::~AssetContainer() {
 	fullscreenVS.Release();
 	cameraVS.Release();
 
+	solidColorPS.Release();
 	texturePS.Release();
 
 	testSprite.Release();

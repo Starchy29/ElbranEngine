@@ -176,6 +176,7 @@ int WINAPI WinMain(
 	InitWindow(hInstance);
 	directX = new DirectXAPI(windowHandle, Int2(START_WINDOW_WIDTH, START_WINDOW_HEIGHT), ASPECT_RATIO, directory);
 	app = new Application(directory, directX);
+	app->SetupGame();
 	RunApp();
 	delete app;
 	return 0;
