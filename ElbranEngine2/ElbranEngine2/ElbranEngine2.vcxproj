@@ -154,7 +154,6 @@
     <ClCompile Include="Scene.cpp" />
     <ClCompile Include="Shaders.cpp" />
     <ClCompile Include="SpriteRenderer.cpp" />
-    <ClCompile Include="Transform.cpp" />
     <ClCompile Include="Tween.cpp" />
     <ClCompile Include="WindowsMain.cpp" />
   </ItemGroup>
@@ -165,6 +164,7 @@
     <ClInclude Include="Common.h" />
     <ClInclude Include="Configs.h" />
     <ClInclude Include="DirectXAPI.h" />
+    <ClInclude Include="FixedList.h" />
     <ClInclude Include="Game.h" />
     <ClInclude Include="GameObject.h" />
     <ClInclude Include="GraphicsAPI.h" />

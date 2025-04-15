@@ -6,7 +6,7 @@ struct Transform {
 	Vector2 scale;
 	float rotation;
 	float zOrder;
-	const Transform* parent;
+	Transform const* parent;
 
 	// AlignedRect GetArea() const;
 	// void SetEdge

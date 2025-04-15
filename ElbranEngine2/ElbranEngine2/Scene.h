@@ -27,6 +27,7 @@ public:
 private:
 	ConstantBuffer projectionBuffer;
 	Transform transforms[10];
+	Matrix worldMatrices[10];
 
 	float t = 0.f;
 	SpriteRenderer* testRenderer;

@@ -17,7 +17,7 @@ void SpriteRenderer::Draw(Vector2 position) {
 
 	VertexShader* vertexShader = &app->assets->cameraVS;
 	CameraVSConstants vsInput;
-	vsInput.worldTransform = Matrix::Translate(position.x, position.y);
+	vsInput.worldTransform = Matrix::Translate(position.x, position.y).Transpose();
 	vsInput.flipX = flipX;
 	vsInput.flipY = flipY;
 	graphics->WriteBuffer(&vsInput, sizeof(CameraVSConstants), vertexShader->constants.data);

@@ -45,7 +45,6 @@
     </ClCompile>
     <ClCompile Include="AssetContainer.cpp" />
     <ClCompile Include="Scene.cpp" />
-    <ClCompile Include="Transform.cpp" />
     <ClCompile Include="SpriteRenderer.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -83,6 +82,9 @@
     <ClInclude Include="SpriteRenderer.h" />
     <ClInclude Include="ShaderConstants.h">
       <Filter>Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="FixedList.h">
+      <Filter>Toolkit</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

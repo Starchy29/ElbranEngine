@@ -12,6 +12,32 @@ Scene::Scene(float cameraWidth) {
 	projectionBuffer = graphics->CreateConstantBuffer(sizeof(Matrix));
 
 	testRenderer = new SpriteRenderer(&app->assets->testSprite);
+
+	// TEST CODE
+	Vector2 topLeft = Vector2(-0.5f, 0.5f);
+	Vector2 topRight = Vector2(0.5f, 0.5f);
+	Vector2 botLeft = Vector2(-0.5f, -0.5f);
+	Vector2 botRight = Vector2(0.5f, -0.5f);
+
+	topLeft = Matrix::Translate(0.2f, 0.f) * topLeft;
+	topRight = Matrix::Translate(0.2f, 0.f) * topRight;
+	botLeft = Matrix::Translate(0.2f, 0.f) * botLeft;
+	botRight = Matrix::Translate(0.2f, 0.f) * botRight;
+
+	topLeft = Matrix::View(camera.position, camera.rotation) * topLeft;
+	topRight = Matrix::View(camera.position, camera.rotation) * topRight;
+	botLeft = Matrix::View(camera.position, camera.rotation) * botLeft;
+	botRight = Matrix::View(camera.position, camera.rotation) * botRight;
+
+	topLeft = Matrix::ProjectOrthographic(camera.viewWidth, camera.viewWidth / app->graphics->GetViewAspectRatio(), CAMERA_DEPTH) * topLeft;
+	topRight = Matrix::ProjectOrthographic(camera.viewWidth, camera.viewWidth / app->graphics->GetViewAspectRatio(), CAMERA_DEPTH) * topRight;
+	botLeft = Matrix::ProjectOrthographic(camera.viewWidth, camera.viewWidth / app->graphics->GetViewAspectRatio(), CAMERA_DEPTH) * botLeft;
+	botRight = Matrix::ProjectOrthographic(camera.viewWidth, camera.viewWidth / app->graphics->GetViewAspectRatio(), CAMERA_DEPTH) * botRight;
+
+	Matrix fullMatrix = Matrix::ProjectOrthographic(camera.viewWidth, camera.viewWidth / app->graphics->GetViewAspectRatio(), CAMERA_DEPTH) *
+		Matrix::View(camera.position, camera.rotation) *
+		Matrix::Translate(0.2f, 0.f);
+	// END TEST
 }
 
 Scene::~Scene() {
@@ -24,12 +50,14 @@ void Scene::Update(float deltaTime) {
 }
 
 void Scene::Draw() {
+	// convert all transforms into matrices
+
 	GraphicsAPI* graphics = app->graphics;
 
 	// set the projection matrix for vertex shaders
 	Matrix viewProjection =
-		Matrix::ProjectOrthographic(camera.viewWidth, camera.viewWidth / app->graphics->GetViewAspectRatio(), CAMERA_DEPTH) *
-		Matrix::View(camera.position, camera.rotation);
+		(Matrix::ProjectOrthographic(camera.viewWidth, camera.viewWidth / app->graphics->GetViewAspectRatio(), CAMERA_DEPTH)
+		* Matrix::View(camera.position, camera.rotation)).Transpose();
 	graphics->WriteBuffer(&viewProjection, sizeof(Matrix), projectionBuffer.data);
 	graphics->SetConstants(ShaderStage::Vertex, &projectionBuffer, 1);
 

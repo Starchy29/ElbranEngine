@@ -318,6 +318,15 @@ Matrix Matrix::operator-() const {
 	return result;
 }
 
+Matrix Matrix::Transpose() const {
+	return Matrix{ {
+		{ values[0][0], values[1][0], values[2][0], values[3][0]},
+		{ values[0][1], values[1][1], values[2][1], values[3][1] },
+		{ values[0][2], values[1][2], values[2][2], values[3][2] },
+		{ values[0][3], values[1][3], values[2][3], values[3][3] }
+	} };
+}
+
 Matrix Matrix::Rotation(float radians) {
 	return Matrix{ {
 		{ cosf(radians), -sinf(radians), 0.f, 0.f },
@@ -336,11 +345,11 @@ Matrix Matrix::Scale(float x, float y) {
 	} };
 }
 
-Matrix Matrix::Translate(float x, float y) {
+Matrix Matrix::Translate(float x, float y, float z) {
 	return Matrix{ {
 		{ 1.f, 0.f, 0.f, x },
 		{ 0.f, 1.f, 0.f, y },
-		{ 0.f, 0.f, 1.f, 0.f },
+		{ 0.f, 0.f, 1.f, z },
 		{ 0.f, 0.f, 0.f, 1.f }
 	} };
 }
