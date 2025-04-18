@@ -1,15 +1,15 @@
 #define PI 3.141592653
 
 struct Light {
-	float4 color;
 	float2 worldPosition;
+	float rotation;
+	float4 color;
 	float radius;
 	float brightness;
 	float coneSize;
-	float rotation;
 };
 
-cbuffer LightData : register(b13) { // max buffer register
+cbuffer LightData : register(b1) { // max buffer register
 	float4 ambientLight;
 	int numLights;
 }

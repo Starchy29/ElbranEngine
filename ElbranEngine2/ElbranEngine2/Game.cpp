@@ -1,8 +1,11 @@
 #include "Game.h"
 #include "Scene.h"
+#include "Application.h"
+#include "AssetContainer.h"
 
 Game::Game() {
-	testScene = new Scene(5.0f);
+	testScene = new Scene(5, 5.0f);
+	SpriteRenderer* checker = testScene->AddSprite(&app->assets->testSprite);
 }
 
 Game::~Game() {

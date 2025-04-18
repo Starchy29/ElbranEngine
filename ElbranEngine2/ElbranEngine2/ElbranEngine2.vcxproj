@@ -168,7 +168,9 @@
     <ClInclude Include="Game.h" />
     <ClInclude Include="GameObject.h" />
     <ClInclude Include="GraphicsAPI.h" />
+    <ClInclude Include="IBehavior.h" />
     <ClInclude Include="IPostProcess.h" />
+    <ClInclude Include="Lights.h" />
     <ClInclude Include="Math.h" />
     <ClInclude Include="Scene.h" />
     <ClInclude Include="ShaderConstants.h" />

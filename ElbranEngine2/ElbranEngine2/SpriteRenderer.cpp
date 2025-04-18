@@ -4,7 +4,10 @@
 #include "AssetContainer.h"
 #include "ShaderConstants.h"
 
-SpriteRenderer::SpriteRenderer(const Texture2D* sprite) {
+SpriteRenderer::SpriteRenderer(Texture2D* sprite) {
+	transform = nullptr;
+	worldMatrix = nullptr;
+
 	this->sprite = sprite;
 	tint = Colors::White;
 	flipX = false;
@@ -12,12 +15,12 @@ SpriteRenderer::SpriteRenderer(const Texture2D* sprite) {
 	lit = false;
 }
 
-void SpriteRenderer::Draw(Vector2 position) {
+void SpriteRenderer::Draw() {
 	GraphicsAPI* graphics = app->graphics;
 
 	VertexShader* vertexShader = &app->assets->cameraVS;
 	CameraVSConstants vsInput;
-	vsInput.worldTransform = Matrix::Translate(position.x, position.y).Transpose();
+	vsInput.worldTransform = *worldMatrix;
 	vsInput.flipX = flipX;
 	vsInput.flipY = flipY;
 	graphics->WriteBuffer(&vsInput, sizeof(CameraVSConstants), vertexShader->constants.data);

@@ -86,6 +86,10 @@
     <ClInclude Include="FixedList.h">
       <Filter>Toolkit</Filter>
     </ClInclude>
+    <ClInclude Include="IBehavior.h" />
+    <ClInclude Include="Lights.h">
+      <Filter>Graphics</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="CameraVS.hlsl">

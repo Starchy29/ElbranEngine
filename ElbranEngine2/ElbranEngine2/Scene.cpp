@@ -2,55 +2,70 @@
 #include "Application.h"
 #include "AssetContainer.h"
 #include "GraphicsAPI.h"
+#include "ShaderConstants.h"
 
-Scene::Scene(float cameraWidth) {
+// these match Lighting.hlsli
+#define LIGHTS_REGISTER 127
+#define LIGHT_INFO_REGISTER 1
+
+Scene::Scene(unsigned int maxEntities, float cameraWidth)  {
 	camera = {};
 	camera.viewWidth = cameraWidth;
+	ambientLight = Colors::White;
+	backgroundColor = Color(0.1f, 0.1f, 0.1f);
+	backgroundImage = nullptr;
+
+	entityCount = 0;
+	transforms = new Transform[maxEntities];
+	worldMatrices = new Matrix[maxEntities];
+	sprites = FixedList<SpriteRenderer*>(maxEntities);
+	behaviors = FixedList<IBehavior*>(maxEntities);
+	lights = FixedList<LightSource>(maxEntities);
 
 	GraphicsAPI* graphics = app->graphics;
 
 	projectionBuffer = graphics->CreateConstantBuffer(sizeof(Matrix));
-
-	testRenderer = new SpriteRenderer(&app->assets->testSprite);
-
-	// TEST CODE
-	Vector2 topLeft = Vector2(-0.5f, 0.5f);
-	Vector2 topRight = Vector2(0.5f, 0.5f);
-	Vector2 botLeft = Vector2(-0.5f, -0.5f);
-	Vector2 botRight = Vector2(0.5f, -0.5f);
-
-	topLeft = Matrix::Translate(0.2f, 0.f) * topLeft;
-	topRight = Matrix::Translate(0.2f, 0.f) * topRight;
-	botLeft = Matrix::Translate(0.2f, 0.f) * botLeft;
-	botRight = Matrix::Translate(0.2f, 0.f) * botRight;
-
-	topLeft = Matrix::View(camera.position, camera.rotation) * topLeft;
-	topRight = Matrix::View(camera.position, camera.rotation) * topRight;
-	botLeft = Matrix::View(camera.position, camera.rotation) * botLeft;
-	botRight = Matrix::View(camera.position, camera.rotation) * botRight;
-
-	topLeft = Matrix::ProjectOrthographic(camera.viewWidth, camera.viewWidth / app->graphics->GetViewAspectRatio(), CAMERA_DEPTH) * topLeft;
-	topRight = Matrix::ProjectOrthographic(camera.viewWidth, camera.viewWidth / app->graphics->GetViewAspectRatio(), CAMERA_DEPTH) * topRight;
-	botLeft = Matrix::ProjectOrthographic(camera.viewWidth, camera.viewWidth / app->graphics->GetViewAspectRatio(), CAMERA_DEPTH) * botLeft;
-	botRight = Matrix::ProjectOrthographic(camera.viewWidth, camera.viewWidth / app->graphics->GetViewAspectRatio(), CAMERA_DEPTH) * botRight;
-
-	Matrix fullMatrix = Matrix::ProjectOrthographic(camera.viewWidth, camera.viewWidth / app->graphics->GetViewAspectRatio(), CAMERA_DEPTH) *
-		Matrix::View(camera.position, camera.rotation) *
-		Matrix::Translate(0.2f, 0.f);
-	// END TEST
+	lightInfoBuffer = graphics->CreateConstantBuffer(sizeof(LightConstants));
+	lightsBuffer = graphics->CreateArrayBuffer(MAX_LIGHTS_ONSCREEN, sizeof(LightData), true);
 }
 
 Scene::~Scene() {
 	projectionBuffer.Release();
-	delete testRenderer;
+	lightInfoBuffer.Release();
+	lightsBuffer.Release();
+
+	delete[] transforms;
+	delete[] worldMatrices;
+	for(int i = 0; i < sprites.GetSize(); i++) {
+		delete sprites[i];
+	}
+	delete[] sprites.dataArray;
+	for(int i = 0; i < behaviors.GetSize(); i++) {
+		delete behaviors[i];
+	}
+	delete[] behaviors.dataArray;
+	delete[] lights.dataArray;
 }
 
 void Scene::Update(float deltaTime) {
 	t += deltaTime;
+	transforms[0].position.x = sinf(t);
+	int numBehaviors = behaviors.GetSize();
+	for(int i = 0; i < numBehaviors; i++) {
+		behaviors[i]->Update(deltaTime);
+	}
 }
 
 void Scene::Draw() {
 	// convert all transforms into matrices
+	for(int i = 0; i < entityCount; i++) {
+		Transform* transform = &transforms[i];
+		worldMatrices[i] = 
+			(Matrix::Translate(transform->position.x, transform->position.y, transform->zOrder) *
+			Matrix::Rotation(transform->rotation) *
+			Matrix::Scale(transform->scale.x, transform->scale.y))
+			.Transpose();
+	}
 
 	GraphicsAPI* graphics = app->graphics;
 
@@ -62,16 +77,78 @@ void Scene::Draw() {
 	graphics->SetConstants(ShaderStage::Vertex, &projectionBuffer, 1);
 
 	// set the light data for pixel shaders
+	LightData lightData[MAX_LIGHTS_ONSCREEN];
+	LightConstants lightConstants;
+	lightConstants.ambientLight = ambientLight;
+	lightConstants.lightCount = 0;
+
+	int totalLights = lights.GetSize();
+	for(int i = 0; i < totalLights; i++) {
+		// TODO: copy light data
+
+		if(lightConstants.lightCount >= MAX_LIGHTS_ONSCREEN) {
+			break;
+		}
+	}
+
+	graphics->WriteBuffer(&lightData, sizeof(LightData) * MAX_LIGHTS_ONSCREEN, lightsBuffer.buffer);
+	graphics->SetArray(ShaderStage::Pixel, &lightsBuffer, LIGHTS_REGISTER);
+
+	graphics->WriteBuffer(&lightConstants, sizeof(LightConstants), lightInfoBuffer.data);
+	graphics->SetConstants(ShaderStage::Pixel, &lightInfoBuffer, LIGHT_INFO_REGISTER);
 
 	// draw opaques front to back
-	testRenderer->Draw(Vector2(3.f * sinf(t), 0.f));
+	int numOpaques = sprites.GetSize();
+	for(int i = 0; i < numOpaques; i++) {
+		sprites[i]->Draw();
+	}
 
 	// draw the background
-	Color backgroundColor = Color(0.2f, 0.2f, 0.2f);
-	graphics->WriteBuffer(&backgroundColor, sizeof(Color), app->assets->solidColorPS.constants.data);
-	graphics->SetConstants(ShaderStage::Pixel, &app->assets->solidColorPS.constants, 0);
-	graphics->SetPixelShader(&app->assets->solidColorPS);
+	if(backgroundImage) {
+		TexturePSConstants psInput;
+		psInput.tint = backgroundColor;
+		psInput.lit = false;
+
+		graphics->WriteBuffer(&psInput, sizeof(TexturePSConstants), app->assets->texturePS.constants.data);
+		graphics->SetConstants(ShaderStage::Pixel, &app->assets->texturePS.constants, 0);
+		graphics->SetTexture(ShaderStage::Pixel, backgroundImage, 0);
+		graphics->SetPixelShader(&app->assets->texturePS);
+	} else {
+		graphics->WriteBuffer(&backgroundColor, sizeof(Color), app->assets->solidColorPS.constants.data);
+		graphics->SetConstants(ShaderStage::Pixel, &app->assets->solidColorPS.constants, 0);
+		graphics->SetPixelShader(&app->assets->solidColorPS);
+	}
 	graphics->DrawFullscreen();
 
 	// draw translucents back to front
+}
+
+SpriteRenderer* Scene::AddSprite(Texture2D* sprite) {
+	SpriteRenderer* added = new SpriteRenderer(sprite);
+	sprites.Add(added);
+	transforms[entityCount] = {};
+	transforms[entityCount].scale = Vector2(1.f, 1.f);
+	added->transform = &transforms[entityCount];
+	added->worldMatrix = &worldMatrices[entityCount];
+	entityCount++;
+	return added;
+}
+
+void Scene::RemoveSprite(SpriteRenderer* sprite) {
+	// determine the index
+	int index = -1;
+	int numSprites = sprites.GetSize();
+	for(int i = 0; i < numSprites; i++) {
+		if(sprites[i] == sprite) {
+			index = i;
+			break;
+		}
+	}
+
+	assert(index >= 0 && "attempted to remove a sprite that was not added");
+
+	// note that this transform index is now available
+
+	sprites.RemoveAt(index);
+	delete sprite;
 }
