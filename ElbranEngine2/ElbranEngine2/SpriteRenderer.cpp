@@ -17,6 +17,7 @@ SpriteRenderer::SpriteRenderer(Texture2D* sprite) {
 
 void SpriteRenderer::Draw() {
 	GraphicsAPI* graphics = app->graphics;
+	worldMatrix->values[0];
 
 	VertexShader* vertexShader = &app->assets->cameraVS;
 	CameraVSConstants vsInput;

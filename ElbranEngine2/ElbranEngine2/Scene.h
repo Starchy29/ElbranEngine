@@ -4,6 +4,7 @@
 #include "IBehavior.h"
 #include "Lights.h"
 #include "FixedList.h"
+#include <vector>
 #include "SpriteRenderer.h"
 
 #define CAMERA_Z 0
@@ -30,8 +31,10 @@ public:
 	virtual void Update(float deltaTime);
 	virtual void Draw();
 
+	void CreateTransform(Transform** outTransform, const Matrix** outMatrix);
 	SpriteRenderer* AddSprite(Texture2D* sprite);
 
+	void ReleaseTransform(Transform* transform);
 	void RemoveSprite(SpriteRenderer* sprite);
 
 private:
@@ -39,6 +42,7 @@ private:
 	Transform* transforms;
 	Matrix* worldMatrices;
 
+	std::vector<int> openSlots;
 	FixedList<IBehavior*> behaviors;
 	FixedList<SpriteRenderer*> sprites;
 	FixedList<LightSource> lights;
@@ -47,7 +51,6 @@ private:
 	ConstantBuffer lightInfoBuffer;
 	ArrayBuffer lightsBuffer;
 
-	float t = 0.f;
-	
+	float t = 0.f; // TEMP
 };
 

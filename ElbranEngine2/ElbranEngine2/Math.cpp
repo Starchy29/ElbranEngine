@@ -244,7 +244,6 @@ bool AlignedRect::Intersects(const Circle& circle) const {
 
 #pragma region Matrix
 Matrix operator+(const Matrix& left, const Matrix& right) {
-	// TODO: use threading
 	Matrix result;
 	for(int r = 0; r < 4; r++) {
 		for(int c = 0; c < 4; c++) {
@@ -255,7 +254,6 @@ Matrix operator+(const Matrix& left, const Matrix& right) {
 }
 
 Matrix operator-(const Matrix& left, const Matrix& right) {
-	// TODO: use threading
 	Matrix result;
 	for(int r = 0; r < 4; r++) {
 		for(int c = 0; c < 4; c++) {
@@ -274,20 +272,18 @@ Vector2 operator*(const Matrix& transform, const Vector2& vector) {
 }
 
 Matrix operator*(const float scalar, const Matrix& matrix) {
-	// TODO: use threading
 	Matrix result;
 	for(int r = 0; r < 4; r++) {
 		for(int c = 0; c < 4; c++) {
 			result.values[r][c] = scalar * matrix.values[r][c];
 		}
 	}
+
 	return result;
 }
 
 Matrix operator*(const Matrix& left, const Matrix& right) {
 	Matrix result;
-
-	// TODO: use threading
 	for(int r = 0; r < 4; r++) {
 		for(int c = 0; c < 4; c++) {
 			result.values[r][c] = 0.f;
@@ -308,7 +304,6 @@ const Matrix Matrix::Identity {{
 }};
 
 Matrix Matrix::operator-() const {
-	// TODO: use threading
 	Matrix result;
 	for(int r = 0; r < 4; r++) {
 		for(int c = 0; c < 4; c++) {

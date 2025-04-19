@@ -50,8 +50,9 @@ Scene::~Scene() {
 void Scene::Update(float deltaTime) {
 	t += deltaTime;
 	transforms[0].position.x = sinf(t);
-	int numBehaviors = behaviors.GetSize();
-	for(int i = 0; i < numBehaviors; i++) {
+
+	for(int i = 0; i < behaviors.GetSize(); i++) {
+		// behaviors may be added or deleted mid-update
 		behaviors[i]->Update(deltaTime);
 	}
 }
@@ -123,32 +124,53 @@ void Scene::Draw() {
 	// draw translucents back to front
 }
 
+void Scene::CreateTransform(Transform** outTransform, const Matrix** outMatrix) {
+	int newSlot = entityCount;
+	if(openSlots.size() > 0) {
+		newSlot = openSlots[openSlots.size() - 1];
+		openSlots.pop_back();
+	}
+
+	entityCount++;
+
+	transforms[newSlot] = {};
+	transforms[newSlot].scale = Vector2(1.f, 1.f);
+	worldMatrices[newSlot] = Matrix::Identity;
+
+	if(outTransform) {
+		*outTransform = &transforms[newSlot];
+	}
+	if(outMatrix) {
+		*outMatrix = &worldMatrices[newSlot];
+	}
+}
+
 SpriteRenderer* Scene::AddSprite(Texture2D* sprite) {
 	SpriteRenderer* added = new SpriteRenderer(sprite);
 	sprites.Add(added);
-	transforms[entityCount] = {};
-	transforms[entityCount].scale = Vector2(1.f, 1.f);
-	added->transform = &transforms[entityCount];
-	added->worldMatrix = &worldMatrices[entityCount];
-	entityCount++;
+	CreateTransform(&added->transform, &added->worldMatrix);
 	return added;
 }
 
-void Scene::RemoveSprite(SpriteRenderer* sprite) {
-	// determine the index
-	int index = -1;
-	int numSprites = sprites.GetSize();
-	for(int i = 0; i < numSprites; i++) {
-		if(sprites[i] == sprite) {
-			index = i;
-			break;
+void Scene::ReleaseTransform(Transform* transform) {
+	int openIndex = transform - transforms; // pointer difference is the index
+	openSlots.push_back(openIndex);
+
+	// sort into the vector so that the largest index is the smallest integer
+	for(int i = openSlots.size() - 1; i > 0; i--) {
+		if(openSlots[i] < openSlots[i-1]) {
+			return;
 		}
+
+		openSlots[i] = openSlots[i-1];
+		openSlots[i-1] = openIndex;
 	}
+}
 
-	assert(index >= 0 && "attempted to remove a sprite that was not added");
-
-	// note that this transform index is now available
-
+void Scene::RemoveSprite(SpriteRenderer* sprite) {
+	int index = sprite - sprites.dataArray[0];
+	assert(index >= 0 && index < sprites.GetSize() && "attempted to remove a sprite that was not added");
+	ReleaseTransform(sprite->transform);
 	sprites.RemoveAt(index);
 	delete sprite;
 }

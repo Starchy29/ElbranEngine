@@ -7,7 +7,7 @@ class SpriteRenderer
 {
 public:
 	Transform* transform;
-	Matrix const* worldMatrix;
+	const Matrix* worldMatrix;
 
 	Texture2D* sprite;
 	Color tint;
