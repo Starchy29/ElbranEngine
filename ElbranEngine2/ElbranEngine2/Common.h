@@ -21,6 +21,29 @@ struct Int2 {
 		this->x = x;
 		this->y = y;
 	}
+
+	Int2 operator+(const Int2& other) { return Int2(x + other.x, y + other.y); }
+	Int2 operator-(const Int2& other) { return Int2(x - other.x, y - other.y); }
+	Int2 operator*(const Int2& other) { return Int2(x * other.x, y * other.y); }
+	Int2 operator-() { return Int2(-x, -y); }
+};
+
+struct UInt2 {
+	unsigned int x;
+	unsigned int y;
+
+	UInt2() {
+		x = 0u;
+		y = 0u;
+	}
+
+	UInt2(unsigned int x, unsigned int y) {
+		this->x = x;
+		this->y = y;
+	}
+
+	UInt2 operator+(const UInt2& other) { return UInt2(x + other.x, y + other.y); }
+	UInt2 operator*(const UInt2& other) { return UInt2(x * other.x, y * other.y); }
 };
 
 struct Color {

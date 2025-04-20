@@ -4,16 +4,21 @@
 #include "AssetContainer.h"
 
 #include "HSVPostProcess.h"
+#include "BlurPostProcess.h"
 
 Game::Game() {
 	testScene = new Scene(5, 5.0f);
 	testScene->backgroundImage = &app->assets->apple;
 	SpriteRenderer* checker = testScene->AddSprite(&app->assets->testSprite);
 
-	HSVPostProcess* pp = new HSVPostProcess();
-	app->graphics->postProcesses.push_back(pp);
-	pp->contrast = 1.0f;
-	pp->saturation = -1.0f;
+	//HSVPostProcess* pp = new HSVPostProcess();
+	//app->graphics->postProcesses.push_back(pp);
+	//pp->contrast = -1.0f;
+	//pp->saturation = -1.0f;
+
+	BlurPostProcess* blurBoy = new BlurPostProcess();
+	app->graphics->postProcesses.push_back(blurBoy);
+	blurBoy->blurRadius = 100;
 }
 
 Game::~Game() {

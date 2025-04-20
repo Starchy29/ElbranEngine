@@ -58,8 +58,8 @@ public:
 	void ApplyPostProcesses();
 	const RenderTarget* GetPostProcessHelper(int slot);
 
-	Int2 GetViewDimensions() const;
-	Int2 GetViewOffset() const;
+	UInt2 GetViewDimensions() const;
+	UInt2 GetViewOffset() const;
 	float GetViewAspectRatio() const;
 
 	//void StartTextBatch();
@@ -110,8 +110,8 @@ public:
 	virtual void RunComputeShader(const ComputeShader* shader, unsigned int xThreads, unsigned int yThreads, unsigned int zThreads = 1) = 0;
 
 protected:
-	Int2 viewportDims;
-	Int2 viewportOffset;
+	UInt2 viewportDims;
+	UInt2 viewportOffset;
 	float viewAspectRatio;
 	RenderTarget postProcessTargets[2];
 	RenderTarget postProcessHelpers[MAX_POST_PROCESS_HELPER_TEXTURES];

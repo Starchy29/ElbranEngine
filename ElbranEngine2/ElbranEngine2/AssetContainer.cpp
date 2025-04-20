@@ -32,6 +32,7 @@ AssetContainer::AssetContainer(std::wstring filePath, GraphicsAPI* graphics) {
 	texturePS = graphics->LoadPixelShader(filePath, L"TexturePS.cso");
 
 	conSatValPP = graphics->LoadPixelShader(filePath, L"ConSatValPP.cso");
+	blurPP = graphics->LoadPixelShader(filePath, L"BlurPP.cso");
 
 	brightnessSumCS = graphics->LoadComputeShader(filePath, L"BrightnessSumCS.cso");
 
@@ -52,6 +53,7 @@ AssetContainer::~AssetContainer() {
 	texturePS.Release();
 
 	conSatValPP.Release();
+	blurPP.Release();
 
 	brightnessSumCS.Release();
 

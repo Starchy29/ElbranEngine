@@ -28,8 +28,8 @@ void HSVPostProcess::Render(GraphicsAPI* graphics, const RenderTarget* input, Re
 
 	if(contrast != 0) {
 		// determine average brightness for contrast adjustment
-		Int2 viewDims = graphics->GetViewDimensions();
-		graphics->WriteBuffer(&viewDims, sizeof(Int2), totalShader->constants.data);
+		UInt2 viewDims = graphics->GetViewDimensions();
+		graphics->WriteBuffer(&viewDims, sizeof(UInt2), totalShader->constants.data);
 		graphics->SetConstants(ShaderStage::Compute, &totalShader->constants, 0);
 		graphics->SetTexture(ShaderStage::Compute, input, 0);
 		

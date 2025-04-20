@@ -163,8 +163,8 @@ void DirectXAPI::Resize(Int2 windowDims, float viewAspectRatio) {
 
 	// set viewport
 	float windowAspectRatio = (float)windowDims.x / windowDims.y;
-	viewportOffset = Int2(0, 0);
-	viewportDims = Int2(windowDims.x, windowDims.y);
+	viewportOffset = UInt2(0, 0);
+	viewportDims = UInt2(windowDims.x, windowDims.y);
 	if(windowAspectRatio > viewAspectRatio) {
 		viewportDims.x = windowDims.y * viewAspectRatio;
 		viewportOffset.x = (windowDims.x - viewportDims.x) / 2;

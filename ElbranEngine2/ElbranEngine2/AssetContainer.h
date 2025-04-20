@@ -18,6 +18,7 @@ public:
 	PixelShader texturePS;
 
 	PixelShader conSatValPP;
+	PixelShader blurPP;
 
 	ComputeShader brightnessSumCS;
 

@@ -78,11 +78,11 @@ const RenderTarget* GraphicsAPI::GetPostProcessHelper(int slot) {
 	return &postProcessHelpers[slot];
 }
 
-Int2 GraphicsAPI::GetViewDimensions() const {
+UInt2 GraphicsAPI::GetViewDimensions() const {
 	return viewportDims;
 }
 
-Int2 GraphicsAPI::GetViewOffset() const {
+UInt2 GraphicsAPI::GetViewOffset() const {
 	return viewportOffset;
 }
 

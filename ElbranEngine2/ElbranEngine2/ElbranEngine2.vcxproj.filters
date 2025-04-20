@@ -52,6 +52,9 @@
     <ClCompile Include="HSVPostProcess.cpp">
       <Filter>Toolkit\Post Processes</Filter>
     </ClCompile>
+    <ClCompile Include="BlurPostProcess.cpp">
+      <Filter>Toolkit\Post Processes</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="GameObject.h" />
@@ -99,6 +102,9 @@
     <ClInclude Include="HSVPostProcess.h">
       <Filter>Toolkit\Post Processes</Filter>
     </ClInclude>
+    <ClInclude Include="BlurPostProcess.h">
+      <Filter>Toolkit\Post Processes</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="CameraVS.hlsl">
@@ -117,6 +123,9 @@
       <Filter>Shaders</Filter>
     </FxCompile>
     <FxCompile Include="BrightnessSumCS.hlsl">
+      <Filter>Shaders</Filter>
+    </FxCompile>
+    <FxCompile Include="BlurPP.hlsl">
       <Filter>Shaders</Filter>
     </FxCompile>
   </ItemGroup>

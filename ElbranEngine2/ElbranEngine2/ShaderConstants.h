@@ -21,3 +21,10 @@ struct ConSatValPPConstants {
 	float brightness;
 	float averageBrightness;
 };
+
+struct BlurPPConstants {
+	UInt2 viewMin;
+	UInt2 viewMax;
+	int blurRadius;
+	GPU_BOOL horizontal;
+};

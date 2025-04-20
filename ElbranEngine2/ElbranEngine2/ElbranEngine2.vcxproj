@@ -145,6 +145,7 @@
   <ItemGroup>
     <ClCompile Include="Application.cpp" />
     <ClCompile Include="AssetContainer.cpp" />
+    <ClCompile Include="BlurPostProcess.cpp" />
     <ClCompile Include="Buffers.cpp" />
     <ClCompile Include="DirectXAPI.cpp" />
     <ClCompile Include="Game.cpp" />
@@ -161,6 +162,7 @@
   <ItemGroup>
     <ClInclude Include="Application.h" />
     <ClInclude Include="AssetContainer.h" />
+    <ClInclude Include="BlurPostProcess.h" />
     <ClInclude Include="Buffers.h" />
     <ClInclude Include="Common.h" />
     <ClInclude Include="Configs.h" />
@@ -182,6 +184,12 @@
     <ClInclude Include="Tween.h" />
   </ItemGroup>
   <ItemGroup>
+    <FxCompile Include="BlurPP.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
+    </FxCompile>
     <FxCompile Include="BrightnessSumCS.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Compute</ShaderType>
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.0</ShaderModel>
