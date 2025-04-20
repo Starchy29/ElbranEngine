@@ -388,6 +388,24 @@ void DirectXAPI::CopyTexture(Texture2D* source, Texture2D* destination) {
 	context->CopyResource(destination->data, source->data);
 }
 
+void DirectXAPI::UnbindTextures(ShaderStage stage) {
+	ID3D11ShaderResourceView* nullTexes[10] {}; // will you ever need more than 10 textures at once?
+	switch(stage) {
+	case ShaderStage::Vertex:
+		context->VSSetShaderResources(0, 10, nullTexes);
+		break;
+	case ShaderStage::Geometry:
+		context->GSSetShaderResources(0, 10, nullTexes);
+		break;
+	case ShaderStage::Pixel:
+		context->PSSetShaderResources(0, 10, nullTexes);
+		break;
+	case ShaderStage::Compute:
+		context->CSSetShaderResources(0, 10, nullTexes);
+		break;
+	}
+}
+
 void DirectXAPI::SetEditBuffer(EditBuffer* buffer, unsigned int slot) {
 	context->CSSetUnorderedAccessViews(slot, 1, &(buffer->computeView), nullptr);
 }

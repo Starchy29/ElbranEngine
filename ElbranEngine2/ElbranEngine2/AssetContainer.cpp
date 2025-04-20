@@ -33,6 +33,8 @@ AssetContainer::AssetContainer(std::wstring filePath, GraphicsAPI* graphics) {
 
 	conSatValPP = graphics->LoadPixelShader(filePath, L"ConSatValPP.cso");
 	blurPP = graphics->LoadPixelShader(filePath, L"BlurPP.cso");
+	bloomFilterPP = graphics->LoadPixelShader(filePath, L"BloomFilterPP.cso");
+	screenSumPP = graphics->LoadPixelShader(filePath, L"ScreenSumPP.cso");
 
 	brightnessSumCS = graphics->LoadComputeShader(filePath, L"BrightnessSumCS.cso");
 
@@ -54,6 +56,8 @@ AssetContainer::~AssetContainer() {
 
 	conSatValPP.Release();
 	blurPP.Release();
+	bloomFilterPP.Release();
+	screenSumPP.Release();
 
 	brightnessSumCS.Release();
 

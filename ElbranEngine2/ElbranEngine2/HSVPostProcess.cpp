@@ -40,10 +40,7 @@ void HSVPostProcess::Render(GraphicsAPI* graphics, const RenderTarget* input, Re
 
 		float totalBrightness = (sums[0] + sums[1] + sums[2] + sums[3]) / 100.0f; // shader multiplies by 100, cancel it out
 		psInput.averageBrightness = totalBrightness / (viewDims.x * viewDims.y);
-
-		// unbind input texture so it can bind to pixel shader next
-		Texture2D nullTex = {};
-		graphics->SetTexture(ShaderStage::Compute, &nullTex, 0);
+		graphics->UnbindTextures(ShaderStage::Compute);
 	}
 
 	graphics->WriteBuffer(&psInput, sizeof(ConSatValPPConstants), ppShader->constants.data);

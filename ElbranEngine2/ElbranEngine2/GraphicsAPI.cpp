@@ -65,15 +65,13 @@ void GraphicsAPI::ApplyPostProcesses() {
 			CopyTexture(input, output);
 		}
 
-		// unbind the input texture so it can be bound again later
-		Texture2D nullTex = {};
-		SetTexture(ShaderStage::Pixel, &nullTex, 0);
+		UnbindTextures(ShaderStage::Pixel);
 	}
 
 	ResetRenderTarget();
 }
 
-const RenderTarget* GraphicsAPI::GetPostProcessHelper(int slot) {
+RenderTarget* GraphicsAPI::GetPostProcessHelper(int slot) {
 	assert(slot >= 0 && slot < MAX_POST_PROCESS_HELPER_TEXTURES && "index was out of range");
 	return &postProcessHelpers[slot];
 }

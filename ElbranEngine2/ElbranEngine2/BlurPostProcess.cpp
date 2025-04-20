@@ -10,7 +10,7 @@ BlurPostProcess::BlurPostProcess() {
 }
 
 void BlurPostProcess::Render(GraphicsAPI* graphics, const RenderTarget* input, RenderTarget* output) {
-	const RenderTarget* midTarget = graphics->GetPostProcessHelper(0);
+	RenderTarget* midTarget = graphics->GetPostProcessHelper(0);
 
 	BlurPPConstants psInput = {};
 	psInput.viewMin = graphics->GetViewOffset();

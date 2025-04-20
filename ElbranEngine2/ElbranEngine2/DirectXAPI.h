@@ -35,6 +35,7 @@ public:
     RenderTarget CreateRenderTarget(unsigned int width, unsigned int height) override;
     ComputeTexture CreateComputeTexture(unsigned int width, unsigned int height) override;
     void CopyTexture(Texture2D* source, Texture2D* destination) override;
+    void UnbindTextures(ShaderStage stage) override;
 
     void SetEditBuffer(EditBuffer* buffer, unsigned int slot) override;
     void WriteBuffer(const void* data, int byteLength, Buffer* buffer) override;

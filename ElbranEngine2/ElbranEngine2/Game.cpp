@@ -5,6 +5,7 @@
 
 #include "HSVPostProcess.h"
 #include "BlurPostProcess.h"
+#include "BloomPostProcess.h"
 
 Game::Game() {
 	testScene = new Scene(5, 5.0f);
@@ -16,9 +17,13 @@ Game::Game() {
 	//pp->contrast = -1.0f;
 	//pp->saturation = -1.0f;
 
-	BlurPostProcess* blurBoy = new BlurPostProcess();
-	app->graphics->postProcesses.push_back(blurBoy);
-	blurBoy->blurRadius = 100;
+	//BlurPostProcess* blurBoy = new BlurPostProcess();
+	//app->graphics->postProcesses.push_back(blurBoy);
+	//blurBoy->blurRadius = 100;
+
+	BloomPostProcess* bloomer = new BloomPostProcess();
+	bloomer->threshold = 0.7f;
+	app->graphics->postProcesses.push_back(bloomer);
 }
 
 Game::~Game() {

@@ -8,7 +8,7 @@
 #include <vector>
 
 #define OBJECT_CONSTANT_REGISTER 0 // shaders with per-object constant buffers should use register 0
-#define MAX_POST_PROCESS_HELPER_TEXTURES 2
+#define MAX_POST_PROCESS_HELPER_TEXTURES 3
 
 class Game;
 
@@ -56,7 +56,7 @@ public:
 
 	void Render(Game* game);
 	void ApplyPostProcesses();
-	const RenderTarget* GetPostProcessHelper(int slot);
+	RenderTarget* GetPostProcessHelper(int slot);
 
 	UInt2 GetViewDimensions() const;
 	UInt2 GetViewOffset() const;
@@ -89,6 +89,7 @@ public:
 	virtual void SetTexture(ShaderStage stage, const Texture2D* texture, unsigned int slot) = 0;
 	virtual void SetSampler(ShaderStage stage, Sampler* sampler, unsigned int slot) = 0;
 	virtual void CopyTexture(Texture2D* source, Texture2D* destination) = 0;
+	virtual void UnbindTextures(ShaderStage stage) = 0;
 
 	virtual void SetVertexShader(const VertexShader* shader) = 0;
 	virtual void SetGeometryShader(const GeometryShader* shader) = 0;
