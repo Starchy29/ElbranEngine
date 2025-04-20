@@ -2,11 +2,11 @@
 
 struct Light {
 	float2 worldPosition;
-	float rotation;
+	float2 direction;
 	float4 color;
 	float radius;
 	float brightness;
-	float coneSize;
+	float2 coneEdge;
 };
 
 cbuffer LightData : register(b1) { // max buffer register
@@ -25,12 +25,10 @@ float4 ApplyLights(float4 startColor, float2 worldPosition) {
 		float scalar = saturate(1.0 - dist * dist / (light.radius * light.radius));
 		scalar *= scalar;
 		
-		if(light.coneSize < 2 * PI) {
-			// become 0 light if out of cone
-			float2 lightToPixel = (worldPosition - light.worldPosition);
-			float2 lightDirection = normalize(float2(cos(light.rotation), sin(light.rotation))); // normalize prevents artifacts
-			scalar *= (acos(dot(lightToPixel, lightDirection) / length(lightToPixel)) <= light.coneSize / 2.0f);
-		}
+		// become 0 light if out of cone
+		float coneDot = dot(light.direction, light.coneEdge);
+		float pixelDot = dot(normalize(worldPosition - light.worldPosition), light.direction) + 1.0e-5;
+		scalar *= saturate(ceil((pixelDot - coneDot) / (1.0 - coneDot))); // 1 when pixel = direction, 0 when pixel = coneEdge
 		
 		multiplier += (scalar * light.brightness) * light.color;
 	}

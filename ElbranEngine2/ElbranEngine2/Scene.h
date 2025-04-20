@@ -15,6 +15,9 @@ struct Camera {
 	Vector2 position;
 	float viewWidth;
 	float rotation;
+
+	float GetViewHeight() const;
+	Vector2 GetWorldDimensions() const;
 };
 
 class Scene
@@ -33,9 +36,11 @@ public:
 
 	void CreateTransform(Transform** outTransform, const Matrix** outMatrix);
 	SpriteRenderer* AddSprite(Texture2D* sprite);
+	LightSource* AddLight(Color color, float radius);
 
 	void ReleaseTransform(Transform* transform);
 	void RemoveSprite(SpriteRenderer* sprite);
+	void RemoveLight(LightSource* light);
 
 private:
 	int entityCount;

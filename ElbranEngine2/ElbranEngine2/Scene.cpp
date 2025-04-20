@@ -11,7 +11,7 @@
 Scene::Scene(unsigned int maxEntities, float cameraWidth)  {
 	camera = {};
 	camera.viewWidth = cameraWidth;
-	ambientLight = Colors::White;
+	ambientLight = Color::White;
 	backgroundColor = Color(1.f, 1.f, 1.f);
 	backgroundImage = nullptr;
 
@@ -20,7 +20,7 @@ Scene::Scene(unsigned int maxEntities, float cameraWidth)  {
 	worldMatrices = new Matrix[maxEntities];
 	sprites = FixedList<SpriteRenderer*>(maxEntities);
 	behaviors = FixedList<IBehavior*>(maxEntities);
-	lights = FixedList<LightSource>(maxEntities);
+	lights = FixedList<LightSource>(maxEntities / 4);
 
 	GraphicsAPI* graphics = app->graphics;
 
@@ -49,7 +49,8 @@ Scene::~Scene() {
 
 void Scene::Update(float deltaTime) {
 	t += deltaTime;
-	transforms[0].position.x = sinf(t);
+	//transforms[0].position.x = sinf(t);
+	transforms[1].rotation = t;
 
 	for(int i = 0; i < behaviors.GetSize(); i++) {
 		// behaviors may be added or deleted mid-update
@@ -58,24 +59,20 @@ void Scene::Update(float deltaTime) {
 }
 
 void Scene::Draw() {
+	Matrix viewProjection =
+		Matrix::ProjectOrthographic(camera.viewWidth, camera.GetViewHeight(), CAMERA_DEPTH) *
+		Matrix::View(camera.position, camera.rotation);
+	
 	// convert all transforms into matrices
 	for(int i = 0; i < entityCount; i++) {
 		Transform* transform = &transforms[i];
 		worldMatrices[i] = 
-			(Matrix::Translate(transform->position.x, transform->position.y, transform->zOrder) *
+			Matrix::Translate(transform->position.x, transform->position.y, transform->zOrder) *
 			Matrix::Rotation(transform->rotation) *
-			Matrix::Scale(transform->scale.x, transform->scale.y))
-			.Transpose();
+			Matrix::Scale(transform->scale.x, transform->scale.y);
 	}
 
 	GraphicsAPI* graphics = app->graphics;
-
-	// set the projection matrix for vertex shaders
-	Matrix viewProjection =
-		(Matrix::ProjectOrthographic(camera.viewWidth, camera.viewWidth / app->graphics->GetViewAspectRatio(), CAMERA_DEPTH)
-		* Matrix::View(camera.position, camera.rotation)).Transpose();
-	graphics->WriteBuffer(&viewProjection, sizeof(Matrix), projectionBuffer.data);
-	graphics->SetConstants(ShaderStage::Vertex, &projectionBuffer, 1);
 
 	// set the light data for pixel shaders
 	LightData lightData[MAX_LIGHTS_ONSCREEN];
@@ -84,9 +81,28 @@ void Scene::Draw() {
 	lightConstants.lightCount = 0;
 
 	int totalLights = lights.GetSize();
+	AlignedRect screenArea = AlignedRect(-1.f, 1.f, 1.f, -1.f);
 	for(int i = 0; i < totalLights; i++) {
-		// TODO: copy light data
+		// omit offscreen lights
+		Vector2 closestPoint = lights[i].transform->position + (camera.position - lights[i].transform->position).SetLength(lights[i].radius);
+		closestPoint = viewProjection * closestPoint;
+		if(!(Circle(lights[i].transform->position, lights[i].radius).Contains(camera.position) || screenArea.Contains(closestPoint))) {
+			continue;
+		}
 
+		// copy this light to the gpu
+		int nextLight = lightConstants.lightCount;
+		lightData[nextLight].worldPosition = *(lights[i].worldMatrix) * Vector2::Zero;
+		Vector2 forward = *(lights[i].worldMatrix) * Vector2::Right;
+		lightData[nextLight].direction = (forward - lightData[i].worldPosition).Normalize();
+
+		lightData[nextLight].color = lights[i].color;
+		lightData[nextLight].radius = lights[i].radius;
+		lightData[nextLight].brightness = lights[i].brightness;
+
+		lightData[nextLight].coneEdge = *(lights[i].worldMatrix) * Vector2::FromAngle(lights[i].coneSize / 2.0f);
+
+		lightConstants.lightCount++;
 		if(lightConstants.lightCount >= MAX_LIGHTS_ONSCREEN) {
 			break;
 		}
@@ -97,6 +113,11 @@ void Scene::Draw() {
 
 	graphics->WriteBuffer(&lightConstants, sizeof(LightConstants), lightInfoBuffer.data);
 	graphics->SetConstants(ShaderStage::Pixel, &lightInfoBuffer, LIGHT_INFO_REGISTER);
+
+	// set the projection matrix for vertex shaders
+	viewProjection = viewProjection.Transpose();
+	graphics->WriteBuffer(&viewProjection, sizeof(Matrix), projectionBuffer.data);
+	graphics->SetConstants(ShaderStage::Vertex, &projectionBuffer, 1);
 
 	// draw opaques front to back
 	int numOpaques = sprites.GetSize();
@@ -152,6 +173,19 @@ SpriteRenderer* Scene::AddSprite(Texture2D* sprite) {
 	return added;
 }
 
+LightSource* Scene::AddLight(Color color, float radius) {
+	LightSource added;
+	added.color = color;
+	added.radius = radius;
+	added.brightness = 1.0f;
+	added.coneSize = 2.0f * PI;
+
+	CreateTransform(&added.transform, &added.worldMatrix);
+	lights.Add(added);
+
+	return &lights[lights.GetSize() - 1];
+}
+
 void Scene::ReleaseTransform(Transform* transform) {
 	int openIndex = transform - transforms; // pointer difference is the index
 	openSlots.push_back(openIndex);
@@ -173,4 +207,19 @@ void Scene::RemoveSprite(SpriteRenderer* sprite) {
 	ReleaseTransform(sprite->transform);
 	sprites.RemoveAt(index);
 	delete sprite;
+}
+
+void Scene::RemoveLight(LightSource* light) {
+	int index = light - lights.dataArray;
+	assert(index >= 0 && index < sprites.GetSize() && "attempted to remove a light that was not added");
+	ReleaseTransform(light->transform);
+	sprites.RemoveAt(index);
+}
+
+float Camera::GetViewHeight() const {
+	return viewWidth / app->graphics->GetViewAspectRatio();
+}
+
+Vector2 Camera::GetWorldDimensions() const {
+	return Vector2(viewWidth, viewWidth / app->graphics->GetViewAspectRatio());
 }

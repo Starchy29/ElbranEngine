@@ -8,9 +8,12 @@
 #include "BloomPostProcess.h"
 
 Game::Game() {
-	testScene = new Scene(5, 5.0f);
-	testScene->backgroundImage = &app->assets->apple;
-	SpriteRenderer* checker = testScene->AddSprite(&app->assets->testSprite);
+	testScene = new Scene(10, 5.0f);
+	testScene->backgroundColor = Color::Black;
+	//testScene->backgroundImage = &app->assets->apple;
+	SpriteRenderer* checker = testScene->AddSprite(&app->assets->apple);
+	checker->transform->scale = testScene->camera.GetWorldDimensions();
+	checker->lit = true;
 
 	//HSVPostProcess* pp = new HSVPostProcess();
 	//app->graphics->postProcesses.push_back(pp);
@@ -21,9 +24,9 @@ Game::Game() {
 	//app->graphics->postProcesses.push_back(blurBoy);
 	//blurBoy->blurRadius = 100;
 
-	BloomPostProcess* bloomer = new BloomPostProcess();
-	bloomer->threshold = 0.7f;
-	app->graphics->postProcesses.push_back(bloomer);
+	//BloomPostProcess* bloomer = new BloomPostProcess();
+	//bloomer->threshold = 0.7f;
+	//app->graphics->postProcesses.push_back(bloomer);
 }
 
 Game::~Game() {

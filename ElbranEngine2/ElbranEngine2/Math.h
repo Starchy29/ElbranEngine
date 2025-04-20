@@ -12,6 +12,7 @@ struct Vector2 {
 
 	Vector2();
 	Vector2(float x, float y);
+	static Vector2 FromAngle(float radians);
 
 	float Length() const;
 	float LengthSquared() const;

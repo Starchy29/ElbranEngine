@@ -18,6 +18,10 @@ Vector2::Vector2(float x, float y) {
 	this->y = y;
 }
 
+Vector2 Vector2::FromAngle(float radians) {
+	return Vector2(cosf(radians), sinf(radians));
+}
+
 float Vector2::Length() const {
 	return sqrtf(x * x + y * y);
 }

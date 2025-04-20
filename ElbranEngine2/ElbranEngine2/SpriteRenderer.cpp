@@ -9,7 +9,7 @@ SpriteRenderer::SpriteRenderer(Texture2D* sprite) {
 	worldMatrix = nullptr;
 
 	this->sprite = sprite;
-	tint = Colors::White;
+	tint = Color::White;
 	flipX = false;
 	flipY = false;
 	lit = false;
@@ -21,7 +21,7 @@ void SpriteRenderer::Draw() {
 
 	VertexShader* vertexShader = &app->assets->cameraVS;
 	CameraVSConstants vsInput;
-	vsInput.worldTransform = *worldMatrix;
+	vsInput.worldTransform = worldMatrix->Transpose();
 	vsInput.flipX = flipX;
 	vsInput.flipY = flipY;
 	graphics->WriteBuffer(&vsInput, sizeof(CameraVSConstants), vertexShader->constants.data);

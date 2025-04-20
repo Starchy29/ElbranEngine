@@ -12,12 +12,12 @@ struct LightConstants {
 // matches struct in Lighting.hlsli
 struct LightData {
 	Vector2 worldPosition;
-	float rotation;
+	Vector2 direction;
 
 	Color color;
 	float radius;
 	float brightness;
-	float coneSize;
+	Vector2 coneEdge;
 };
 
 struct LightSource {

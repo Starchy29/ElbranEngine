@@ -58,6 +58,9 @@
     <ClCompile Include="BloomPostProcess.cpp">
       <Filter>Toolkit\Post Processes</Filter>
     </ClCompile>
+    <ClCompile Include="Common.cpp">
+      <Filter>Toolkit</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="GameObject.h" />
