@@ -10,8 +10,10 @@ Game::Game() {
 	testScene->backgroundImage = &app->assets->apple;
 	SpriteRenderer* checker = testScene->AddSprite(&app->assets->testSprite);
 
-	//HSVPostProcess* pp = new HSVPostProcess();
-	//app->graphics->postProcesses.push_back(pp);
+	HSVPostProcess* pp = new HSVPostProcess();
+	app->graphics->postProcesses.push_back(pp);
+	pp->contrast = 1.0f;
+	pp->saturation = -1.0f;
 }
 
 Game::~Game() {

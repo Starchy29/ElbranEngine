@@ -53,15 +53,15 @@ public:
     void SetVertexShader(const VertexShader* shader) override;
     void SetGeometryShader(const GeometryShader* shader) override;
     void SetPixelShader(const PixelShader* shader) override;
-    void RunComputeShader(const ComputeShader* shader, unsigned int xThreads, unsigned int yThreads, unsigned int zThreads = 0) override;
-    void SetRenderTarget(const RenderTarget* renderTarget) override;
+    void RunComputeShader(const ComputeShader* shader, unsigned int xThreads, unsigned int yThreads, unsigned int zThreads = 1) override;
+    void SetRenderTarget(const RenderTarget* renderTarget, bool useDepthStencil) override;
 
 protected:
     void ClearBackBuffer() override;
     void ClearDepthStencil() override;
     void PresentSwapChain() override;
     void ResetRenderTarget() override;
-    RenderTarget GetBackBuffer() override;
+    RenderTarget* GetBackBuffer() override;
 
 private:
     Microsoft::WRL::ComPtr<ID3D11Device> device;

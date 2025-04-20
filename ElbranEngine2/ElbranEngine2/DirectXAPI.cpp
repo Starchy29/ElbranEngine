@@ -136,10 +136,8 @@ void DirectXAPI::Resize(Int2 windowDims, float viewAspectRatio) {
 	swapChain->ResizeBuffers(2, windowDims.x, windowDims.y, DXGI_FORMAT_R8G8B8A8_UNORM, 0);
 
 	// recreate back buffer
-	//ID3D11Texture2D* backBufferTexture = 0;
 	swapChain->GetBuffer(0, __uuidof(ID3D11Texture2D), reinterpret_cast<void**>(&backBuffer.data));
 	device->CreateRenderTargetView(backBuffer.data, 0, &backBuffer.outputView);
-	//backBufferTexture->Release();
 
 	// recreate depth stencil
 	D3D11_TEXTURE2D_DESC depthStencilDesc;
@@ -350,6 +348,7 @@ OutputBuffer DirectXAPI::CreateOutputBuffer(ShaderDataType type, unsigned int el
 	OutputBuffer result = {};
 	result.gpuBuffer = CreateIndexedBuffer(elements, elementBytes, structured, false, true);
 	result.cpuBuffer = CreateIndexedBuffer(elements, elementBytes, structured, true, true);
+	result.byteLength = elements * elementBytes;
 
 	D3D11_UNORDERED_ACCESS_VIEW_DESC description;
 	description.Format = FormatOf(type);
@@ -390,7 +389,7 @@ void DirectXAPI::CopyTexture(Texture2D* source, Texture2D* destination) {
 }
 
 void DirectXAPI::SetEditBuffer(EditBuffer* buffer, unsigned int slot) {
-	context->CSSetUnorderedAccessViews(slot, 0, &(buffer->computeView), nullptr);
+	context->CSSetUnorderedAccessViews(slot, 1, &(buffer->computeView), nullptr);
 }
 
 void DirectXAPI::WriteBuffer(const void* data, int byteLength, Buffer* buffer) {
@@ -402,24 +401,27 @@ void DirectXAPI::WriteBuffer(const void* data, int byteLength, Buffer* buffer) {
 
 void DirectXAPI::SetOutputBuffer(OutputBuffer* buffer, unsigned int slot, const void* initialData) {
 	if(initialData) {
-		WriteBuffer(initialData, buffer->byteLength, buffer->cpuBuffer);
+		D3D11_MAPPED_SUBRESOURCE mappedResource = {};
+		context->Map(buffer->cpuBuffer, 0, D3D11_MAP_WRITE, 0, &mappedResource);
+		memcpy(mappedResource.pData, initialData, buffer->byteLength);
+		context->Unmap(buffer->cpuBuffer, 0);
 		context->CopyResource(buffer->gpuBuffer, buffer->cpuBuffer);
 	}
 
-	context->CSSetUnorderedAccessViews(slot, 0, &(buffer->view), nullptr);
+	context->CSSetUnorderedAccessViews(slot, 1, &(buffer->view), nullptr);
 }
 
 void DirectXAPI::ReadBuffer(const OutputBuffer* buffer, void* destination) {
 	context->CopyResource(buffer->cpuBuffer, buffer->gpuBuffer);
 
 	D3D11_MAPPED_SUBRESOURCE mappedResource = {};
-	context->Map(buffer->cpuBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
+	context->Map(buffer->cpuBuffer, 0, D3D11_MAP_READ, 0, &mappedResource);
 	memcpy(destination, mappedResource.pData, buffer->byteLength);
 	context->Unmap(buffer->cpuBuffer, 0);
 }
 
 void DirectXAPI::SetBlendMode(BlendState mode) {
-	switch (mode) {
+	switch(mode) {
 	case BlendState::None:
 		context->OMSetBlendState(nullptr, nullptr, 0xffffffff);
 		break;
@@ -521,8 +523,8 @@ void DirectXAPI::RunComputeShader(const ComputeShader* shader, unsigned int xThr
 	context->Dispatch(ceil((double)xThreads / shader->xGroupSize), ceil((double)yThreads / shader->yGroupSize), ceil((double)zThreads / shader->zGroupSize));
 }
 
-void DirectXAPI::SetRenderTarget(const RenderTarget* renderTarget) {
-	context->OMSetRenderTargets(1, &(renderTarget->outputView), nullptr);
+void DirectXAPI::SetRenderTarget(const RenderTarget* renderTarget, bool useDepthStencil) {
+	context->OMSetRenderTargets(1, &(renderTarget->outputView), useDepthStencil ? depthStencilView.Get() : nullptr);
 }
 
 void DirectXAPI::ClearBackBuffer() {
@@ -542,12 +544,8 @@ void DirectXAPI::ResetRenderTarget() {
 	context->OMSetRenderTargets(1, &backBuffer.outputView, depthStencilView.Get());
 }
 
-RenderTarget DirectXAPI::GetBackBuffer() {
-	//RenderTarget result = {};
-	//result.outputView = backBufferView.Get();
-	//backBufferView->GetResource((ID3D11Resource**)&result.data);
-	//return result;
-	return backBuffer;
+RenderTarget* DirectXAPI::GetBackBuffer() {
+	return &backBuffer;
 }
 
 Texture2D DirectXAPI::LoadSprite(std::wstring directory, std::wstring fileName) {
@@ -655,15 +653,23 @@ ConstantBuffer DirectXAPI::LoadConstantBuffer(ID3DBlob* shaderBlob) {
 	D3DReflect(shaderBlob->GetBufferPointer(), shaderBlob->GetBufferSize(), IID_ID3D11ShaderReflection, (void**)reflection.GetAddressOf());
 	D3D11_SHADER_DESC shaderDescr;
 	reflection->GetDesc(&shaderDescr);
-	ID3D11ShaderReflectionConstantBuffer* bufferReflection = reflection->GetConstantBufferByIndex(OBJECT_CONSTANT_REGISTER);
-	if(!bufferReflection) {
-		return {};
+	
+	for(int i = 0; i < shaderDescr.ConstantBuffers; i++) {
+		// find the constant buffer at register 0
+		ID3D11ShaderReflectionConstantBuffer* bufferReflection = reflection->GetConstantBufferByIndex(i);
+		D3D11_SHADER_BUFFER_DESC bufferDescr;
+		bufferReflection->GetDesc(&bufferDescr);
+
+		D3D11_SHADER_INPUT_BIND_DESC bindDescr;
+		reflection->GetResourceBindingDescByName(bufferDescr.Name, &bindDescr);
+		if(bindDescr.Type == D3D_SIT_CBUFFER && bindDescr.BindPoint == OBJECT_CONSTANT_REGISTER) {
+			return CreateConstantBuffer(bufferDescr.Size);
+		}
 	}
 
-	D3D11_SHADER_BUFFER_DESC bufferDescr;
-	bufferReflection->GetDesc(&bufferDescr);
-	return CreateConstantBuffer(bufferDescr.Size);
+	return {};
 }
+
 DXGI_FORMAT DirectXAPI::FormatOf(ShaderDataType type) {
 	switch(type) {
 	case ShaderDataType::Structured: return DXGI_FORMAT_UNKNOWN;
@@ -686,6 +692,7 @@ DXGI_FORMAT DirectXAPI::FormatOf(ShaderDataType type) {
 	}
 	return DXGI_FORMAT_UNKNOWN;
 }
+
 unsigned int DirectXAPI::ByteLengthOf(ShaderDataType type) {
 	switch(type) {
 	case ShaderDataType::Float: return sizeof(float);

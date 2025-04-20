@@ -95,7 +95,7 @@ public:
 	virtual void SetPixelShader(const PixelShader* shader) = 0;
 
 	virtual void SetBlendMode(BlendState mode) = 0;
-	virtual void SetRenderTarget(const RenderTarget* renderTarget) = 0;
+	virtual void SetRenderTarget(const RenderTarget* renderTarget, bool useDepthStencil) = 0;
 	virtual void ResetRenderTarget() = 0;
 
 	virtual void DrawVertices(unsigned int numVertices) = 0;
@@ -107,7 +107,7 @@ public:
 	virtual void SetEditBuffer(EditBuffer* buffer, unsigned int slot) = 0;
 	virtual void SetOutputBuffer(OutputBuffer* buffer, unsigned int slot, const void* initialData = nullptr) = 0;
 	virtual void ReadBuffer(const OutputBuffer* buffer, void* destination) = 0;
-	virtual void RunComputeShader(const ComputeShader* shader, unsigned int xThreads, unsigned int yThreads, unsigned int zThreads = 0) = 0;
+	virtual void RunComputeShader(const ComputeShader* shader, unsigned int xThreads, unsigned int yThreads, unsigned int zThreads = 1) = 0;
 
 protected:
 	Int2 viewportDims;
@@ -119,7 +119,7 @@ protected:
 	virtual void ClearBackBuffer() = 0;
 	virtual void ClearDepthStencil() = 0;
 	virtual void PresentSwapChain() = 0;
-	virtual RenderTarget GetBackBuffer() = 0;
+	virtual RenderTarget* GetBackBuffer() = 0;
 
 private:
 	bool postProcessed;

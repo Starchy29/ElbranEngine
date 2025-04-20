@@ -34,7 +34,7 @@ void GraphicsAPI::Render(Game* game) {
 	ClearDepthStencil();
 
 	if(postProcesses.size() > 0) {
-		SetRenderTarget(&postProcessTargets[0]);
+		SetRenderTarget(&postProcessTargets[0], true);
 	}
 
 	game->Draw();
@@ -55,8 +55,7 @@ void GraphicsAPI::ApplyPostProcesses() {
 		RenderTarget* input = &postProcessTargets[i%2];
 		RenderTarget* output = &postProcessTargets[1 - (i%2)];
 		if(i == postProcesses.size() - 1) {
-			RenderTarget backBuffer = GetBackBuffer();
-			output = &backBuffer;
+			output = GetBackBuffer();
 		}
 
 		if(postProcesses[i]->IsActive()) {
@@ -65,6 +64,10 @@ void GraphicsAPI::ApplyPostProcesses() {
 			// if the post process makes no changes, copying the pixels is fastest
 			CopyTexture(input, output);
 		}
+
+		// unbind the input texture so it can be bound again later
+		Texture2D nullTex = {};
+		SetTexture(ShaderStage::Pixel, &nullTex, 0);
 	}
 
 	ResetRenderTarget();
