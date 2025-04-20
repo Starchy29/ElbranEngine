@@ -58,28 +58,9 @@ DirectXAPI::DirectXAPI(HWND windowHandle, Int2 windowDims, float viewAspectRatio
 	adapter->GetParent(IID_PPV_ARGS(&factory));
 	factory->CreateSwapChain(device.Get(), &desc, &swapChain);
 
-	// create render target
-	ID3D11Texture2D* backBuffer = nullptr;
-	swapChain->GetBuffer(0, __uuidof(ID3D11Texture2D), (void**)&backBuffer);
-	device->CreateRenderTargetView(backBuffer, nullptr, backBufferView.GetAddressOf());
-	backBuffer->Release();
-
-	// create depth stencil
-	ID3D11Texture2D* depthStencil = nullptr;
-	CD3D11_TEXTURE2D_DESC depthStencilDesc(
-		DXGI_FORMAT_D24_UNORM_S8_UINT,
-		static_cast<UINT> (windowDims.x),
-		static_cast<UINT> (windowDims.x),
-		1,
-		1,
-		D3D11_BIND_DEPTH_STENCIL
-	);
-
-	device->CreateTexture2D(&depthStencilDesc, nullptr, &depthStencil);
-
-	CD3D11_DEPTH_STENCIL_VIEW_DESC depthStencilViewDesc(D3D11_DSV_DIMENSION_TEXTURE2D);
-	device->CreateDepthStencilView(depthStencil, &depthStencilViewDesc, &depthStencilView);
-	depthStencil->Release();
+	// create the viewport
+	backBuffer = {};
+	Resize(windowDims, viewAspectRatio);
 
 	D3D11_DEPTH_STENCIL_DESC stencilStateDesc = {};
 	stencilStateDesc.DepthEnable = true;
@@ -124,9 +105,6 @@ DirectXAPI::DirectXAPI(HWND windowHandle, Int2 windowDims, float viewAspectRatio
 
 	device->CreateBlendState(&blendDescription, additiveBlendState.GetAddressOf());
 
-	// create the viewport
-	Resize(windowDims, viewAspectRatio);
-
 	// set the input layout to match the Vertex struct in GraphicsAPI.h
 	D3D11_INPUT_ELEMENT_DESC inputDescriptions[2];
 	inputDescriptions[0] = { "POSITION", 0, DXGI_FORMAT_R32G32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT };
@@ -148,22 +126,20 @@ DirectXAPI::DirectXAPI(HWND windowHandle, Int2 windowDims, float viewAspectRatio
 }
 
 DirectXAPI::~DirectXAPI() {
-	
+	backBuffer.Release();
 }
 
 void DirectXAPI::Resize(Int2 windowDims, float viewAspectRatio) {
 	this->viewAspectRatio = viewAspectRatio;
-	backBufferView.Reset();
 	depthStencilView.Reset();
+	backBuffer.Release();
 	swapChain->ResizeBuffers(2, windowDims.x, windowDims.y, DXGI_FORMAT_R8G8B8A8_UNORM, 0);
 
 	// recreate back buffer
-	ID3D11Texture2D* backBufferTexture = 0;
-	swapChain->GetBuffer(0, __uuidof(ID3D11Texture2D), reinterpret_cast<void**>(&backBufferTexture));
-	if(backBufferTexture) {
-		device->CreateRenderTargetView(backBufferTexture, 0, backBufferView.ReleaseAndGetAddressOf());
-		backBufferTexture->Release();
-	}
+	//ID3D11Texture2D* backBufferTexture = 0;
+	swapChain->GetBuffer(0, __uuidof(ID3D11Texture2D), reinterpret_cast<void**>(&backBuffer.data));
+	device->CreateRenderTargetView(backBuffer.data, 0, &backBuffer.outputView);
+	//backBufferTexture->Release();
 
 	// recreate depth stencil
 	D3D11_TEXTURE2D_DESC depthStencilDesc;
@@ -181,13 +157,11 @@ void DirectXAPI::Resize(Int2 windowDims, float viewAspectRatio) {
 
 	ID3D11Texture2D* depthBufferTexture = 0;
 	device->CreateTexture2D(&depthStencilDesc, 0, &depthBufferTexture);
-	if(depthBufferTexture != 0) {
-		device->CreateDepthStencilView(depthBufferTexture, 0, depthStencilView.ReleaseAndGetAddressOf());
-		depthBufferTexture->Release();
-	}
+	device->CreateDepthStencilView(depthBufferTexture, 0, depthStencilView.ReleaseAndGetAddressOf());
+	depthBufferTexture->Release();
 
 	// bind to the pipeline
-	context->OMSetRenderTargets(1, backBufferView.GetAddressOf(), depthStencilView.Get());
+	context->OMSetRenderTargets(1, &backBuffer.outputView, depthStencilView.Get());
 
 	// set viewport
 	float windowAspectRatio = (float)windowDims.x / windowDims.y;
@@ -213,11 +187,11 @@ void DirectXAPI::Resize(Int2 windowDims, float viewAspectRatio) {
 	// resize post process textures
 	postProcessTargets[0].Release();
 	postProcessTargets[1].Release();
-	postProcessTargets[0] = CreateRenderTarget(viewportDims.x, viewportDims.y);
-	postProcessTargets[1] = CreateRenderTarget(viewportDims.x, viewportDims.y);
+	postProcessTargets[0] = CreateRenderTarget(windowDims.x, windowDims.y);
+	postProcessTargets[1] = CreateRenderTarget(windowDims.x, windowDims.y);
 	for(int i = 0; i < MAX_POST_PROCESS_HELPER_TEXTURES; i++) {
 		postProcessHelpers[i].Release();
-		postProcessHelpers[i] = CreateRenderTarget(viewportDims.x, viewportDims.y);
+		postProcessHelpers[i] = CreateRenderTarget(windowDims.x, windowDims.y);
 	}
 }
 
@@ -278,33 +252,6 @@ ComputeShader DirectXAPI::LoadComputeShader(std::wstring directory, std::wstring
 	return newShader;
 }
 
-TextureData* DirectXAPI::CreateTexture(unsigned int width, int unsigned height, bool renderTarget, bool computeWritable) {
-	TextureData* output;
-
-	D3D11_TEXTURE2D_DESC textureDesc;
-	textureDesc.Width = width;
-	textureDesc.Height = height;
-	textureDesc.MipLevels = 0; // include all mip levels
-	textureDesc.ArraySize = 1;
-	textureDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
-	textureDesc.SampleDesc.Count = 1;
-	textureDesc.SampleDesc.Quality = 0;
-	textureDesc.MiscFlags = 0;
-	textureDesc.Usage = (renderTarget || computeWritable ? D3D11_USAGE_DEFAULT : D3D11_USAGE_IMMUTABLE);
-	textureDesc.CPUAccessFlags = 0;
-	textureDesc.BindFlags = D3D11_BIND_SHADER_RESOURCE;
-	if(renderTarget) {
-		textureDesc.BindFlags |= D3D11_BIND_RENDER_TARGET;
-	}
-	else if(computeWritable) {
-		textureDesc.BindFlags |= D3D11_BIND_UNORDERED_ACCESS;
-	}
-	
-	device->CreateTexture2D(&textureDesc, 0, &output);
-
-	return output;
-}
-
 Mesh DirectXAPI::CreateMesh(const Vertex* vertices, int vertexCount, const unsigned int* indices, int indexCount, bool editable) {
 	Mesh result = {};
 	result.indexCount = indexCount;
@@ -354,26 +301,65 @@ ConstantBuffer DirectXAPI::CreateConstantBuffer(unsigned int byteLength) {
 	return result;
 }
 
-ArrayBuffer DirectXAPI::CreateArrayBuffer(unsigned int elements, unsigned int elementBytes, bool structured) {
+ArrayBuffer DirectXAPI::CreateArrayBuffer(ShaderDataType type, unsigned int elements, unsigned int structBytes) {
 	ArrayBuffer result = {};
-	result.buffer = CreateIndexedBuffer(elements, elementBytes, structured, true, false);
-	device->CreateShaderResourceView(result.buffer, 0, &result.view);
+	bool structured = type == ShaderDataType::Structured;
+	result.buffer = CreateIndexedBuffer(elements, structured ? structBytes: ByteLengthOf(type), structured, true, false);
+
+	D3D11_SHADER_RESOURCE_VIEW_DESC srvDescription;
+	srvDescription.Format = FormatOf(type);
+	srvDescription.ViewDimension = D3D11_SRV_DIMENSION_BUFFER;
+	srvDescription.Buffer.FirstElement = 0;
+	srvDescription.Buffer.NumElements = elements;
+
+	device->CreateShaderResourceView(result.buffer, &srvDescription, &result.view);
 	return result;
 }
 
-EditBuffer DirectXAPI::CreateEditBuffer(unsigned int elements, unsigned int elementBytes, bool structured) {
+EditBuffer DirectXAPI::CreateEditBuffer(ShaderDataType type, unsigned int elements, unsigned int structBytes) {
+	bool structured = type == ShaderDataType::Structured;
+	unsigned int elementBytes = structured ? structBytes : ByteLengthOf(type);
+	DXGI_FORMAT format = FormatOf(type);
+
 	EditBuffer result = {};
 	result.buffer = CreateIndexedBuffer(elements, elementBytes, structured, false, true);
-	device->CreateShaderResourceView(result.buffer, 0, &result.view);
-	device->CreateUnorderedAccessView(result.buffer, 0, &result.computeView);
+
+	D3D11_SHADER_RESOURCE_VIEW_DESC srvDescription;
+	srvDescription.Format = format;
+	srvDescription.ViewDimension = D3D11_SRV_DIMENSION_BUFFER;
+	srvDescription.Buffer.FirstElement = 0;
+	srvDescription.Buffer.NumElements = elements;
+
+	device->CreateShaderResourceView(result.buffer, &srvDescription, &result.view);
+
+	D3D11_UNORDERED_ACCESS_VIEW_DESC uavDescription;
+	uavDescription.Format = format;
+	uavDescription.ViewDimension = D3D11_UAV_DIMENSION_BUFFER;
+	uavDescription.Buffer.FirstElement = 0;
+	uavDescription.Buffer.NumElements = elements;
+	uavDescription.Buffer.Flags = 0;
+
+	device->CreateUnorderedAccessView(result.buffer, &uavDescription, &result.computeView);
 	return result;
 }
 
-OutputBuffer DirectXAPI::CreateOutputBuffer(unsigned int elements, unsigned int elementBytes, bool structured) {
+OutputBuffer DirectXAPI::CreateOutputBuffer(ShaderDataType type, unsigned int elements, unsigned int structBytes) {
+	bool structured = type == ShaderDataType::Structured;
+	unsigned int elementBytes = structured ? structBytes : ByteLengthOf(type);
+
 	OutputBuffer result = {};
-	result.gpuBuffer = CreateIndexedBuffer(elements, elementBytes, structured, false, false);
-	device->CreateUnorderedAccessView(result.gpuBuffer, 0, &result.view);
+	result.gpuBuffer = CreateIndexedBuffer(elements, elementBytes, structured, false, true);
 	result.cpuBuffer = CreateIndexedBuffer(elements, elementBytes, structured, true, true);
+
+	D3D11_UNORDERED_ACCESS_VIEW_DESC description;
+	description.Format = FormatOf(type);
+	description.ViewDimension = D3D11_UAV_DIMENSION_BUFFER;
+	description.Buffer.FirstElement = 0;
+	description.Buffer.NumElements = elements;
+	description.Buffer.Flags = 0;
+
+	device->CreateUnorderedAccessView(result.gpuBuffer, &description, &result.view);
+	
 	return result;
 }
 
@@ -435,13 +421,13 @@ void DirectXAPI::ReadBuffer(const OutputBuffer* buffer, void* destination) {
 void DirectXAPI::SetBlendMode(BlendState mode) {
 	switch (mode) {
 	case BlendState::None:
-		context->OMSetBlendState(NULL, NULL, 0xffffffff);
+		context->OMSetBlendState(nullptr, nullptr, 0xffffffff);
 		break;
 	case BlendState::AlphaBlend:
-		context->OMSetBlendState(alphaBlendState.Get(), NULL, 0xffffffff);
+		context->OMSetBlendState(alphaBlendState.Get(), nullptr, 0xffffffff);
 		break;
 	case BlendState::Additive:
-		context->OMSetBlendState(additiveBlendState.Get(), NULL, 0xffffffff);
+		context->OMSetBlendState(additiveBlendState.Get(), nullptr, 0xffffffff);
 		break;
 	}
 }
@@ -541,7 +527,7 @@ void DirectXAPI::SetRenderTarget(const RenderTarget* renderTarget) {
 
 void DirectXAPI::ClearBackBuffer() {
 	float black[4] { 0.f, 0.f, 0.f, 0.f };
-	context->ClearRenderTargetView(backBufferView.Get(), black);
+	context->ClearRenderTargetView(backBuffer.outputView, black);
 }
 
 void DirectXAPI::ClearDepthStencil() {
@@ -553,13 +539,15 @@ void DirectXAPI::PresentSwapChain() {
 }
 
 void DirectXAPI::ResetRenderTarget() {
-	context->OMSetRenderTargets(1, backBufferView.GetAddressOf(), depthStencilView.Get());
+	context->OMSetRenderTargets(1, &backBuffer.outputView, depthStencilView.Get());
 }
 
-RenderTarget DirectXAPI::GetBackBufferView() {
-	RenderTarget result = {};
-	result.outputView = backBufferView.Get();
-	return result;
+RenderTarget DirectXAPI::GetBackBuffer() {
+	//RenderTarget result = {};
+	//result.outputView = backBufferView.Get();
+	//backBufferView->GetResource((ID3D11Resource**)&result.data);
+	//return result;
+	return backBuffer;
 }
 
 Texture2D DirectXAPI::LoadSprite(std::wstring directory, std::wstring fileName) {
@@ -586,13 +574,43 @@ Sampler DirectXAPI::CreateDefaultSampler() {
 	return result;
 }
 
+TextureData* DirectXAPI::CreateTexture(unsigned int width, int unsigned height, bool renderTarget, bool computeWritable) {
+	TextureData* output;
+
+	D3D11_TEXTURE2D_DESC textureDesc;
+	textureDesc.Width = width;
+	textureDesc.Height = height;
+	textureDesc.MipLevels = renderTarget ? 1 : 0; // include all mip levels unless render target
+	textureDesc.ArraySize = 1;
+	textureDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
+	textureDesc.SampleDesc.Count = 1;
+	textureDesc.SampleDesc.Quality = 0;
+	textureDesc.MiscFlags = 0;
+	textureDesc.Usage = (renderTarget || computeWritable ? D3D11_USAGE_DEFAULT : D3D11_USAGE_IMMUTABLE);
+	textureDesc.CPUAccessFlags = 0;
+	textureDesc.BindFlags = D3D11_BIND_SHADER_RESOURCE;
+	if(renderTarget) {
+		textureDesc.BindFlags |= D3D11_BIND_RENDER_TARGET;
+	}
+	else if(computeWritable) {
+		textureDesc.BindFlags |= D3D11_BIND_UNORDERED_ACCESS;
+	}
+	
+	device->CreateTexture2D(&textureDesc, 0, &output);
+
+	return output;
+}
+
 Buffer* DirectXAPI::CreateIndexedBuffer(unsigned int elements, unsigned int elementBytes, bool structured, bool cpuWrite, bool gpuWrite) {
 	Buffer* result;
 
 	D3D11_BUFFER_DESC bufferDescription = {};
 	bufferDescription.ByteWidth = elements * elementBytes;
 	bufferDescription.BindFlags = D3D11_BIND_SHADER_RESOURCE;
-	if(gpuWrite) {
+	if(gpuWrite && cpuWrite) {
+		bufferDescription.BindFlags = 0;
+	}
+	else if(gpuWrite) {
 		bufferDescription.BindFlags |= D3D11_BIND_UNORDERED_ACCESS;
 	}
 
@@ -645,5 +663,47 @@ ConstantBuffer DirectXAPI::LoadConstantBuffer(ID3DBlob* shaderBlob) {
 	D3D11_SHADER_BUFFER_DESC bufferDescr;
 	bufferReflection->GetDesc(&bufferDescr);
 	return CreateConstantBuffer(bufferDescr.Size);
+}
+DXGI_FORMAT DirectXAPI::FormatOf(ShaderDataType type) {
+	switch(type) {
+	case ShaderDataType::Structured: return DXGI_FORMAT_UNKNOWN;
+
+	case ShaderDataType::Float: return DXGI_FORMAT_R32_FLOAT;
+	case ShaderDataType::Int: return DXGI_FORMAT_R32_SINT;
+	case ShaderDataType::UInt: return DXGI_FORMAT_R32_UINT;
+
+	case ShaderDataType::Float2: return DXGI_FORMAT_R32G32_FLOAT;
+	case ShaderDataType::Int2: return DXGI_FORMAT_R32G32_SINT;
+	case ShaderDataType::UInt2: return DXGI_FORMAT_R32G32_UINT;
+
+	case ShaderDataType::Float3: return DXGI_FORMAT_R32G32B32_FLOAT;
+	case ShaderDataType::Int3: return DXGI_FORMAT_R32G32B32_SINT;
+	case ShaderDataType::UInt3: return DXGI_FORMAT_R32G32B32_UINT;
+
+	case ShaderDataType::Float4: return DXGI_FORMAT_R32G32B32A32_FLOAT;
+	case ShaderDataType::Int4: return DXGI_FORMAT_R32G32B32A32_SINT;
+	case ShaderDataType::UInt4: return DXGI_FORMAT_R32G32B32A32_UINT;
+	}
+	return DXGI_FORMAT_UNKNOWN;
+}
+unsigned int DirectXAPI::ByteLengthOf(ShaderDataType type) {
+	switch(type) {
+	case ShaderDataType::Float: return sizeof(float);
+	case ShaderDataType::Int: return sizeof(int);
+	case ShaderDataType::UInt: return sizeof(unsigned int);
+
+	case ShaderDataType::Float2: return 2 * sizeof(float);
+	case ShaderDataType::Int2: return 2 * sizeof(int);
+	case ShaderDataType::UInt2: return 2 * sizeof(unsigned int);
+
+	case ShaderDataType::Float3: return 3 * sizeof(float);
+	case ShaderDataType::Int3: return 3 * sizeof(int);
+	case ShaderDataType::UInt3: return 3 * sizeof(unsigned int);
+
+	case ShaderDataType::Float4: return 4 * sizeof(float);
+	case ShaderDataType::Int4: return 4 * sizeof(int);
+	case ShaderDataType::UInt4: return 4 * sizeof(unsigned int);
+	}
+	return 0;
 }
 #endif

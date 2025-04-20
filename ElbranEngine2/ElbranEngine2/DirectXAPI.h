@@ -29,9 +29,9 @@ public:
     Sampler CreateDefaultSampler() override;
     Mesh CreateMesh(const Vertex* vertices, int vertexCount, const unsigned int* indices, int indexCount, bool editable) override;
     ConstantBuffer CreateConstantBuffer(unsigned int byteLength) override;
-    ArrayBuffer CreateArrayBuffer(unsigned int elements, unsigned int elementBytes, bool structured) override;
-    EditBuffer CreateEditBuffer(unsigned int elements, unsigned int elementBytes, bool structured) override;
-    OutputBuffer CreateOutputBuffer(unsigned int elements, unsigned int elementBytes, bool structured) override;
+    ArrayBuffer CreateArrayBuffer(ShaderDataType type, unsigned int elements, unsigned int structBytes = 0u) override;
+    EditBuffer CreateEditBuffer(ShaderDataType type, unsigned int elements, unsigned int structBytes = 0u) override;
+    OutputBuffer CreateOutputBuffer(ShaderDataType type, unsigned int elements, unsigned int structBytes = 0u) override;
     RenderTarget CreateRenderTarget(unsigned int width, unsigned int height) override;
     ComputeTexture CreateComputeTexture(unsigned int width, unsigned int height) override;
     void CopyTexture(Texture2D* source, Texture2D* destination) override;
@@ -61,14 +61,14 @@ protected:
     void ClearDepthStencil() override;
     void PresentSwapChain() override;
     void ResetRenderTarget() override;
-    RenderTarget GetBackBufferView() override;
+    RenderTarget GetBackBuffer() override;
 
 private:
     Microsoft::WRL::ComPtr<ID3D11Device> device;
     Microsoft::WRL::ComPtr<ID3D11DeviceContext> context;
     Microsoft::WRL::ComPtr<IDXGISwapChain> swapChain;
 
-    Microsoft::WRL::ComPtr<ID3D11RenderTargetView> backBufferView;
+    RenderTarget backBuffer;
     Microsoft::WRL::ComPtr<ID3D11DepthStencilView> depthStencilView;
     Microsoft::WRL::ComPtr<ID3D11DepthStencilState> defaultStencil;
 
@@ -80,5 +80,8 @@ private:
 
     ID3DBlob* LoadShader(std::wstring directory, std::wstring fileName);
     ConstantBuffer LoadConstantBuffer(ID3DBlob* shaderBlob);
+
+    DXGI_FORMAT FormatOf(ShaderDataType type);
+    unsigned int ByteLengthOf(ShaderDataType type);
 };
 #endif

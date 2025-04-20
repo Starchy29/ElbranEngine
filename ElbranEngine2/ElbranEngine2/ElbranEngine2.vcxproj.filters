@@ -17,6 +17,9 @@
     <Filter Include="Shaders">
       <UniqueIdentifier>{a8bf3d93-ad3e-49f5-ad0f-c13762326d2d}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Toolkit\Post Processes">
+      <UniqueIdentifier>{7cf9fbe3-36d2-4c3f-b316-9a6969c93534}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="GameObject.cpp" />
@@ -46,6 +49,9 @@
     <ClCompile Include="AssetContainer.cpp" />
     <ClCompile Include="Scene.cpp" />
     <ClCompile Include="SpriteRenderer.cpp" />
+    <ClCompile Include="HSVPostProcess.cpp">
+      <Filter>Toolkit\Post Processes</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="GameObject.h" />
@@ -90,6 +96,9 @@
     <ClInclude Include="Lights.h">
       <Filter>Graphics</Filter>
     </ClInclude>
+    <ClInclude Include="HSVPostProcess.h">
+      <Filter>Toolkit\Post Processes</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="CameraVS.hlsl">
@@ -104,6 +113,12 @@
     <FxCompile Include="SolidColorPS.hlsl">
       <Filter>Shaders</Filter>
     </FxCompile>
+    <FxCompile Include="ConSatValPP.hlsl">
+      <Filter>Shaders</Filter>
+    </FxCompile>
+    <FxCompile Include="BrightnessSumCS.hlsl">
+      <Filter>Shaders</Filter>
+    </FxCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="ShaderStructs.hlsli">
@@ -111,6 +126,9 @@
     </None>
     <None Include="packages.config" />
     <None Include="Lighting.hlsli">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="ColorConversion.hlsli">
       <Filter>Shaders</Filter>
     </None>
   </ItemGroup>

@@ -31,7 +31,12 @@ AssetContainer::AssetContainer(std::wstring filePath, GraphicsAPI* graphics) {
 	solidColorPS = graphics->LoadPixelShader(filePath, L"SolidColorPS.cso");
 	texturePS = graphics->LoadPixelShader(filePath, L"TexturePS.cso");
 
+	conSatValPP = graphics->LoadPixelShader(filePath, L"ConSatValPP.cso");
+
+	brightnessSumCS = graphics->LoadComputeShader(filePath, L"BrightnessSumCS.cso");
+
 	testSprite = graphics->LoadSprite(filePath, L"elbran.png");
+	apple = graphics->LoadSprite(filePath, L"apple.jpeg");
 }
 
 AssetContainer::~AssetContainer() {
@@ -46,5 +51,10 @@ AssetContainer::~AssetContainer() {
 	solidColorPS.Release();
 	texturePS.Release();
 
+	conSatValPP.Release();
+
+	brightnessSumCS.Release();
+
 	testSprite.Release();
+	apple.Release();
 }

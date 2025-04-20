@@ -25,6 +25,22 @@ enum class ShaderStage {
 	Compute
 };
 
+enum class ShaderDataType {
+	Structured,
+	Float,
+	Int,
+	UInt,
+	Float2,
+	Int2,
+	UInt2,
+	Float3,
+	Int3,
+	UInt3,
+	Float4,
+	Int4,
+	UInt4
+};
+
 struct Vertex {
 	Vector2 position;
 	Vector2 uv;
@@ -61,9 +77,9 @@ public:
 	virtual Sampler CreateDefaultSampler() = 0;
 	virtual Mesh CreateMesh(const Vertex* vertices, int vertexCount, const unsigned int* indices, int indexCount, bool editable) = 0;
 	virtual ConstantBuffer CreateConstantBuffer(unsigned int byteLength) = 0;
-	virtual ArrayBuffer CreateArrayBuffer(unsigned int elements, unsigned int elementBytes, bool structured) = 0;
-	virtual EditBuffer CreateEditBuffer(unsigned int elements, unsigned int elementBytes, bool structured) = 0;
-	virtual OutputBuffer CreateOutputBuffer(unsigned int elements, unsigned int elementBytes, bool structured) = 0;
+	virtual ArrayBuffer CreateArrayBuffer(ShaderDataType type, unsigned int elements, unsigned int structBytes = 0u) = 0;
+	virtual EditBuffer CreateEditBuffer(ShaderDataType type, unsigned int elements, unsigned int structBytes = 0u) = 0;
+	virtual OutputBuffer CreateOutputBuffer(ShaderDataType type, unsigned int elements, unsigned int structBytes = 0u) = 0;
 	virtual RenderTarget CreateRenderTarget(unsigned int width, unsigned int height) = 0;
 	virtual ComputeTexture CreateComputeTexture(unsigned int width, unsigned int height) = 0;
 	
@@ -103,7 +119,7 @@ protected:
 	virtual void ClearBackBuffer() = 0;
 	virtual void ClearDepthStencil() = 0;
 	virtual void PresentSwapChain() = 0;
-	virtual RenderTarget GetBackBufferView() = 0;
+	virtual RenderTarget GetBackBuffer() = 0;
 
 private:
 	bool postProcessed;

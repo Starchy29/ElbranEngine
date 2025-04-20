@@ -3,10 +3,15 @@
 #include "Application.h"
 #include "AssetContainer.h"
 
+#include "HSVPostProcess.h"
+
 Game::Game() {
 	testScene = new Scene(5, 5.0f);
+	testScene->backgroundImage = &app->assets->apple;
 	SpriteRenderer* checker = testScene->AddSprite(&app->assets->testSprite);
-	testScene->RemoveSprite(checker);
+
+	//HSVPostProcess* pp = new HSVPostProcess();
+	//app->graphics->postProcesses.push_back(pp);
 }
 
 Game::~Game() {

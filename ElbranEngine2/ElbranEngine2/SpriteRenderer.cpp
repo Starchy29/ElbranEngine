@@ -32,7 +32,7 @@ void SpriteRenderer::Draw() {
 	TexturePSConstants psInput;
 	psInput.tint = tint;
 	psInput.lit = lit;
-	graphics->WriteBuffer(&psInput, sizeof(CameraVSConstants), pixelShader->constants.data);
+	graphics->WriteBuffer(&psInput, sizeof(TexturePSConstants), pixelShader->constants.data);
 	graphics->SetConstants(ShaderStage::Pixel, &pixelShader->constants, 0);
 	graphics->SetTexture(ShaderStage::Pixel, sprite, 0);
 	graphics->SetPixelShader(pixelShader);

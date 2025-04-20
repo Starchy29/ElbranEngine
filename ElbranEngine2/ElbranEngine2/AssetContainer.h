@@ -17,7 +17,12 @@ public:
 	PixelShader solidColorPS;
 	PixelShader texturePS;
 
+	PixelShader conSatValPP;
+
+	ComputeShader brightnessSumCS;
+
 	Texture2D testSprite;
+	Texture2D apple;
 
 	AssetContainer(std::wstring filePath, GraphicsAPI* graphics);
 	~AssetContainer();

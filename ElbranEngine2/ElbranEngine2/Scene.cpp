@@ -12,7 +12,7 @@ Scene::Scene(unsigned int maxEntities, float cameraWidth)  {
 	camera = {};
 	camera.viewWidth = cameraWidth;
 	ambientLight = Colors::White;
-	backgroundColor = Color(0.1f, 0.1f, 0.1f);
+	backgroundColor = Color(1.f, 1.f, 1.f);
 	backgroundImage = nullptr;
 
 	entityCount = 0;
@@ -26,7 +26,7 @@ Scene::Scene(unsigned int maxEntities, float cameraWidth)  {
 
 	projectionBuffer = graphics->CreateConstantBuffer(sizeof(Matrix));
 	lightInfoBuffer = graphics->CreateConstantBuffer(sizeof(LightConstants));
-	lightsBuffer = graphics->CreateArrayBuffer(MAX_LIGHTS_ONSCREEN, sizeof(LightData), true);
+	lightsBuffer = graphics->CreateArrayBuffer(ShaderDataType::Structured, MAX_LIGHTS_ONSCREEN, sizeof(LightData));
 }
 
 Scene::~Scene() {

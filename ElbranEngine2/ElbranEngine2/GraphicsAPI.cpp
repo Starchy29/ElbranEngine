@@ -55,7 +55,7 @@ void GraphicsAPI::ApplyPostProcesses() {
 		RenderTarget* input = &postProcessTargets[i%2];
 		RenderTarget* output = &postProcessTargets[1 - (i%2)];
 		if(i == postProcesses.size() - 1) {
-			RenderTarget backBuffer = GetBackBufferView();
+			RenderTarget backBuffer = GetBackBuffer();
 			output = &backBuffer;
 		}
 

@@ -14,3 +14,10 @@ struct TexturePSConstants {
 	Color tint;
 	GPU_BOOL lit;
 };
+
+struct ConSatValPPConstants {
+	float contrast;
+	float saturation;
+	float brightness;
+	float averageBrightness;
+};
