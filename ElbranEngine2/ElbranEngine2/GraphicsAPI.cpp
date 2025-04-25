@@ -92,3 +92,21 @@ void GraphicsAPI::DrawFullscreen() {
 	SetVertexShader(&app->assets->fullscreenVS);
 	DrawVertices(3); // fullscreen triangle
 }
+
+void GraphicsAPI::SetVertexShader(const VertexShader* shader, void* constantInput, unsigned int inputBytes) {
+	WriteBuffer(constantInput, inputBytes, shader->constants.data);
+	SetConstants(ShaderStage::Vertex, &shader->constants, OBJECT_CONSTANT_REGISTER);
+	SetVertexShader(shader);
+}
+
+void GraphicsAPI::SetGeometryShader(const GeometryShader* shader, void* constantInput, unsigned int inputBytes) {
+	WriteBuffer(constantInput, inputBytes, shader->constants.data);
+	SetConstants(ShaderStage::Geometry, &shader->constants, OBJECT_CONSTANT_REGISTER);
+	SetGeometryShader(shader);
+}
+
+void GraphicsAPI::SetPixelShader(const PixelShader* shader, void* constantInput, unsigned int inputBytes) {
+	WriteBuffer(constantInput, inputBytes, shader->constants.data);
+	SetConstants(ShaderStage::Pixel, &shader->constants, OBJECT_CONSTANT_REGISTER);
+	SetPixelShader(shader);
+}

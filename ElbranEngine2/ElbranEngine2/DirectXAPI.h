@@ -38,7 +38,7 @@ public:
     void UnbindTextures(ShaderStage stage) override;
 
     void SetEditBuffer(EditBuffer* buffer, unsigned int slot) override;
-    void WriteBuffer(const void* data, int byteLength, Buffer* buffer) override;
+    void WriteBuffer(const void* data, unsigned int byteLength, Buffer* buffer) override;
     void SetOutputBuffer(OutputBuffer* buffer, unsigned int slot, const void* initialData) override;
     void ReadBuffer(const OutputBuffer* buffer, void* destination) override;
 

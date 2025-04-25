@@ -9,10 +9,10 @@
 
 Game::Game() {
 	testScene = new Scene(10, 5.0f);
-	testScene->backgroundColor = Color::Black;
-	//testScene->backgroundImage = &app->assets->apple;
-	SpriteRenderer* checker = testScene->AddSprite(&app->assets->apple);
-	checker->transform->scale = testScene->camera.GetWorldDimensions();
+	//testScene->backgroundColor = Color::Black;
+	testScene->backgroundImage = &app->assets->apple;
+	SpriteRenderer* checker = testScene->AddSprite(&app->assets->testSprite);
+	//checker->transform->scale = testScene->camera.GetWorldDimensions();
 	checker->lit = true;
 
 	//HSVPostProcess* pp = new HSVPostProcess();

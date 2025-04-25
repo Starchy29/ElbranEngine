@@ -20,9 +20,11 @@
     <Filter Include="Toolkit\Post Processes">
       <UniqueIdentifier>{7cf9fbe3-36d2-4c3f-b316-9a6969c93534}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Shaders\Particles">
+      <UniqueIdentifier>{a204d15e-6025-49dd-8357-3c3591d46c67}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="GameObject.cpp" />
     <ClCompile Include="Application.cpp" />
     <ClCompile Include="WindowsMain.cpp">
       <Filter>Windows</Filter>
@@ -48,7 +50,6 @@
     </ClCompile>
     <ClCompile Include="AssetContainer.cpp" />
     <ClCompile Include="Scene.cpp" />
-    <ClCompile Include="SpriteRenderer.cpp" />
     <ClCompile Include="HSVPostProcess.cpp">
       <Filter>Toolkit\Post Processes</Filter>
     </ClCompile>
@@ -61,9 +62,14 @@
     <ClCompile Include="Common.cpp">
       <Filter>Toolkit</Filter>
     </ClCompile>
+    <ClCompile Include="ParticleRenderer.cpp">
+      <Filter>Graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="SpriteRenderer.cpp">
+      <Filter>Graphics</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="GameObject.h" />
     <ClInclude Include="Application.h" />
     <ClInclude Include="Game.h" />
     <ClInclude Include="DirectXAPI.h">
@@ -94,7 +100,6 @@
     <ClInclude Include="AssetContainer.h" />
     <ClInclude Include="Scene.h" />
     <ClInclude Include="Transform.h" />
-    <ClInclude Include="SpriteRenderer.h" />
     <ClInclude Include="ShaderConstants.h">
       <Filter>Graphics</Filter>
     </ClInclude>
@@ -113,6 +118,18 @@
     </ClInclude>
     <ClInclude Include="BloomPostProcess.h">
       <Filter>Toolkit\Post Processes</Filter>
+    </ClInclude>
+    <ClInclude Include="SpriteSheet.h">
+      <Filter>Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="ParticleRenderer.h">
+      <Filter>Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="SpriteRenderer.h">
+      <Filter>Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="IRenderer.h">
+      <Filter>Graphics</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -142,6 +159,12 @@
     </FxCompile>
     <FxCompile Include="ScreenSumPP.hlsl">
       <Filter>Shaders</Filter>
+    </FxCompile>
+    <FxCompile Include="ParticlePassVS.hlsl">
+      <Filter>Shaders\Particles</Filter>
+    </FxCompile>
+    <FxCompile Include="ParticleQuadGS.hlsl">
+      <Filter>Shaders\Particles</Filter>
     </FxCompile>
   </ItemGroup>
   <ItemGroup>

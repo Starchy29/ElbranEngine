@@ -1,14 +1,10 @@
 #pragma once
-#include "GraphicsAPI.h"
 #include "Common.h"
-#include "Transform.h"
+#include "Buffers.h"
+#include "IRenderer.h"
 
-class SpriteRenderer
-{
+class SpriteRenderer : public IRenderer {
 public:
-	Transform* transform;
-	const Matrix* worldMatrix;
-
 	Texture2D* sprite;
 	Color tint;
 	bool lit;
@@ -17,6 +13,6 @@ public:
 
 	SpriteRenderer(Texture2D* sprite);
 	
-	void Draw();
+	void Draw() override;
 };
 

@@ -151,10 +151,10 @@
     <ClCompile Include="Common.cpp" />
     <ClCompile Include="DirectXAPI.cpp" />
     <ClCompile Include="Game.cpp" />
-    <ClCompile Include="GameObject.cpp" />
     <ClCompile Include="GraphicsAPI.cpp" />
     <ClCompile Include="HSVPostProcess.cpp" />
     <ClCompile Include="Math.cpp" />
+    <ClCompile Include="ParticleRenderer.cpp" />
     <ClCompile Include="Scene.cpp" />
     <ClCompile Include="Shaders.cpp" />
     <ClCompile Include="SpriteRenderer.cpp" />
@@ -172,17 +172,19 @@
     <ClInclude Include="DirectXAPI.h" />
     <ClInclude Include="FixedList.h" />
     <ClInclude Include="Game.h" />
-    <ClInclude Include="GameObject.h" />
     <ClInclude Include="GraphicsAPI.h" />
     <ClInclude Include="HSVPostProcess.h" />
     <ClInclude Include="IBehavior.h" />
     <ClInclude Include="IPostProcess.h" />
+    <ClInclude Include="IRenderer.h" />
     <ClInclude Include="Lights.h" />
     <ClInclude Include="Math.h" />
+    <ClInclude Include="ParticleRenderer.h" />
     <ClInclude Include="Scene.h" />
     <ClInclude Include="ShaderConstants.h" />
     <ClInclude Include="Shaders.h" />
     <ClInclude Include="SpriteRenderer.h" />
+    <ClInclude Include="SpriteSheet.h" />
     <ClInclude Include="Transform.h" />
     <ClInclude Include="Tween.h" />
   </ItemGroup>
@@ -224,6 +226,22 @@
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Vertex</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Vertex</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Vertex</ShaderType>
+    </FxCompile>
+    <FxCompile Include="ParticlePassVS.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Vertex</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Vertex</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Vertex</ShaderType>
+    </FxCompile>
+    <FxCompile Include="ParticleQuadGS.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Geometry</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">4.0</ShaderModel>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Geometry</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">4.0</ShaderModel>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Geometry</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">4.0</ShaderModel>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Geometry</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">4.0</ShaderModel>
     </FxCompile>
     <FxCompile Include="ScreenSumPP.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>

@@ -83,7 +83,7 @@ public:
 	virtual RenderTarget CreateRenderTarget(unsigned int width, unsigned int height) = 0;
 	virtual ComputeTexture CreateComputeTexture(unsigned int width, unsigned int height) = 0;
 	
-	virtual void WriteBuffer(const void* data, int byteLength, Buffer* buffer) = 0; // fails if the buffer was not created with cpu write access
+	virtual void WriteBuffer(const void* data, unsigned int byteLength, Buffer* buffer) = 0; // fails if the buffer was not created with cpu write access
 	virtual void SetConstants(ShaderStage stage, const ConstantBuffer* buffer, unsigned int slot) = 0;
 	virtual void SetArray(ShaderStage stage, const ArrayBuffer* buffer, unsigned int slot) = 0;
 	virtual void SetTexture(ShaderStage stage, const Texture2D* texture, unsigned int slot) = 0;
@@ -94,6 +94,9 @@ public:
 	virtual void SetVertexShader(const VertexShader* shader) = 0;
 	virtual void SetGeometryShader(const GeometryShader* shader) = 0;
 	virtual void SetPixelShader(const PixelShader* shader) = 0;
+	void SetVertexShader(const VertexShader* shader, void* constantInput, unsigned int inputBytes);
+	void SetGeometryShader(const GeometryShader* shader, void* constantInput, unsigned int inputBytes);
+	void SetPixelShader(const PixelShader* shader, void* constantInput, unsigned int inputBytes);
 
 	virtual void SetBlendMode(BlendState mode) = 0;
 	virtual void SetRenderTarget(const RenderTarget* renderTarget, bool useDepthStencil) = 0;

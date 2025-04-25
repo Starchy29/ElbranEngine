@@ -17,10 +17,8 @@ void BloomPostProcess::Render(GraphicsAPI* graphics, const RenderTarget* input, 
     // extract bright pixels
     RenderTarget* brightPixels = graphics->GetPostProcessHelper(1); // blur shader uses slot 0
     graphics->SetRenderTarget(brightPixels, false);
-    graphics->WriteBuffer(&threshold, sizeof(float), filterShader->constants.data);
-    graphics->SetConstants(ShaderStage::Pixel, &filterShader->constants, 0);
     graphics->SetTexture(ShaderStage::Pixel, input, 0);
-    graphics->SetPixelShader(filterShader);
+    graphics->SetPixelShader(filterShader, &threshold, sizeof(float));
     graphics->DrawFullscreen();
 
     // blur bright pixels

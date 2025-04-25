@@ -49,8 +49,8 @@ private:
 
 	std::vector<int> openSlots;
 	FixedList<IBehavior*> behaviors;
-	FixedList<SpriteRenderer*> sprites;
 	FixedList<LightSource> lights;
+	FixedList<SpriteRenderer*> sprites;
 
 	ConstantBuffer projectionBuffer;
 	ConstantBuffer lightInfoBuffer;

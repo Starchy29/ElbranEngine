@@ -27,6 +27,9 @@ AssetContainer::AssetContainer(std::wstring filePath, GraphicsAPI* graphics) {
 	// load shaders
 	fullscreenVS = graphics->LoadVertexShader(filePath, L"FullscreenVS.cso");
 	cameraVS = graphics->LoadVertexShader(filePath, L"CameraVS.cso");
+	particlePassPS = graphics->LoadVertexShader(filePath, L"ParticlePassVS.cso");
+
+	particleQuadGS = graphics->LoadGeometryShader(filePath, L"ParticleQuadGS.cso");
 
 	solidColorPS = graphics->LoadPixelShader(filePath, L"SolidColorPS.cso");
 	texturePS = graphics->LoadPixelShader(filePath, L"TexturePS.cso");
@@ -50,6 +53,9 @@ AssetContainer::~AssetContainer() {
 
 	fullscreenVS.Release();
 	cameraVS.Release();
+	particlePassPS.Release();
+
+	particleQuadGS.Release();
 
 	solidColorPS.Release();
 	texturePS.Release();

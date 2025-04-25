@@ -19,23 +19,17 @@ void SpriteRenderer::Draw() {
 	GraphicsAPI* graphics = app->graphics;
 	worldMatrix->values[0];
 
-	VertexShader* vertexShader = &app->assets->cameraVS;
 	CameraVSConstants vsInput;
 	vsInput.worldTransform = worldMatrix->Transpose();
 	vsInput.flipX = flipX;
 	vsInput.flipY = flipY;
-	graphics->WriteBuffer(&vsInput, sizeof(CameraVSConstants), vertexShader->constants.data);
-	graphics->SetConstants(ShaderStage::Vertex, &vertexShader->constants, 0);
-	graphics->SetVertexShader(vertexShader);
+	graphics->SetVertexShader(&app->assets->cameraVS, &vsInput, sizeof(CameraVSConstants));
 
-	PixelShader* pixelShader = &app->assets->texturePS;
 	TexturePSConstants psInput;
 	psInput.tint = tint;
 	psInput.lit = lit;
-	graphics->WriteBuffer(&psInput, sizeof(TexturePSConstants), pixelShader->constants.data);
-	graphics->SetConstants(ShaderStage::Pixel, &pixelShader->constants, 0);
 	graphics->SetTexture(ShaderStage::Pixel, sprite, 0);
-	graphics->SetPixelShader(pixelShader);
+	graphics->SetPixelShader(&app->assets->texturePS, &psInput, sizeof(TexturePSConstants));
 
 	graphics->DrawMesh(&app->assets->unitSquare);
 }

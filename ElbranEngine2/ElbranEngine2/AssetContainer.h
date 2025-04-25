@@ -13,6 +13,9 @@ public:
 
 	VertexShader fullscreenVS;
 	VertexShader cameraVS;
+	VertexShader particlePassPS;
+
+	GeometryShader particleQuadGS;
 
 	PixelShader solidColorPS;
 	PixelShader texturePS;

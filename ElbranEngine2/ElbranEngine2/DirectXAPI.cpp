@@ -410,7 +410,7 @@ void DirectXAPI::SetEditBuffer(EditBuffer* buffer, unsigned int slot) {
 	context->CSSetUnorderedAccessViews(slot, 1, &(buffer->computeView), nullptr);
 }
 
-void DirectXAPI::WriteBuffer(const void* data, int byteLength, Buffer* buffer) {
+void DirectXAPI::WriteBuffer(const void* data, unsigned int byteLength, Buffer* buffer) {
 	D3D11_MAPPED_SUBRESOURCE mappedResource = {};
 	context->Map(buffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
 	memcpy(mappedResource.pData, data, byteLength);

@@ -43,10 +43,8 @@ void HSVPostProcess::Render(GraphicsAPI* graphics, const RenderTarget* input, Re
 		graphics->UnbindTextures(ShaderStage::Compute);
 	}
 
-	graphics->WriteBuffer(&psInput, sizeof(ConSatValPPConstants), ppShader->constants.data);
-	graphics->SetConstants(ShaderStage::Pixel, &ppShader->constants, 0);
 	graphics->SetTexture(ShaderStage::Pixel, input, 0);
-	graphics->SetPixelShader(ppShader);
+	graphics->SetPixelShader(ppShader, &psInput, sizeof(ConSatValPPConstants));
 
 	graphics->DrawFullscreen();
 }

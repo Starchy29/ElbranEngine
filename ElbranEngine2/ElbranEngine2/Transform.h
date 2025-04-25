@@ -7,7 +7,4 @@ struct Transform {
 	float rotation;
 	float zOrder;
 	Transform const* parent;
-
-	// AlignedRect GetArea() const;
-	// void SetEdge
 };

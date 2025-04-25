@@ -28,3 +28,12 @@ struct BlurPPConstants {
 	int blurRadius;
 	GPU_BOOL horizontal;
 };
+
+struct ParticleQuadGSConstants {
+	float z;
+	float spriteAspectRatio;
+	float frameDuration;
+	int animationFrames;
+	Vector2 spriteDims;
+	int atlasCols;
+};
