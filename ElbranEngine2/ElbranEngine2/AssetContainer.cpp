@@ -40,6 +40,8 @@ AssetContainer::AssetContainer(std::wstring filePath, GraphicsAPI* graphics) {
 	screenSumPP = graphics->LoadPixelShader(filePath, L"ScreenSumPP.cso");
 
 	brightnessSumCS = graphics->LoadComputeShader(filePath, L"BrightnessSumCS.cso");
+	particleSpawnCS = graphics->LoadComputeShader(filePath, L"ParticleSpawnCS.cso");
+	particleMoveCS = graphics->LoadComputeShader(filePath, L"ParticleMoveCS.cso");
 
 	testSprite = graphics->LoadSprite(filePath, L"elbran.png");
 	apple = graphics->LoadSprite(filePath, L"apple.jpeg");
@@ -66,6 +68,8 @@ AssetContainer::~AssetContainer() {
 	screenSumPP.Release();
 
 	brightnessSumCS.Release();
+	particleSpawnCS.Release();
+	particleMoveCS.Release();
 
 	testSprite.Release();
 	apple.Release();

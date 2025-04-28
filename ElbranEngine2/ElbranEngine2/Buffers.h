@@ -29,6 +29,16 @@ struct Texture2D {
 	void Release();
 };
 
+struct SpriteSheet {
+	Texture2D texture;
+	int rows;
+	int cols;
+	int spriteCount;
+	float spriteAspectRatio;
+
+	void Release();
+};
+
 struct RenderTarget : Texture2D {
 	RenderTargetView* outputView;
 

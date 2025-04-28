@@ -32,8 +32,24 @@ struct BlurPPConstants {
 struct ParticleQuadGSConstants {
 	float z;
 	float spriteAspectRatio;
-	float frameDuration;
 	int animationFrames;
-	Vector2 spriteDims;
+	float animationFPS;
+	int atlasRows;
 	int atlasCols;
+};
+
+struct ParticleMoveCSConstants {
+	unsigned int maxParticles;
+	float deltaTime;
+	float growthRate;
+	float spinRate;
+	float fadeDuration;
+};
+
+struct ParticleSpawnCSConstants {
+	unsigned int spawnCount;
+	unsigned int lastParticle;
+	unsigned int maxParticles;
+	float lifespan;
+	float width;
 };

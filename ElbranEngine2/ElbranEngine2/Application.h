@@ -3,6 +3,7 @@
 class GraphicsAPI;
 class Game;
 class AssetContainer;
+class Random;
 
 class Application
 {
@@ -12,7 +13,7 @@ public:
 	// SoundMixer* sounds;
 	AssetContainer* assets;
 	Game* game;
-	// Random* rng;
+	Random* rng;
 
 	std::wstring filePath;
 

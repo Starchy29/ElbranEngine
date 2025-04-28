@@ -6,14 +6,25 @@
 #include "HSVPostProcess.h"
 #include "BlurPostProcess.h"
 #include "BloomPostProcess.h"
+#include "SpriteRenderer.h"
+#include "ParticleBehavior.h"
 
 Game::Game() {
 	testScene = new Scene(10, 5.0f);
 	//testScene->backgroundColor = Color::Black;
 	testScene->backgroundImage = &app->assets->apple;
-	SpriteRenderer* checker = testScene->AddSprite(&app->assets->testSprite);
+	//SpriteRenderer* checker = new SpriteRenderer(&app->assets->testSprite);
+	//testScene->AddRenderer(checker, false);
 	//checker->transform->scale = testScene->camera.GetWorldDimensions();
-	checker->lit = true;
+	//checker->lit = true;
+
+	ParticleRenderer* parts = new ParticleRenderer(200, app->assets->testSprite);
+	ParticleBehavior* swarm = new ParticleBehavior(parts);
+	testScene->AddRenderer(parts, true);
+	testScene->AddBehavior(swarm);
+	swarm->SetSpawnRate(10.f);
+	//swarm->Spawn(200);
+	//parts->transform->zOrder = 0.99f;
 
 	//HSVPostProcess* pp = new HSVPostProcess();
 	//app->graphics->postProcesses.push_back(pp);

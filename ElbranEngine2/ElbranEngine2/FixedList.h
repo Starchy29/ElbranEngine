@@ -10,7 +10,11 @@ class FixedList
 public:
 	Type* dataArray;
 
-	FixedList() {}
+	FixedList() {
+		dataArray = nullptr;
+		size = 0;
+		capacity = 0;
+	}
 
 	FixedList(unsigned int capacity) {
 		size = 0;

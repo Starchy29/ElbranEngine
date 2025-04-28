@@ -18,7 +18,9 @@ Scene::Scene(unsigned int maxEntities, float cameraWidth)  {
 	entityCount = 0;
 	transforms = new Transform[maxEntities];
 	worldMatrices = new Matrix[maxEntities];
-	sprites = FixedList<SpriteRenderer*>(maxEntities);
+
+	opaques = FixedList<IRenderer*>(maxEntities);
+	translucents = FixedList<IRenderer*>(maxEntities);
 	behaviors = FixedList<IBehavior*>(maxEntities);
 	lights = FixedList<LightSource>(maxEntities / 4);
 
@@ -36,11 +38,15 @@ Scene::~Scene() {
 
 	delete[] transforms;
 	delete[] worldMatrices;
-	for(int i = 0; i < sprites.GetSize(); i++) {
-		delete sprites[i];
+	for(unsigned int i = 0; i < opaques.GetSize(); i++) {
+		delete opaques[i];
 	}
-	delete[] sprites.dataArray;
-	for(int i = 0; i < behaviors.GetSize(); i++) {
+	delete[] opaques.dataArray;
+	for(unsigned int i = 0; i < translucents.GetSize(); i++) {
+		delete translucents[i];
+	}
+	delete[] translucents.dataArray;
+	for(unsigned int i = 0; i < behaviors.GetSize(); i++) {
 		delete behaviors[i];
 	}
 	delete[] behaviors.dataArray;
@@ -52,7 +58,7 @@ void Scene::Update(float deltaTime) {
 	//transforms[0].position.x = sinf(t);
 	transforms[1].rotation = t;
 
-	for(int i = 0; i < behaviors.GetSize(); i++) {
+	for(unsigned int i = 0; i < behaviors.GetSize(); i++) {
 		// behaviors may be added or deleted mid-update
 		behaviors[i]->Update(deltaTime);
 	}
@@ -118,11 +124,12 @@ void Scene::Draw() {
 	viewProjection = viewProjection.Transpose();
 	graphics->WriteBuffer(&viewProjection, sizeof(Matrix), projectionBuffer.data);
 	graphics->SetConstants(ShaderStage::Vertex, &projectionBuffer, 1);
+	graphics->SetConstants(ShaderStage::Geometry, &projectionBuffer, 1);
 
 	// draw opaques front to back
-	int numOpaques = sprites.GetSize();
+	int numOpaques = opaques.GetSize();
 	for(int i = 0; i < numOpaques; i++) {
-		sprites[i]->Draw();
+		opaques[i]->Draw();
 	}
 
 	// draw the background
@@ -143,9 +150,13 @@ void Scene::Draw() {
 	graphics->DrawFullscreen();
 
 	// draw translucents back to front
+	int numTranslucents = translucents.GetSize();
+	for(int i = 0; i < numTranslucents; i++) {
+		translucents[i]->Draw();
+	}
 }
 
-void Scene::CreateTransform(Transform** outTransform, const Matrix** outMatrix) {
+void Scene::ReserveTransform(Transform** outTransform, const Matrix** outMatrix) {
 	int newSlot = entityCount;
 	if(openSlots.size() > 0) {
 		newSlot = openSlots[openSlots.size() - 1];
@@ -166,11 +177,17 @@ void Scene::CreateTransform(Transform** outTransform, const Matrix** outMatrix) 
 	}
 }
 
-SpriteRenderer* Scene::AddSprite(Texture2D* sprite) {
-	SpriteRenderer* added = new SpriteRenderer(sprite);
-	sprites.Add(added);
-	CreateTransform(&added->transform, &added->worldMatrix);
-	return added;
+void Scene::AddRenderer(IRenderer* renderer, bool translucent) {
+	ReserveTransform(&renderer->transform, &renderer->worldMatrix);
+	if(translucent) {
+		translucents.Add(renderer);
+	} else {
+		opaques.Add(renderer);
+	}
+}
+
+void Scene::AddBehavior(IBehavior* behavior) {
+	behaviors.Add(behavior);
 }
 
 LightSource* Scene::AddLight(Color color, float radius) {
@@ -180,7 +197,7 @@ LightSource* Scene::AddLight(Color color, float radius) {
 	added.brightness = 1.0f;
 	added.coneSize = 2.0f * PI;
 
-	CreateTransform(&added.transform, &added.worldMatrix);
+	ReserveTransform(&added.transform, &added.worldMatrix);
 	lights.Add(added);
 
 	return &lights[lights.GetSize() - 1];
@@ -201,19 +218,29 @@ void Scene::ReleaseTransform(Transform* transform) {
 	}
 }
 
-void Scene::RemoveSprite(SpriteRenderer* sprite) {
-	int index = sprite - sprites.dataArray[0];
-	assert(index >= 0 && index < sprites.GetSize() && "attempted to remove a sprite that was not added");
-	ReleaseTransform(sprite->transform);
-	sprites.RemoveAt(index);
-	delete sprite;
+void Scene::RemoveRenderer(IRenderer* renderer) {
+	unsigned int index = -1;
+	if(renderer >= opaques.dataArray[0] && renderer <= opaques.dataArray[opaques.GetSize() - 1]) {
+		index = renderer - opaques.dataArray[0];
+		opaques.RemoveAt(index);
+	}
+	else if(renderer >= translucents.dataArray[0] && renderer <= translucents.dataArray[translucents.GetSize() - 1]) {
+		index = renderer - translucents.dataArray[0];
+		translucents.RemoveAt(index);
+	}
+	assert(index >= 0 && "attempted to remove a renderer that was not added");
+	ReleaseTransform(renderer->transform);
+}
+
+void Scene::RemoveBehavior(IBehavior* behavior) {
+	behaviors.RemoveAt(behavior - behaviors.dataArray[0]);
 }
 
 void Scene::RemoveLight(LightSource* light) {
-	int index = light - lights.dataArray;
-	assert(index >= 0 && index < sprites.GetSize() && "attempted to remove a light that was not added");
+	unsigned int index = light - lights.dataArray;
+	assert(index >= 0 && index < lights.GetSize() && "attempted to remove a light that was not added");
 	ReleaseTransform(light->transform);
-	sprites.RemoveAt(index);
+	lights.RemoveAt(index);
 }
 
 float Camera::GetViewHeight() const {

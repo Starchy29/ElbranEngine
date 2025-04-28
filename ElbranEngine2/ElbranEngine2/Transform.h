@@ -6,5 +6,5 @@ struct Transform {
 	Vector2 scale;
 	float rotation;
 	float zOrder;
-	Transform const* parent;
+	Transform* parent;
 };

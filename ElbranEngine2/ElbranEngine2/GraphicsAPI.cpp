@@ -64,8 +64,6 @@ void GraphicsAPI::ApplyPostProcesses() {
 			// if the post process makes no changes, copying the pixels is fastest
 			CopyTexture(input, output);
 		}
-
-		UnbindTextures(ShaderStage::Pixel);
 	}
 
 	ResetRenderTarget();

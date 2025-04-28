@@ -35,13 +35,13 @@ public:
     RenderTarget CreateRenderTarget(unsigned int width, unsigned int height) override;
     ComputeTexture CreateComputeTexture(unsigned int width, unsigned int height) override;
     void CopyTexture(Texture2D* source, Texture2D* destination) override;
-    void UnbindTextures(ShaderStage stage) override;
 
     void SetEditBuffer(EditBuffer* buffer, unsigned int slot) override;
     void WriteBuffer(const void* data, unsigned int byteLength, Buffer* buffer) override;
     void SetOutputBuffer(OutputBuffer* buffer, unsigned int slot, const void* initialData) override;
     void ReadBuffer(const OutputBuffer* buffer, void* destination) override;
 
+    void SetPrimitive(RenderPrimitive primitive) override;
     void SetBlendMode(BlendState mode) override;
 
     void SetConstants(ShaderStage stage, const ConstantBuffer* buffer, unsigned int slot) override;
@@ -50,6 +50,7 @@ public:
     void SetSampler(ShaderStage stage, Sampler* sampler, unsigned int slot) override;
 
     void SetComputeTexture(const ComputeTexture* texture, unsigned int slot) override;
+    void ClearMesh() override;
 
     void SetVertexShader(const VertexShader* shader) override;
     void SetGeometryShader(const GeometryShader* shader) override;

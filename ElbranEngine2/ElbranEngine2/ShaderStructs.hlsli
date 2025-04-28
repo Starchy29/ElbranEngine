@@ -17,9 +17,8 @@ struct Particle {
 	float2 worldPosition : POSITION;
 	float2 velocity : POSITION2;
 	float timeLeft : HELPER0;
-	float lifetime : HELPER1;
-	float rotation : HELPER2;
-	float width : HELPER3;
-	float alpha : HELPER4;
+	float rotation : HELPER1;
+	float width : HELPER2;
+	float alpha : HELPER3;
 };
 #endif

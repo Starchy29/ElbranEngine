@@ -5,7 +5,7 @@
 #include "Lights.h"
 #include "FixedList.h"
 #include <vector>
-#include "SpriteRenderer.h"
+#include "IRenderer.h"
 
 #define CAMERA_Z 0
 #define CAMERA_DEPTH 100
@@ -34,12 +34,14 @@ public:
 	virtual void Update(float deltaTime);
 	virtual void Draw();
 
-	void CreateTransform(Transform** outTransform, const Matrix** outMatrix);
-	SpriteRenderer* AddSprite(Texture2D* sprite);
+	void ReserveTransform(Transform** outTransform, const Matrix** outMatrix);
+	void AddRenderer(IRenderer* renderer, bool translucent);
+	void AddBehavior(IBehavior* behavior);
 	LightSource* AddLight(Color color, float radius);
 
 	void ReleaseTransform(Transform* transform);
-	void RemoveSprite(SpriteRenderer* sprite);
+	void RemoveRenderer(IRenderer* renderer);
+	void RemoveBehavior(IBehavior* behavior);
 	void RemoveLight(LightSource* light);
 
 private:
@@ -50,7 +52,8 @@ private:
 	std::vector<int> openSlots;
 	FixedList<IBehavior*> behaviors;
 	FixedList<LightSource> lights;
-	FixedList<SpriteRenderer*> sprites;
+	FixedList<IRenderer*> opaques;
+	FixedList<IRenderer*> translucents;
 
 	ConstantBuffer projectionBuffer;
 	ConstantBuffer lightInfoBuffer;

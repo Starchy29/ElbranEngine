@@ -32,6 +32,8 @@ void BlurPostProcess::Render(GraphicsAPI* graphics, const RenderTarget* input, R
 	graphics->SetRenderTarget(output, false);
 	graphics->SetTexture(ShaderStage::Pixel, midTarget, 0);
 	graphics->DrawFullscreen();
+
+	graphics->SetTexture(ShaderStage::Pixel, nullptr, 0);
 }
 
 bool BlurPostProcess::IsActive() const {

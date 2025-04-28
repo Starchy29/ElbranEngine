@@ -68,6 +68,12 @@
     <ClCompile Include="SpriteRenderer.cpp">
       <Filter>Graphics</Filter>
     </ClCompile>
+    <ClCompile Include="ParticleBehavior.cpp">
+      <Filter>Graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="Random.cpp">
+      <Filter>Toolkit</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Application.h" />
@@ -119,9 +125,6 @@
     <ClInclude Include="BloomPostProcess.h">
       <Filter>Toolkit\Post Processes</Filter>
     </ClInclude>
-    <ClInclude Include="SpriteSheet.h">
-      <Filter>Graphics</Filter>
-    </ClInclude>
     <ClInclude Include="ParticleRenderer.h">
       <Filter>Graphics</Filter>
     </ClInclude>
@@ -130,6 +133,12 @@
     </ClInclude>
     <ClInclude Include="IRenderer.h">
       <Filter>Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="ParticleBehavior.h">
+      <Filter>Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="Random.h">
+      <Filter>Toolkit</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -164,6 +173,12 @@
       <Filter>Shaders\Particles</Filter>
     </FxCompile>
     <FxCompile Include="ParticleQuadGS.hlsl">
+      <Filter>Shaders\Particles</Filter>
+    </FxCompile>
+    <FxCompile Include="ParticleSpawnCS.hlsl">
+      <Filter>Shaders\Particles</Filter>
+    </FxCompile>
+    <FxCompile Include="ParticleMoveCS.hlsl">
       <Filter>Shaders\Particles</Filter>
     </FxCompile>
   </ItemGroup>

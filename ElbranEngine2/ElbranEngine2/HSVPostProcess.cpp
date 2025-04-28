@@ -40,13 +40,14 @@ void HSVPostProcess::Render(GraphicsAPI* graphics, const RenderTarget* input, Re
 
 		float totalBrightness = (sums[0] + sums[1] + sums[2] + sums[3]) / 100.0f; // shader multiplies by 100, cancel it out
 		psInput.averageBrightness = totalBrightness / (viewDims.x * viewDims.y);
-		graphics->UnbindTextures(ShaderStage::Compute);
+		graphics->SetTexture(ShaderStage::Compute, nullptr, 0); // unbind input texture
 	}
 
 	graphics->SetTexture(ShaderStage::Pixel, input, 0);
 	graphics->SetPixelShader(ppShader, &psInput, sizeof(ConSatValPPConstants));
 
 	graphics->DrawFullscreen();
+	graphics->SetTexture(ShaderStage::Pixel, nullptr, 0);
 }
 
 bool HSVPostProcess::IsActive() const {

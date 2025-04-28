@@ -26,6 +26,8 @@ public:
 	PixelShader screenSumPP;
 
 	ComputeShader brightnessSumCS;
+	ComputeShader particleSpawnCS;
+	ComputeShader particleMoveCS;
 
 	Texture2D testSprite;
 	Texture2D apple;

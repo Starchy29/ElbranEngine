@@ -388,26 +388,9 @@ void DirectXAPI::CopyTexture(Texture2D* source, Texture2D* destination) {
 	context->CopyResource(destination->data, source->data);
 }
 
-void DirectXAPI::UnbindTextures(ShaderStage stage) {
-	ID3D11ShaderResourceView* nullTexes[10] {}; // will you ever need more than 10 textures at once?
-	switch(stage) {
-	case ShaderStage::Vertex:
-		context->VSSetShaderResources(0, 10, nullTexes);
-		break;
-	case ShaderStage::Geometry:
-		context->GSSetShaderResources(0, 10, nullTexes);
-		break;
-	case ShaderStage::Pixel:
-		context->PSSetShaderResources(0, 10, nullTexes);
-		break;
-	case ShaderStage::Compute:
-		context->CSSetShaderResources(0, 10, nullTexes);
-		break;
-	}
-}
-
 void DirectXAPI::SetEditBuffer(EditBuffer* buffer, unsigned int slot) {
-	context->CSSetUnorderedAccessViews(slot, 1, &(buffer->computeView), nullptr);
+	UnorderedAccessView* view = buffer ? buffer->computeView : nullptr;
+	context->CSSetUnorderedAccessViews(slot, 1, &view, nullptr);
 }
 
 void DirectXAPI::WriteBuffer(const void* data, unsigned int byteLength, Buffer* buffer) {
@@ -426,7 +409,8 @@ void DirectXAPI::SetOutputBuffer(OutputBuffer* buffer, unsigned int slot, const 
 		context->CopyResource(buffer->gpuBuffer, buffer->cpuBuffer);
 	}
 
-	context->CSSetUnorderedAccessViews(slot, 1, &(buffer->view), nullptr);
+	UnorderedAccessView* view = buffer ? buffer->view : nullptr;
+	context->CSSetUnorderedAccessViews(slot, 1, &view, nullptr);
 }
 
 void DirectXAPI::ReadBuffer(const OutputBuffer* buffer, void* destination) {
@@ -436,6 +420,20 @@ void DirectXAPI::ReadBuffer(const OutputBuffer* buffer, void* destination) {
 	context->Map(buffer->cpuBuffer, 0, D3D11_MAP_READ, 0, &mappedResource);
 	memcpy(destination, mappedResource.pData, buffer->byteLength);
 	context->Unmap(buffer->cpuBuffer, 0);
+}
+
+void DirectXAPI::SetPrimitive(RenderPrimitive primitive) {
+	switch(primitive) {
+	case RenderPrimitive::Point:
+		context->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_POINTLIST);
+		break;
+	case RenderPrimitive::Line:
+		context->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_LINELIST);
+		break;
+	case RenderPrimitive::Triangle:
+		context->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+		break;
+	}
 }
 
 void DirectXAPI::SetBlendMode(BlendState mode) {
@@ -453,75 +451,86 @@ void DirectXAPI::SetBlendMode(BlendState mode) {
 }
 
 void DirectXAPI::SetConstants(ShaderStage stage, const ConstantBuffer* constantBuffer, unsigned int slot) {
+	Buffer* data = constantBuffer ? constantBuffer->data : nullptr;
 	switch (stage) {
 	case ShaderStage::Vertex:
-		context->VSSetConstantBuffers(slot, 1, &constantBuffer->data);
+		context->VSSetConstantBuffers(slot, 1, &data);
 		break;
 	case ShaderStage::Geometry:
-		context->GSSetConstantBuffers(slot, 1, &constantBuffer->data);
+		context->GSSetConstantBuffers(slot, 1, &data);
 		break;
 	case ShaderStage::Pixel:
-		context->PSSetConstantBuffers(slot, 1, &constantBuffer->data);
+		context->PSSetConstantBuffers(slot, 1, &data);
 		break;
 	case ShaderStage::Compute:
-		context->CSSetConstantBuffers(slot, 1, &constantBuffer->data);
+		context->CSSetConstantBuffers(slot, 1, &data);
 		break;
 	}
 }
 
 void DirectXAPI::SetArray(ShaderStage stage, const ArrayBuffer* buffer, unsigned int slot) {
+	ShaderResourceView* view = buffer ? buffer->view : nullptr;
 	switch(stage) {
 	case ShaderStage::Vertex:
-		context->VSSetShaderResources(slot, 1, &buffer->view);
+		context->VSSetShaderResources(slot, 1, &view);
 		break;
 	case ShaderStage::Geometry:
-		context->GSSetShaderResources(slot, 1, &buffer->view);
+		context->GSSetShaderResources(slot, 1, &view);
 		break;
 	case ShaderStage::Pixel:
-		context->PSSetShaderResources(slot, 1, &buffer->view);
+		context->PSSetShaderResources(slot, 1, &view);
 		break;
 	case ShaderStage::Compute:
-		context->CSSetShaderResources(slot, 1, &buffer->view);
+		context->CSSetShaderResources(slot, 1, &view);
 		break;
 	}
 }
 
 void DirectXAPI::SetTexture(ShaderStage stage, const Texture2D* texture, unsigned int slot) {
+	ShaderResourceView* view = texture ? texture->inputView : nullptr;
 	switch(stage) {
 	case ShaderStage::Vertex:
-		context->VSSetShaderResources(slot, 1, &texture->inputView);
+		context->VSSetShaderResources(slot, 1, &view);
 		break;
 	case ShaderStage::Geometry:
-		context->GSSetShaderResources(slot, 1, &texture->inputView);
+		context->GSSetShaderResources(slot, 1, &view);
 		break;
 	case ShaderStage::Pixel:
-		context->PSSetShaderResources(slot, 1, &texture->inputView);
+		context->PSSetShaderResources(slot, 1, &view);
 		break;
 	case ShaderStage::Compute:
-		context->CSSetShaderResources(slot, 1, &texture->inputView);
+		context->CSSetShaderResources(slot, 1, &view);
 		break;
 	}
 }
 
 void DirectXAPI::SetSampler(ShaderStage stage, Sampler* sampler, unsigned int slot) {
+	SamplerState* state = sampler ? sampler->state : nullptr;
 	switch(stage) {
 	case ShaderStage::Vertex:
-		context->VSSetSamplers(slot, 1, &sampler->state);
+		context->VSSetSamplers(slot, 1, &state);
 		break;
 	case ShaderStage::Geometry:
-		context->GSSetSamplers(slot, 1, &sampler->state);
+		context->GSSetSamplers(slot, 1, &state);
 		break;
 	case ShaderStage::Pixel:
-		context->PSSetSamplers(slot, 1, &sampler->state);
+		context->PSSetSamplers(slot, 1, &state);
 		break;
 	case ShaderStage::Compute:
-		context->CSSetSamplers(slot, 1, &sampler->state);
+		context->CSSetSamplers(slot, 1, &state);
 		break;
 	}
 }
 
 void DirectXAPI::SetComputeTexture(const ComputeTexture* texture, unsigned int slot) {
-	context->CSSetUnorderedAccessViews(slot, 1, &(texture->outputView), nullptr);
+	UnorderedAccessView* view = texture ? texture->outputView : nullptr;
+	context->CSSetUnorderedAccessViews(slot, 1, &view, nullptr);
+}
+
+void DirectXAPI::ClearMesh() {
+	UINT zero = 0;
+	ID3D11Buffer* nullBuffer = nullptr;
+	context->IASetVertexBuffers(0, 1, &nullBuffer, &zero, &zero);
 }
 
 void DirectXAPI::SetVertexShader(const VertexShader* shader) {
@@ -529,7 +538,7 @@ void DirectXAPI::SetVertexShader(const VertexShader* shader) {
 }
 
 void DirectXAPI::SetGeometryShader(const GeometryShader* shader) {
-	context->GSSetShader(shader->shader, 0, 0);
+	context->GSSetShader(shader ? shader->shader : nullptr, 0, 0);
 }
 
 void DirectXAPI::SetPixelShader(const PixelShader* shader) {
@@ -572,6 +581,10 @@ Texture2D DirectXAPI::LoadSprite(std::wstring directory, std::wstring fileName) 
 	ID3D11Resource* textureResource;
 	DirectX::CreateWICTextureFromFile(device.Get(), context.Get(), fullPath.c_str(), &textureResource, &result.inputView);
 	result.data = (TextureData*)textureResource;
+
+	D3D11_TEXTURE2D_DESC description;
+	result.data->GetDesc(&description);
+	result.aspectRatio = (float)description.Width / description.Height;
 	return result;
 }
 

@@ -2,6 +2,7 @@
 #include "GraphicsAPI.h"
 #include "Game.h"
 #include "AssetContainer.h"
+#include "Random.h"
 
 Application* app;
 
@@ -10,13 +11,13 @@ Application::Application(std::wstring filePath, GraphicsAPI* graphics) {
 	// sounds = new SoundMixer();
 	// InputManager* input;
 	assets = new AssetContainer(filePath, graphics);
-	// rng = new Random();
+	rng = new Random();
 
 	this->filePath = filePath;
 }
 
 Application::~Application() {
-	// delete rng;
+	delete rng;
 	delete game;
 	// delete input;
 	// delete sounds;

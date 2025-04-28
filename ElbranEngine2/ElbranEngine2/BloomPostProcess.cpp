@@ -31,6 +31,9 @@ void BloomPostProcess::Render(GraphicsAPI* graphics, const RenderTarget* input, 
     graphics->SetTexture(ShaderStage::Pixel, blurredBrightness, 1);
     graphics->SetPixelShader(combineShader);
     graphics->DrawFullscreen();
+
+    graphics->SetTexture(ShaderStage::Pixel, nullptr, 0);
+    graphics->SetTexture(ShaderStage::Pixel, nullptr, 1);
 }
 
 bool BloomPostProcess::IsActive() const {

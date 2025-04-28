@@ -3,9 +3,6 @@
 cbuffer Constants : register(b0) {
 	uint maxParticles;
 	float deltaTime;
-}
-
-cbuffer ParticleType : register(b1) {
 	float growthRate;
 	float spinRate;
 	float fadeDuration;
@@ -25,7 +22,6 @@ void main(uint3 DTid : SV_DispatchThreadID) {
 	}
 	
 	particle.timeLeft -= deltaTime;
-	particle.lifetime += deltaTime;
 	
 	particle.worldPosition += particle.velocity * deltaTime;
 	particle.width = max(0, particle.width + growthRate * deltaTime);

@@ -18,6 +18,12 @@ enum class BlendState {
 	Additive
 };
 
+enum class RenderPrimitive {
+	Point,
+	Line,
+	Triangle
+};
+
 enum class ShaderStage {
 	Vertex,
 	Geometry,
@@ -89,7 +95,7 @@ public:
 	virtual void SetTexture(ShaderStage stage, const Texture2D* texture, unsigned int slot) = 0;
 	virtual void SetSampler(ShaderStage stage, Sampler* sampler, unsigned int slot) = 0;
 	virtual void CopyTexture(Texture2D* source, Texture2D* destination) = 0;
-	virtual void UnbindTextures(ShaderStage stage) = 0;
+	virtual void ClearMesh() = 0;
 
 	virtual void SetVertexShader(const VertexShader* shader) = 0;
 	virtual void SetGeometryShader(const GeometryShader* shader) = 0;
@@ -99,6 +105,7 @@ public:
 	void SetPixelShader(const PixelShader* shader, void* constantInput, unsigned int inputBytes);
 
 	virtual void SetBlendMode(BlendState mode) = 0;
+	virtual void SetPrimitive(RenderPrimitive primitive) = 0;
 	virtual void SetRenderTarget(const RenderTarget* renderTarget, bool useDepthStencil) = 0;
 	virtual void ResetRenderTarget() = 0;
 

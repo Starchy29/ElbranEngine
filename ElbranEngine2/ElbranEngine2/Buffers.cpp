@@ -50,3 +50,7 @@ void EditBuffer::Release() {
 void Sampler::Release() {
 	RELEASE(state);
 }
+
+void SpriteSheet::Release() {
+	texture.Release();
+}
