@@ -74,6 +74,7 @@
     <ClCompile Include="Random.cpp">
       <Filter>Toolkit</Filter>
     </ClCompile>
+    <ClCompile Include="ShapeRenderer.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Application.h" />
@@ -140,6 +141,7 @@
     <ClInclude Include="Random.h">
       <Filter>Toolkit</Filter>
     </ClInclude>
+    <ClInclude Include="ShapeRenderer.h" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="CameraVS.hlsl">
@@ -181,16 +183,19 @@
     <FxCompile Include="ParticleMoveCS.hlsl">
       <Filter>Shaders\Particles</Filter>
     </FxCompile>
+    <FxCompile Include="CircleFillPS.hlsl">
+      <Filter>Shaders</Filter>
+    </FxCompile>
   </ItemGroup>
   <ItemGroup>
-    <None Include="ShaderStructs.hlsli">
-      <Filter>Shaders</Filter>
-    </None>
     <None Include="packages.config" />
     <None Include="Lighting.hlsli">
       <Filter>Shaders</Filter>
     </None>
     <None Include="ColorConversion.hlsli">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="ShaderStructs.hlsli">
       <Filter>Shaders</Filter>
     </None>
   </ItemGroup>

@@ -8,6 +8,7 @@
 #include "BloomPostProcess.h"
 #include "SpriteRenderer.h"
 #include "ParticleBehavior.h"
+#include "ShapeRenderer.h"
 
 Game::Game() {
 	testScene = new Scene(10, 5.0f);
@@ -18,11 +19,14 @@ Game::Game() {
 	//checker->transform->scale = testScene->camera.GetWorldDimensions();
 	//checker->lit = true;
 
-	ParticleRenderer* parts = new ParticleRenderer(200, app->assets->testSprite);
-	ParticleBehavior* swarm = new ParticleBehavior(parts);
-	testScene->AddRenderer(parts, true);
-	testScene->AddBehavior(swarm);
-	swarm->SetSpawnRate(10.f);
+	testScene->AddRenderer(new ShapeRenderer(ShapeRenderer::Shape::Circle, Color(0, 1, 1, 0.6f)), true);
+
+	//ParticleRenderer* parts = new ParticleRenderer(200, app->assets->testSprite);
+	//ParticleBehavior* swarm = new ParticleBehavior(parts);
+	//testScene->AddRenderer(parts, true);
+	//testScene->AddBehavior(swarm);
+	//swarm->SetSpawnRate(10.f);
+	//parts->transform->zOrder = 10.f;
 	//swarm->Spawn(200);
 	//parts->transform->zOrder = 0.99f;
 

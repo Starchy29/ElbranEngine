@@ -138,22 +138,20 @@ void Scene::Draw() {
 		psInput.tint = backgroundColor;
 		psInput.lit = false;
 
-		graphics->WriteBuffer(&psInput, sizeof(TexturePSConstants), app->assets->texturePS.constants.data);
-		graphics->SetConstants(ShaderStage::Pixel, &app->assets->texturePS.constants, 0);
 		graphics->SetTexture(ShaderStage::Pixel, backgroundImage, 0);
-		graphics->SetPixelShader(&app->assets->texturePS);
+		graphics->SetPixelShader(&app->assets->texturePS, &psInput, sizeof(TexturePSConstants));
 	} else {
-		graphics->WriteBuffer(&backgroundColor, sizeof(Color), app->assets->solidColorPS.constants.data);
-		graphics->SetConstants(ShaderStage::Pixel, &app->assets->solidColorPS.constants, 0);
-		graphics->SetPixelShader(&app->assets->solidColorPS);
+		graphics->SetPixelShader(&app->assets->solidColorPS, &backgroundColor, sizeof(Color));
 	}
 	graphics->DrawFullscreen();
 
 	// draw translucents back to front
+	graphics->SetBlendMode(BlendState::AlphaBlend);
 	int numTranslucents = translucents.GetSize();
 	for(int i = 0; i < numTranslucents; i++) {
 		translucents[i]->Draw();
 	}
+	graphics->SetBlendMode(BlendState::None);
 }
 
 void Scene::ReserveTransform(Transform** outTransform, const Matrix** outMatrix) {

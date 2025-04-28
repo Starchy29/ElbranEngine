@@ -10,6 +10,7 @@ class AssetContainer
 public:
 	Sampler defaultSampler;
 	Mesh unitSquare;
+	Mesh unitTriangle;
 
 	VertexShader fullscreenVS;
 	VertexShader cameraVS;
@@ -19,6 +20,7 @@ public:
 
 	PixelShader solidColorPS;
 	PixelShader texturePS;
+	PixelShader circleFillPS;
 
 	PixelShader conSatValPP;
 	PixelShader blurPP;

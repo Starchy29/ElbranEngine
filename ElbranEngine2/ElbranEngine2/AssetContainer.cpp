@@ -24,6 +24,16 @@ AssetContainer::AssetContainer(std::wstring filePath, GraphicsAPI* graphics) {
 
 	unitSquare = graphics->CreateMesh(vertices, 4, indices, 6, false);
 
+	// create unit triangle
+	Vertex triVerts[] = {
+		{ Vector2(-0.5f, 0.5f), Vector2(0.0f, 0.0f) },
+		{ Vector2(0.5f, 0.f), Vector2(1.0f, 0.5f) },
+		{ Vector2(-0.5f, -0.5f), Vector2(0.0f, 1.0f) }
+	};
+
+	unsigned int triIndices[] = { 0, 1, 2 };
+	unitTriangle = graphics->CreateMesh(triVerts, 3, triIndices, 3, false);
+
 	// load shaders
 	fullscreenVS = graphics->LoadVertexShader(filePath, L"FullscreenVS.cso");
 	cameraVS = graphics->LoadVertexShader(filePath, L"CameraVS.cso");
@@ -33,6 +43,7 @@ AssetContainer::AssetContainer(std::wstring filePath, GraphicsAPI* graphics) {
 
 	solidColorPS = graphics->LoadPixelShader(filePath, L"SolidColorPS.cso");
 	texturePS = graphics->LoadPixelShader(filePath, L"TexturePS.cso");
+	circleFillPS = graphics->LoadPixelShader(filePath, L"CircleFillPS.cso");
 
 	conSatValPP = graphics->LoadPixelShader(filePath, L"ConSatValPP.cso");
 	blurPP = graphics->LoadPixelShader(filePath, L"BlurPP.cso");
@@ -50,8 +61,9 @@ AssetContainer::AssetContainer(std::wstring filePath, GraphicsAPI* graphics) {
 AssetContainer::~AssetContainer() {
 	GraphicsAPI* graphics = app->graphics;
 
-	unitSquare.Release();
 	defaultSampler.Release();
+	unitSquare.Release();
+	unitTriangle.Release();
 
 	fullscreenVS.Release();
 	cameraVS.Release();
@@ -61,6 +73,7 @@ AssetContainer::~AssetContainer() {
 
 	solidColorPS.Release();
 	texturePS.Release();
+	circleFillPS.Release();
 
 	conSatValPP.Release();
 	blurPP.Release();
