@@ -14,9 +14,8 @@ Game::Game() {
 	testScene = new Scene(10, 5.0f);
 	//testScene->backgroundColor = Color::Black;
 	testScene->backgroundImage = &app->assets->apple;
-	//SpriteRenderer* checker = new SpriteRenderer(&app->assets->testSprite);
-	//testScene->AddRenderer(checker, false);
-	//checker->transform->scale = testScene->camera.GetWorldDimensions();
+	SpriteRenderer* checker = new SpriteRenderer(&app->assets->testSprite);
+	testScene->AddRenderer(checker, false);
 	//checker->lit = true;
 
 	testScene->AddRenderer(new ShapeRenderer(ShapeRenderer::Shape::Circle, Color(0, 1, 1, 0.6f)), true);

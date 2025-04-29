@@ -47,6 +47,7 @@ public:
 private:
 	int entityCount;
 	Transform* transforms;
+	Matrix* localMatrices;
 	Matrix* worldMatrices;
 
 	std::vector<int> openSlots;
@@ -58,7 +59,5 @@ private:
 	ConstantBuffer projectionBuffer;
 	ConstantBuffer lightInfoBuffer;
 	ArrayBuffer lightsBuffer;
-
-	float t = 0.f; // TEMP
 };
 

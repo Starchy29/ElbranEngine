@@ -101,7 +101,7 @@ struct Matrix {
 	
 	static Matrix Rotation(float radians);
 	static Matrix Scale(float x, float y);
-	static Matrix Translate(float x, float y, float z = 0.f);
+	static Matrix Translation(float x, float y, float z = 0.f);
 	static Matrix View(Vector2 eyePosition, float rotation);
 	static Matrix ProjectOrthographic(float viewWidth, float viewHeight, float viewRange);
 

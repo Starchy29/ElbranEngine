@@ -344,7 +344,7 @@ Matrix Matrix::Scale(float x, float y) {
 	} };
 }
 
-Matrix Matrix::Translate(float x, float y, float z) {
+Matrix Matrix::Translation(float x, float y, float z) {
 	return Matrix{ {
 		{ 1.f, 0.f, 0.f, x },
 		{ 0.f, 1.f, 0.f, y },
@@ -354,7 +354,7 @@ Matrix Matrix::Translate(float x, float y, float z) {
 }
 
 Matrix Matrix::View(Vector2 eyePosition, float rotation) {
-	return Rotation(-rotation) * Translate(-eyePosition.x, -eyePosition.y);
+	return Rotation(-rotation) * Translation(-eyePosition.x, -eyePosition.y);
 }
 
 Matrix Matrix::ProjectOrthographic(float viewWidth, float viewHeight, float viewRange) {

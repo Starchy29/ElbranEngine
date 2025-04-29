@@ -17,6 +17,7 @@ Scene::Scene(unsigned int maxEntities, float cameraWidth)  {
 
 	entityCount = 0;
 	transforms = new Transform[maxEntities];
+	localMatrices = new Matrix[maxEntities];
 	worldMatrices = new Matrix[maxEntities];
 
 	opaques = FixedList<IRenderer*>(maxEntities);
@@ -37,6 +38,7 @@ Scene::~Scene() {
 	lightsBuffer.Release();
 
 	delete[] transforms;
+	delete[] localMatrices;
 	delete[] worldMatrices;
 	for(unsigned int i = 0; i < opaques.GetSize(); i++) {
 		delete opaques[i];
@@ -54,10 +56,6 @@ Scene::~Scene() {
 }
 
 void Scene::Update(float deltaTime) {
-	t += deltaTime;
-	//transforms[0].position.x = sinf(t);
-	transforms[1].rotation = t;
-
 	for(unsigned int i = 0; i < behaviors.GetSize(); i++) {
 		// behaviors may be added or deleted mid-update
 		behaviors[i]->Update(deltaTime);
@@ -65,22 +63,39 @@ void Scene::Update(float deltaTime) {
 }
 
 void Scene::Draw() {
+	GraphicsAPI* graphics = app->graphics;
+	
+	// convert all transforms into matrices
+	Transform* lastTransform = &transforms[entityCount];
+	Matrix* currentLocal = localMatrices;
+	Matrix* currentGlobal = worldMatrices;
+	for(Transform* transform = transforms; transform < lastTransform; transform++) {
+		*currentLocal =
+			Matrix::Translation(transform->position.x, transform->position.y, transform->zOrder) *
+			Matrix::Rotation(transform->rotation) *
+			Matrix::Scale(transform->scale.x, transform->scale.y);
+
+		memcpy(currentGlobal, currentLocal, sizeof(Matrix));
+		currentLocal++;
+		currentGlobal++;
+	}
+
+	// convert from local to global matrices
+	currentGlobal = worldMatrices;
+	for(Transform* transform = transforms; transform < lastTransform; transform++) {
+		Transform* parent = transform->parent;
+		while(parent) {
+			*currentGlobal = localMatrices[parent - transforms] * (*currentGlobal);
+			parent = parent->parent;
+		}
+		currentGlobal++;
+	}
+
+	// set the light data for pixel shaders
 	Matrix viewProjection =
 		Matrix::ProjectOrthographic(camera.viewWidth, camera.GetViewHeight(), CAMERA_DEPTH) *
 		Matrix::View(camera.position, camera.rotation);
-	
-	// convert all transforms into matrices
-	for(int i = 0; i < entityCount; i++) {
-		Transform* transform = &transforms[i];
-		worldMatrices[i] = 
-			Matrix::Translate(transform->position.x, transform->position.y, transform->zOrder) *
-			Matrix::Rotation(transform->rotation) *
-			Matrix::Scale(transform->scale.x, transform->scale.y);
-	}
 
-	GraphicsAPI* graphics = app->graphics;
-
-	// set the light data for pixel shaders
 	LightData lightData[MAX_LIGHTS_ONSCREEN];
 	LightConstants lightConstants;
 	lightConstants.ambientLight = ambientLight;
@@ -202,7 +217,7 @@ LightSource* Scene::AddLight(Color color, float radius) {
 }
 
 void Scene::ReleaseTransform(Transform* transform) {
-	int openIndex = transform - transforms; // pointer difference is the index
+	int openIndex = transform - transforms;
 	openSlots.push_back(openIndex);
 
 	// sort into the vector so that the largest index is the smallest integer
