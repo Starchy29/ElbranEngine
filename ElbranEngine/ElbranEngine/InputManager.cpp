@@ -24,7 +24,7 @@ InputManager::InputManager(HWND windowHandle) {
 	memset(previousKeyboard, 0, sizeof(BYTE) * KEY_COUNT);
 
 	memset(&gamepads, 0, sizeof(GamepadData) * 4);
-
+	
 	// set keybinds
 	keyBinds[(int)InputAction::Up] = { 
 		{ VK_UP, 'W' },

@@ -6,7 +6,7 @@
 BloomPostProcess::BloomPostProcess() {
     threshold = 1.0f;
     blurStep = BlurPostProcess();
-    blurStep.blurRadius = 30;
+    blurStep.blurRadius = 50;
 
     filterShader = &app->assets->bloomFilterPP;
     combineShader = &app->assets->screenSumPP;

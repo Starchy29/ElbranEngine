@@ -153,6 +153,7 @@
     <ClCompile Include="Game.cpp" />
     <ClCompile Include="GraphicsAPI.cpp" />
     <ClCompile Include="HSVPostProcess.cpp" />
+    <ClCompile Include="InputManager.cpp" />
     <ClCompile Include="Math.cpp" />
     <ClCompile Include="ParticleBehavior.cpp" />
     <ClCompile Include="ParticleRenderer.cpp" />
@@ -162,6 +163,7 @@
     <ClCompile Include="ShapeRenderer.cpp" />
     <ClCompile Include="SpriteRenderer.cpp" />
     <ClCompile Include="Tween.cpp" />
+    <ClCompile Include="WindowsInput.cpp" />
     <ClCompile Include="WindowsMain.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -178,6 +180,7 @@
     <ClInclude Include="GraphicsAPI.h" />
     <ClInclude Include="HSVPostProcess.h" />
     <ClInclude Include="IBehavior.h" />
+    <ClInclude Include="InputManager.h" />
     <ClInclude Include="IPostProcess.h" />
     <ClInclude Include="IRenderer.h" />
     <ClInclude Include="Lights.h" />
@@ -192,6 +195,7 @@
     <ClInclude Include="SpriteRenderer.h" />
     <ClInclude Include="Transform.h" />
     <ClInclude Include="Tween.h" />
+    <ClInclude Include="WindowsInput.h" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="BloomFilterPP.hlsl">

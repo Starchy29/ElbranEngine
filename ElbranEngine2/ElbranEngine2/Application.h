@@ -3,13 +3,14 @@
 class GraphicsAPI;
 class Game;
 class AssetContainer;
+class InputManager;
 class Random;
 
 class Application
 {
 public:
 	GraphicsAPI* graphics;
-	// InputManager* input;
+	InputManager* input;
 	// SoundMixer* sounds;
 	AssetContainer* assets;
 	Game* game;
@@ -17,7 +18,7 @@ public:
 
 	std::wstring filePath;
 
-	Application(std::wstring filePath, GraphicsAPI* graphics);
+	Application(std::wstring filePath, GraphicsAPI* graphics, InputManager* input);
 	~Application();
 
 	void SetupGame();

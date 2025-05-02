@@ -9,16 +9,27 @@
 #include "SpriteRenderer.h"
 #include "ParticleBehavior.h"
 #include "ShapeRenderer.h"
+#include "InputManager.h"
+#include "GraphicsAPI.h"
 
 Game::Game() {
 	testScene = new Scene(10, 5.0f);
-	//testScene->backgroundColor = Color::Black;
-	testScene->backgroundImage = &app->assets->apple;
+	testScene->backgroundColor = Color(0.1f, 0.1f, 0.1f);
+
+	SpriteRenderer* background = new SpriteRenderer(&app->assets->apple);
+	testScene->AddRenderer(background, false);
+	background->transform->zOrder = 99.f;
+	background->transform->scale = testScene->camera.GetWorldDimensions();
+
 	SpriteRenderer* checker = new SpriteRenderer(&app->assets->testSprite);
 	testScene->AddRenderer(checker, false);
+	checker->transform->position.x -= 2.0f;
 	//checker->lit = true;
 
-	testScene->AddRenderer(new ShapeRenderer(ShapeRenderer::Shape::Circle, Color(0, 1, 1, 0.6f)), true);
+	cursor = new ShapeRenderer(ShapeRenderer::Shape::Circle, Color(0, 1, 1, 0.6f));
+	testScene->AddRenderer(cursor, true);
+	cursor->transform->scale *= 0.3f;
+	checker->transform->parent = cursor->transform;
 
 	//ParticleRenderer* parts = new ParticleRenderer(200, app->assets->testSprite);
 	//ParticleBehavior* swarm = new ParticleBehavior(parts);
@@ -36,11 +47,11 @@ Game::Game() {
 
 	//BlurPostProcess* blurBoy = new BlurPostProcess();
 	//app->graphics->postProcesses.push_back(blurBoy);
-	//blurBoy->blurRadius = 100;
+	//blurBoy->blurRadius = 50;
 
-	//BloomPostProcess* bloomer = new BloomPostProcess();
-	//bloomer->threshold = 0.7f;
-	//app->graphics->postProcesses.push_back(bloomer);
+	BloomPostProcess* bloomer = new BloomPostProcess();
+	bloomer->threshold = 0.8f;
+	app->graphics->postProcesses.push_back(bloomer);
 }
 
 Game::~Game() {
@@ -48,7 +59,34 @@ Game::~Game() {
 }
 
 void Game::Update(float deltaTime) {
+	cursor->transform->position = app->input->GetMousePosition(&testScene->camera);
 	testScene->Update(deltaTime);
+
+	if(app->input->JustPressed(InputAction::Select, 0)) {
+		app->input->Rumble(0, 0.1f, 2.1f);
+	}
+
+	cursor->transform->rotation += 20.0f * app->input->GetMouseWheelSpin() * deltaTime;
+
+	if(app->input->IsPressed(InputAction::Up)) {
+		//((BloomPostProcess*)app->graphics->postProcesses[0])->threshold += deltaTime;
+	}
+	if(app->input->IsPressed(InputAction::Down)) {
+		//((BloomPostProcess*)app->graphics->postProcesses[0])->threshold -= deltaTime;
+	}
+
+	/*if (app->input->IsPressed(InputAction::Up)) {
+		testScene->camera.transform->position.y += deltaTime;
+	}
+	if(app->input->IsPressed(InputAction::Down)) {
+		testScene->camera.transform->position.y -= deltaTime;
+	}
+	if(app->input->IsPressed(InputAction::Left)) {
+		testScene->camera.transform->position.x -= deltaTime;
+	}
+	if(app->input->IsPressed(InputAction::Right)) {
+		testScene->camera.transform->position.x += deltaTime;
+	}*/
 }
 
 void Game::Draw() {

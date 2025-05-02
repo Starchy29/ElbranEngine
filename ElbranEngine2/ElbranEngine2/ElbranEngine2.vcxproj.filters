@@ -75,6 +75,10 @@
       <Filter>Toolkit</Filter>
     </ClCompile>
     <ClCompile Include="ShapeRenderer.cpp" />
+    <ClCompile Include="InputManager.cpp" />
+    <ClCompile Include="WindowsInput.cpp">
+      <Filter>Windows</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Application.h" />
@@ -142,6 +146,10 @@
       <Filter>Toolkit</Filter>
     </ClInclude>
     <ClInclude Include="ShapeRenderer.h" />
+    <ClInclude Include="InputManager.h" />
+    <ClInclude Include="WindowsInput.h">
+      <Filter>Windows</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="CameraVS.hlsl">

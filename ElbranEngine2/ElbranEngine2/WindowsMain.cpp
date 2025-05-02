@@ -4,6 +4,7 @@
 #include <memory>
 #include "Application.h"
 #include "DirectXAPI.h"
+#include "WindowsInput.h"
 #include "Configs.h"
 
 HWND windowHandle;
@@ -11,6 +12,7 @@ __int64 lastPerfCount;
 double perfCountSecs;
 double minSecsPerFrame; // inverse of max fps
 DirectXAPI* directX;
+WindowsInput* input;
 
 #if defined(DEBUG) | defined(_DEBUG)
 float timeSinceFPSUpdate = 0.f;
@@ -78,7 +80,7 @@ LRESULT CALLBACK WndProc(_In_ HWND hWnd, _In_ UINT message, _In_ WPARAM wParam, 
 
 		return 0;
 	case WM_MOUSEWHEEL:
-		//input->mouseWheelDelta += GET_WHEEL_DELTA_WPARAM(wParam) / (float)WHEEL_DELTA;
+		input->mouseWheelDelta += GET_WHEEL_DELTA_WPARAM(wParam) / (float)WHEEL_DELTA;
 		return 0;
 	default:
 		return DefWindowProc(hWnd, message, wParam, lParam);
@@ -174,8 +176,11 @@ int WINAPI WinMain(
 	}
 
 	InitWindow(hInstance);
-	directX = new DirectXAPI(windowHandle, Int2(START_WINDOW_WIDTH, START_WINDOW_HEIGHT), ASPECT_RATIO, directory);
-	app = new Application(directory, directX);
+	RECT windowRect;
+	GetClientRect(windowHandle, &windowRect);
+	directX = new DirectXAPI(windowHandle, Int2(windowRect.right - windowRect.left, windowRect.bottom - windowRect.top), ASPECT_RATIO, directory);
+	input = new WindowsInput(windowHandle);
+	app = new Application(directory, directX, input);
 	app->SetupGame();
 	RunApp();
 	delete app;

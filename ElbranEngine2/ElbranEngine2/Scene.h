@@ -12,9 +12,9 @@
 #define MAX_LIGHTS_ONSCREEN 16
 
 struct Camera {
-	Vector2 position;
+	Transform* transform;
+	const Matrix* worldMatrix;
 	float viewWidth;
-	float rotation;
 
 	float GetViewHeight() const;
 	Vector2 GetWorldDimensions() const;

@@ -5,6 +5,7 @@ struct Circle;
 struct AlignedRect;
 
 #define PI 3.1415927f
+#define SQRT2_DIV2 0.71f
 
 struct Vector2 {
 	float x;

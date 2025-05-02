@@ -9,8 +9,6 @@
 #define LIGHT_INFO_REGISTER 1
 
 Scene::Scene(unsigned int maxEntities, float cameraWidth)  {
-	camera = {};
-	camera.viewWidth = cameraWidth;
 	ambientLight = Color::White;
 	backgroundColor = Color(1.f, 1.f, 1.f);
 	backgroundImage = nullptr;
@@ -24,6 +22,10 @@ Scene::Scene(unsigned int maxEntities, float cameraWidth)  {
 	translucents = FixedList<IRenderer*>(maxEntities);
 	behaviors = FixedList<IBehavior*>(maxEntities);
 	lights = FixedList<LightSource>(maxEntities / 4);
+
+	camera = {};
+	camera.viewWidth = cameraWidth;
+	ReserveTransform(&camera.transform, &camera.worldMatrix);
 
 	GraphicsAPI* graphics = app->graphics;
 
@@ -64,7 +66,7 @@ void Scene::Update(float deltaTime) {
 
 void Scene::Draw() {
 	GraphicsAPI* graphics = app->graphics;
-	
+
 	// convert all transforms into matrices
 	Transform* lastTransform = &transforms[entityCount];
 	Matrix* currentLocal = localMatrices;
@@ -75,7 +77,7 @@ void Scene::Draw() {
 			Matrix::Rotation(transform->rotation) *
 			Matrix::Scale(transform->scale.x, transform->scale.y);
 
-		memcpy(currentGlobal, currentLocal, sizeof(Matrix));
+		*currentGlobal = *currentLocal;
 		currentLocal++;
 		currentGlobal++;
 	}
@@ -91,11 +93,13 @@ void Scene::Draw() {
 		currentGlobal++;
 	}
 
-	// set the light data for pixel shaders
+	// create projection matrix
+	Vector2 cameraPosition = *camera.worldMatrix * Vector2::Zero;
 	Matrix viewProjection =
 		Matrix::ProjectOrthographic(camera.viewWidth, camera.GetViewHeight(), CAMERA_DEPTH) *
-		Matrix::View(camera.position, camera.rotation);
+		Matrix::View(cameraPosition, camera.transform->rotation);
 
+	// set the light data for pixel shaders
 	LightData lightData[MAX_LIGHTS_ONSCREEN];
 	LightConstants lightConstants;
 	lightConstants.ambientLight = ambientLight;
@@ -105,9 +109,9 @@ void Scene::Draw() {
 	AlignedRect screenArea = AlignedRect(-1.f, 1.f, 1.f, -1.f);
 	for(int i = 0; i < totalLights; i++) {
 		// omit offscreen lights
-		Vector2 closestPoint = lights[i].transform->position + (camera.position - lights[i].transform->position).SetLength(lights[i].radius);
+		Vector2 closestPoint = lights[i].transform->position + (cameraPosition - lights[i].transform->position).SetLength(lights[i].radius);
 		closestPoint = viewProjection * closestPoint;
-		if(!(Circle(lights[i].transform->position, lights[i].radius).Contains(camera.position) || screenArea.Contains(closestPoint))) {
+		if(!(Circle(lights[i].transform->position, lights[i].radius).Contains(cameraPosition) || screenArea.Contains(closestPoint))) {
 			continue;
 		}
 
@@ -232,16 +236,12 @@ void Scene::ReleaseTransform(Transform* transform) {
 }
 
 void Scene::RemoveRenderer(IRenderer* renderer) {
-	unsigned int index = -1;
-	if(renderer >= opaques.dataArray[0] && renderer <= opaques.dataArray[opaques.GetSize() - 1]) {
-		index = renderer - opaques.dataArray[0];
-		opaques.RemoveAt(index);
+	if(renderer >= opaques.dataArray[0] && renderer < opaques.dataArray[opaques.GetSize()]) {
+		opaques.RemoveAt(renderer - opaques.dataArray[0]);
 	}
-	else if(renderer >= translucents.dataArray[0] && renderer <= translucents.dataArray[translucents.GetSize() - 1]) {
-		index = renderer - translucents.dataArray[0];
-		translucents.RemoveAt(index);
+	else if(renderer >= translucents.dataArray[0] && renderer < translucents.dataArray[translucents.GetSize()]) {
+		translucents.RemoveAt(renderer - translucents.dataArray[0]);
 	}
-	assert(index >= 0 && "attempted to remove a renderer that was not added");
 	ReleaseTransform(renderer->transform);
 }
 
@@ -250,10 +250,8 @@ void Scene::RemoveBehavior(IBehavior* behavior) {
 }
 
 void Scene::RemoveLight(LightSource* light) {
-	unsigned int index = light - lights.dataArray;
-	assert(index >= 0 && index < lights.GetSize() && "attempted to remove a light that was not added");
 	ReleaseTransform(light->transform);
-	lights.RemoveAt(index);
+	lights.RemoveAt(light - lights.dataArray);
 }
 
 float Camera::GetViewHeight() const {

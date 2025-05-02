@@ -1,6 +1,7 @@
 #pragma once
+#include "Scene.h"
 
-class Scene;
+#include "ShapeRenderer.h"
 
 class Game
 {
@@ -13,5 +14,6 @@ public:
 
 private:
 	Scene* testScene;
+	ShapeRenderer* cursor;
 };
 

@@ -2,14 +2,15 @@
 #include "GraphicsAPI.h"
 #include "Game.h"
 #include "AssetContainer.h"
+#include "InputManager.h"
 #include "Random.h"
 
 Application* app;
 
-Application::Application(std::wstring filePath, GraphicsAPI* graphics) {
+Application::Application(std::wstring filePath, GraphicsAPI* graphics, InputManager* input) {
 	this->graphics = graphics;
 	// sounds = new SoundMixer();
-	// InputManager* input;
+	this->input = input;
 	assets = new AssetContainer(filePath, graphics);
 	rng = new Random();
 
@@ -19,7 +20,7 @@ Application::Application(std::wstring filePath, GraphicsAPI* graphics) {
 Application::~Application() {
 	delete rng;
 	delete game;
-	// delete input;
+	delete input;
 	// delete sounds;
 	delete assets;
 	delete graphics;
@@ -31,10 +32,8 @@ void Application::SetupGame() {
 }
 
 void Application::Update(float deltaTime) {
-	//input->Update();
+	input->Update(deltaTime);
 	//audio->Update(fDeltaTime);
 	game->Update(deltaTime);
 	graphics->Render(game);
-
-	//input->mouseWheelDelta = 0.0f;
 }
