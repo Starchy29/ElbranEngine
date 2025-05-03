@@ -147,6 +147,16 @@ void Scene::Draw() {
 
 	// draw opaques front to back
 	int numOpaques = opaques.GetSize();
+	for(int i = 1; i < numOpaques; i++) {
+		int index = i;
+		while(index > 0 && opaques[index]->worldMatrix->values[2][3] < opaques[index - 1]->worldMatrix->values[2][3]) { // global z is in row 3 col 4
+			IRenderer* swapper = opaques[index - 1];
+			opaques[index - 1] = opaques[index];
+			opaques[index] = swapper;
+			index--;
+		}
+	}
+
 	for(int i = 0; i < numOpaques; i++) {
 		opaques[i]->Draw();
 	}
@@ -165,8 +175,18 @@ void Scene::Draw() {
 	graphics->DrawFullscreen();
 
 	// draw translucents back to front
-	graphics->SetBlendMode(BlendState::AlphaBlend);
 	int numTranslucents = translucents.GetSize();
+	for(int i = 1; i < numTranslucents; i++) {
+		int index = i;
+		while(index > 0 && translucents[index]->worldMatrix->values[2][3] > translucents[index - 1]->worldMatrix->values[2][3]) { // global z is in row 3 col 4
+			IRenderer* swapper = translucents[index - 1];
+			translucents[index - 1] = translucents[index];
+			translucents[index] = swapper;
+			index--;
+		}
+	}
+
+	graphics->SetBlendMode(BlendState::AlphaBlend);
 	for(int i = 0; i < numTranslucents; i++) {
 		translucents[i]->Draw();
 	}

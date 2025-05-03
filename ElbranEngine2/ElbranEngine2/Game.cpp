@@ -21,15 +21,28 @@ Game::Game() {
 	background->transform->zOrder = 99.f;
 	background->transform->scale = testScene->camera.GetWorldDimensions();
 
-	SpriteRenderer* checker = new SpriteRenderer(&app->assets->testSprite);
-	testScene->AddRenderer(checker, false);
-	checker->transform->position.x -= 2.0f;
-	//checker->lit = true;
-
 	cursor = new ShapeRenderer(ShapeRenderer::Shape::Circle, Color(0, 1, 1, 0.6f));
 	testScene->AddRenderer(cursor, true);
 	cursor->transform->scale *= 0.3f;
+	
+	ShapeRenderer* trans = new ShapeRenderer(ShapeRenderer::Shape::Square, Color(0, 0, 1, 0.3f));
+	testScene->AddRenderer(trans, true);
+	trans->transform->scale *= 1.0f;
+	trans->transform->zOrder = 70;
+	trans = new ShapeRenderer(ShapeRenderer::Shape::Square, Color(0, 1, 0, 0.6f));
+	testScene->AddRenderer(trans, true);
+	trans->transform->scale *= 2.0f;
+	trans->transform->zOrder = 80;
+	trans = new ShapeRenderer(ShapeRenderer::Shape::Square, Color(1, 0, 0, 0.8f));
+	testScene->AddRenderer(trans, true);
+	trans->transform->scale *= 3.0f;
+	trans->transform->zOrder = 90;
+
+	SpriteRenderer* checker = new SpriteRenderer(&app->assets->testSprite);
+	testScene->AddRenderer(checker, false);
+	checker->transform->position.x -= 2.0f;
 	checker->transform->parent = cursor->transform;
+	//checker->lit = true;
 
 	//ParticleRenderer* parts = new ParticleRenderer(200, app->assets->testSprite);
 	//ParticleBehavior* swarm = new ParticleBehavior(parts);

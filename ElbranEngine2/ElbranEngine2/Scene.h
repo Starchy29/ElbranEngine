@@ -49,8 +49,8 @@ private:
 	Transform* transforms;
 	Matrix* localMatrices;
 	Matrix* worldMatrices;
-
 	std::vector<int> openSlots;
+
 	FixedList<IBehavior*> behaviors;
 	FixedList<LightSource> lights;
 	FixedList<IRenderer*> opaques;
