@@ -1,8 +1,9 @@
 #include "AssetContainer.h"
 #include "GraphicsAPI.h"
 #include "Application.h"
+#include "SoundMixer.h"
 
-AssetContainer::AssetContainer(std::wstring filePath, GraphicsAPI* graphics) {
+AssetContainer::AssetContainer(std::wstring filePath, GraphicsAPI* graphics, SoundMixer* audio) {
 	defaultSampler = graphics->CreateDefaultSampler();
 	graphics->SetSampler(ShaderStage::Vertex, &defaultSampler, 0);
 	graphics->SetSampler(ShaderStage::Geometry, &defaultSampler, 0);
@@ -56,10 +57,14 @@ AssetContainer::AssetContainer(std::wstring filePath, GraphicsAPI* graphics) {
 
 	testSprite = graphics->LoadSprite(filePath, L"elbran.png");
 	apple = graphics->LoadSprite(filePath, L"apple.jpeg");
+
+	testSound = audio->LoadEffect(filePath, L"water plunk.wav");
+	testMusic = audio->LoadTrack(filePath, L"Menu song.wav", true);
 }
 
 AssetContainer::~AssetContainer() {
-	GraphicsAPI* graphics = app->graphics;
+	//GraphicsAPI* graphics = app->graphics;
+	SoundMixer* audio = app->audio;
 
 	defaultSampler.Release();
 	unitSquare.Release();
@@ -86,4 +91,7 @@ AssetContainer::~AssetContainer() {
 
 	testSprite.Release();
 	apple.Release();
+
+	audio->ReleaseSoundEffect(&testSound);
+	audio->ReleaseAudioTrack(&testMusic);
 }

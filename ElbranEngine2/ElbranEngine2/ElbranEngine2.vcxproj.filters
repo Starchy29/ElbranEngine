@@ -23,6 +23,9 @@
     <Filter Include="Shaders\Particles">
       <UniqueIdentifier>{a204d15e-6025-49dd-8357-3c3591d46c67}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Graphics\Renderers">
+      <UniqueIdentifier>{2cf26133-0f27-4634-9e97-a4659cf2d397}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Application.cpp" />
@@ -62,21 +65,30 @@
     <ClCompile Include="Common.cpp">
       <Filter>Toolkit</Filter>
     </ClCompile>
-    <ClCompile Include="ParticleRenderer.cpp">
-      <Filter>Graphics</Filter>
-    </ClCompile>
-    <ClCompile Include="SpriteRenderer.cpp">
-      <Filter>Graphics</Filter>
-    </ClCompile>
-    <ClCompile Include="ParticleBehavior.cpp">
-      <Filter>Graphics</Filter>
-    </ClCompile>
     <ClCompile Include="Random.cpp">
       <Filter>Toolkit</Filter>
     </ClCompile>
-    <ClCompile Include="ShapeRenderer.cpp" />
     <ClCompile Include="InputManager.cpp" />
     <ClCompile Include="WindowsInput.cpp">
+      <Filter>Windows</Filter>
+    </ClCompile>
+    <ClCompile Include="SpriteRenderer.cpp">
+      <Filter>Graphics\Renderers</Filter>
+    </ClCompile>
+    <ClCompile Include="ParticleRenderer.cpp">
+      <Filter>Graphics\Renderers</Filter>
+    </ClCompile>
+    <ClCompile Include="ParticleBehavior.cpp">
+      <Filter>Graphics\Renderers</Filter>
+    </ClCompile>
+    <ClCompile Include="ShapeRenderer.cpp">
+      <Filter>Graphics\Renderers</Filter>
+    </ClCompile>
+    <ClCompile Include="SoundMixer.cpp" />
+    <ClCompile Include="MemoryArena.cpp">
+      <Filter>Toolkit</Filter>
+    </ClCompile>
+    <ClCompile Include="WindowsAudio.cpp">
       <Filter>Windows</Filter>
     </ClCompile>
   </ItemGroup>
@@ -130,26 +142,36 @@
     <ClInclude Include="BloomPostProcess.h">
       <Filter>Toolkit\Post Processes</Filter>
     </ClInclude>
-    <ClInclude Include="ParticleRenderer.h">
-      <Filter>Graphics</Filter>
-    </ClInclude>
-    <ClInclude Include="SpriteRenderer.h">
-      <Filter>Graphics</Filter>
-    </ClInclude>
     <ClInclude Include="IRenderer.h">
-      <Filter>Graphics</Filter>
-    </ClInclude>
-    <ClInclude Include="ParticleBehavior.h">
       <Filter>Graphics</Filter>
     </ClInclude>
     <ClInclude Include="Random.h">
       <Filter>Toolkit</Filter>
     </ClInclude>
-    <ClInclude Include="ShapeRenderer.h" />
     <ClInclude Include="InputManager.h" />
     <ClInclude Include="WindowsInput.h">
       <Filter>Windows</Filter>
     </ClInclude>
+    <ClInclude Include="SpriteRenderer.h">
+      <Filter>Graphics\Renderers</Filter>
+    </ClInclude>
+    <ClInclude Include="ParticleRenderer.h">
+      <Filter>Graphics\Renderers</Filter>
+    </ClInclude>
+    <ClInclude Include="ParticleBehavior.h">
+      <Filter>Graphics\Renderers</Filter>
+    </ClInclude>
+    <ClInclude Include="ShapeRenderer.h">
+      <Filter>Graphics\Renderers</Filter>
+    </ClInclude>
+    <ClInclude Include="SoundMixer.h" />
+    <ClInclude Include="MemoryArena.h">
+      <Filter>Toolkit</Filter>
+    </ClInclude>
+    <ClInclude Include="WindowsAudio.h">
+      <Filter>Windows</Filter>
+    </ClInclude>
+    <ClInclude Include="AudioData.h" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="CameraVS.hlsl">

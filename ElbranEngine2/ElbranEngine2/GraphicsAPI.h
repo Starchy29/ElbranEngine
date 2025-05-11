@@ -68,10 +68,6 @@ public:
 	UInt2 GetViewOffset() const;
 	float GetViewAspectRatio() const;
 
-	//void StartTextBatch();
-	// DirectX::SpriteBatch* GetSpriteBatch() const;
-	//void FinishTextBatch();
-	//void SetLights(const Light* lights, int numLights, const Color& ambientColor);
 	//void SetFullscreen(bool fullscreen);
 
 	virtual VertexShader LoadVertexShader(std::wstring directory, std::wstring fileName) = 0;

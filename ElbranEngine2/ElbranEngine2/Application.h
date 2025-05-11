@@ -1,6 +1,7 @@
 #pragma once
 #include <string>
 class GraphicsAPI;
+class SoundMixer;
 class Game;
 class AssetContainer;
 class InputManager;
@@ -10,15 +11,15 @@ class Application
 {
 public:
 	GraphicsAPI* graphics;
+	SoundMixer* audio;
 	InputManager* input;
-	// SoundMixer* sounds;
 	AssetContainer* assets;
 	Game* game;
 	Random* rng;
 
 	std::wstring filePath;
 
-	Application(std::wstring filePath, GraphicsAPI* graphics, InputManager* input);
+	Application(std::wstring filePath, GraphicsAPI* graphics, SoundMixer* audio, InputManager* input);
 	~Application();
 
 	void SetupGame();

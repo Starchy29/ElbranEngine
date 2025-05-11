@@ -155,20 +155,24 @@
     <ClCompile Include="HSVPostProcess.cpp" />
     <ClCompile Include="InputManager.cpp" />
     <ClCompile Include="Math.cpp" />
+    <ClCompile Include="MemoryArena.cpp" />
     <ClCompile Include="ParticleBehavior.cpp" />
     <ClCompile Include="ParticleRenderer.cpp" />
     <ClCompile Include="Random.cpp" />
     <ClCompile Include="Scene.cpp" />
     <ClCompile Include="Shaders.cpp" />
     <ClCompile Include="ShapeRenderer.cpp" />
+    <ClCompile Include="SoundMixer.cpp" />
     <ClCompile Include="SpriteRenderer.cpp" />
     <ClCompile Include="Tween.cpp" />
+    <ClCompile Include="WindowsAudio.cpp" />
     <ClCompile Include="WindowsInput.cpp" />
     <ClCompile Include="WindowsMain.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Application.h" />
     <ClInclude Include="AssetContainer.h" />
+    <ClInclude Include="AudioData.h" />
     <ClInclude Include="BloomPostProcess.h" />
     <ClInclude Include="BlurPostProcess.h" />
     <ClInclude Include="Buffers.h" />
@@ -185,6 +189,7 @@
     <ClInclude Include="IRenderer.h" />
     <ClInclude Include="Lights.h" />
     <ClInclude Include="Math.h" />
+    <ClInclude Include="MemoryArena.h" />
     <ClInclude Include="ParticleBehavior.h" />
     <ClInclude Include="ParticleRenderer.h" />
     <ClInclude Include="Random.h" />
@@ -192,9 +197,11 @@
     <ClInclude Include="ShaderConstants.h" />
     <ClInclude Include="Shaders.h" />
     <ClInclude Include="ShapeRenderer.h" />
+    <ClInclude Include="SoundMixer.h" />
     <ClInclude Include="SpriteRenderer.h" />
     <ClInclude Include="Transform.h" />
     <ClInclude Include="Tween.h" />
+    <ClInclude Include="WindowsAudio.h" />
     <ClInclude Include="WindowsInput.h" />
   </ItemGroup>
   <ItemGroup>

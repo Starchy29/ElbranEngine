@@ -1,9 +1,11 @@
 #pragma once
 #include "Buffers.h"
 #include "Shaders.h"
+#include "AudioData.h"
 #include <string>
 
 class GraphicsAPI;
+class SoundMixer;
 
 class AssetContainer
 {
@@ -34,7 +36,10 @@ public:
 	Texture2D testSprite;
 	Texture2D apple;
 
-	AssetContainer(std::wstring filePath, GraphicsAPI* graphics);
+	SoundEffect testSound;
+	AudioTrack testMusic;
+
+	AssetContainer(std::wstring filePath, GraphicsAPI* graphics, SoundMixer* audio);
 	~AssetContainer();
 };
 

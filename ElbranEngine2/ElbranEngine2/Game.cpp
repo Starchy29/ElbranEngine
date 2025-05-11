@@ -11,6 +11,8 @@
 #include "ShapeRenderer.h"
 #include "InputManager.h"
 #include "GraphicsAPI.h"
+#include "SoundMixer.h"
+#include "Random.h"
 
 Game::Game() {
 	testScene = new Scene(10, 5.0f);
@@ -65,6 +67,7 @@ Game::Game() {
 	BloomPostProcess* bloomer = new BloomPostProcess();
 	bloomer->threshold = 0.8f;
 	app->graphics->postProcesses.push_back(bloomer);
+	app->audio->PlayTrack(&app->assets->testMusic, true);
 }
 
 Game::~Game() {
@@ -76,7 +79,13 @@ void Game::Update(float deltaTime) {
 	testScene->Update(deltaTime);
 
 	if(app->input->JustPressed(InputAction::Select, 0)) {
-		app->input->Rumble(0, 0.1f, 2.1f);
+		//app->input->Rumble(0, 0.1f, 2.1f);
+		//app->audio->PlayEffect(&app->assets->testSound, 1.0f, app->rng->GenerateFloat(-1.f, 1.f));
+		//app->audio->PauseTrack(&app->assets->testMusic);
+		app->audio->SetTrackVolume(&app->assets->testMusic, 0.5f);
+	}
+	if(app->input->JustPressed(InputAction::Down)) {
+		app->audio->PlayTrack(&app->assets->testMusic, false);
 	}
 
 	cursor->transform->rotation += 20.0f * app->input->GetMouseWheelSpin() * deltaTime;

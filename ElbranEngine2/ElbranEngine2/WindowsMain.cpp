@@ -4,6 +4,7 @@
 #include <memory>
 #include "Application.h"
 #include "DirectXAPI.h"
+#include "WindowsAudio.h"
 #include "WindowsInput.h"
 #include "Configs.h"
 
@@ -180,7 +181,7 @@ int WINAPI WinMain(
 	GetClientRect(windowHandle, &windowRect);
 	directX = new DirectXAPI(windowHandle, Int2(windowRect.right - windowRect.left, windowRect.bottom - windowRect.top), ASPECT_RATIO, directory);
 	input = new WindowsInput(windowHandle);
-	app = new Application(directory, directX, input);
+	app = new Application(directory, directX, new WindowsAudio(), input);
 	app->SetupGame();
 	RunApp();
 	delete app;

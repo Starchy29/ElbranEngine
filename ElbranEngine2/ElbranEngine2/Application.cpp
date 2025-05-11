@@ -1,5 +1,6 @@
 #include "Application.h"
 #include "GraphicsAPI.h"
+#include "SoundMixer.h"
 #include "Game.h"
 #include "AssetContainer.h"
 #include "InputManager.h"
@@ -7,11 +8,11 @@
 
 Application* app;
 
-Application::Application(std::wstring filePath, GraphicsAPI* graphics, InputManager* input) {
+Application::Application(std::wstring filePath, GraphicsAPI* graphics, SoundMixer* audio, InputManager* input) {
 	this->graphics = graphics;
-	// sounds = new SoundMixer();
+	this->audio = audio;
 	this->input = input;
-	assets = new AssetContainer(filePath, graphics);
+	assets = new AssetContainer(filePath, graphics, audio);
 	rng = new Random();
 
 	this->filePath = filePath;
@@ -21,8 +22,8 @@ Application::~Application() {
 	delete rng;
 	delete game;
 	delete input;
-	// delete sounds;
 	delete assets;
+	delete audio;
 	delete graphics;
 }
 
@@ -33,7 +34,7 @@ void Application::SetupGame() {
 
 void Application::Update(float deltaTime) {
 	input->Update(deltaTime);
-	//audio->Update(fDeltaTime);
+	//audio->Update(deltaTime);
 	game->Update(deltaTime);
 	graphics->Render(game);
 }
