@@ -6,7 +6,7 @@
 
 struct AudioTrack {
 	float baseVolume;
-	float currentVolume;
+	float mixVolume;
 	XAUDIO2_BUFFER soundBuffer;
 	IXAudio2SourceVoice* voice;
 };

@@ -81,11 +81,12 @@ void Game::Update(float deltaTime) {
 	if(app->input->JustPressed(InputAction::Select, 0)) {
 		//app->input->Rumble(0, 0.1f, 2.1f);
 		//app->audio->PlayEffect(&app->assets->testSound, 1.0f, app->rng->GenerateFloat(-1.f, 1.f));
-		//app->audio->PauseTrack(&app->assets->testMusic);
-		app->audio->SetTrackVolume(&app->assets->testMusic, 0.5f);
+		//app->audio->PauseTrack(&app->assets->testMusic, 0.5f);
+		app->audio->SetTrackVolume(&app->assets->testMusic, 0.3f, 1.0f);
 	}
 	if(app->input->JustPressed(InputAction::Down)) {
-		app->audio->PlayTrack(&app->assets->testMusic, false);
+		//app->audio->PlayTrack(&app->assets->testMusic, true);
+		app->audio->SetTrackVolume(&app->assets->testMusic, 1.0f, 1.0f);
 	}
 
 	cursor->transform->rotation += 20.0f * app->input->GetMouseWheelSpin() * deltaTime;

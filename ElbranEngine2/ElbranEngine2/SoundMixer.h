@@ -34,9 +34,13 @@ private:
 	struct FadeData {
 		float targetVolume;
 		float fadeRate;
+		bool pauseAtEnd;
 	};
 
 	FixedList<AudioTrack*> faders;
 	FixedList<FadeData> fadeData;
+
+	void CancelFader(AudioTrack* track);
+	void AddFader(AudioTrack* track, float targetVolume, float duration, bool pauseAtEnd);
 };
 

@@ -28,6 +28,7 @@ AudioTrack WindowsAudio::LoadTrack(std::wstring directory, std::wstring fileName
     WAVEFORMATEXTENSIBLE wfx = {};
     LoadAudio(&track.soundBuffer, &wfx, directory + L"Assets\\" + fileName);
     track.baseVolume = 1.0f;
+    track.mixVolume = 0.0f;
     track.soundBuffer.LoopCount = looped ? XAUDIO2_LOOP_INFINITE : XAUDIO2_NO_LOOP_REGION;
 
     XAUDIO2_VOICE_SENDS outputData = {};

@@ -34,7 +34,7 @@ void Application::SetupGame() {
 
 void Application::Update(float deltaTime) {
 	input->Update(deltaTime);
-	//audio->Update(deltaTime);
+	audio->Update(deltaTime);
 	game->Update(deltaTime);
 	graphics->Render(game);
 }
