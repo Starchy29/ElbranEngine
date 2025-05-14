@@ -13,6 +13,11 @@
 #include "GraphicsAPI.h"
 #include "SoundMixer.h"
 #include "Random.h"
+#include "Tween.h"
+
+float t = 0.f;
+SpriteRenderer* linear;
+SpriteRenderer* tweener;
 
 Game::Game() {
 	testScene = new Scene(10, 5.0f);
@@ -26,24 +31,17 @@ Game::Game() {
 	cursor = new ShapeRenderer(ShapeRenderer::Shape::Circle, Color(0, 1, 1, 0.6f));
 	testScene->AddRenderer(cursor, true);
 	cursor->transform->scale *= 0.3f;
-	
-	ShapeRenderer* trans = new ShapeRenderer(ShapeRenderer::Shape::Square, Color(0, 0, 1, 0.3f));
-	testScene->AddRenderer(trans, true);
-	trans->transform->scale *= 1.0f;
-	trans->transform->zOrder = 70;
-	trans = new ShapeRenderer(ShapeRenderer::Shape::Square, Color(0, 1, 0, 0.6f));
-	testScene->AddRenderer(trans, true);
-	trans->transform->scale *= 2.0f;
-	trans->transform->zOrder = 80;
-	trans = new ShapeRenderer(ShapeRenderer::Shape::Square, Color(1, 0, 0, 0.8f));
-	testScene->AddRenderer(trans, true);
-	trans->transform->scale *= 3.0f;
-	trans->transform->zOrder = 90;
 
-	SpriteRenderer* checker = new SpriteRenderer(&app->assets->testSprite);
-	testScene->AddRenderer(checker, false);
-	checker->transform->position.x -= 2.0f;
-	checker->transform->parent = cursor->transform;
+	linear = new SpriteRenderer(&app->assets->testSprite);
+	testScene->AddRenderer(linear, false);
+	linear->transform->position.y = 0.5f;
+	linear->transform->scale *= 0.5f;
+
+	tweener = new SpriteRenderer(&app->assets->testSprite);
+	testScene->AddRenderer(tweener, false);
+	tweener->transform->position.y = -0.5f;
+	tweener->transform->scale *= 0.5f;
+
 	//checker->lit = true;
 
 	//ParticleRenderer* parts = new ParticleRenderer(200, app->assets->testSprite);
@@ -67,7 +65,6 @@ Game::Game() {
 	BloomPostProcess* bloomer = new BloomPostProcess();
 	bloomer->threshold = 0.8f;
 	app->graphics->postProcesses.push_back(bloomer);
-	app->audio->PlayTrack(&app->assets->testMusic, true);
 }
 
 Game::~Game() {
@@ -75,6 +72,11 @@ Game::~Game() {
 }
 
 void Game::Update(float deltaTime) {
+	t += 0.7f * deltaTime;
+	if(t > 1.0f) t -= 1.0f;
+	linear->transform->position.x = Tween::Lerp(-2.0f, 2.0f, t);
+	tweener->transform->position.x = -2.0f + 4.0f * Tween::EaseInOut(t);
+
 	cursor->transform->position = app->input->GetMousePosition(&testScene->camera);
 	testScene->Update(deltaTime);
 
@@ -82,11 +84,11 @@ void Game::Update(float deltaTime) {
 		//app->input->Rumble(0, 0.1f, 2.1f);
 		//app->audio->PlayEffect(&app->assets->testSound, 1.0f, app->rng->GenerateFloat(-1.f, 1.f));
 		//app->audio->PauseTrack(&app->assets->testMusic, 0.5f);
-		app->audio->SetTrackVolume(&app->assets->testMusic, 0.3f, 1.0f);
+		//app->audio->SetTrackVolume(&app->assets->testMusic, 0.3f, 1.0f);
 	}
 	if(app->input->JustPressed(InputAction::Down)) {
 		//app->audio->PlayTrack(&app->assets->testMusic, true);
-		app->audio->SetTrackVolume(&app->assets->testMusic, 1.0f, 1.0f);
+		//app->audio->SetTrackVolume(&app->assets->testMusic, 1.0f, 1.0f);
 	}
 
 	cursor->transform->rotation += 20.0f * app->input->GetMouseWheelSpin() * deltaTime;
