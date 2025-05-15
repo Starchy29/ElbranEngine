@@ -15,10 +15,13 @@
 #include "Random.h"
 #include "Tween.h"
 #include "AtlasRenderer.h"
+#include "AtlasAnimator.h"
 
 float t = 0.f;
 SpriteRenderer* linear;
 SpriteRenderer* tweener;
+
+AtlasAnimator* animator;
 
 Game::Game() {
 	testScene = new Scene(10, 5.0f);
@@ -48,6 +51,10 @@ Game::Game() {
 	testSheet->transform->scale *= 2.0f;
 	testSheet->row = 1;
 	testSheet->col = 1;
+
+	animator = new AtlasAnimator(testSheet, 8.f);
+	testScene->AddBehavior(animator);
+	animator->looped = true;
 
 	//checker->lit = true;
 
@@ -92,6 +99,7 @@ void Game::Update(float deltaTime) {
 		//app->audio->PlayEffect(&app->assets->testSound, 1.0f, app->rng->GenerateFloat(-1.f, 1.f));
 		//app->audio->PauseTrack(&app->assets->testMusic, 0.5f);
 		//app->audio->SetTrackVolume(&app->assets->testMusic, 0.3f, 1.0f);
+		animator->Restart(true);
 	}
 	if(app->input->JustPressed(InputAction::Down)) {
 		//app->audio->PlayTrack(&app->assets->testMusic, true);

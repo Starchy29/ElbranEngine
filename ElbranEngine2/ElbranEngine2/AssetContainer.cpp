@@ -59,7 +59,7 @@ AssetContainer::AssetContainer(std::wstring filePath, GraphicsAPI* graphics, Sou
 
 	testSprite = graphics->LoadSprite(filePath, L"elbran.png");
 	apple = graphics->LoadSprite(filePath, L"apple.jpeg");
-	testAtlas = LoadSpriteSheet(L"test atlas.png", 3, 3, 9);
+	testAtlas = LoadSpriteSheet(L"test atlas.png", 3, 3, 8);
 
 	testSound = audio->LoadEffect(filePath, L"water plunk.wav");
 	testMusic = audio->LoadTrack(filePath, L"Menu song.wav", true);

@@ -21,7 +21,7 @@ void SpriteRenderer::Draw() {
 	CameraVSConstants vsInput;
 	vsInput.worldTransform = worldMatrix->Transpose();
 	vsInput.uvOffset = Vector2::Zero;
-	vsInput.uvScale = Vector2(flipX ? -1 : 1, flipY ? -1 : 1);
+	vsInput.uvScale = Vector2(flipX ? -1 : 1, flipY ? -1 : 1); // assumes wrap enabled on sampling
 	graphics->SetVertexShader(&app->assets->cameraVS, &vsInput, sizeof(CameraVSConstants));
 
 	TexturePSConstants psInput;
