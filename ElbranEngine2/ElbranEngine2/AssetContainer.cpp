@@ -3,6 +3,8 @@
 #include "Application.h"
 #include "SoundMixer.h"
 
+#define LoadSpriteSheet(fileName, rows, cols, numSprites) SpriteSheet{ graphics->LoadSprite(filePath, fileName), rows, cols, numSprites }
+
 AssetContainer::AssetContainer(std::wstring filePath, GraphicsAPI* graphics, SoundMixer* audio) {
 	defaultSampler = graphics->CreateDefaultSampler();
 	graphics->SetSampler(ShaderStage::Vertex, &defaultSampler, 0);
@@ -57,6 +59,7 @@ AssetContainer::AssetContainer(std::wstring filePath, GraphicsAPI* graphics, Sou
 
 	testSprite = graphics->LoadSprite(filePath, L"elbran.png");
 	apple = graphics->LoadSprite(filePath, L"apple.jpeg");
+	testAtlas = LoadSpriteSheet(L"test atlas.png", 3, 3, 9);
 
 	testSound = audio->LoadEffect(filePath, L"water plunk.wav");
 	testMusic = audio->LoadTrack(filePath, L"Menu song.wav", true);
@@ -91,6 +94,7 @@ AssetContainer::~AssetContainer() {
 
 	testSprite.Release();
 	apple.Release();
+	testAtlas.Release();
 
 	audio->ReleaseSoundEffect(&testSound);
 	audio->ReleaseAudioTrack(&testMusic);

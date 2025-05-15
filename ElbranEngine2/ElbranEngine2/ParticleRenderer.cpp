@@ -6,9 +6,8 @@
 
 #define PARTICLE_BYTES 32 // based on struct in ShaderStructs.hlsli
 
-
 ParticleRenderer::ParticleRenderer(unsigned int maxParticles, Texture2D sprite) 
-	: ParticleRenderer(maxParticles, SpriteSheet { sprite, 1, 1, 1, sprite.aspectRatio }, 0.f)
+	: ParticleRenderer(maxParticles, SpriteSheet { sprite, 1, 1, 1 }, 0.f)
 { }
 
 ParticleRenderer::ParticleRenderer(unsigned int maxParticles, SpriteSheet animation, float animationFPS) {
@@ -54,7 +53,7 @@ void ParticleRenderer::Draw() {
 
 	ParticleQuadGSConstants gsInput = {};
 	gsInput.z = globalZ;
-	gsInput.spriteAspectRatio = sprites.spriteAspectRatio;
+	gsInput.spriteAspectRatio = sprites.SpriteAspectRatio();
 	gsInput.animationFPS = animationFPS;
 	gsInput.animationFrames = sprites.spriteCount;
 	gsInput.atlasRows = sprites.rows;

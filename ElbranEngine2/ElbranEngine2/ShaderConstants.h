@@ -6,8 +6,8 @@
 
 struct CameraVSConstants {
 	Matrix worldTransform;
-	GPU_BOOL flipX;
-	GPU_BOOL flipY;
+	Vector2 uvOffset;
+	Vector2 uvScale;
 };
 
 struct TexturePSConstants {

@@ -35,6 +35,7 @@ public:
 
 	Texture2D testSprite;
 	Texture2D apple;
+	SpriteSheet testAtlas;
 
 	SoundEffect testSound;
 	AudioTrack testMusic;

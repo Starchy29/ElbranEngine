@@ -14,6 +14,7 @@
 #include "SoundMixer.h"
 #include "Random.h"
 #include "Tween.h"
+#include "AtlasRenderer.h"
 
 float t = 0.f;
 SpriteRenderer* linear;
@@ -42,6 +43,12 @@ Game::Game() {
 	tweener->transform->position.y = -0.5f;
 	tweener->transform->scale *= 0.5f;
 
+	AtlasRenderer* testSheet = new AtlasRenderer(&app->assets->testAtlas);
+	testScene->AddRenderer(testSheet, false);
+	testSheet->transform->scale *= 2.0f;
+	testSheet->row = 1;
+	testSheet->col = 1;
+
 	//checker->lit = true;
 
 	//ParticleRenderer* parts = new ParticleRenderer(200, app->assets->testSprite);
@@ -62,9 +69,9 @@ Game::Game() {
 	//app->graphics->postProcesses.push_back(blurBoy);
 	//blurBoy->blurRadius = 50;
 
-	BloomPostProcess* bloomer = new BloomPostProcess();
-	bloomer->threshold = 0.8f;
-	app->graphics->postProcesses.push_back(bloomer);
+	//BloomPostProcess* bloomer = new BloomPostProcess();
+	//bloomer->threshold = 0.8f;
+	//app->graphics->postProcesses.push_back(bloomer);
 }
 
 Game::~Game() {

@@ -31,10 +31,11 @@ struct Texture2D {
 
 struct SpriteSheet {
 	Texture2D texture;
-	int rows;
-	int cols;
-	int spriteCount;
-	float spriteAspectRatio;
+	unsigned int rows;
+	unsigned int cols;
+	unsigned int spriteCount;
+
+	float SpriteAspectRatio() const { return texture.aspectRatio * rows / cols; }
 
 	void Release();
 };
