@@ -6,8 +6,8 @@ SoundMixer::SoundMixer() {
 }
 
 SoundMixer::~SoundMixer() {
-	delete[] faders.dataArray;
-	delete[] fadeData.dataArray;
+	faders.Release();
+	fadeData.Release();
 }
 
 void SoundMixer::Update(float deltaTime) {

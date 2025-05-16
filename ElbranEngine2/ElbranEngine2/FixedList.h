@@ -5,11 +5,8 @@
 
 // an array-based unordered list that is initialized with a set capacity which never changes
 template<class Type>
-class FixedList
-{
+class FixedList {
 public:
-	Type* dataArray;
-
 	FixedList() {
 		dataArray = nullptr;
 		size = 0;
@@ -20,6 +17,17 @@ public:
 		size = 0;
 		this->capacity = capacity;
 		dataArray = new Type[capacity] {};
+	}
+
+	void Release() {
+		// will not call delete on elements because it is unknown if Type is a pointer
+		delete[] dataArray; 
+	}
+
+	void ReleaseElements() {
+		for(unsigned int i = 0; i < size; i++) {
+			delete dataArray[i];
+		}
 	}
 
 	Type& operator[](int index) {
@@ -43,6 +51,7 @@ public:
 	}
 
 private:
+	Type* dataArray;
 	unsigned int capacity;
 	unsigned int size;
 };

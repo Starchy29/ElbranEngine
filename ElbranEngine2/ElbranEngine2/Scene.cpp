@@ -42,19 +42,14 @@ Scene::~Scene() {
 	delete[] transforms;
 	delete[] localMatrices;
 	delete[] worldMatrices;
-	for(unsigned int i = 0; i < opaques.GetSize(); i++) {
-		delete opaques[i];
-	}
-	delete[] opaques.dataArray;
-	for(unsigned int i = 0; i < translucents.GetSize(); i++) {
-		delete translucents[i];
-	}
-	delete[] translucents.dataArray;
-	for(unsigned int i = 0; i < behaviors.GetSize(); i++) {
-		delete behaviors[i];
-	}
-	delete[] behaviors.dataArray;
-	delete[] lights.dataArray;
+
+	opaques.ReleaseElements();
+	opaques.Release();
+	translucents.ReleaseElements();
+	translucents.Release();
+	behaviors.ReleaseElements();
+	behaviors.Release();
+	lights.Release();
 }
 
 void Scene::Update(float deltaTime) {
@@ -256,22 +251,22 @@ void Scene::ReleaseTransform(Transform* transform) {
 }
 
 void Scene::RemoveRenderer(IRenderer* renderer) {
-	if(renderer >= opaques.dataArray[0] && renderer < opaques.dataArray[opaques.GetSize()]) {
-		opaques.RemoveAt(renderer - opaques.dataArray[0]);
+	if(renderer >= opaques[0] && renderer < opaques[opaques.GetSize()]) {
+		opaques.RemoveAt(renderer - opaques[0]);
 	}
-	else if(renderer >= translucents.dataArray[0] && renderer < translucents.dataArray[translucents.GetSize()]) {
-		translucents.RemoveAt(renderer - translucents.dataArray[0]);
+	else if(renderer >= translucents[0] && renderer < translucents[translucents.GetSize()]) {
+		translucents.RemoveAt(renderer - translucents[0]);
 	}
 	ReleaseTransform(renderer->transform);
 }
 
 void Scene::RemoveBehavior(IBehavior* behavior) {
-	behaviors.RemoveAt(behavior - behaviors.dataArray[0]);
+	behaviors.RemoveAt(behavior - behaviors[0]);
 }
 
 void Scene::RemoveLight(LightSource* light) {
 	ReleaseTransform(light->transform);
-	lights.RemoveAt(light - lights.dataArray);
+	lights.RemoveAt(light - &lights[0]);
 }
 
 float Camera::GetViewHeight() const {

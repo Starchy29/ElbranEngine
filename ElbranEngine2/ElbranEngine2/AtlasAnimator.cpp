@@ -2,6 +2,8 @@
 
 #define LAST_FRAME renderer->atlas->spriteCount - 1
 
+AtlasAnimator::AtlasAnimator() {}
+
 AtlasAnimator::AtlasAnimator(AtlasRenderer* renderer, float frameRate) {
 	this->renderer = renderer;
 	this->frameRate = frameRate;

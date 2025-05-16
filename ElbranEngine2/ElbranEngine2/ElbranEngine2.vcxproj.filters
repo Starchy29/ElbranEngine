@@ -91,9 +91,14 @@
     <ClCompile Include="WindowsAudio.cpp">
       <Filter>Windows</Filter>
     </ClCompile>
-    <ClCompile Include="AtlasAnimator.cpp" />
     <ClCompile Include="AtlasRenderer.cpp">
       <Filter>Graphics\Renderers</Filter>
+    </ClCompile>
+    <ClCompile Include="AtlasAnimator.cpp">
+      <Filter>Toolkit</Filter>
+    </ClCompile>
+    <ClCompile Include="AnimationGroup.cpp">
+      <Filter>Toolkit</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -176,9 +181,14 @@
       <Filter>Windows</Filter>
     </ClInclude>
     <ClInclude Include="AudioData.h" />
-    <ClInclude Include="AtlasAnimator.h" />
     <ClInclude Include="AtlasRenderer.h">
       <Filter>Graphics\Renderers</Filter>
+    </ClInclude>
+    <ClInclude Include="AtlasAnimator.h">
+      <Filter>Toolkit</Filter>
+    </ClInclude>
+    <ClInclude Include="AnimationGroup.h">
+      <Filter>Toolkit</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

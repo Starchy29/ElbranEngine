@@ -16,12 +16,14 @@
 #include "Tween.h"
 #include "AtlasRenderer.h"
 #include "AtlasAnimator.h"
+#include "AnimationGroup.h"
 
 float t = 0.f;
 SpriteRenderer* linear;
 SpriteRenderer* tweener;
 
-AtlasAnimator* animator;
+//AtlasAnimator* animator;
+AnimationGroup* animations;
 
 Game::Game() {
 	testScene = new Scene(10, 5.0f);
@@ -52,9 +54,15 @@ Game::Game() {
 	testSheet->row = 1;
 	testSheet->col = 1;
 
-	animator = new AtlasAnimator(testSheet, 8.f);
-	testScene->AddBehavior(animator);
-	animator->looped = true;
+	//animator = new AtlasAnimator(testSheet, 8.f);
+	//testScene->AddBehavior(animator);
+	//animator->looped = true;
+
+	animations = new AnimationGroup(testSheet, 2);
+	testScene->AddBehavior(animations);
+	animations->AddAnimation(&app->assets->testAtlas, 8.f, false, true, 1);
+	animations->AddAnimation(&app->assets->testAnimation2, 6.f, true, false, 0);
+	animations->StartAnimation(0);
 
 	//checker->lit = true;
 
@@ -99,7 +107,7 @@ void Game::Update(float deltaTime) {
 		//app->audio->PlayEffect(&app->assets->testSound, 1.0f, app->rng->GenerateFloat(-1.f, 1.f));
 		//app->audio->PauseTrack(&app->assets->testMusic, 0.5f);
 		//app->audio->SetTrackVolume(&app->assets->testMusic, 0.3f, 1.0f);
-		animator->Restart(true);
+		//animator->Restart(true);
 	}
 	if(app->input->JustPressed(InputAction::Down)) {
 		//app->audio->PlayTrack(&app->assets->testMusic, true);
