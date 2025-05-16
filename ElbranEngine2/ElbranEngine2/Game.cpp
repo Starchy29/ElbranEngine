@@ -17,13 +17,13 @@
 #include "AtlasRenderer.h"
 #include "AtlasAnimator.h"
 #include "AnimationGroup.h"
+#include "PatternRenderer.h"
 
 float t = 0.f;
 SpriteRenderer* linear;
 SpriteRenderer* tweener;
 
-//AtlasAnimator* animator;
-AnimationGroup* animations;
+PatternRenderer* pattern;
 
 Game::Game() {
 	testScene = new Scene(10, 5.0f);
@@ -48,21 +48,19 @@ Game::Game() {
 	tweener->transform->position.y = -0.5f;
 	tweener->transform->scale *= 0.5f;
 
-	AtlasRenderer* testSheet = new AtlasRenderer(&app->assets->testAtlas);
-	testScene->AddRenderer(testSheet, false);
-	testSheet->transform->scale *= 2.0f;
-	testSheet->row = 1;
-	testSheet->col = 1;
+	//AtlasRenderer* testSheet = new AtlasRenderer(&app->assets->testAtlas);
+	//testScene->AddRenderer(testSheet, false);
+	//testSheet->transform->scale *= 2.0f;
+	//testSheet->row = 1;
+	//testSheet->col = 1;
 
 	//animator = new AtlasAnimator(testSheet, 8.f);
 	//testScene->AddBehavior(animator);
 	//animator->looped = true;
 
-	animations = new AnimationGroup(testSheet, 2);
-	testScene->AddBehavior(animations);
-	animations->AddAnimation(&app->assets->testAtlas, 8.f, false, true, 1);
-	animations->AddAnimation(&app->assets->testAnimation2, 6.f, true, false, 0);
-	animations->StartAnimation(0);
+	pattern = new PatternRenderer(&app->assets->testAtlas.texture);
+	testScene->AddRenderer(pattern, false);
+	pattern->transform->scale *= 3.0f;
 
 	//checker->lit = true;
 
@@ -117,10 +115,20 @@ void Game::Update(float deltaTime) {
 	cursor->transform->rotation += 20.0f * app->input->GetMouseWheelSpin() * deltaTime;
 
 	if(app->input->IsPressed(InputAction::Up)) {
-		//((BloomPostProcess*)app->graphics->postProcesses[0])->threshold += deltaTime;
+		//pattern->transform->scale.y += deltaTime;
+		pattern->origin.y += deltaTime;
 	}
 	if(app->input->IsPressed(InputAction::Down)) {
-		//((BloomPostProcess*)app->graphics->postProcesses[0])->threshold -= deltaTime;
+		//pattern->transform->scale.y -= deltaTime;
+		pattern->origin.y -= deltaTime;
+	}
+	if(app->input->IsPressed(InputAction::Left)) {
+		//pattern->transform->scale.x -= deltaTime;
+		pattern->origin.x -= deltaTime;
+	}
+	if(app->input->IsPressed(InputAction::Right)) {
+		//pattern->transform->scale.x += deltaTime;
+		pattern->origin.x += deltaTime;
 	}
 
 	/*if (app->input->IsPressed(InputAction::Up)) {

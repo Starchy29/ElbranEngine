@@ -26,6 +26,9 @@
     <Filter Include="Graphics\Renderers">
       <UniqueIdentifier>{2cf26133-0f27-4634-9e97-a4659cf2d397}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Toolkit\Behaviors">
+      <UniqueIdentifier>{daac94b3-951d-4812-be0b-a41bb4b0d73e}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Application.cpp" />
@@ -78,9 +81,6 @@
     <ClCompile Include="ParticleRenderer.cpp">
       <Filter>Graphics\Renderers</Filter>
     </ClCompile>
-    <ClCompile Include="ParticleBehavior.cpp">
-      <Filter>Graphics\Renderers</Filter>
-    </ClCompile>
     <ClCompile Include="ShapeRenderer.cpp">
       <Filter>Graphics\Renderers</Filter>
     </ClCompile>
@@ -94,11 +94,17 @@
     <ClCompile Include="AtlasRenderer.cpp">
       <Filter>Graphics\Renderers</Filter>
     </ClCompile>
-    <ClCompile Include="AtlasAnimator.cpp">
-      <Filter>Toolkit</Filter>
-    </ClCompile>
     <ClCompile Include="AnimationGroup.cpp">
-      <Filter>Toolkit</Filter>
+      <Filter>Toolkit\Behaviors</Filter>
+    </ClCompile>
+    <ClCompile Include="AtlasAnimator.cpp">
+      <Filter>Toolkit\Behaviors</Filter>
+    </ClCompile>
+    <ClCompile Include="ParticleBehavior.cpp">
+      <Filter>Toolkit\Behaviors</Filter>
+    </ClCompile>
+    <ClCompile Include="PatternRenderer.cpp">
+      <Filter>Graphics\Renderers</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -167,9 +173,6 @@
     <ClInclude Include="ParticleRenderer.h">
       <Filter>Graphics\Renderers</Filter>
     </ClInclude>
-    <ClInclude Include="ParticleBehavior.h">
-      <Filter>Graphics\Renderers</Filter>
-    </ClInclude>
     <ClInclude Include="ShapeRenderer.h">
       <Filter>Graphics\Renderers</Filter>
     </ClInclude>
@@ -184,11 +187,17 @@
     <ClInclude Include="AtlasRenderer.h">
       <Filter>Graphics\Renderers</Filter>
     </ClInclude>
-    <ClInclude Include="AtlasAnimator.h">
-      <Filter>Toolkit</Filter>
-    </ClInclude>
     <ClInclude Include="AnimationGroup.h">
-      <Filter>Toolkit</Filter>
+      <Filter>Toolkit\Behaviors</Filter>
+    </ClInclude>
+    <ClInclude Include="AtlasAnimator.h">
+      <Filter>Toolkit\Behaviors</Filter>
+    </ClInclude>
+    <ClInclude Include="ParticleBehavior.h">
+      <Filter>Toolkit\Behaviors</Filter>
+    </ClInclude>
+    <ClInclude Include="PatternRenderer.h">
+      <Filter>Graphics\Renderers</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

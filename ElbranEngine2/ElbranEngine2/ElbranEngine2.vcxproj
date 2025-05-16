@@ -161,6 +161,7 @@
     <ClCompile Include="MemoryArena.cpp" />
     <ClCompile Include="ParticleBehavior.cpp" />
     <ClCompile Include="ParticleRenderer.cpp" />
+    <ClCompile Include="PatternRenderer.cpp" />
     <ClCompile Include="Random.cpp" />
     <ClCompile Include="Scene.cpp" />
     <ClCompile Include="Shaders.cpp" />
@@ -198,6 +199,7 @@
     <ClInclude Include="MemoryArena.h" />
     <ClInclude Include="ParticleBehavior.h" />
     <ClInclude Include="ParticleRenderer.h" />
+    <ClInclude Include="PatternRenderer.h" />
     <ClInclude Include="Random.h" />
     <ClInclude Include="Scene.h" />
     <ClInclude Include="ShaderConstants.h" />

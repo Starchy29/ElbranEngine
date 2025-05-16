@@ -22,7 +22,7 @@ void AtlasRenderer::Draw() {
 
 	CameraVSConstants vsInput;
 	vsInput.worldTransform = worldMatrix->Transpose();
-	vsInput.uvScale = Vector2(1.0f / atlas->cols * (flipX ? -1.0f : 1.0f), 1.0f / atlas->rows * (flipY ? -1.0f : 1.0f));
+	vsInput.uvScale = Vector2(1.0f / atlas->cols * (flipX ? -1.0f : 1.0f), 1.0f / atlas->rows * (flipY ? -1.0f : 1.0f)); // assumes wrap enabled on sampling
 	vsInput.uvOffset = Vector2(col, row) * vsInput.uvScale;
 	graphics->SetVertexShader(&app->assets->cameraVS, &vsInput, sizeof(CameraVSConstants));
 
