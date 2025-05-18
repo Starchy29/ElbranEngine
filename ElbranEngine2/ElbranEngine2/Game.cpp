@@ -51,6 +51,8 @@ Game::Game() {
 	pattern->transform->zOrder = 1;
 	pattern->blockSize.x *= 1.4f;
 	pattern->origin = Vector2(-0.6f, -0.7f);
+	pattern->flipY = true;
+	pattern->flipX = true;
 
 	originTest = new ShapeRenderer(ShapeRenderer::Shape::Circle, Color::Red);
 	testScene->AddRenderer(originTest, false);
@@ -104,24 +106,24 @@ void Game::Update(float deltaTime) {
 	cursor->transform->rotation += 20.0f * app->input->GetMouseWheelSpin() * deltaTime;
 
 	if(app->input->IsPressed(InputAction::Up)) {
-		pattern->transform->scale.y += deltaTime;
+		//pattern->transform->scale.y += deltaTime;
 		//pattern->origin.y += deltaTime;
-		//pattern->blockSize.y += deltaTime;
+		pattern->blockSize.y += deltaTime;
 	}
 	if(app->input->IsPressed(InputAction::Down)) {
-		pattern->transform->scale.y -= deltaTime;
+		//pattern->transform->scale.y -= deltaTime;
 		//pattern->origin.y -= deltaTime;
-		//pattern->blockSize.y -= deltaTime;
+		pattern->blockSize.y -= deltaTime;
 	}
 	if(app->input->IsPressed(InputAction::Left)) {
-		pattern->transform->scale.x -= deltaTime;
+		//pattern->transform->scale.x -= deltaTime;
 		//pattern->origin.x -= deltaTime;
-		//pattern->blockSize.x -= deltaTime;
+		pattern->blockSize.x -= deltaTime;
 	}
 	if(app->input->IsPressed(InputAction::Right)) {
-		pattern->transform->scale.x += deltaTime;
+		//pattern->transform->scale.x += deltaTime;
 		//pattern->origin.x += deltaTime;
-		//pattern->blockSize.x += deltaTime;
+		pattern->blockSize.x += deltaTime;
 	}
 
 	originTest->transform->position = pattern->origin;
