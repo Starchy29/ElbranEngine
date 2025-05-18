@@ -22,8 +22,9 @@ void AtlasRenderer::Draw() {
 
 	CameraVSConstants vsInput;
 	vsInput.worldTransform = worldMatrix->Transpose();
-	vsInput.uvScale = Vector2(1.0f / atlas->cols * (flipX ? -1.0f : 1.0f), 1.0f / atlas->rows * (flipY ? -1.0f : 1.0f)); // assumes wrap enabled on sampling
-	vsInput.uvOffset = Vector2(col, row) * vsInput.uvScale;
+	Vector2 tileScale = Vector2(1.0f / atlas->cols, 1.0f / atlas->rows);
+	vsInput.uvScale = tileScale * Vector2(flipX ? -1.0f : 1.0f, flipY ? -1.0f : 1.0f); // assumes wrap enabled on sampling
+	vsInput.uvOffset = Vector2(col + (flipX ? 1 : 0), row + (flipY ? 1 : 0)) * tileScale;
 	graphics->SetVertexShader(&app->assets->cameraVS, &vsInput, sizeof(CameraVSConstants));
 
 	TexturePSConstants psInput;

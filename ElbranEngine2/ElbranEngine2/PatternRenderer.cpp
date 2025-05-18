@@ -3,6 +3,7 @@
 #include "GraphicsAPI.h"
 #include "AssetContainer.h"
 #include "ShaderConstants.h"
+#include "Math.h"
 
 PatternRenderer::PatternRenderer(Texture2D* sprite) {
 	this->sprite = sprite;
@@ -25,8 +26,11 @@ void PatternRenderer::Draw() {
 
 	CameraVSConstants vsInput;
 	vsInput.worldTransform = worldMatrix->Transpose();
-	vsInput.uvOffset = (mid - right - up) - origin;
 	vsInput.uvScale = globalScale / blockSize * Vector2(flipX ? -1 : 1, flipY ? -1 : 1); // assumes wrap enabled on sampling
+	Vector2 worldOffset = (mid - right - up) - origin;
+	worldOffset.y *= -1.f; // uvs are flipped vertically
+	vsInput.uvOffset = worldOffset / blockSize + Vector2(0.f, -Math::FractionOf(globalScale.y / blockSize.y));
+	//vsInput.uvOffset = Vector2(((mid - right) - origin).x / blockSize.x, (origin - (mid - up)).y / blockSize.y - Math::FractionOf(globalScale.y / blockSize.y));// ((mid - right + up) - origin) / globalScale / blockSize;
 	graphics->SetVertexShader(&app->assets->cameraVS, &vsInput, sizeof(CameraVSConstants));
 
 	TexturePSConstants psInput;

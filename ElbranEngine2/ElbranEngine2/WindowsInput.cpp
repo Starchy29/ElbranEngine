@@ -2,7 +2,7 @@
 #include "WindowsInput.h"
 #include "Application.h"
 #include "GraphicsAPI.h"
-#include "Tween.h"
+#include "Math.h"
 
 #pragma comment(lib,"XInput.lib")
 #pragma comment(lib,"Xinput9_1_0.lib")
@@ -211,7 +211,7 @@ void WindowsInput::SetRumble(int playerIndex, float strength) {
     }
 
 	XINPUT_VIBRATION vibeState = {};
-	vibeState.wRightMotorSpeed = (unsigned short)(Tween::Clamp(strength, 0.f, 1.f) * MAX_VIBRATION);
+	vibeState.wRightMotorSpeed = (unsigned short)(Math::Clamp(strength, 0.f, 1.f) * MAX_VIBRATION);
 	vibeState.wLeftMotorSpeed = vibeState.wRightMotorSpeed;
 
 	XInputSetState(playerIndex, &vibeState);

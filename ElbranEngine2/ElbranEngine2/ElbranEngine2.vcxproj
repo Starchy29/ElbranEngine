@@ -168,7 +168,6 @@
     <ClCompile Include="ShapeRenderer.cpp" />
     <ClCompile Include="SoundMixer.cpp" />
     <ClCompile Include="SpriteRenderer.cpp" />
-    <ClCompile Include="Tween.cpp" />
     <ClCompile Include="WindowsAudio.cpp" />
     <ClCompile Include="WindowsInput.cpp" />
     <ClCompile Include="WindowsMain.cpp" />
@@ -208,7 +207,6 @@
     <ClInclude Include="SoundMixer.h" />
     <ClInclude Include="SpriteRenderer.h" />
     <ClInclude Include="Transform.h" />
-    <ClInclude Include="Tween.h" />
     <ClInclude Include="WindowsAudio.h" />
     <ClInclude Include="WindowsInput.h" />
   </ItemGroup>

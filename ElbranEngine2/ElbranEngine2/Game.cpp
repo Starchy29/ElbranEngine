@@ -13,17 +13,14 @@
 #include "GraphicsAPI.h"
 #include "SoundMixer.h"
 #include "Random.h"
-#include "Tween.h"
+#include "Math.h"
 #include "AtlasRenderer.h"
 #include "AtlasAnimator.h"
 #include "AnimationGroup.h"
 #include "PatternRenderer.h"
 
-float t = 0.f;
-SpriteRenderer* linear;
-SpriteRenderer* tweener;
-
 PatternRenderer* pattern;
+ShapeRenderer* originTest;
 
 Game::Game() {
 	testScene = new Scene(10, 5.0f);
@@ -38,16 +35,6 @@ Game::Game() {
 	testScene->AddRenderer(cursor, true);
 	cursor->transform->scale *= 0.3f;
 
-	linear = new SpriteRenderer(&app->assets->testSprite);
-	testScene->AddRenderer(linear, false);
-	linear->transform->position.y = 0.5f;
-	linear->transform->scale *= 0.5f;
-
-	tweener = new SpriteRenderer(&app->assets->testSprite);
-	testScene->AddRenderer(tweener, false);
-	tweener->transform->position.y = -0.5f;
-	tweener->transform->scale *= 0.5f;
-
 	//AtlasRenderer* testSheet = new AtlasRenderer(&app->assets->testAtlas);
 	//testScene->AddRenderer(testSheet, false);
 	//testSheet->transform->scale *= 2.0f;
@@ -60,7 +47,14 @@ Game::Game() {
 
 	pattern = new PatternRenderer(&app->assets->testAtlas.texture);
 	testScene->AddRenderer(pattern, false);
-	pattern->transform->scale *= 3.0f;
+	pattern->transform->scale *= 2.5f;
+	pattern->transform->zOrder = 1;
+	pattern->blockSize.x *= 1.4f;
+	pattern->origin = Vector2(-0.6f, -0.7f);
+
+	originTest = new ShapeRenderer(ShapeRenderer::Shape::Circle, Color::Red);
+	testScene->AddRenderer(originTest, false);
+	originTest->transform->scale *= 0.05f;
 
 	//checker->lit = true;
 
@@ -92,11 +86,6 @@ Game::~Game() {
 }
 
 void Game::Update(float deltaTime) {
-	t += 0.7f * deltaTime;
-	if(t > 1.0f) t -= 1.0f;
-	linear->transform->position.x = Tween::Lerp(-2.0f, 2.0f, t);
-	tweener->transform->position.x = -2.0f + 4.0f * Tween::EaseInOut(t);
-
 	cursor->transform->position = app->input->GetMousePosition(&testScene->camera);
 	testScene->Update(deltaTime);
 
@@ -115,21 +104,27 @@ void Game::Update(float deltaTime) {
 	cursor->transform->rotation += 20.0f * app->input->GetMouseWheelSpin() * deltaTime;
 
 	if(app->input->IsPressed(InputAction::Up)) {
-		//pattern->transform->scale.y += deltaTime;
-		pattern->origin.y += deltaTime;
+		pattern->transform->scale.y += deltaTime;
+		//pattern->origin.y += deltaTime;
+		//pattern->blockSize.y += deltaTime;
 	}
 	if(app->input->IsPressed(InputAction::Down)) {
-		//pattern->transform->scale.y -= deltaTime;
-		pattern->origin.y -= deltaTime;
+		pattern->transform->scale.y -= deltaTime;
+		//pattern->origin.y -= deltaTime;
+		//pattern->blockSize.y -= deltaTime;
 	}
 	if(app->input->IsPressed(InputAction::Left)) {
-		//pattern->transform->scale.x -= deltaTime;
-		pattern->origin.x -= deltaTime;
+		pattern->transform->scale.x -= deltaTime;
+		//pattern->origin.x -= deltaTime;
+		//pattern->blockSize.x -= deltaTime;
 	}
 	if(app->input->IsPressed(InputAction::Right)) {
-		//pattern->transform->scale.x += deltaTime;
-		pattern->origin.x += deltaTime;
+		pattern->transform->scale.x += deltaTime;
+		//pattern->origin.x += deltaTime;
+		//pattern->blockSize.x += deltaTime;
 	}
+
+	originTest->transform->position = pattern->origin;
 
 	/*if (app->input->IsPressed(InputAction::Up)) {
 		testScene->camera.transform->position.y += deltaTime;
