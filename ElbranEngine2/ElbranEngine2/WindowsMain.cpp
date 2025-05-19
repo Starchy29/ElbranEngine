@@ -195,8 +195,7 @@ int WINAPI WinMain(
 	GetClientRect(windowHandle, &windowRect);
 	directX = new DirectXAPI(windowHandle, Int2(windowRect.right - windowRect.left, windowRect.bottom - windowRect.top), ASPECT_RATIO, directory);
 	input = new WindowsInput(windowHandle);
-	app = new Application(directory, directX, new WindowsAudio(), input);
-	app->SetupGame();
+	Application::InitApp(directory, directX, new WindowsAudio(), input);
 	RunApp();
 	delete app;
 	return 0;

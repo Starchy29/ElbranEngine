@@ -8,14 +8,18 @@
 
 Application* app;
 
+void Application::InitApp(std::wstring filePath, GraphicsAPI* graphics, SoundMixer* audio, InputManager* input) {
+	app = new Application(filePath, graphics, audio, input);
+	app->assets = new AssetContainer(filePath, graphics, audio);
+	app->game = new Game();
+}
+
 Application::Application(std::wstring filePath, GraphicsAPI* graphics, SoundMixer* audio, InputManager* input) {
+	this->filePath = filePath;
 	this->graphics = graphics;
 	this->audio = audio;
 	this->input = input;
-	assets = new AssetContainer(filePath, graphics, audio);
 	rng = new Random();
-
-	this->filePath = filePath;
 }
 
 Application::~Application() {
@@ -25,11 +29,6 @@ Application::~Application() {
 	delete assets;
 	delete audio;
 	delete graphics;
-}
-
-void Application::SetupGame() {
-	// called after the constructor, when all assets are loaded
-	game = new Game();
 }
 
 void Application::Update(float deltaTime) {

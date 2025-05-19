@@ -19,11 +19,13 @@ public:
 
 	std::wstring filePath;
 
-	Application(std::wstring filePath, GraphicsAPI* graphics, SoundMixer* audio, InputManager* input);
+	static void InitApp(std::wstring filePath, GraphicsAPI* graphics, SoundMixer* audio, InputManager* input);
 	~Application();
 
-	void SetupGame();
 	void Update(float deltaTime);
+
+private:
+	Application(std::wstring filePath, GraphicsAPI* graphics, SoundMixer* audio, InputManager* input);
 };
 
 extern Application* app; // pointer to the app singleton, created and destroyed by the platform
