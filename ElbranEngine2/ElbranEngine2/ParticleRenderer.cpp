@@ -31,7 +31,7 @@ ParticleRenderer::ParticleRenderer(unsigned int maxParticles, SpriteSheet animat
 }
 
 ParticleRenderer::~ParticleRenderer() {
-	particleBuffer.Release();
+	app->graphics->ReleaseEditBuffer(&particleBuffer);
 }
 
 void ParticleRenderer::Draw() {

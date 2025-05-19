@@ -58,6 +58,20 @@ public:
     void RunComputeShader(const ComputeShader* shader, unsigned int xThreads, unsigned int yThreads, unsigned int zThreads = 1) override;
     void SetRenderTarget(const RenderTarget* renderTarget, bool useDepthStencil) override;
 
+    void ReleaseShader(VertexShader* shader) override;
+    void ReleaseShader(GeometryShader* shader) override;
+    void ReleaseShader(PixelShader* shader) override;
+    void ReleaseShader(ComputeShader* shader) override;
+    void ReleaseSampler(Sampler* sampler) override;
+    void ReleaseTexture(Texture2D* texture) override;
+    void ReleaseRenderTarget(RenderTarget* texture) override;
+    void ReleaseComputeTexture(ComputeTexture* texture) override;
+    void ReleaseMesh(Mesh* mesh) override;
+    void ReleaseConstantBuffer(ConstantBuffer* buffer) override;
+    void ReleaseArrayBuffer(ArrayBuffer* buffer) override;
+    void ReleaseEditBuffer(EditBuffer* buffer) override;
+    void ReleaseOuputBuffer(OutputBuffer* buffer) override;
+
 protected:
     void ClearBackBuffer() override;
     void ClearDepthStencil() override;

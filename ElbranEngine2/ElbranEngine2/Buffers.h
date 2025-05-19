@@ -17,16 +17,12 @@ typedef ID3D11UnorderedAccessView UnorderedAccessView;
 
 struct Sampler {
 	SamplerState* state;
-
-	void Release();
 };
 
 struct Texture2D {
 	TextureData* data;
 	ShaderResourceView* inputView;
 	float aspectRatio;
-
-	void Release();
 };
 
 struct SpriteSheet {
@@ -34,50 +30,35 @@ struct SpriteSheet {
 	unsigned int rows;
 	unsigned int cols;
 	unsigned int spriteCount;
-
 	float SpriteAspectRatio() const { return texture.aspectRatio * rows / cols; }
-
-	void Release();
 };
 
 struct RenderTarget : Texture2D {
 	RenderTargetView* outputView;
-
-	void Release();
 };
 
 struct ComputeTexture : Texture2D {
 	UnorderedAccessView* outputView;
-
-	void Release();
 };
 
 struct Mesh {
 	int indexCount;
 	Buffer* vertices;
 	Buffer* indices;
-
-	void Release();
 };
 
 struct ConstantBuffer {
 	Buffer* data;
-
-	void Release();
 };
 
 struct ArrayBuffer {
 	Buffer* buffer;
 	ShaderResourceView* view;
-
-	void Release();
 };
 
 // a gpu-writable buffer that gets bound to the render pipeline
 struct EditBuffer : ArrayBuffer {
 	UnorderedAccessView* computeView;
-
-	void Release();
 };
 
 // a gpu-writable buffer that the cpu can read back from
@@ -86,6 +67,4 @@ struct OutputBuffer {
 	Buffer* cpuBuffer;
 	UnorderedAccessView* view;
 	int byteLength;
-
-	void Release();
 };

@@ -150,7 +150,6 @@
     <ClCompile Include="AtlasRenderer.cpp" />
     <ClCompile Include="BloomPostProcess.cpp" />
     <ClCompile Include="BlurPostProcess.cpp" />
-    <ClCompile Include="Buffers.cpp" />
     <ClCompile Include="Common.cpp" />
     <ClCompile Include="DirectXAPI.cpp" />
     <ClCompile Include="Game.cpp" />
@@ -164,7 +163,6 @@
     <ClCompile Include="PatternRenderer.cpp" />
     <ClCompile Include="Random.cpp" />
     <ClCompile Include="Scene.cpp" />
-    <ClCompile Include="Shaders.cpp" />
     <ClCompile Include="ShapeRenderer.cpp" />
     <ClCompile Include="SoundMixer.cpp" />
     <ClCompile Include="SpriteRenderer.cpp" />

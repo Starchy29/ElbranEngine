@@ -116,6 +116,21 @@ public:
 	virtual void ReadBuffer(const OutputBuffer* buffer, void* destination) = 0;
 	virtual void RunComputeShader(const ComputeShader* shader, unsigned int xThreads, unsigned int yThreads, unsigned int zThreads = 1) = 0;
 
+	// gpu memory release functions
+	virtual void ReleaseShader(VertexShader* shader) = 0;
+	virtual void ReleaseShader(GeometryShader* shader) = 0;
+	virtual void ReleaseShader(PixelShader* shader) = 0;
+	virtual void ReleaseShader(ComputeShader* shader) = 0;
+	virtual void ReleaseSampler(Sampler* sampler) = 0;
+	virtual void ReleaseTexture(Texture2D* texture) = 0;
+	virtual void ReleaseRenderTarget(RenderTarget* texture) = 0;
+	virtual void ReleaseComputeTexture(ComputeTexture* texture) = 0;
+	virtual void ReleaseMesh(Mesh* mesh) = 0;
+	virtual void ReleaseConstantBuffer(ConstantBuffer* buffer) = 0;
+	virtual void ReleaseArrayBuffer(ArrayBuffer* buffer) = 0;
+	virtual void ReleaseEditBuffer(EditBuffer* buffer) = 0;
+	virtual void ReleaseOuputBuffer(OutputBuffer* buffer) = 0;
+
 protected:
 	UInt2 viewportDims;
 	UInt2 viewportOffset;

@@ -67,36 +67,36 @@ AssetContainer::AssetContainer(std::wstring filePath, GraphicsAPI* graphics, Sou
 }
 
 AssetContainer::~AssetContainer() {
-	//GraphicsAPI* graphics = app->graphics;
+	GraphicsAPI* graphics = app->graphics;
 	SoundMixer* audio = app->audio;
 
-	defaultSampler.Release();
-	unitSquare.Release();
-	unitTriangle.Release();
+	graphics->ReleaseSampler(&defaultSampler);
+	graphics->ReleaseMesh(&unitSquare);
+	graphics->ReleaseMesh(&unitTriangle);
 
-	fullscreenVS.Release();
-	cameraVS.Release();
-	particlePassPS.Release();
+	graphics->ReleaseShader(&fullscreenVS);
+	graphics->ReleaseShader(&cameraVS);
+	graphics->ReleaseShader(&particlePassPS);
 
-	particleQuadGS.Release();
+	graphics->ReleaseShader(&particleQuadGS);
 
-	solidColorPS.Release();
-	texturePS.Release();
-	circleFillPS.Release();
+	graphics->ReleaseShader(&solidColorPS);
+	graphics->ReleaseShader(&texturePS);
+	graphics->ReleaseShader(&circleFillPS);
 
-	conSatValPP.Release();
-	blurPP.Release();
-	bloomFilterPP.Release();
-	screenSumPP.Release();
+	graphics->ReleaseShader(&conSatValPP);
+	graphics->ReleaseShader(&blurPP);
+	graphics->ReleaseShader(&bloomFilterPP);
+	graphics->ReleaseShader(&screenSumPP);
 
-	brightnessSumCS.Release();
-	particleSpawnCS.Release();
-	particleMoveCS.Release();
+	graphics->ReleaseShader(&brightnessSumCS);
+	graphics->ReleaseShader(&particleSpawnCS);
+	graphics->ReleaseShader(&particleMoveCS);
 
-	testSprite.Release();
-	apple.Release();
-	testAtlas.Release();
-	testAnimation2.Release();
+	graphics->ReleaseTexture(&testSprite);
+	graphics->ReleaseTexture(&apple);
+	graphics->ReleaseTexture(&testAtlas.texture);
+	graphics->ReleaseTexture(&testAnimation2.texture);
 
 	audio->ReleaseSoundEffect(&testSound);
 	audio->ReleaseAudioTrack(&testMusic);

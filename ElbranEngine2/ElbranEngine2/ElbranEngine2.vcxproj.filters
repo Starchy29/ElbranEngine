@@ -45,12 +45,6 @@
     <ClCompile Include="Math.cpp">
       <Filter>Toolkit</Filter>
     </ClCompile>
-    <ClCompile Include="Buffers.cpp">
-      <Filter>Graphics</Filter>
-    </ClCompile>
-    <ClCompile Include="Shaders.cpp">
-      <Filter>Graphics</Filter>
-    </ClCompile>
     <ClCompile Include="AssetContainer.cpp" />
     <ClCompile Include="Scene.cpp" />
     <ClCompile Include="HSVPostProcess.cpp">

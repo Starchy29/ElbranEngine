@@ -16,22 +16,16 @@ typedef ID3D11ComputeShader CSData;
 struct VertexShader {
 	VSData* shader;
 	ConstantBuffer constants;
-
-	void Release();
 };
 
 struct GeometryShader {
 	GSData* shader;
 	ConstantBuffer constants;
-
-	void Release();
 };
 
 struct PixelShader {
 	PSData* shader;
 	ConstantBuffer constants;
-
-	void Release();
 };
 
 struct ComputeShader {
@@ -40,6 +34,4 @@ struct ComputeShader {
 	unsigned int xGroupSize;
 	unsigned int yGroupSize;
 	unsigned int zGroupSize;
-
-	void Release();
 };

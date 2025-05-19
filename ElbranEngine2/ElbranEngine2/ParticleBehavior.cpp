@@ -28,7 +28,7 @@ ParticleBehavior::ParticleBehavior(ParticleRenderer* renderer) {
 }
 
 ParticleBehavior::~ParticleBehavior() {
-    spawnData.Release();
+    app->graphics->ReleaseArrayBuffer(&spawnData);
 }
 
 void ParticleBehavior::Update(float deltaTime) {

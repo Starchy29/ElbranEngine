@@ -15,7 +15,7 @@ HSVPostProcess::HSVPostProcess() {
 }
 
 HSVPostProcess::~HSVPostProcess() {
-	totalBrightnessBuffer.Release();
+	app->graphics->ReleaseOuputBuffer(&totalBrightnessBuffer);
 }
 
 void HSVPostProcess::Render(GraphicsAPI* graphics, const RenderTarget* input, RenderTarget* output) {

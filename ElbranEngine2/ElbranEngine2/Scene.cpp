@@ -35,9 +35,10 @@ Scene::Scene(unsigned int maxEntities, float cameraWidth)  {
 }
 
 Scene::~Scene() {
-	projectionBuffer.Release();
-	lightInfoBuffer.Release();
-	lightsBuffer.Release();
+	GraphicsAPI* graphics = app->graphics;
+	graphics->ReleaseConstantBuffer(&projectionBuffer);
+	graphics->ReleaseConstantBuffer(&lightInfoBuffer);
+	graphics->ReleaseArrayBuffer(&lightsBuffer);
 
 	delete[] transforms;
 	delete[] localMatrices;

@@ -6,6 +6,8 @@
 #include <cassert>
 #include <WICTextureLoader.h>
 
+#define SafeRelease(x) if(x) x->Release()
+
 DirectXAPI::DirectXAPI(HWND windowHandle, Int2 windowDims, float viewAspectRatio, std::wstring directory) {
 	D3D_FEATURE_LEVEL levels[] = {
 		D3D_FEATURE_LEVEL_11_1,
@@ -126,13 +128,18 @@ DirectXAPI::DirectXAPI(HWND windowHandle, Int2 windowDims, float viewAspectRatio
 }
 
 DirectXAPI::~DirectXAPI() {
-	backBuffer.Release();
+	ReleaseRenderTarget(&backBuffer);
+	ReleaseRenderTarget(&postProcessTargets[0]);
+	ReleaseRenderTarget(&postProcessTargets[1]);
+	for(int i = 0; i < MAX_POST_PROCESS_HELPER_TEXTURES; i++) {
+		ReleaseRenderTarget(&postProcessHelpers[i]);
+	}
 }
 
 void DirectXAPI::Resize(Int2 windowDims, float viewAspectRatio) {
 	this->viewAspectRatio = viewAspectRatio;
 	depthStencilView.Reset();
-	backBuffer.Release();
+	ReleaseRenderTarget(&backBuffer);
 	swapChain->ResizeBuffers(2, windowDims.x, windowDims.y, DXGI_FORMAT_R8G8B8A8_UNORM, 0);
 
 	// recreate back buffer
@@ -183,12 +190,12 @@ void DirectXAPI::Resize(Int2 windowDims, float viewAspectRatio) {
 	context->RSSetViewports(1, &viewport);
 
 	// resize post process textures
-	postProcessTargets[0].Release();
-	postProcessTargets[1].Release();
+	ReleaseRenderTarget(&postProcessTargets[0]);
+	ReleaseRenderTarget(&postProcessTargets[1]);
 	postProcessTargets[0] = CreateRenderTarget(windowDims.x, windowDims.y);
 	postProcessTargets[1] = CreateRenderTarget(windowDims.x, windowDims.y);
 	for(int i = 0; i < MAX_POST_PROCESS_HELPER_TEXTURES; i++) {
-		postProcessHelpers[i].Release();
+		ReleaseRenderTarget(&postProcessHelpers[i]);
 		postProcessHelpers[i] = CreateRenderTarget(windowDims.x, windowDims.y);
 	}
 }
@@ -552,6 +559,70 @@ void DirectXAPI::RunComputeShader(const ComputeShader* shader, unsigned int xThr
 
 void DirectXAPI::SetRenderTarget(const RenderTarget* renderTarget, bool useDepthStencil) {
 	context->OMSetRenderTargets(1, &(renderTarget->outputView), useDepthStencil ? depthStencilView.Get() : nullptr);
+}
+
+void DirectXAPI::ReleaseShader(VertexShader* shader) {
+	SafeRelease(shader->shader);
+	SafeRelease(shader->constants.data);
+}
+
+void DirectXAPI::ReleaseShader(GeometryShader* shader) {
+	SafeRelease(shader->shader);
+	SafeRelease(shader->constants.data);
+}
+
+void DirectXAPI::ReleaseShader(PixelShader* shader) {
+	SafeRelease(shader->shader);
+	SafeRelease(shader->constants.data);
+}
+
+void DirectXAPI::ReleaseShader(ComputeShader* shader) {
+	SafeRelease(shader->shader);
+	SafeRelease(shader->constants.data);
+}
+
+void DirectXAPI::ReleaseSampler(Sampler* sampler) {
+	SafeRelease(sampler->state);
+}
+
+void DirectXAPI::ReleaseTexture(Texture2D* texture) {
+	SafeRelease(texture->data);
+	SafeRelease(texture->inputView);
+}
+
+void DirectXAPI::ReleaseRenderTarget(RenderTarget* texture) {
+	ReleaseTexture(texture);
+	SafeRelease(texture->outputView);
+}
+
+void DirectXAPI::ReleaseComputeTexture(ComputeTexture* texture) {
+	ReleaseTexture(texture);
+	SafeRelease(texture->outputView);
+}
+
+void DirectXAPI::ReleaseMesh(Mesh* mesh) {
+	SafeRelease(mesh->vertices);
+	SafeRelease(mesh->indices);
+}
+
+void DirectXAPI::ReleaseConstantBuffer(ConstantBuffer* buffer) {
+	SafeRelease(buffer->data);
+}
+
+void DirectXAPI::ReleaseArrayBuffer(ArrayBuffer* buffer) {
+	SafeRelease(buffer->buffer);
+	SafeRelease(buffer->view);
+}
+
+void DirectXAPI::ReleaseEditBuffer(EditBuffer* buffer) {
+	ReleaseArrayBuffer(buffer);
+	SafeRelease(buffer->computeView);
+}
+
+void DirectXAPI::ReleaseOuputBuffer(OutputBuffer* buffer) {
+	SafeRelease(buffer->cpuBuffer);
+	SafeRelease(buffer->gpuBuffer);
+	SafeRelease(buffer->view);
 }
 
 void DirectXAPI::ClearBackBuffer() {

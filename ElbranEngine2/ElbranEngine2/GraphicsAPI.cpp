@@ -21,11 +21,6 @@ GraphicsAPI::~GraphicsAPI() {
 	for(IPostProcess* pp : postProcesses) {
 		delete pp;
 	}
-	postProcessTargets[0].Release();
-	postProcessTargets[1].Release();
-	for(int i = 0; i < MAX_POST_PROCESS_HELPER_TEXTURES; i++) {
-		postProcessHelpers[i].Release();
-	}
 }
 
 void GraphicsAPI::Render(Game* game) {
