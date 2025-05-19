@@ -19,6 +19,30 @@ WindowsInput* input;
 float timeSinceFPSUpdate = 0.f;
 #endif
 
+void UpdateApp() {
+	__int64 currentCount;
+	QueryPerformanceCounter((LARGE_INTEGER*) &currentCount);
+	double deltaTime = (currentCount - lastPerfCount) * perfCountSecs;
+	if(deltaTime < minSecsPerFrame) {
+		return;
+	}
+	lastPerfCount = currentCount;
+			
+	float fDeltaTime = (float)deltaTime;
+
+	app->Update(fDeltaTime);
+
+	#if defined(DEBUG) | defined(_DEBUG)
+	if(SHOW_FPS) {
+		timeSinceFPSUpdate += fDeltaTime;
+		if(timeSinceFPSUpdate >= 0.5) {
+			timeSinceFPSUpdate = 0.0f;
+			SetWindowText(windowHandle, (_T(GAME_TITLE) + std::wstring(L" FPS: ") + std::to_wstring(1.0 / deltaTime)).c_str());
+		}
+	}
+	#endif
+}
+
 void RunApp() {
 	// main message loop
 	bool hasMsg;
@@ -29,27 +53,7 @@ void RunApp() {
 			TranslateMessage(&msg);
 			DispatchMessage(&msg);
 		} else {
-			__int64 currentCount;
-			QueryPerformanceCounter((LARGE_INTEGER*) &currentCount);
-			double deltaTime = (currentCount - lastPerfCount) * perfCountSecs;
-			if(deltaTime < minSecsPerFrame) {
-				continue;
-			}
-			lastPerfCount = currentCount;
-			
-			float fDeltaTime = (float)deltaTime;
-
-			app->Update(fDeltaTime);
-
-			#if defined(DEBUG) | defined(_DEBUG)
-			if(SHOW_FPS) {
-				timeSinceFPSUpdate += fDeltaTime;
-				if(timeSinceFPSUpdate >= 0.5) {
-					timeSinceFPSUpdate = 0.0f;
-					SetWindowText(windowHandle, (_T(GAME_TITLE) + std::wstring(L" FPS: ") + std::to_wstring(1.0 / deltaTime)).c_str());
-				}
-			}
-			#endif
+			UpdateApp();
 		}
 	}
 }
@@ -82,6 +86,16 @@ LRESULT CALLBACK WndProc(_In_ HWND hWnd, _In_ UINT message, _In_ WPARAM wParam, 
 		return 0;
 	case WM_MOUSEWHEEL:
 		input->mouseWheelDelta += GET_WHEEL_DELTA_WPARAM(wParam) / (float)WHEEL_DELTA;
+		return 0;
+	case WM_ENTERSIZEMOVE:
+		SetTimer(windowHandle, 1, USER_TIMER_MINIMUM, NULL);
+		break;
+	case WM_EXITSIZEMOVE:
+		KillTimer(windowHandle, 1);
+		return 0;
+	case WM_TIMER:
+		// timer allows the app to update when dragging/resizing the window
+		UpdateApp();
 		return 0;
 	default:
 		return DefWindowProc(hWnd, message, wParam, lParam);

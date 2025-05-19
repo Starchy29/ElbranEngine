@@ -91,6 +91,8 @@ void Game::Update(float deltaTime) {
 	cursor->transform->position = app->input->GetMousePosition(&testScene->camera);
 	testScene->Update(deltaTime);
 
+	pattern->origin += deltaTime * Vector2(2.f, 1.f);
+
 	if(app->input->JustPressed(InputAction::Select, 0)) {
 		//app->input->Rumble(0, 0.1f, 2.1f);
 		//app->audio->PlayEffect(&app->assets->testSound, 1.0f, app->rng->GenerateFloat(-1.f, 1.f));
