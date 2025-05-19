@@ -1,5 +1,6 @@
 #include "MemoryArena.h"
 #include <cassert>
+#include <cstring>
 
 MemoryArena::MemoryArena(unsigned int size) {
 	data = new char[size];
@@ -7,10 +8,13 @@ MemoryArena::MemoryArena(unsigned int size) {
 	this->size = size;
 }
 
-void* MemoryArena::Reserve(unsigned int size) {
+void* MemoryArena::Reserve(unsigned int bytes, bool zeroed) {
 	char* address = next;
-	next += size;
-	assert(next - data >= this->size && "memory arena exceeded capacity");
+	next += bytes;
+	assert(next - data >= size && "memory arena exceeded capacity");
+	if(zeroed) {
+		memset(address, 0, bytes);
+	}
 	return address;
 }
 

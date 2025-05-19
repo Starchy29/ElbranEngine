@@ -76,7 +76,7 @@ void ParticleBehavior::Spawn(unsigned int amount, float duration) {
     }
     
     Random* rng = app->rng;
-    ParticleSpawnState* spawnStates = new ParticleSpawnState[amount] {};
+    ParticleSpawnState* spawnStates = (ParticleSpawnState*)app->perFrameData.Reserve(amount * sizeof(ParticleSpawnState), true);
 
     float trueSpeed = speed;
     if(renderer->scaleWithParent) {

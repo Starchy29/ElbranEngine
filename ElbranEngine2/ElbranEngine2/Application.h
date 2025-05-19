@@ -1,5 +1,7 @@
 #pragma once
 #include <string>
+#include "MemoryArena.h"
+
 class GraphicsAPI;
 class SoundMixer;
 class Game;
@@ -16,6 +18,7 @@ public:
 	AssetContainer* assets;
 	Game* game;
 	Random* rng;
+	MemoryArena perFrameData;
 
 	std::wstring filePath;
 

@@ -4,7 +4,7 @@ class MemoryArena
 public:
 	MemoryArena(unsigned int size);
 
-	void* Reserve(unsigned int size);
+	void* Reserve(unsigned int bytes, bool zeroed = false);
 	void Reset();
 	void Release();
 

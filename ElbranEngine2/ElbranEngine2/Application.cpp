@@ -14,7 +14,9 @@ void Application::InitApp(std::wstring filePath, GraphicsAPI* graphics, SoundMix
 	app->game = new Game();
 }
 
-Application::Application(std::wstring filePath, GraphicsAPI* graphics, SoundMixer* audio, InputManager* input) {
+Application::Application(std::wstring filePath, GraphicsAPI* graphics, SoundMixer* audio, InputManager* input) 
+	: perFrameData(8192)
+{
 	this->filePath = filePath;
 	this->graphics = graphics;
 	this->audio = audio;
@@ -29,6 +31,7 @@ Application::~Application() {
 	delete assets;
 	delete audio;
 	delete graphics;
+	perFrameData.Release();
 }
 
 void Application::Update(float deltaTime) {
@@ -36,4 +39,5 @@ void Application::Update(float deltaTime) {
 	audio->Update(deltaTime);
 	game->Update(deltaTime);
 	graphics->Render(game);
+	perFrameData.Reset();
 }
