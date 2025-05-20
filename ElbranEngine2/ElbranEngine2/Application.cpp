@@ -15,7 +15,7 @@ void Application::InitApp(std::wstring filePath, GraphicsAPI* graphics, SoundMix
 }
 
 Application::Application(std::wstring filePath, GraphicsAPI* graphics, SoundMixer* audio, InputManager* input) 
-	: perFrameData(8192)
+	: perFrameData(1024)
 {
 	this->filePath = filePath;
 	this->graphics = graphics;

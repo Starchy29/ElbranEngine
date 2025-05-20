@@ -129,7 +129,6 @@ void ParticleBehavior::Spawn(unsigned int amount, float duration) {
     
     app->graphics->WriteBuffer(spawnStates, sizeof(ParticleSpawnState) * amount, spawnData.buffer);
     renderer->Emit(amount, &spawnData);
-    delete[] spawnStates;
 }
 
 void ParticleBehavior::SetSpawnRate(float perSec, unsigned int groupSize) {

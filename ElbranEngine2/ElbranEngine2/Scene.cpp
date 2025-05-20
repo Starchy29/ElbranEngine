@@ -56,7 +56,9 @@ Scene::~Scene() {
 void Scene::Update(float deltaTime) {
 	for(unsigned int i = 0; i < behaviors.GetSize(); i++) {
 		// behaviors may be added or deleted mid-update
-		behaviors[i]->Update(deltaTime);
+		if(behaviors[i]->enabled) {
+			behaviors[i]->Update(deltaTime);
+		}
 	}
 }
 
