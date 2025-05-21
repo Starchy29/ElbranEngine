@@ -29,6 +29,17 @@ float Math::FractionOf(float number) {
 	float remainder = modff(number, &integral);
 	return (number > 0.f ? remainder : -remainder); // modff returns a negative if the input is negative
 }
+
+float Math::InvSqrt(float number) {
+	// fast inverse square root algorithm, based on the fact that an IEEE 754 float's bits are an approximation of its own logarithm
+	float halfInput = number * 0.5f;
+	long log = * (long*) &number; // reinterpret as a 32-bit integer to allow bit manipulation
+	log = 0x5f3759df - (log >> 1); // inverse square root is -1/2 power, constant is the error term
+	number = * (float*) &log; // reinterpret back as a float
+	number = number * (1.5f - halfInput * number * number); // Newton iteration improves approximation
+	number = number * (1.5f - halfInput * number * number);
+	return number;
+}
 #pragma endregion
 
 #pragma region Tween
@@ -111,22 +122,24 @@ float Vector2::Dot(const Vector2& other) const {
 }
 
 float Vector2::Distance(const Vector2& other) const {
-	return (other - *this).Length();
+	float xDiff = x - other.x;
+	float yDiff = y - other.y;
+	return sqrtf(xDiff * xDiff + yDiff * yDiff);
 }
 
 float Vector2::SquareDistance(const Vector2& other) const {
-	return (other - *this).LengthSquared();
+	float xDiff = x - other.x;
+	float yDiff = y - other.y;
+	return xDiff * xDiff + yDiff * yDiff;
 }
 float Vector2::AngleBetween(const Vector2& other) const {
 	return acosf(Dot(other) / (Length() * other.Length()));
 }
 
 Vector2 Vector2::Normalize() const {
-	float length = Length();
-	if(length <= 0.f) {
-		return Vector2::Zero;
-	}
-	return Vector2(x / length, y / length);
+	if(x == 0.f && y == 0.f) return Vector2::Zero;
+	if(x == 0.f || y == 0.f) return Vector2(Math::Sign(x), Math::Sign(y));
+	return *this * Math::InvSqrt(x * x + y * y);
 }
 
 Vector2 Vector2::Rotate(float radians) const {

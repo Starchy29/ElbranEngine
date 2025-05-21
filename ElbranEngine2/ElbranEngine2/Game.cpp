@@ -35,6 +35,14 @@ Game::Game() {
 	testScene->AddRenderer(cursor, true);
 	cursor->transform->scale *= 0.3f;
 
+	float test1 = Math::InvSqrt(2.7f);
+	float test2 = Math::InvSqrt(123456789.f);
+	float test3 = Math::InvSqrt(1.f);
+	float test4 = Math::InvSqrt(0.f);
+
+	Vector2 quiz1 = Vector2(-5.f, 0.f).Normalize();
+	Vector2 quiz2 = Vector2(-5.f, -5.f).Normalize();
+
 	//AtlasRenderer* testSheet = new AtlasRenderer(&app->assets->testAtlas);
 	//testScene->AddRenderer(testSheet, false);
 	//testSheet->transform->scale *= 2.0f;

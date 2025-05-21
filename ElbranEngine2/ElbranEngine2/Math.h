@@ -13,6 +13,7 @@ namespace Math {
 	float Clamp(float value, float minimum, float maximum);
 	int Clamp(int value, int minimum, int maximum);
 	float FractionOf(float number);
+	float InvSqrt(float number);
 }
 
 namespace Tween {
