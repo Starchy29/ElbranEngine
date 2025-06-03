@@ -68,8 +68,6 @@ public:
 	UInt2 GetViewOffset() const;
 	float GetViewAspectRatio() const;
 
-	//void SetFullscreen(bool fullscreen);
-
 	virtual VertexShader LoadVertexShader(std::wstring directory, std::wstring fileName) = 0;
 	virtual GeometryShader LoadGeometryShader(std::wstring directory, std::wstring fileName) = 0;
 	virtual PixelShader LoadPixelShader(std::wstring directory, std::wstring fileName) = 0;

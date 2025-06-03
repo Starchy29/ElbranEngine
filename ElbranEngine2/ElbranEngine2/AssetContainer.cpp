@@ -64,6 +64,9 @@ AssetContainer::AssetContainer(std::wstring filePath, GraphicsAPI* graphics, Sou
 
 	testSound = audio->LoadEffect(filePath, L"water plunk.wav");
 	testMusic = audio->LoadTrack(filePath, L"Menu song.wav", true);
+
+	//testFont = Font::Load(L"Exile-Regular.ttf");
+	testFont = Font::Load(L"arial.ttf");
 }
 
 AssetContainer::~AssetContainer() {

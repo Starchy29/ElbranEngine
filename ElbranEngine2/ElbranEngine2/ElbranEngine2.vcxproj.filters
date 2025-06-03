@@ -97,6 +97,8 @@
     <ClCompile Include="PatternRenderer.cpp">
       <Filter>Graphics\Renderers</Filter>
     </ClCompile>
+    <ClCompile Include="TextRenderer.cpp" />
+    <ClCompile Include="Font.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Application.h" />
@@ -187,6 +189,8 @@
     <ClInclude Include="PatternRenderer.h">
       <Filter>Graphics\Renderers</Filter>
     </ClInclude>
+    <ClInclude Include="TextRenderer.h" />
+    <ClInclude Include="Font.h" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="CameraVS.hlsl">

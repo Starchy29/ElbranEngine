@@ -152,6 +152,7 @@
     <ClCompile Include="BlurPostProcess.cpp" />
     <ClCompile Include="Common.cpp" />
     <ClCompile Include="DirectXAPI.cpp" />
+    <ClCompile Include="Font.cpp" />
     <ClCompile Include="Game.cpp" />
     <ClCompile Include="GraphicsAPI.cpp" />
     <ClCompile Include="HSVPostProcess.cpp" />
@@ -166,6 +167,7 @@
     <ClCompile Include="ShapeRenderer.cpp" />
     <ClCompile Include="SoundMixer.cpp" />
     <ClCompile Include="SpriteRenderer.cpp" />
+    <ClCompile Include="TextRenderer.cpp" />
     <ClCompile Include="WindowsAudio.cpp" />
     <ClCompile Include="WindowsInput.cpp" />
     <ClCompile Include="WindowsMain.cpp" />
@@ -184,6 +186,7 @@
     <ClInclude Include="Configs.h" />
     <ClInclude Include="DirectXAPI.h" />
     <ClInclude Include="FixedList.h" />
+    <ClInclude Include="Font.h" />
     <ClInclude Include="Game.h" />
     <ClInclude Include="GraphicsAPI.h" />
     <ClInclude Include="HSVPostProcess.h" />
@@ -204,6 +207,7 @@
     <ClInclude Include="ShapeRenderer.h" />
     <ClInclude Include="SoundMixer.h" />
     <ClInclude Include="SpriteRenderer.h" />
+    <ClInclude Include="TextRenderer.h" />
     <ClInclude Include="Transform.h" />
     <ClInclude Include="WindowsAudio.h" />
     <ClInclude Include="WindowsInput.h" />

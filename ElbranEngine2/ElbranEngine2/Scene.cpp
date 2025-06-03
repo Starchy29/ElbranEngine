@@ -10,7 +10,7 @@
 
 Scene::Scene(unsigned int maxEntities, float cameraWidth)  {
 	ambientLight = Color::White;
-	backgroundColor = Color(1.f, 1.f, 1.f);
+	backgroundColor = Color::White;
 	backgroundImage = nullptr;
 
 	entityCount = 0;

@@ -2,6 +2,7 @@
 #include "Buffers.h"
 #include "Shaders.h"
 #include "AudioData.h"
+#include "Font.h"
 #include <string>
 
 class GraphicsAPI;
@@ -40,6 +41,8 @@ public:
 
 	SoundEffect testSound;
 	AudioTrack testMusic;
+
+	Font testFont;
 
 	AssetContainer(std::wstring filePath, GraphicsAPI* graphics, SoundMixer* audio);
 	~AssetContainer();

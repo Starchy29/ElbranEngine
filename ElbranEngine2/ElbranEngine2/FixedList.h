@@ -50,6 +50,8 @@ public:
 		size--;
 	}
 
+	const Type* GetArray() const { return dataArray; }
+
 private:
 	Type* dataArray;
 	unsigned int capacity;
