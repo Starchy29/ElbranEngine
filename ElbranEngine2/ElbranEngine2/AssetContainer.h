@@ -33,6 +33,7 @@ public:
 	ComputeShader brightnessSumCS;
 	ComputeShader particleSpawnCS;
 	ComputeShader particleMoveCS;
+	ComputeShader glyphAtlasDrawCS;
 
 	Texture2D testSprite;
 	Texture2D apple;

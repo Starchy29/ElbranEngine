@@ -56,6 +56,7 @@ AssetContainer::AssetContainer(std::wstring filePath, GraphicsAPI* graphics, Sou
 	brightnessSumCS = graphics->LoadComputeShader(filePath, L"BrightnessSumCS.cso");
 	particleSpawnCS = graphics->LoadComputeShader(filePath, L"ParticleSpawnCS.cso");
 	particleMoveCS = graphics->LoadComputeShader(filePath, L"ParticleMoveCS.cso");
+	glyphAtlasDrawCS = graphics->LoadComputeShader(filePath, L"GlyphAtlasDrawCS.cso");
 
 	testSprite = graphics->LoadSprite(filePath, L"elbran.png");
 	apple = graphics->LoadSprite(filePath, L"apple.jpeg");
@@ -66,7 +67,7 @@ AssetContainer::AssetContainer(std::wstring filePath, GraphicsAPI* graphics, Sou
 	testMusic = audio->LoadTrack(filePath, L"Menu song.wav", true);
 
 	//testFont = Font::Load(L"Exile-Regular.ttf");
-	testFont = Font::Load(L"arial.ttf");
+	testFont = Font::Load(L"arial.ttf", this);
 }
 
 AssetContainer::~AssetContainer() {
@@ -95,6 +96,7 @@ AssetContainer::~AssetContainer() {
 	graphics->ReleaseShader(&brightnessSumCS);
 	graphics->ReleaseShader(&particleSpawnCS);
 	graphics->ReleaseShader(&particleMoveCS);
+	graphics->ReleaseShader(&glyphAtlasDrawCS);
 
 	graphics->ReleaseTexture(&testSprite);
 	graphics->ReleaseTexture(&apple);
@@ -103,4 +105,6 @@ AssetContainer::~AssetContainer() {
 
 	audio->ReleaseSoundEffect(&testSound);
 	audio->ReleaseAudioTrack(&testMusic);
+
+	testFont.Release();
 }

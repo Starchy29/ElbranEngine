@@ -19,9 +19,6 @@
 #include "AnimationGroup.h"
 #include "PatternRenderer.h"
 
-PatternRenderer* pattern;
-ShapeRenderer* originTest;
-
 Game::Game() {
 	testScene = new Scene(10, 5.0f);
 	testScene->backgroundColor = Color(0.1f, 0.1f, 0.1f);
@@ -43,6 +40,10 @@ Game::Game() {
 	Vector2 quiz1 = Vector2(-5.f, 0.f).Normalize();
 	Vector2 quiz2 = Vector2(-5.f, -5.f).Normalize();
 
+	SpriteRenderer* glyphAtlasShower = new SpriteRenderer(&app->assets->testFont.glyphAtlas);
+	testScene->AddRenderer(glyphAtlasShower, false);
+	glyphAtlasShower->transform->scale *= 2.f;
+
 	//AtlasRenderer* testSheet = new AtlasRenderer(&app->assets->testAtlas);
 	//testScene->AddRenderer(testSheet, false);
 	//testSheet->transform->scale *= 2.0f;
@@ -52,19 +53,6 @@ Game::Game() {
 	//animator = new AtlasAnimator(testSheet, 8.f);
 	//testScene->AddBehavior(animator);
 	//animator->looped = true;
-
-	pattern = new PatternRenderer(&app->assets->testAtlas.texture);
-	testScene->AddRenderer(pattern, false);
-	pattern->transform->scale *= 2.5f;
-	pattern->transform->zOrder = 1;
-	pattern->blockSize.x *= 1.4f;
-	pattern->origin = Vector2(-0.6f, -0.7f);
-	pattern->flipY = true;
-	pattern->flipX = true;
-
-	originTest = new ShapeRenderer(ShapeRenderer::Shape::Circle, Color::Red);
-	testScene->AddRenderer(originTest, false);
-	originTest->transform->scale *= 0.05f;
 
 	//checker->lit = true;
 
@@ -96,10 +84,10 @@ Game::~Game() {
 }
 
 void Game::Update(float deltaTime) {
+	UInt2 viewSize = app->graphics->GetViewDimensions();
+
 	cursor->transform->position = app->input->GetMousePosition(&testScene->camera);
 	testScene->Update(deltaTime);
-
-	pattern->origin += deltaTime * Vector2(2.f, 1.f);
 
 	if(app->input->JustPressed(InputAction::Select, 0)) {
 		//app->input->Rumble(0, 0.1f, 2.1f);
@@ -114,29 +102,6 @@ void Game::Update(float deltaTime) {
 	}
 
 	cursor->transform->rotation += 20.0f * app->input->GetMouseWheelSpin() * deltaTime;
-
-	if(app->input->IsPressed(InputAction::Up)) {
-		//pattern->transform->scale.y += deltaTime;
-		//pattern->origin.y += deltaTime;
-		pattern->blockSize.y += deltaTime;
-	}
-	if(app->input->IsPressed(InputAction::Down)) {
-		//pattern->transform->scale.y -= deltaTime;
-		//pattern->origin.y -= deltaTime;
-		pattern->blockSize.y -= deltaTime;
-	}
-	if(app->input->IsPressed(InputAction::Left)) {
-		//pattern->transform->scale.x -= deltaTime;
-		//pattern->origin.x -= deltaTime;
-		pattern->blockSize.x -= deltaTime;
-	}
-	if(app->input->IsPressed(InputAction::Right)) {
-		//pattern->transform->scale.x += deltaTime;
-		//pattern->origin.x += deltaTime;
-		pattern->blockSize.x += deltaTime;
-	}
-
-	originTest->transform->position = pattern->origin;
 
 	/*if (app->input->IsPressed(InputAction::Up)) {
 		testScene->camera.transform->position.y += deltaTime;

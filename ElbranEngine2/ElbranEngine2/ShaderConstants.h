@@ -53,3 +53,9 @@ struct ParticleSpawnCSConstants {
 	float lifespan;
 	float width;
 };
+
+struct GlyphAtlasDrawCSConstants {
+	unsigned int numGlyphs;
+	unsigned int glyphSize; // pixel width of square for each glyph
+	unsigned int rowsCols; // rows and cols are equal
+};

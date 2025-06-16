@@ -97,8 +97,10 @@
     <ClCompile Include="PatternRenderer.cpp">
       <Filter>Graphics\Renderers</Filter>
     </ClCompile>
-    <ClCompile Include="TextRenderer.cpp" />
     <ClCompile Include="Font.cpp" />
+    <ClCompile Include="TextRenderer.cpp">
+      <Filter>Graphics\Renderers</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Application.h" />
@@ -189,8 +191,10 @@
     <ClInclude Include="PatternRenderer.h">
       <Filter>Graphics\Renderers</Filter>
     </ClInclude>
-    <ClInclude Include="TextRenderer.h" />
     <ClInclude Include="Font.h" />
+    <ClInclude Include="TextRenderer.h">
+      <Filter>Graphics\Renderers</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="CameraVS.hlsl">
@@ -233,6 +237,9 @@
       <Filter>Shaders\Particles</Filter>
     </FxCompile>
     <FxCompile Include="CircleFillPS.hlsl">
+      <Filter>Shaders</Filter>
+    </FxCompile>
+    <FxCompile Include="GlyphAtlasDrawCS.hlsl">
       <Filter>Shaders</Filter>
     </FxCompile>
   </ItemGroup>

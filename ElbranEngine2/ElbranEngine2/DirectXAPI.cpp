@@ -680,7 +680,7 @@ TextureData* DirectXAPI::CreateTexture(unsigned int width, int unsigned height, 
 	D3D11_TEXTURE2D_DESC textureDesc;
 	textureDesc.Width = width;
 	textureDesc.Height = height;
-	textureDesc.MipLevels = renderTarget ? 1 : 0; // include all mip levels unless render target
+	textureDesc.MipLevels = (renderTarget || computeWritable) ? 1 : 0; // include all mip levels unless gpu writable
 	textureDesc.ArraySize = 1;
 	textureDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
 	textureDesc.SampleDesc.Count = 1;

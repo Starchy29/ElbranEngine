@@ -50,6 +50,10 @@ public:
 		size--;
 	}
 
+	void Clear() {
+		size = 0;
+	}
+
 	const Type* GetArray() const { return dataArray; }
 
 private:
