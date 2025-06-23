@@ -33,18 +33,15 @@ void Font::Release() {
     app->graphics->ReleaseComputeTexture(&glyphAtlas);
 }
 
-int16_t ReadInt16(std::ifstream &fileReader) {
-    int16_t result;
-    fileReader.read((char*)&result, 2);
-    result = (result >> 8 | result << 8); // swap bytes because file is big-endian
-    return result;
-}
-
 uint16_t ReadUInt16(std::ifstream &fileReader) {
     uint16_t result;
     fileReader.read((char*)&result, 2);
     result = (result >> 8 | result << 8); // swap bytes because file is big-endian
     return result;
+}
+
+int16_t ReadInt16(std::ifstream &fileReader) {
+    return (int16_t)ReadUInt16(fileReader);
 }
 
 uint32_t ReadUInt32(std::ifstream &fileReader) {
@@ -191,8 +188,31 @@ Font Font::Load(std::wstring file, const AssetContainer* assets) {
         }
     }
 
+    // DEBUG CODE TO GRAB ONE SPECIFIC CHAR
+    fileReader.seekg(FindStartByte(tables, "head"));
+    fileReader.ignore(50);
+    int16_t locFormat = ReadInt16(fileReader);
+    uint32_t charOffset;
+
+    char testLet = 'A';
+    fileReader.seekg(FindStartByte(tables, "loca"));
+    if(locFormat == 0) {
+        fileReader.ignore(2 * loaded.charToGlyphIndex[testLet]);
+        charOffset = ReadUInt16(fileReader);
+    } 
+    else if(locFormat == 1) {
+        fileReader.ignore(4 * loaded.charToGlyphIndex[testLet]);
+        charOffset = ReadUInt32(fileReader);
+    }
+    else {
+        assert(false && "invalid loc format");
+    }
+    charOffset = 0;
+    // END DEBUG TEST
+
     // load the glyph data
     fileReader.seekg(FindStartByte(tables, "glyf"));
+    fileReader.ignore(charOffset);
     FixedList<BezierCurve> curves(numGlyphs * maxPoints / 2);
     FixedList<uint32_t> glyphStartIndices(numGlyphs + 1); // maps glyph index to index of first curve for that glyph
 
@@ -322,13 +342,6 @@ Font Font::Load(std::wstring file, const AssetContainer* assets) {
 
                 contourStart = contourEnd + 1;
             }
-
-            // DEBUG TEST
-            for(int i = 0; i < numPoints; i++) {
-                Vector2 checker = points[i];
-                float stopper = 2.0f;
-            }
-            // END TEST
         } else {
             // compound glyph
         }
@@ -344,15 +357,6 @@ Font Font::Load(std::wstring file, const AssetContainer* assets) {
     fileReader.close();
 
     // generate glyph atlas
-
-    // DEBUG TEST
-    //curves.Clear();
-    //curves.Add(BezierCurve { Vector2(0.5, 1), Vector2(0.5, 0), Vector2(0.0, 0.5) } );
-    //glyphStartIndices.Clear();
-    //glyphStartIndices.Add(0);
-    //glyphStartIndices.Add(1);
-    // END DEBUG
-
     ArrayBuffer curveBuffer = app->graphics->CreateArrayBuffer(ShaderDataType::Structured, curves.GetSize(), sizeof(BezierCurve));
     ArrayBuffer glyphBuffer = app->graphics->CreateArrayBuffer(ShaderDataType::UInt, glyphStartIndices.GetSize());
     app->graphics->WriteBuffer(curves.GetArray(), curves.GetSize() * sizeof(BezierCurve), curveBuffer.buffer);

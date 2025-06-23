@@ -88,7 +88,7 @@ void main(uint3 DTid : SV_DispatchThreadID) {
 		int intersectX = round(intersections[intersect] * glyphSize);
 		for(; localX >= intersectX; localX--) {
 			float tester = (float)intersect / (intersectCount - 1);
-			outAtlas[uint2(DTid.x + localX, DTid.y)] = float4(tester, tester, tester, 1);//float4(pixelOn, pixelOn, pixelOn, 1);
+			outAtlas[uint2(DTid.x + localX, DTid.y)] = float4(pixelOn, pixelOn, pixelOn, 1);
 		}
 		pixelOn = 1.0 - pixelOn;
 	}
