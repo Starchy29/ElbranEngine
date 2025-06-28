@@ -14,9 +14,10 @@ public:
         float padding;
     } positioning;
 
+    Color color;
     unsigned int hiddenChars; // number of omitted characters from the end of the text
 
-    TextRenderer(std::string text, const Font* font, float size);
+    TextRenderer(std::string text, const Font* font);
 
     void Draw() override;
 
@@ -26,6 +27,7 @@ public:
 private:
     const Font* font;
     std::string text;
+    Mesh textMesh;
 
     void GenerateMesh();
 };

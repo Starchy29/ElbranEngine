@@ -22,7 +22,7 @@ struct Table {
     uint32_t startByte;
 };
 
-// must match GlyphAtlasDrawCS.hlsl
+// must match TextRasterizePS.hlsl
 struct BezierCurve {
     Vector2 start;
     Vector2 end;
@@ -30,7 +30,8 @@ struct BezierCurve {
 };
 
 void Font::Release() {
-    app->graphics->ReleaseComputeTexture(&glyphAtlas);
+    app->graphics->ReleaseArrayBuffer(&glyphCurves);
+    app->graphics->ReleaseArrayBuffer(&firstCurveIndices);
 }
 
 uint16_t ReadUInt16(std::ifstream &fileReader) {
@@ -348,43 +349,21 @@ Font Font::Load(std::wstring file, const AssetContainer* assets) {
     }
 
     glyphStartIndices.Add(curves.GetSize());
+    fileReader.close();
+
+    // send curve data to the GPU
+    loaded.glyphCurves = app->graphics->CreateArrayBuffer(ShaderDataType::Structured, curves.GetSize(), sizeof(BezierCurve));
+    loaded.firstCurveIndices = app->graphics->CreateArrayBuffer(ShaderDataType::UInt, glyphStartIndices.GetSize());
+    app->graphics->WriteBuffer(curves.GetArray(), curves.GetSize() * sizeof(BezierCurve), loaded.glyphCurves.buffer);
+    app->graphics->WriteBuffer(glyphStartIndices.GetArray(), glyphStartIndices.GetSize() * sizeof(unsigned int), loaded.firstCurveIndices.buffer);
+
+    curves.Release();
+    glyphStartIndices.Release();
 
     delete[] contourEndIndices;
     delete[] flags;
     delete[] points;
-
     delete[] tables;
-    fileReader.close();
 
-    // generate glyph atlas
-    ArrayBuffer curveBuffer = app->graphics->CreateArrayBuffer(ShaderDataType::Structured, curves.GetSize(), sizeof(BezierCurve));
-    ArrayBuffer glyphBuffer = app->graphics->CreateArrayBuffer(ShaderDataType::UInt, glyphStartIndices.GetSize());
-    app->graphics->WriteBuffer(curves.GetArray(), curves.GetSize() * sizeof(BezierCurve), curveBuffer.buffer);
-    app->graphics->WriteBuffer(glyphStartIndices.GetArray(), glyphStartIndices.GetSize() * sizeof(unsigned int), glyphBuffer.buffer);
-    app->graphics->SetArray(ShaderStage::Compute, &curveBuffer, 0);
-    app->graphics->SetArray(ShaderStage::Compute, &glyphBuffer, 1);
-
-    GlyphAtlasDrawCSConstants constants;
-    constants.numGlyphs = 1; // numGlyphs
-    constants.glyphSize = 500;
-    constants.rowsCols = 1;
-    //while(numGlyphs > constants.rowsCols * constants.rowsCols) {
-        // find atlas dimensions with enough spots for all glyphs
-        //constants.rowsCols++;
-    //}
-
-    unsigned int atlasSize = constants.glyphSize * constants.rowsCols;
-    loaded.glyphAtlas = app->graphics->CreateComputeTexture(atlasSize, atlasSize);
-    app->graphics->SetComputeTexture(&loaded.glyphAtlas, 0);
-
-    app->graphics->WriteBuffer(&constants, sizeof(constants), assets->glyphAtlasDrawCS.constants.data);
-    app->graphics->SetConstants(ShaderStage::Compute, &assets->glyphAtlasDrawCS.constants, 0);
-    app->graphics->RunComputeShader(&assets->glyphAtlasDrawCS, constants.rowsCols, atlasSize);
-    app->graphics->SetComputeTexture(nullptr, 0); // unbind the texture so it can be used as input later
-
-    curves.Release();
-    glyphStartIndices.Release();
-    app->graphics->ReleaseArrayBuffer(&curveBuffer);
-    app->graphics->ReleaseArrayBuffer(&glyphBuffer);
     return loaded;
 }

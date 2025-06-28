@@ -24,6 +24,7 @@ public:
 	PixelShader solidColorPS;
 	PixelShader texturePS;
 	PixelShader circleFillPS;
+	PixelShader textRasterizePS;
 
 	PixelShader conSatValPP;
 	PixelShader blurPP;
@@ -33,7 +34,6 @@ public:
 	ComputeShader brightnessSumCS;
 	ComputeShader particleSpawnCS;
 	ComputeShader particleMoveCS;
-	ComputeShader glyphAtlasDrawCS;
 
 	Texture2D testSprite;
 	Texture2D apple;

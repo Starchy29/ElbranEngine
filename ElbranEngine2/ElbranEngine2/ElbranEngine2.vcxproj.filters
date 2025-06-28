@@ -239,7 +239,7 @@
     <FxCompile Include="CircleFillPS.hlsl">
       <Filter>Shaders</Filter>
     </FxCompile>
-    <FxCompile Include="GlyphAtlasDrawCS.hlsl">
+    <FxCompile Include="TextRasterizePS.hlsl">
       <Filter>Shaders</Filter>
     </FxCompile>
   </ItemGroup>

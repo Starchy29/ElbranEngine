@@ -56,7 +56,7 @@ AssetContainer::AssetContainer(std::wstring filePath, GraphicsAPI* graphics, Sou
 	brightnessSumCS = graphics->LoadComputeShader(filePath, L"BrightnessSumCS.cso");
 	particleSpawnCS = graphics->LoadComputeShader(filePath, L"ParticleSpawnCS.cso");
 	particleMoveCS = graphics->LoadComputeShader(filePath, L"ParticleMoveCS.cso");
-	glyphAtlasDrawCS = graphics->LoadComputeShader(filePath, L"GlyphAtlasDrawCS.cso");
+	textRasterizePS = graphics->LoadPixelShader(filePath, L"TextRasterizePS.cso");
 
 	testSprite = graphics->LoadSprite(filePath, L"elbran.png");
 	apple = graphics->LoadSprite(filePath, L"apple.jpeg");
@@ -96,7 +96,7 @@ AssetContainer::~AssetContainer() {
 	graphics->ReleaseShader(&brightnessSumCS);
 	graphics->ReleaseShader(&particleSpawnCS);
 	graphics->ReleaseShader(&particleMoveCS);
-	graphics->ReleaseShader(&glyphAtlasDrawCS);
+	graphics->ReleaseShader(&textRasterizePS);
 
 	graphics->ReleaseTexture(&testSprite);
 	graphics->ReleaseTexture(&apple);

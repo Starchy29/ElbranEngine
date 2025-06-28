@@ -6,8 +6,10 @@
 class AssetContainer;
 
 struct Font {
-	ComputeTexture glyphAtlas;
+	//ComputeTexture glyphAtlas;
 	std::unordered_map<char, int> charToGlyphIndex;
+	ArrayBuffer glyphCurves;
+	ArrayBuffer firstCurveIndices;
 
 	void Release();
 

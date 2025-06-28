@@ -18,6 +18,7 @@
 #include "AtlasAnimator.h"
 #include "AnimationGroup.h"
 #include "PatternRenderer.h"
+#include "TextRenderer.h"
 
 Game::Game() {
 	testScene = new Scene(10, 5.0f);
@@ -32,17 +33,13 @@ Game::Game() {
 	testScene->AddRenderer(cursor, true);
 	cursor->transform->scale *= 0.3f;
 
-	float test1 = Math::InvSqrt(2.7f);
-	float test2 = Math::InvSqrt(123456789.f);
-	float test3 = Math::InvSqrt(1.f);
-	float test4 = Math::InvSqrt(0.f);
+	//SpriteRenderer* glyphAtlasShower = new SpriteRenderer(&app->assets->testFont.glyphAtlas);
+	//testScene->AddRenderer(glyphAtlasShower, false);
+	//glyphAtlasShower->transform->scale *= 2.f;
 
-	Vector2 quiz1 = Vector2(-5.f, 0.f).Normalize();
-	Vector2 quiz2 = Vector2(-5.f, -5.f).Normalize();
-
-	SpriteRenderer* glyphAtlasShower = new SpriteRenderer(&app->assets->testFont.glyphAtlas);
-	testScene->AddRenderer(glyphAtlasShower, false);
-	glyphAtlasShower->transform->scale *= 2.f;
+	TextRenderer* testTexter = new TextRenderer("", &app->assets->testFont);
+	testScene->AddRenderer(testTexter, false);
+	testTexter->transform->scale *= 2.f;
 
 	//AtlasRenderer* testSheet = new AtlasRenderer(&app->assets->testAtlas);
 	//testScene->AddRenderer(testSheet, false);
