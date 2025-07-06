@@ -18,6 +18,7 @@ public:
     unsigned int hiddenChars; // number of omitted characters from the end of the text
 
     TextRenderer(std::string text, const Font* font);
+    ~TextRenderer();
 
     void Draw() override;
 

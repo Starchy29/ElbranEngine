@@ -238,6 +238,11 @@ Vector2& Vector2::operator/=(float scalar) {
 #pragma endregion
 
 #pragma region Circle
+Circle::Circle() {
+	center = {};
+	radius = 0.f;
+}
+
 Circle::Circle(Vector2 center, float radius) {
 	this->center = center;
 	this->radius = radius;
@@ -263,6 +268,13 @@ bool Circle::Intersects(const AlignedRect& rectangle) const {
 #pragma endregion
 
 #pragma region AlignedRect
+AlignedRect::AlignedRect() {
+	left = 0.f;
+	right = 0.f;
+	top = 0.f;
+	bottom = 0.f;
+}
+
 AlignedRect::AlignedRect(Vector2 center, Vector2 size) {
 	left = center.x - size.x / 2.0f;
 	right = center.x + size.x / 2.0f;
@@ -283,6 +295,14 @@ Vector2 AlignedRect::Center() const {
 
 Vector2 AlignedRect::Size() const {
 	return Vector2(right - left, top - bottom);
+}
+
+float AlignedRect::Width() const {
+	return right - left;
+}
+
+float AlignedRect::Height() const {
+	return 0.0f;
 }
 
 AlignedRect AlignedRect::SetCenter(Vector2 center) const {

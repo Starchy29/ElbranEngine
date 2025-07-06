@@ -50,14 +50,14 @@ float4 main(VertexToPixel input) : SV_TARGET {
 		float t2 = isCurve * (-b - rootDeterminant) / (2.0*a); // when horizontal line, this will be t=0, the other end point
 		
 		float onCurve = isCurve * saturate(ceil(determinant)); // 1 when determinant > 0, 0 otherwise
-		uint hasIntersection = (onCurve + isLine + isHorizontal) * Is0To1(t1) * (CalcBezierX(curves[curveIndex], t1) >= localCoords.x);
+		uint hasIntersection = (onCurve + isLine + isHorizontal) * Is0To1(t1) * (CalcBezierX(curves[curveIndex], t1) <= localCoords.x);
 		intersections += hasIntersection;
 		
-		hasIntersection = (onCurve + isHorizontal) * Is0To1(t2) * (CalcBezierX(curves[curveIndex], t2) >= localCoords.x); // non-horizontal straight lines have 1 intersection
+		hasIntersection = (onCurve + isHorizontal) * Is0To1(t2) * (CalcBezierX(curves[curveIndex], t2) <= localCoords.x); // non-horizontal straight lines have 1 intersection
 		intersections += hasIntersection;
 	}
 	
 	float4 result = color * (intersections % 2 == 1);
-	clip(result.a - 0.00001);
+	//clip(result.a - 0.00001);
 	return result;
 }

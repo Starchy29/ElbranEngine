@@ -84,6 +84,7 @@ struct Circle {
 	Vector2 center;
 	float radius;
 
+	Circle();
 	Circle(Vector2 center, float radius);
 
 	bool Contains(const Vector2& point) const;
@@ -98,11 +99,14 @@ struct AlignedRect {
 	float top;
 	float bottom;
 
+	AlignedRect();
 	AlignedRect(Vector2 center, Vector2 size);
 	AlignedRect(float left, float right, float top, float bottom);
 
 	Vector2 Center() const;
 	Vector2 Size() const;
+	float Width() const;
+	float Height() const;
 
 	AlignedRect SetCenter(Vector2 center) const;
 	AlignedRect SetWidth(float width) const;
