@@ -147,12 +147,12 @@ Font FontLoader::LoadFile(std::wstring file) {
             startCodes[i] = ReadUInt16();
         }
 
-        uint16_t* idDeltas = new uint16_t[numSegments];
+        int16_t* idDeltas = new int16_t[numSegments];
         for(uint16_t i = 0; i < numSegments; i++) {
-            idDeltas[i] = ReadUInt16();
+            idDeltas[i] = ReadInt16();
         }
 
-        std::streampos idRangeOffsetStart = fileReader.tellg();
+        uint16_t idRangeOffsetStart = fileReader.tellg();
         uint16_t* idRangeOffsets = new uint16_t[numSegments];
         for(uint16_t i = 0; i < numSegments; i++) {
             idRangeOffsets[i] = ReadUInt16();
@@ -160,24 +160,21 @@ Font FontLoader::LoadFile(std::wstring file) {
 
         for(uint16_t segment = 0; segment < numSegments - 1; segment++) { // last segment has no mappings
             for(uint16_t currCode = startCodes[segment]; currCode <= endCodes[segment]; currCode++) {
-                uint16_t startTest = startCodes[segment];
-                uint16_t endTest = endCodes[segment];
-
                 uint16_t glyphIndex;
                 if(idRangeOffsets[segment] == 0) {
                     // calculate glyph index directly
                     glyphIndex = (currCode + idDeltas[segment]) % 65536;
                 } else {
                     // look up glyph index from an array in the file
-                    fileReader.seekg((uint16_t)idRangeOffsetStart + 2 * segment + idRangeOffsets[segment] / 2 + (currCode - startCodes[segment]));
+                    fileReader.seekg(idRangeOffsetStart + 2*segment + idRangeOffsets[segment]/2 + (currCode - startCodes[segment]));
                     glyphIndex = ReadUInt16();
-                    if(glyphIndex != 0) glyphIndex = (currCode + idDeltas[segment]) % 65536;
+                    if(glyphIndex != 0) glyphIndex = (glyphIndex + idDeltas[segment]) % 65536;
                 }
 
-                loaded.charToGlyphIndex[(char)currCode] = glyphIndex;
+                loaded.charToGlyphIndex.insert({currCode, glyphIndex});
             }
         }
-        loaded.charToGlyphIndex[0xFFFF] = 0;
+        loaded.charToGlyphIndex.insert({0xFFFF, 0});
 
         delete[] endCodes;
         delete[] startCodes;

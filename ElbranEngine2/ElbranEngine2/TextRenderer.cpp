@@ -50,7 +50,7 @@ void TextRenderer::SetFont(const Font* font) {
 void TextRenderer::GenerateMesh() {
 	app->graphics->ReleaseMesh(&textMesh);
 
-	int glyphIndex = 4;//font->charToGlyphIndex.at('!');
+	int glyphIndex = font->charToGlyphIndex.at('M');
 	Vector2 dimensions = font->glyphDimensions[glyphIndex];
 	AlignedRect glyphBox = AlignedRect(Vector2::Zero, dimensions);
 
