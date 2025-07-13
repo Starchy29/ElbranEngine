@@ -186,6 +186,7 @@
     <ClInclude Include="Configs.h" />
     <ClInclude Include="DirectXAPI.h" />
     <ClInclude Include="FixedList.h" />
+    <ClInclude Include="FixedMap.h" />
     <ClInclude Include="Font.h" />
     <ClInclude Include="Game.h" />
     <ClInclude Include="GraphicsAPI.h" />

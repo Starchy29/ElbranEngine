@@ -4,6 +4,7 @@
 #include "AssetContainer.h"
 #include "FixedList.h"
 #include "ShaderConstants.h"
+#include "FixedMap.h"
 #include <iostream>
 #include <fstream>
 #include <cassert>
@@ -55,6 +56,7 @@ void Font::Release() {
     app->graphics->ReleaseArrayBuffer(&firstCurveIndices);
     delete[] glyphBaselines;
     delete[] glyphDimensions;
+    charToGlyphIndex.Release();
 }
 
 Font Font::Load(std::wstring file) {
@@ -131,6 +133,8 @@ Font FontLoader::LoadFile(std::wstring file) {
     uint16_t format = ReadUInt16();
     assert((format == 4 || format == 12) && "font file uses an unsupported cmap format");
 
+    loaded.charToGlyphIndex = FixedMap<uint16_t, uint16_t>(numGlyphs, [](uint16_t let) { return (unsigned int)let; });
+
     if(format == 4) {
         fileReader.ignore(4);
         uint16_t numSegments = ReadUInt16() / 2;
@@ -171,10 +175,9 @@ Font FontLoader::LoadFile(std::wstring file) {
                     if(glyphIndex != 0) glyphIndex = (glyphIndex + idDeltas[segment]) % 65536;
                 }
 
-                loaded.charToGlyphIndex.insert({currCode, glyphIndex});
+                loaded.charToGlyphIndex.Set(currCode, glyphIndex);
             }
         }
-        loaded.charToGlyphIndex.insert({0xFFFF, 0});
 
         delete[] endCodes;
         delete[] startCodes;
@@ -191,10 +194,11 @@ Font FontLoader::LoadFile(std::wstring file) {
 
             uint32_t groupLength = endCharCode - startCharCode + 1;
             for(uint32_t i = 0; i < groupLength; i++) {
-                loaded.charToGlyphIndex[startCharCode + i] = startGlyphCode + i;
+                loaded.charToGlyphIndex.Set(startCharCode + i, startGlyphCode + i);
             }
         }
     }
+    loaded.charToGlyphIndex.Set(0xFFFF, 0);
 
     // load glyph advance widths
     fileReader.seekg(FindTableStart("hhea") + 34);

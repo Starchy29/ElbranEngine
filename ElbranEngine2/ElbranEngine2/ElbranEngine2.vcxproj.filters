@@ -195,6 +195,9 @@
     <ClInclude Include="TextRenderer.h">
       <Filter>Graphics\Renderers</Filter>
     </ClInclude>
+    <ClInclude Include="FixedMap.h">
+      <Filter>Toolkit</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="CameraVS.hlsl">

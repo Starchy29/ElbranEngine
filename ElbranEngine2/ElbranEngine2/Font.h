@@ -2,12 +2,12 @@
 #include "Buffers.h"
 #include "Math.h"
 #include <string>
-#include <unordered_map>
+#include "FixedMap.h"
 
 class AssetContainer;
 
 struct Font {
-	std::unordered_map<char, int> charToGlyphIndex;
+	FixedMap<unsigned short, unsigned short> charToGlyphIndex;
 	ArrayBuffer glyphCurves;
 	ArrayBuffer firstCurveIndices;
 	Vector2* glyphDimensions;
