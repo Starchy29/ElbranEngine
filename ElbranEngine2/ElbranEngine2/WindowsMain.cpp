@@ -197,6 +197,7 @@ int WINAPI WinMain(
 	input = new WindowsInput(windowHandle);
 	Application::InitApp(directory, directX, new WindowsAudio(), input);
 	RunApp();
+	app->Release();
 	delete app;
 	return 0;
 }

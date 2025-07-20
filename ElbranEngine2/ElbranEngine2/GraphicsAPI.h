@@ -58,7 +58,8 @@ public:
 	std::vector<IPostProcess*> postProcesses;
 
 	GraphicsAPI();
-	virtual ~GraphicsAPI();
+	virtual ~GraphicsAPI() {}
+	virtual void Release();
 
 	void Render(Game* game);
 	void ApplyPostProcesses();

@@ -23,7 +23,7 @@ public:
 	std::wstring filePath;
 
 	static void InitApp(std::wstring filePath, GraphicsAPI* graphics, SoundMixer* audio, InputManager* input);
-	~Application();
+	void Release();
 
 	void Update(float deltaTime);
 

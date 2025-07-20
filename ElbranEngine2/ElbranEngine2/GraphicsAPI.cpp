@@ -17,7 +17,7 @@ GraphicsAPI::GraphicsAPI() {
 	}
 }
 
-GraphicsAPI::~GraphicsAPI() {
+void GraphicsAPI::Release() {
 	for(IPostProcess* pp : postProcesses) {
 		delete pp;
 	}

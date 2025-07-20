@@ -24,12 +24,13 @@ Application::Application(std::wstring filePath, GraphicsAPI* graphics, SoundMixe
 	rng = new Random();
 }
 
-Application::~Application() {
+void Application::Release() {
 	delete rng;
 	delete game;
 	delete input;
 	delete assets;
 	delete audio;
+	graphics->Release();
 	delete graphics;
 	perFrameData.Release();
 }

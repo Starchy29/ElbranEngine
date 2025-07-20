@@ -127,13 +127,14 @@ DirectXAPI::DirectXAPI(HWND windowHandle, Int2 windowDims, float viewAspectRatio
 	//spriteBatch = new DirectX::SpriteBatch(context.Get());
 }
 
-DirectXAPI::~DirectXAPI() {
+void DirectXAPI::Release() {
 	ReleaseRenderTarget(&backBuffer);
 	ReleaseRenderTarget(&postProcessTargets[0]);
 	ReleaseRenderTarget(&postProcessTargets[1]);
 	for(int i = 0; i < MAX_POST_PROCESS_HELPER_TEXTURES; i++) {
 		ReleaseRenderTarget(&postProcessHelpers[i]);
 	}
+	GraphicsAPI::Release();
 }
 
 void DirectXAPI::Resize(Int2 windowDims, float viewAspectRatio) {

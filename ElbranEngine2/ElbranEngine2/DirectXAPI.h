@@ -13,7 +13,7 @@ class DirectXAPI :
 {
 public:
     DirectXAPI(HWND windowHandle, Int2 windowDims, float viewAspectRatio, std::wstring directory);
-    ~DirectXAPI();
+    void Release() override;
 
     void Resize(Int2 windowDims, float viewAspectRatio);
 
