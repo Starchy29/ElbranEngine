@@ -24,9 +24,9 @@ float4 main(VertexToPixel input) : SV_TARGET {
 	
 	// find all curve intersection for this row of pixels
 	uint intersections = 0;
-	
 	uint startCurve = glyphStartIndices[glyphIndex];
 	uint lastCurve = glyphStartIndices[glyphIndex + 1] - 1;
+	
 	for(uint curveIndex = startCurve; curveIndex <= lastCurve; curveIndex++) {
 		// use quadratic formula to find times where the curve is intersected
 		float a = (curves[curveIndex].start.y - 2 * curves[curveIndex].control.y + curves[curveIndex].end.y);
@@ -34,26 +34,24 @@ float4 main(VertexToPixel input) : SV_TARGET {
 		float c = curves[curveIndex].start.y - localCoords.y;
 	
 		// determine if this is a horizontal line, slanted line, or curve
-		float isLine = abs(a) < 0.00001;
-		float isHorizontal = isLine * (abs(b) < 0.00001);
-		isLine -= isHorizontal;
-		float isCurve = 1.0 - isLine - isHorizontal;
+		float isLine = (abs(a) < 0.00001);
+		float isCurve = 1.0 - isLine;
+		isLine *= (abs(b) > 0.00001); // omit horizontal lines
 		
 		float determinant = b*b - 4*a*c;
 		float rootDeterminant = sqrt(max(determinant, 0));
 		a += (a == 0.0); // avoid divide by 0
-		b += (b == 0.0);
+		float safeB = b + (b == 0.0);
 		
 		float t1 = isCurve * (-b + rootDeterminant) / (2.0*a) 
-				+ isLine * (-c / b); // simpler equation for straight lines
-				+ isHorizontal; // add end point at t=1 for horizontal line
-		float t2 = isCurve * (-b - rootDeterminant) / (2.0*a); // when horizontal line, this will be t=0, the other end point
+				+ isLine * (-c / safeB); // simpler equation for straight lines
+		float t2 = isCurve * (-b - rootDeterminant) / (2.0*a);
 		
 		float onCurve = isCurve * saturate(ceil(determinant)); // 1 when determinant > 0, 0 otherwise
-		uint hasIntersection = (onCurve + isLine + isHorizontal) * Is0To1(t1) * (CalcBezierX(curves[curveIndex], t1) <= localCoords.x);
+		uint hasIntersection = (onCurve + isLine) * Is0To1(t1) * (CalcBezierX(curves[curveIndex], t1) >= localCoords.x);
 		intersections += hasIntersection;
 		
-		hasIntersection = (onCurve + isHorizontal) * Is0To1(t2) * (CalcBezierX(curves[curveIndex], t2) <= localCoords.x); // non-horizontal straight lines have 1 intersection
+		hasIntersection = onCurve * Is0To1(t2) * (CalcBezierX(curves[curveIndex], t2) >= localCoords.x); // straight lines have 1 intersection
 		intersections += hasIntersection;
 	}
 	
