@@ -50,7 +50,7 @@ void TextRenderer::SetFont(const Font* font) {
 void TextRenderer::GenerateMesh() {
 	app->graphics->ReleaseMesh(&textMesh);
 
-	int glyphIndex = font->charToGlyphIndex.Get('C');
+	int glyphIndex = font->charToGlyphIndex.Get('@');
 	Vector2 dimensions = font->glyphDimensions[glyphIndex];
 	AlignedRect glyphBox = AlignedRect(Vector2::Zero, dimensions);
 

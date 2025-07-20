@@ -12,8 +12,8 @@
 // must match TextRasterizePS.hlsl
 struct BezierCurve {
     Vector2 start;
-    Vector2 end;
     Vector2 control;
+    Vector2 end;
 };
 
 struct Table {
@@ -341,60 +341,72 @@ void FontLoader::ReadSimpleGlyph(int16_t contourCount, AlignedRect glyphArea) {
     for(int16_t contour = 0; contour < contourCount; contour++) {
         contourEnd = contourEndIndices[contour];
         uint16_t currentPoint = contourStart;
-        while(!(flags[currentPoint] & ON_CURVE_BIT)) {
-            // always start with an on-curve point
-            currentPoint++;
-        }
-
         while(currentPoint <= contourEnd) {
             uint16_t nextPoint1 = currentPoint + 1;
             uint16_t nextPoint2 = currentPoint + 2;
-            uint16_t nextPoint3 = currentPoint + 3;
             if(nextPoint1 > contourEnd) {
                 nextPoint1 -= (contourEnd - contourStart + 1);
             }
             if(nextPoint2 > contourEnd) {
                 nextPoint2 -= (contourEnd - contourStart + 1);
             }
-            if(nextPoint3 > contourEnd) {
-                nextPoint3 -= (contourEnd - contourStart + 1);
-            }
 
-            if(flags[nextPoint1] & ON_CURVE_BIT) {
-                // straight line
-                curves.Add(BezierCurve{ 
-                    points[currentPoint],
-                    points[nextPoint1],
-                    (points[currentPoint] + points[nextPoint1]) / 2.f
-                });
+            if(flags[currentPoint] & ON_CURVE_BIT) {
+                if(flags[nextPoint1] & ON_CURVE_BIT) {
+                    // on, on (straight line)
+                    curves.Add(BezierCurve{ 
+                        points[currentPoint],
+                        (points[currentPoint] + points[nextPoint1]) / 2.f,
+                        points[nextPoint1]
+                    });
 
-                currentPoint += 1;
-            }
-            else if(flags[nextPoint2] & ON_CURVE_BIT) {
-                // bezier curve
-                curves.Add(BezierCurve{ 
-                    points[currentPoint], 
-                    points[nextPoint2], 
-                    points[nextPoint1] 
-                });
+                    currentPoint += 1;
+                }
+                else if(flags[nextPoint2] & ON_CURVE_BIT) {
+                    // on, off, on
+                    curves.Add(BezierCurve{ 
+                        points[currentPoint],
+                        points[nextPoint1],
+                        points[nextPoint2]
+                    });
 
-                currentPoint += 2;
-            }
-            else {
-                // two bezier curves joined by an implied on-curve point between the off-curve points
-                Vector2 impliedMidPoint = (points[nextPoint1] + points[nextPoint2]) / 2.0f;
-                curves.Add(BezierCurve{ 
-                    points[currentPoint], 
-                    impliedMidPoint, 
-                    points[nextPoint1] 
-                });
-                curves.Add(BezierCurve{ 
-                    impliedMidPoint, 
-                    points[nextPoint3], 
-                    points[nextPoint2] 
-                });
+                    currentPoint += 2;
+                }
+                else {
+                    // on, off, off
+                    curves.Add(BezierCurve{ 
+                        points[currentPoint],
+                        points[nextPoint1],
+                        (points[nextPoint1] + points[nextPoint2]) / 2.0f
+                    });
 
-                currentPoint += 3;
+                    currentPoint += 1;
+                }
+            } else {
+                if(flags[nextPoint1] & ON_CURVE_BIT) {
+                    // off, on ...
+                    currentPoint += 1;
+                }
+                else if(flags[nextPoint2] & ON_CURVE_BIT) {
+                    // off, off, on
+                    curves.Add(BezierCurve{ 
+                        (points[currentPoint] + points[nextPoint1]) / 2.0f,
+                        points[nextPoint1],
+                        points[nextPoint2]
+                    });
+
+                    currentPoint += 2;
+                }
+                else {
+                    // off, off, off
+                    curves.Add(BezierCurve{ 
+                        (points[currentPoint] + points[nextPoint1]) / 2.0f,
+                        points[nextPoint1],
+                        (points[nextPoint1] + points[nextPoint2]) / 2.0f
+                    });
+
+                    currentPoint += 1;
+                }
             }
         }
 

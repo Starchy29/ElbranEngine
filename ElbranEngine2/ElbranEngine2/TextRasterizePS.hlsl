@@ -7,8 +7,8 @@ cbuffer Constants : register(b0) {
 // must match Font.cpp
 struct BezierCurve {
 	float2 start;
-	float2 end;
 	float2 control;
+	float2 end;
 };
 
 StructuredBuffer<BezierCurve> curves : register(t0);
