@@ -62,10 +62,10 @@ Game::Game() {
 	//swarm->Spawn(200);
 	//parts->transform->zOrder = 0.99f;
 
-	HSVPostProcess* pp = new HSVPostProcess();
-	app->graphics->postProcesses.push_back(pp);
-	pp->contrast = 0.5f;
-	pp->saturation = -1.0f;
+	//HSVPostProcess* pp = new HSVPostProcess();
+	//app->graphics->postProcesses.push_back(pp);
+	//pp->contrast = 0.5f;
+	//pp->saturation = -1.0f;
 
 	//BlurPostProcess* blurBoy = new BlurPostProcess();
 	//app->graphics->postProcesses.push_back(blurBoy);

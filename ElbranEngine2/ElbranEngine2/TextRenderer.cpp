@@ -51,6 +51,7 @@ void TextRenderer::GenerateMesh() {
 	app->graphics->ReleaseMesh(&textMesh);
 
 	int glyphIndex = font->charToGlyphIndex.Get('@');
+	glyphIndex = 395;
 	Vector2 dimensions = font->glyphDimensions[glyphIndex];
 	AlignedRect glyphBox = AlignedRect(Vector2::Zero, dimensions);
 

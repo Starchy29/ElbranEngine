@@ -26,6 +26,13 @@ struct Matrix2D {
     Vector2 right;
 };
 
+Matrix2D operator*(const Matrix2D& left, const Matrix2D& right) {
+    return {
+        { left.left.x * right.left.x + left.right.x * right.left.y, left.left.y * right.left.x + left.right.y * right.left.y },
+        { left.left.x * right.right.x + left.right.x * right.right.y, left.left.y * right.right.x + left.right.y * right.right.y }
+    };
+}
+
 class FontLoader {
 public:
     std::ifstream fileReader;
@@ -46,9 +53,9 @@ public:
     int16_t ReadInt16();
     uint32_t ReadUInt32();
     float ReadF2Dot14();
-    void ReadGlyph(uint16_t glyphIndex, AlignedRect* outArea);
-    void ReadSimpleGlyph(int16_t contourCount, AlignedRect glyphArea);
-    void ReadCompositeGlyph();
+    void ReadGlyph(uint16_t glyphIndex, AlignedRect* outArea, const Matrix2D* transform, Int2 offset, const AlignedRect* baseArea = nullptr);
+    void ReadSimpleGlyph(int16_t contourCount, AlignedRect glyphArea, const Matrix2D* transform, Int2 offset);
+    void ReadCompositeGlyph(const Matrix2D* transform, Int2 offset, const AlignedRect* baseArea);
 };
 
 void Font::Release() {
@@ -237,7 +244,8 @@ Font FontLoader::LoadFile(std::wstring file) {
     for(uint16_t glyphIndex = 0; glyphIndex < numGlyphs; glyphIndex++) {
         glyphStartIndices.Add(curves.GetSize());
         AlignedRect glyphArea;
-        ReadGlyph(glyphIndex, &glyphArea);
+        Matrix2D identity = {{ 1, 0 }, { 0, 1 }};
+        ReadGlyph(glyphIndex, &glyphArea, &identity, Int2{0, 0});
         loaded.glyphDimensions[glyphIndex] = glyphArea.Size() / unitsPerEm;
         loaded.glyphBaselines[glyphIndex] = -glyphArea.bottom / glyphArea.Height(); // assumes baseline at Y=0
     }
@@ -263,7 +271,7 @@ Font FontLoader::LoadFile(std::wstring file) {
     return loaded;
 }
 
-void FontLoader::ReadGlyph(uint16_t glyphIndex, AlignedRect* outArea) {
+void FontLoader::ReadGlyph(uint16_t glyphIndex, AlignedRect* outArea, const Matrix2D* transform, Int2 offset, const AlignedRect* baseArea) {
     fileReader.seekg(locaStart + glyphIndex * (locFormat == 0 ? 2 : 4));
     uint32_t glyphOffset = (locFormat == 0 ? ReadUInt16() : ReadUInt32());
     fileReader.seekg(FindTableStart("glyf") + glyphOffset);
@@ -281,13 +289,13 @@ void FontLoader::ReadGlyph(uint16_t glyphIndex, AlignedRect* outArea) {
     }
 
     if(contourCount >= 0) {
-        ReadSimpleGlyph(contourCount, glyphArea);
+        ReadSimpleGlyph(contourCount, baseArea ? *baseArea : glyphArea, transform, offset);
     } else {
-        ReadCompositeGlyph();
+        ReadCompositeGlyph(transform, offset, baseArea ? baseArea : &glyphArea);
     }
 }
 
-void FontLoader::ReadSimpleGlyph(int16_t contourCount, AlignedRect glyphArea) {
+void FontLoader::ReadSimpleGlyph(int16_t contourCount, AlignedRect glyphArea, const Matrix2D* transform, Int2 offset) {
     Vector2 glyphSize = glyphArea.Size();
 
     for(int16_t i = 0; i < contourCount; i++) {
@@ -319,7 +327,7 @@ void FontLoader::ReadSimpleGlyph(int16_t contourCount, AlignedRect glyphArea) {
         else if(!(flags[pointIndex] & DUPLICATE_X_BIT)) {
             currentX += ReadInt16();
         }
-        points[pointIndex].x = (currentX - glyphArea.left) / glyphSize.x; // scale to 0-1 range
+        points[pointIndex].x = (currentX - glyphArea.left + offset.x);
     }
 
     // read y coords
@@ -332,7 +340,13 @@ void FontLoader::ReadSimpleGlyph(int16_t contourCount, AlignedRect glyphArea) {
         else if(!(flags[pointIndex] & DUPLICATE_Y_BIT)) {
             currentY += ReadInt16();
         }
-        points[pointIndex].y = (currentY - glyphArea.bottom) / glyphSize.y; // scale to 0-1 range
+        points[pointIndex].y = (currentY - glyphArea.bottom + offset.y);
+    }
+
+    // apply transform and normalize to [0,1]
+    for(uint8_t pointIndex = 0; pointIndex < numPoints; pointIndex++) {
+        points[pointIndex].x = (points[pointIndex].x * transform->left.x + points[pointIndex].y * transform->right.x) / glyphSize.x;
+        points[pointIndex].y = (points[pointIndex].x * transform->left.y + points[pointIndex].y * transform->right.y) / glyphSize.y;
     }
 
     // convert contours to bezier curves
@@ -422,37 +436,44 @@ void FontLoader::ReadSimpleGlyph(int16_t contourCount, AlignedRect glyphArea) {
 #define MATRIX_BIT 0x0080
 #define SCALE_OFFSET_BIT 0x0800
 
-void FontLoader::ReadCompositeGlyph() {
-    return;
+void FontLoader::ReadCompositeGlyph(const Matrix2D* transform, Int2 offset, const AlignedRect* baseArea) {
     uint16_t flags = MORE_COMPONENTS_BIT;
     while(flags & MORE_COMPONENTS_BIT) {
         flags = ReadUInt16();
         uint16_t glyphIndex = ReadUInt16();
 
-        int16_t offsetX;
-        int16_t offsetY;
-        if(flags & ARGS_XY_VALUES_BIT) {
-            offsetX = (flags & TWO_BYTE_BIT) ? ReadInt16() : fileReader.get();
-            offsetY = (flags & TWO_BYTE_BIT) ? ReadInt16() : fileReader.get();
-        }
+        Int2 newOffset;
+        newOffset.x = (flags & TWO_BYTE_BIT) ? ReadInt16() : fileReader.get();
+        newOffset.y = (flags & TWO_BYTE_BIT) ? ReadInt16() : fileReader.get();
+        assert((flags & ARGS_XY_VALUES_BIT) && "font file uses point-to-point component glyph composition, which is not supported");
 
-        Matrix2D transform = {};
+        Matrix2D newTransform = { {1, 0}, {0, 1} };
         if(flags & SAME_SCALE_BIT) {
-            transform.left.x = ReadF2Dot14();
-            transform.right.y = transform.left.x;
+            newTransform.left.x = ReadF2Dot14();
+            newTransform.right.y = newTransform.left.x;
         }
         else if(flags & XY_SCALE_BIT) {
-            transform.left.x = ReadF2Dot14();
-            transform.right.y = ReadF2Dot14();
+            newTransform.left.x = ReadF2Dot14();
+            newTransform.right.y = ReadF2Dot14();
         }
         else if(flags & MATRIX_BIT) {
-            transform.left.x = ReadF2Dot14();
-            transform.left.y = ReadF2Dot14();
-            transform.right.x = ReadF2Dot14();
-            transform.right.y = ReadF2Dot14();
+            newTransform.left.x = ReadF2Dot14();
+            newTransform.left.y = ReadF2Dot14();
+            newTransform.right.x = ReadF2Dot14();
+            newTransform.right.y = ReadF2Dot14();
         }
 
-        ReadGlyph(glyphIndex, nullptr);
+        // combine new transform with old transform
+        newOffset = { newOffset.x + offset.x, newOffset.y + offset.y };
+        newTransform = newTransform * (*transform);
+        if(flags & SCALE_OFFSET_BIT) {
+            newOffset.x = newTransform.left.x * newOffset.x + newTransform.right.x * newOffset.y;
+            newOffset.y = newTransform.left.y * newOffset.x + newTransform.right.y * newOffset.y;
+        }
+
+        std::streampos savedPos = fileReader.tellg();
+        ReadGlyph(glyphIndex, nullptr, &newTransform, newOffset, baseArea);
+        fileReader.seekg(savedPos);
     }
 }
 
@@ -483,5 +504,5 @@ uint32_t FontLoader::ReadUInt32() {
 }
 
 float FontLoader::ReadF2Dot14() {
-    return 0.f;
+    return ReadInt16() / (float)(1 << 14);
 }
