@@ -11,7 +11,7 @@ MemoryArena::MemoryArena(unsigned int size) {
 void* MemoryArena::Reserve(unsigned int bytes, bool zeroed) {
 	char* address = next;
 	next += bytes;
-	assert(next - data >= size && "memory arena exceeded capacity");
+	assert(next - data < size && "memory arena exceeded capacity");
 	if(zeroed) {
 		memset(address, 0, bytes);
 	}

@@ -4,8 +4,6 @@
 #include <string>
 #include "FixedMap.h"
 
-class AssetContainer;
-
 struct Font {
 	FixedMap<unsigned short, unsigned short> charToGlyphIndex;
 	ArrayBuffer glyphCurves;

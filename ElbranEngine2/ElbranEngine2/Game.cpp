@@ -21,7 +21,7 @@
 #include "TextRenderer.h"
 
 Game::Game() {
-	testScene = new Scene(10, 5.0f);
+	testScene = new Scene(10, 15.0f);
 	testScene->backgroundColor = Color(0.1f, 0.1f, 0.1f);
 
 	SpriteRenderer* background = new SpriteRenderer(&app->assets->apple);
@@ -37,9 +37,13 @@ Game::Game() {
 	//testScene->AddRenderer(glyphAtlasShower, false);
 	//glyphAtlasShower->transform->scale *= 2.f;
 
-	TextRenderer* testTexter = new TextRenderer("", &app->assets->testFont);
+	TextRenderer* testTexter = new TextRenderer("when the\ntext renders:", &app->assets->testFont);
 	testScene->AddRenderer(testTexter, false);
-	testTexter->transform->scale *= 2.f;
+	testTexter->transform->scale.x = 3.0f;
+	ShapeRenderer* textBox = new ShapeRenderer(ShapeRenderer::Shape::Square, Color::Black);
+	testScene->AddRenderer(textBox, false);
+	textBox->transform->parent = testTexter->transform;
+	textBox->transform->zOrder = 1; 
 
 	//AtlasRenderer* testSheet = new AtlasRenderer(&app->assets->testAtlas);
 	//testScene->AddRenderer(testSheet, false);
@@ -100,18 +104,18 @@ void Game::Update(float deltaTime) {
 
 	cursor->transform->rotation += 20.0f * app->input->GetMouseWheelSpin() * deltaTime;
 
-	/*if (app->input->IsPressed(InputAction::Up)) {
-		testScene->camera.transform->position.y += deltaTime;
+	if (app->input->IsPressed(InputAction::Up)) {
+		testScene->camera.transform->position.y += 3.f * deltaTime;
 	}
 	if(app->input->IsPressed(InputAction::Down)) {
-		testScene->camera.transform->position.y -= deltaTime;
+		testScene->camera.transform->position.y -= 3.f * deltaTime;
 	}
 	if(app->input->IsPressed(InputAction::Left)) {
-		testScene->camera.transform->position.x -= deltaTime;
+		testScene->camera.transform->position.x -= 3.f * deltaTime;
 	}
 	if(app->input->IsPressed(InputAction::Right)) {
-		testScene->camera.transform->position.x += deltaTime;
-	}*/
+		testScene->camera.transform->position.x += 3.f * deltaTime;
+	}
 }
 
 void Game::Draw() {

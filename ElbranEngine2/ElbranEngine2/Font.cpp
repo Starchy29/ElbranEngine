@@ -274,6 +274,7 @@ Font FontLoader::LoadFile(std::wstring file) {
 void FontLoader::ReadGlyph(uint16_t glyphIndex, AlignedRect* outArea, const Matrix2D* transform, Int2 offset, const AlignedRect* baseArea) {
     fileReader.seekg(locaStart + glyphIndex * (locFormat == 0 ? 2 : 4));
     uint32_t glyphOffset = (locFormat == 0 ? ReadUInt16() : ReadUInt32());
+    uint32_t nextOffset = (locFormat == 0 ? ReadUInt16() : ReadUInt32());
     fileReader.seekg(FindTableStart("glyf") + glyphOffset);
 
     int16_t contourCount = ReadInt16();
@@ -287,6 +288,8 @@ void FontLoader::ReadGlyph(uint16_t glyphIndex, AlignedRect* outArea, const Matr
     if(outArea) {
         *outArea = glyphArea;
     }
+
+    if(nextOffset == glyphOffset) return; // no curves to load
 
     if(contourCount >= 0) {
         ReadSimpleGlyph(contourCount, baseArea ? *baseArea : glyphArea, transform, offset);

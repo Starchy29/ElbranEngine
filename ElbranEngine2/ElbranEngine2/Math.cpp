@@ -302,11 +302,15 @@ float AlignedRect::Width() const {
 }
 
 float AlignedRect::Height() const {
-	return 0.0f;
+	return top - bottom;
 }
 
 AlignedRect AlignedRect::SetCenter(Vector2 center) const {
 	return AlignedRect(center, Size());
+}
+
+AlignedRect AlignedRect::Translate(Vector2 shift) const {
+	return AlignedRect(Center() + shift, Size());
 }
 
 AlignedRect AlignedRect::SetWidth(float width) const {

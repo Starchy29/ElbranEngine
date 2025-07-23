@@ -109,6 +109,7 @@ struct AlignedRect {
 	float Height() const;
 
 	AlignedRect SetCenter(Vector2 center) const;
+	AlignedRect Translate(Vector2 shift) const;
 	AlignedRect SetWidth(float width) const;
 	AlignedRect SetHeight(float height) const;
 	AlignedRect SetSize(Vector2 size) const;

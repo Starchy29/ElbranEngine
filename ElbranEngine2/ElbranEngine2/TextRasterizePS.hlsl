@@ -56,6 +56,6 @@ float4 main(VertexToPixel input) : SV_TARGET {
 	}
 	
 	float4 result = color * (intersections % 2 == 1);
-	//clip(result.a - 0.00001);
+	clip(result.a - 0.00001);
 	return result;
 }
