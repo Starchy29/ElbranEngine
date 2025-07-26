@@ -43,7 +43,7 @@ Game::Game() {
 	ShapeRenderer* textBox = new ShapeRenderer(ShapeRenderer::Shape::Square, Color::Black);
 	testScene->AddRenderer(textBox, false);
 	textBox->transform->parent = testTexter->transform;
-	textBox->transform->zOrder = 1; 
+	textBox->transform->zOrder = 1;
 
 	//AtlasRenderer* testSheet = new AtlasRenderer(&app->assets->testAtlas);
 	//testScene->AddRenderer(testSheet, false);

@@ -16,15 +16,34 @@ struct BezierCurve {
     Vector2 end;
 };
 
-struct Table {
-    char tag[4];
-    uint32_t startByte;
-};
-
 struct Matrix2D {
     Vector2 left;
     Vector2 right;
 };
+
+struct Tag {
+    char chars[4];
+    Tag(){}
+    Tag(const Tag& original) {
+        chars[0] = original.chars[0];
+        chars[1] = original.chars[1];
+        chars[2] = original.chars[2];
+        chars[3] = original.chars[3];
+    }
+    Tag(const char literal[5]) {
+        chars[0] = literal[0];
+        chars[1] = literal[1];
+        chars[2] = literal[2];
+        chars[3] = literal[3];
+    }
+    
+    static unsigned int Hash(Tag tag) {
+        return tag.chars[0] + tag.chars[1] + tag.chars[2] + tag.chars[3];
+    }
+};
+bool operator==(const Tag& left, const Tag& right) {
+    return left.chars[0] == right.chars[0] && left.chars[1] == right.chars[1] && left.chars[2] == right.chars[2] && left.chars[3] == right.chars[3];
+}
 
 Matrix2D operator*(const Matrix2D& left, const Matrix2D& right) {
     return {
@@ -37,7 +56,7 @@ class FontLoader {
 public:
     std::ifstream fileReader;
     FixedList<BezierCurve> curves;
-    Table* tables;
+    FixedMap<Tag, uint32_t> tableStarts;
     uint32_t locaStart;
     int16_t locFormat;
     uint16_t* contourEndIndices;
@@ -48,7 +67,6 @@ public:
 
     Font LoadFile(std::wstring file);
 
-    uint32_t FindTableStart(const char tag[4]);
     uint16_t ReadUInt16();
     int16_t ReadInt16();
     uint32_t ReadUInt32();
@@ -95,23 +113,25 @@ Font FontLoader::LoadFile(std::wstring file) {
     fileReader.ignore(6);
 
     // store the byte offsets of all data tables to support file navigation
-    tables = new Table[tableCount];
+    tableStarts = FixedMap<Tag, uint32_t>(tableCount, Tag::Hash);
+    Tag newTag;
     for(uint16_t i = 0; i < tableCount; i++) {
-        fileReader.read(tables[i].tag, 4);
+        fileReader.read(newTag.chars, 4);
         fileReader.ignore(4);
-        tables[i].startByte = ReadUInt32();
+        tableStarts.Set(newTag, ReadUInt32());
         fileReader.ignore(4);
     }
+    locaStart = tableStarts.Get(Tag{"loca"});
 
     // determine number of glyphs and other limits
-    fileReader.seekg(FindTableStart("maxp"));
+    fileReader.seekg(tableStarts.Get(Tag{"maxp"}));
     fileReader.ignore(4);
     uint16_t numGlyphs = ReadUInt16();
     uint16_t maxPoints = ReadUInt16();
     uint16_t maxContours = ReadUInt16();
 
     // load the character map
-    fileReader.seekg(FindTableStart("cmap"));
+    fileReader.seekg(tableStarts.Get(Tag{"cmap"}));
     fileReader.ignore(2);
     uint16_t cmapSubtables = ReadUInt16();
     uint32_t cmapOffset = 0;
@@ -136,7 +156,7 @@ Font FontLoader::LoadFile(std::wstring file) {
 
     assert(cmapOffset > 0 && "font file contains no unicode encoding");
 
-    fileReader.seekg(FindTableStart("cmap") + cmapOffset);
+    fileReader.seekg(tableStarts.Get(Tag{"cmap"}) + cmapOffset);
     uint16_t format = ReadUInt16();
     assert((format == 4 || format == 12) && "font file uses an unsupported cmap format");
 
@@ -208,9 +228,9 @@ Font FontLoader::LoadFile(std::wstring file) {
     loaded.charToGlyphIndex.Set(0xFFFF, 0);
 
     // load glyph advance widths
-    fileReader.seekg(FindTableStart("hhea") + 34);
+    fileReader.seekg(tableStarts.Get(Tag{"hhea"}) + 34);
     uint16_t numHMetrics = ReadUInt16();
-    fileReader.seekg(FindTableStart("hmtx"));
+    fileReader.seekg(tableStarts.Get(Tag{"hmtx"}));
     leftSideBearings = new int16_t[numGlyphs];
     advanceWidths = new uint16_t[numGlyphs];
     
@@ -225,14 +245,13 @@ Font FontLoader::LoadFile(std::wstring file) {
     }
 
     // load the glyph contour data
-    fileReader.seekg(FindTableStart("head") + 18);
+    fileReader.seekg(tableStarts.Get(Tag{"head"}) + 18);
     float unitsPerEm = ReadUInt16();
     fileReader.ignore(30);
     locFormat = ReadInt16();
     assert((locFormat == 0 || locFormat == 1) && "font file has an invalid loc format");
-    locaStart = FindTableStart("loca");
 
-    curves = FixedList<BezierCurve>(numGlyphs * maxPoints / 2);
+    curves = FixedList<BezierCurve>(numGlyphs * maxPoints);
     FixedList<uint32_t> glyphStartIndices(numGlyphs + 1); // maps glyph index to index of first curve for that glyph
 
     contourEndIndices = new uint16_t[maxContours];
@@ -241,10 +260,10 @@ Font FontLoader::LoadFile(std::wstring file) {
 
     loaded.glyphDimensions = new Vector2[numGlyphs];
     loaded.glyphBaselines = new float[numGlyphs];
+    Matrix2D identity = {{ 1, 0 }, { 0, 1 }};
     for(uint16_t glyphIndex = 0; glyphIndex < numGlyphs; glyphIndex++) {
         glyphStartIndices.Add(curves.GetSize());
         AlignedRect glyphArea;
-        Matrix2D identity = {{ 1, 0 }, { 0, 1 }};
         ReadGlyph(glyphIndex, &glyphArea, &identity, Int2{0, 0});
         loaded.glyphDimensions[glyphIndex] = glyphArea.Size() / unitsPerEm;
         loaded.glyphBaselines[glyphIndex] = -glyphArea.bottom / glyphArea.Height(); // assumes baseline at Y=0
@@ -261,10 +280,10 @@ Font FontLoader::LoadFile(std::wstring file) {
     glyphStartIndices.Release();
 
     // clean up
+    tableStarts.Release();
     delete[] contourEndIndices;
     delete[] flags;
     delete[] points;
-    delete[] tables;
     delete[] advanceWidths;
     delete[] leftSideBearings;
 
@@ -273,9 +292,9 @@ Font FontLoader::LoadFile(std::wstring file) {
 
 void FontLoader::ReadGlyph(uint16_t glyphIndex, AlignedRect* outArea, const Matrix2D* transform, Int2 offset, const AlignedRect* baseArea) {
     fileReader.seekg(locaStart + glyphIndex * (locFormat == 0 ? 2 : 4));
-    uint32_t glyphOffset = (locFormat == 0 ? ReadUInt16() : ReadUInt32());
-    uint32_t nextOffset = (locFormat == 0 ? ReadUInt16() : ReadUInt32());
-    fileReader.seekg(FindTableStart("glyf") + glyphOffset);
+    uint32_t glyphOffset = (locFormat == 0 ? ReadUInt16() * 2u : ReadUInt32());
+    uint32_t nextOffset = (locFormat == 0 ? ReadUInt16() * 2u : ReadUInt32());
+    fileReader.seekg(tableStarts.Get(Tag{"glyf"}) + glyphOffset);
 
     int16_t contourCount = ReadInt16();
     AlignedRect glyphArea;
@@ -478,14 +497,6 @@ void FontLoader::ReadCompositeGlyph(const Matrix2D* transform, Int2 offset, cons
         ReadGlyph(glyphIndex, nullptr, &newTransform, newOffset, baseArea);
         fileReader.seekg(savedPos);
     }
-}
-
-uint32_t FontLoader::FindTableStart(const char tag[4]) {
-    int index = 0;
-    while(!(tables[index].tag[0] == tag[0] && tables[index].tag[1] == tag[1] && tables[index].tag[2] == tag[2] && tables[index].tag[3] == tag[3])) {
-        index++;
-    }
-    return tables[index].startByte;
 }
 
 uint16_t FontLoader::ReadUInt16() {

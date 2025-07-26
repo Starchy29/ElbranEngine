@@ -76,6 +76,7 @@ public:
 
 		if(size == capacity) {
 			delete[] fullSlots;
+			fullSlots = nullptr;
 		}
 	}
 
