@@ -24,12 +24,6 @@ public:
 		delete[] dataArray; 
 	}
 
-	void ReleaseElements() {
-		for(unsigned int i = 0; i < size; i++) {
-			delete dataArray[i];
-		}
-	}
-
 	Type& operator[](int index) {
 		return dataArray[index];
 	}

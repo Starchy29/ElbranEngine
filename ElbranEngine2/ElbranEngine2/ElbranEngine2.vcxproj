@@ -150,6 +150,7 @@
     <ClCompile Include="AtlasRenderer.cpp" />
     <ClCompile Include="BloomPostProcess.cpp" />
     <ClCompile Include="BlurPostProcess.cpp" />
+    <ClCompile Include="Button.cpp" />
     <ClCompile Include="Common.cpp" />
     <ClCompile Include="DirectXAPI.cpp" />
     <ClCompile Include="Font.cpp" />
@@ -168,6 +169,7 @@
     <ClCompile Include="SoundMixer.cpp" />
     <ClCompile Include="SpriteRenderer.cpp" />
     <ClCompile Include="TextRenderer.cpp" />
+    <ClCompile Include="UserInterface.cpp" />
     <ClCompile Include="WindowsAudio.cpp" />
     <ClCompile Include="WindowsInput.cpp" />
     <ClCompile Include="WindowsMain.cpp" />
@@ -182,6 +184,7 @@
     <ClInclude Include="BloomPostProcess.h" />
     <ClInclude Include="BlurPostProcess.h" />
     <ClInclude Include="Buffers.h" />
+    <ClInclude Include="Button.h" />
     <ClInclude Include="Common.h" />
     <ClInclude Include="Configs.h" />
     <ClInclude Include="DirectXAPI.h" />
@@ -210,6 +213,7 @@
     <ClInclude Include="SpriteRenderer.h" />
     <ClInclude Include="TextRenderer.h" />
     <ClInclude Include="Transform.h" />
+    <ClInclude Include="UserInterface.h" />
     <ClInclude Include="WindowsAudio.h" />
     <ClInclude Include="WindowsInput.h" />
   </ItemGroup>

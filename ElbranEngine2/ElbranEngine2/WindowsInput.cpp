@@ -19,19 +19,6 @@ void WindowsInput::CheckInputs() {
     // get keyboard
     (void)GetKeyboardState(keyboard);
 
-    // get mouse
-    POINT mouseWindowPos;
-    GetCursorPos(&mouseWindowPos);
-    ScreenToClient(windowHandle, &mouseWindowPos);
-
-    UInt2 viewOffset = app->graphics->GetViewOffset();
-    UInt2 viewDims = app->graphics->GetViewDimensions();
-    mouseWindowPos.x -= viewOffset.x;
-    mouseWindowPos.y -= viewOffset.y;
-    mousePosition.x = (float)mouseWindowPos.x / viewDims.x * 2.0f - 1.0f;
-    mousePosition.y = (float)mouseWindowPos.y / viewDims.y * 2.0f - 1.0f;
-    mousePosition.y *= -1.0f;
-
     // get gamepads
     DWORD result;
 	for(DWORD i = 0; i < XUSER_MAX_COUNT; i++) {
@@ -202,6 +189,19 @@ Vector2 WindowsInput::GetGamepadStick(bool left, int playerIndex) {
 }
 
 Vector2 WindowsInput::GetMouseScreenPosition() {
+    // get mouse
+    POINT mouseWindowPos;
+    GetCursorPos(&mouseWindowPos);
+    ScreenToClient(windowHandle, &mouseWindowPos);
+
+    UInt2 viewOffset = app->graphics->GetViewOffset();
+    UInt2 viewDims = app->graphics->GetViewDimensions();
+    Vector2 mousePosition;
+    mouseWindowPos.x -= viewOffset.x;
+    mouseWindowPos.y -= viewOffset.y;
+    mousePosition.x = (float)mouseWindowPos.x / viewDims.x * 2.0f - 1.0f;
+    mousePosition.y = (float)mouseWindowPos.y / viewDims.y * 2.0f - 1.0f;
+    mousePosition.y *= -1.0f;
     return mousePosition;
 }
 

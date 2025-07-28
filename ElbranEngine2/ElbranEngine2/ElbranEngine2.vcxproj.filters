@@ -101,6 +101,8 @@
     <ClCompile Include="TextRenderer.cpp">
       <Filter>Graphics\Renderers</Filter>
     </ClCompile>
+    <ClCompile Include="UserInterface.cpp" />
+    <ClCompile Include="Button.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Application.h" />
@@ -198,6 +200,8 @@
     <ClInclude Include="FixedMap.h">
       <Filter>Toolkit</Filter>
     </ClInclude>
+    <ClInclude Include="UserInterface.h" />
+    <ClInclude Include="Button.h" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="CameraVS.hlsl">

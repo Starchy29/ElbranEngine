@@ -89,6 +89,7 @@ public:
 
 	void Rumble(int playerIndex, float strength0to1, float duration);
 	Vector2 GetMousePosition(const Camera* camera);
+	Vector2 GetMouseDelta(const Camera* camera);
 	float GetMouseWheelSpin();
 
 protected:
@@ -106,5 +107,7 @@ private:
 	InputState currentState[MAX_PLAYERS];
 	float rumbleDurations[MAX_PLAYERS];
 	float mouseWheelDelta;
+	Vector2 mouseScreenPos;
+	Vector2 lastMousePos;
 };
 

@@ -1,7 +1,9 @@
 #pragma once
+class Scene;
 
 class IBehavior {
 public:
+	Scene* scene;
 	bool enabled = true;
 
 	virtual ~IBehavior() {}

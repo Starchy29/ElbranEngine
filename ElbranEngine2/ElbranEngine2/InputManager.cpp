@@ -9,6 +9,8 @@ InputManager::InputManager() {
 	memset(&rumbleDurations, 0, sizeof(float) * MAX_PLAYERS);
 	memset(&bindings, 0, sizeof(KeyBinds) * (int)InputAction::ACTION_COUNT * MAX_PLAYERS);
 	mouseWheelDelta = 0.f;
+	mouseScreenPos = Vector2::Zero;
+	lastMousePos = Vector2::Zero;
 	for(int i = 0; i < MAX_PLAYERS; i++) {
 		bindings[i][(int)InputAction::Up].keys[0] = 'W';
 		bindings[i][(int)InputAction::Up].keys[1] = KEY_UP_ARROW;
@@ -42,7 +44,9 @@ InputManager::InputManager() {
 
 void InputManager::Update(float deltaTime) {
 	memcpy(&lastState, &currentState, sizeof(InputState) * MAX_PLAYERS);
+	lastMousePos = mouseScreenPos;
 	CheckInputs();
+	mouseScreenPos = GetMouseScreenPosition();
 	mouseWheelDelta = DetermineMouseSpin();
 
 	for(int player = 0; player < MAX_PLAYERS; player++) {
@@ -103,8 +107,14 @@ void InputManager::Rumble(int playerIndex, float strength0to1, float duration) {
 
 Vector2 InputManager::GetMousePosition(const Camera* camera) {
 	Vector2 screenCenter = *camera->worldMatrix * Vector2::Zero;
-	Vector2 fromCenter = (GetMouseScreenPosition() * camera->GetWorldDimensions() * 0.5f).Rotate(camera->transform->rotation);
+	Vector2 fromCenter = (mouseScreenPos * camera->GetWorldDimensions() * 0.5f).Rotate(camera->transform->rotation);
 	return screenCenter + fromCenter;
+}
+
+Vector2 InputManager::GetMouseDelta(const Camera* camera) {
+	Vector2 newPos = (mouseScreenPos * camera->GetWorldDimensions() * 0.5f).Rotate(camera->transform->rotation);
+	Vector2 oldPos = (lastMousePos * camera->GetWorldDimensions() * 0.5f).Rotate(camera->transform->rotation);
+	return newPos - oldPos;
 }
 
 float InputManager::GetMouseWheelSpin() {

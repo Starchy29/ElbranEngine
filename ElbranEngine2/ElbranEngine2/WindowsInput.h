@@ -36,6 +36,5 @@ private:
 
     BYTE keyboard[KEY_COUNT];
     GamepadData gamepads[4];
-    Vector2 mousePosition;
 };
 #endif

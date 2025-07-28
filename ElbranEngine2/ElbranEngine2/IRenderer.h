@@ -7,6 +7,5 @@ public:
 	const Matrix* worldMatrix;
 
 	virtual ~IRenderer() {}
-
 	virtual void Draw() = 0;
 };

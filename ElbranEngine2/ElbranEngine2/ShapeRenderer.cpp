@@ -4,6 +4,11 @@
 #include "AssetContainer.h"
 #include "ShaderConstants.h"
 
+ShapeRenderer::ShapeRenderer() {
+	shape = Shape::Square;
+	color = Color::White;
+}
+
 ShapeRenderer::ShapeRenderer(Shape shape, Color color) {
 	this->shape = shape;
 	this->color = color;

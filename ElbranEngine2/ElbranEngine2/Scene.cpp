@@ -44,11 +44,8 @@ Scene::~Scene() {
 	delete[] localMatrices;
 	delete[] worldMatrices;
 
-	opaques.ReleaseElements();
 	opaques.Release();
-	translucents.ReleaseElements();
 	translucents.Release();
-	behaviors.ReleaseElements();
 	behaviors.Release();
 	lights.Release();
 }
@@ -223,6 +220,7 @@ void Scene::AddRenderer(IRenderer* renderer, bool translucent) {
 
 void Scene::AddBehavior(IBehavior* behavior) {
 	behaviors.Add(behavior);
+	behavior->scene = this;
 }
 
 LightSource* Scene::AddLight(Color color, float radius) {

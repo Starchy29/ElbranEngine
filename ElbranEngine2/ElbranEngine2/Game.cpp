@@ -19,12 +19,27 @@
 #include "AnimationGroup.h"
 #include "PatternRenderer.h"
 #include "TextRenderer.h"
+#include "UserInterface.h"
+#include "Button.h"
+
+SpriteRenderer* background;
+UserInterface* testUI;
+Button* butt1;
+Button* butt2;
+Button* butt3;
+Button* butt4;
+TextRenderer* testTexter;
+ShapeRenderer* textBox;
+
+void RandomizeColor(Button* clicked) {
+	clicked->box.color = Color(app->rng->GenerateFloat(0, 1), app->rng->GenerateFloat(0, 1), app->rng->GenerateFloat(0, 1));
+}
 
 Game::Game() {
-	testScene = new Scene(10, 15.0f);
+	testScene = new Scene(10, 12.0f);
 	testScene->backgroundColor = Color(0.1f, 0.1f, 0.1f);
 
-	SpriteRenderer* background = new SpriteRenderer(&app->assets->apple);
+	background = new SpriteRenderer(&app->assets->apple);
 	testScene->AddRenderer(background, false);
 	background->transform->zOrder = 99.f;
 	background->transform->scale = testScene->camera.GetWorldDimensions();
@@ -37,13 +52,29 @@ Game::Game() {
 	//testScene->AddRenderer(glyphAtlasShower, false);
 	//glyphAtlasShower->transform->scale *= 2.f;
 
-	TextRenderer* testTexter = new TextRenderer("when the\ntext renders:", &app->assets->testFont);
+	testTexter = new TextRenderer("when the\ntext renders:", &app->assets->testFont);
 	testScene->AddRenderer(testTexter, false);
 	testTexter->transform->scale.x = 3.0f;
-	ShapeRenderer* textBox = new ShapeRenderer(ShapeRenderer::Shape::Square, Color::Black);
+	textBox = new ShapeRenderer(ShapeRenderer::Shape::Square, Color::Black);
 	testScene->AddRenderer(textBox, false);
 	textBox->transform->parent = testTexter->transform;
 	textBox->transform->zOrder = 1;
+	
+	butt1 = new Button(testScene, RandomizeColor);
+	butt1->box.transform->position += Vector2(2, 2);
+	butt2 = new Button(testScene, RandomizeColor);
+	butt2->box.transform->position += Vector2(-2, 2);
+	butt3 = new Button(testScene, RandomizeColor);
+	butt3->box.transform->position += Vector2(2, -2);
+	butt4 = new Button(testScene, RandomizeColor);
+	butt4->box.transform->position += Vector2(0, 0);
+	
+	testUI = new UserInterface(4);
+	testScene->AddBehavior(testUI);
+	testUI->Join(butt1);
+	testUI->Join(butt2);
+	testUI->Join(butt3);
+	testUI->Join(butt4);
 
 	//AtlasRenderer* testSheet = new AtlasRenderer(&app->assets->testAtlas);
 	//testScene->AddRenderer(testSheet, false);
@@ -82,6 +113,17 @@ Game::Game() {
 
 Game::~Game() {
 	delete testScene;
+	delete background;
+	delete cursor;
+
+	delete testTexter;
+	delete textBox;
+
+	delete testUI;
+	delete butt1;
+	delete butt2;
+	delete butt3;
+	delete butt4;
 }
 
 void Game::Update(float deltaTime) {
@@ -104,18 +146,18 @@ void Game::Update(float deltaTime) {
 
 	cursor->transform->rotation += 20.0f * app->input->GetMouseWheelSpin() * deltaTime;
 
-	if (app->input->IsPressed(InputAction::Up)) {
-		testScene->camera.transform->position.y += 3.f * deltaTime;
-	}
-	if(app->input->IsPressed(InputAction::Down)) {
-		testScene->camera.transform->position.y -= 3.f * deltaTime;
-	}
-	if(app->input->IsPressed(InputAction::Left)) {
-		testScene->camera.transform->position.x -= 3.f * deltaTime;
-	}
-	if(app->input->IsPressed(InputAction::Right)) {
-		testScene->camera.transform->position.x += 3.f * deltaTime;
-	}
+	//if (app->input->IsPressed(InputAction::Up)) {
+	//	testScene->camera.transform->position.y += 3.f * deltaTime;
+	//}
+	//if(app->input->IsPressed(InputAction::Down)) {
+	//	testScene->camera.transform->position.y -= 3.f * deltaTime;
+	//}
+	//if(app->input->IsPressed(InputAction::Left)) {
+	//	testScene->camera.transform->position.x -= 3.f * deltaTime;
+	//}
+	//if(app->input->IsPressed(InputAction::Right)) {
+	//	testScene->camera.transform->position.x += 3.f * deltaTime;
+	//}
 }
 
 void Game::Draw() {
