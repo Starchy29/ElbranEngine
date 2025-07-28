@@ -2,6 +2,7 @@
 #include "Application.h"
 #include "InputManager.h"
 #include "Scene.h"
+#include <cassert>
 
 UserInterface::UserInterface() {}
 
@@ -66,7 +67,7 @@ void UserInterface::Update(float deltaTime) {
 		Vector2 mouseDelta = inputs->GetMouseDelta(&scene->camera);
 
 		// click and drag
-		if(focus && mouseDelta != Vector2::Zero && inputs->IsPressed(InputAction::Select)) { // select is left click
+		if(focus && (mouseDelta != Vector2::Zero && inputs->IsPressed(InputAction::Select) || inputs->JustPressed(InputAction::Select))) { // select is left click
 			focus->OnMouseDragged(mouseDelta);
 		}
 
@@ -74,13 +75,10 @@ void UserInterface::Update(float deltaTime) {
 		if(mouseDelta != Vector2::Zero) {
 			Vector2 mousePos = inputs->GetMousePosition(&scene->camera);
 			UIElement* hovered = nullptr;
+			AlignedRect unitSquare = AlignedRect(Vector2::Zero, Vector2(1.f, 1.f));
 			for(int i = 0; i < elements.GetSize(); i++) {
-				// assumes no rotation
-				Vector2 center = *elements[i]->selectArea * Vector2::Zero;
-				Vector2 right = *elements[i]->selectArea * Vector2::Right;
-				Vector2 up = *elements[i]->selectArea * Vector2::Up;
-				AlignedRect collisionArea = AlignedRect(center, Vector2(right.x - center.x, up.y - center.y));
-				if(collisionArea.Contains(mousePos)) {
+				Vector2 normalizedMouse = elements[i]->selectArea->Inverse() * mousePos;
+				if(unitSquare.Contains(normalizedMouse)) {
 					hovered = elements[i];
 					break;
 				}
@@ -91,7 +89,7 @@ void UserInterface::Update(float deltaTime) {
 
 		// scroll the focused element with the mouse wheel
 		float scroll = inputs->GetMouseWheelSpin();
-		if(scroll > 0 && focus) {
+		if(scroll != 0.f && focus) {
 			focus->OnScrolled(scroll);
 		}
 	}

@@ -14,6 +14,7 @@ Scene::Scene(unsigned int maxEntities, float cameraWidth)  {
 	backgroundImage = nullptr;
 
 	entityCount = 0;
+	this->maxEntities = maxEntities;
 	transforms = new Transform[maxEntities];
 	localMatrices = new Matrix[maxEntities];
 	worldMatrices = new Matrix[maxEntities];
@@ -189,6 +190,7 @@ void Scene::Draw() {
 }
 
 void Scene::ReserveTransform(Transform** outTransform, const Matrix** outMatrix) {
+	assert(entityCount < maxEntities && "scene capacity is unable to fit another transform");
 	int newSlot = entityCount;
 	if(openSlots.size() > 0) {
 		newSlot = openSlots[openSlots.size() - 1];

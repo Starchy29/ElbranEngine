@@ -21,6 +21,7 @@
 #include "TextRenderer.h"
 #include "UserInterface.h"
 #include "Button.h"
+#include "SliderUI.h"
 
 SpriteRenderer* background;
 UserInterface* testUI;
@@ -30,13 +31,14 @@ Button* butt3;
 Button* butt4;
 TextRenderer* testTexter;
 ShapeRenderer* textBox;
+SliderUI* slider;
 
 void RandomizeColor(Button* clicked) {
 	clicked->box.color = Color(app->rng->GenerateFloat(0, 1), app->rng->GenerateFloat(0, 1), app->rng->GenerateFloat(0, 1));
 }
 
 Game::Game() {
-	testScene = new Scene(10, 12.0f);
+	testScene = new Scene(20, 12.0f);
 	testScene->backgroundColor = Color(0.1f, 0.1f, 0.1f);
 
 	background = new SpriteRenderer(&app->assets->apple);
@@ -65,16 +67,31 @@ Game::Game() {
 	butt2 = new Button(testScene, RandomizeColor);
 	butt2->box.transform->position += Vector2(-2, 2);
 	butt3 = new Button(testScene, RandomizeColor);
-	butt3->box.transform->position += Vector2(2, -2);
+	butt3->box.transform->position += Vector2(2, -1);
 	butt4 = new Button(testScene, RandomizeColor);
 	butt4->box.transform->position += Vector2(0, 0);
+
+	butt1->box.transform->scale = Vector2(2.0f, 0.8f);
+	butt2->box.transform->scale = Vector2(2.0f, 0.8f);
+	butt3->box.transform->scale = Vector2(2.0f, 0.8f);
+	butt4->box.transform->scale = Vector2(2.0f, 0.8f);
+
+	butt1->box.transform->rotation = app->rng->GenerateFloat(0, 2.0f * PI);
+	butt2->box.transform->rotation = app->rng->GenerateFloat(0, 2.0f * PI);
+	butt3->box.transform->rotation = app->rng->GenerateFloat(0, 2.0f * PI);
+	butt4->box.transform->rotation = app->rng->GenerateFloat(0, 2.0f * PI);
+
+	slider = new SliderUI(testScene, 5.0f, 20);
+	slider->root->position.y -= 2.0f;
+	slider->root->zOrder = 5;
 	
-	testUI = new UserInterface(4);
+	testUI = new UserInterface(5);
 	testScene->AddBehavior(testUI);
 	testUI->Join(butt1);
 	testUI->Join(butt2);
 	testUI->Join(butt3);
 	testUI->Join(butt4);
+	testUI->Join(slider);
 
 	//AtlasRenderer* testSheet = new AtlasRenderer(&app->assets->testAtlas);
 	//testScene->AddRenderer(testSheet, false);
@@ -124,6 +141,7 @@ Game::~Game() {
 	delete butt2;
 	delete butt3;
 	delete butt4;
+	delete slider;
 }
 
 void Game::Update(float deltaTime) {

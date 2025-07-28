@@ -46,6 +46,7 @@ public:
 
 private:
 	int entityCount;
+	unsigned int maxEntities;
 	Transform* transforms;
 	Matrix* localMatrices;
 	Matrix* worldMatrices;

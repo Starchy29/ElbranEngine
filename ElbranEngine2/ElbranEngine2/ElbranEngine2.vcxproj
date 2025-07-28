@@ -166,6 +166,7 @@
     <ClCompile Include="Random.cpp" />
     <ClCompile Include="Scene.cpp" />
     <ClCompile Include="ShapeRenderer.cpp" />
+    <ClCompile Include="SliderUI.cpp" />
     <ClCompile Include="SoundMixer.cpp" />
     <ClCompile Include="SpriteRenderer.cpp" />
     <ClCompile Include="TextRenderer.cpp" />
@@ -209,6 +210,7 @@
     <ClInclude Include="ShaderConstants.h" />
     <ClInclude Include="Shaders.h" />
     <ClInclude Include="ShapeRenderer.h" />
+    <ClInclude Include="SliderUI.h" />
     <ClInclude Include="SoundMixer.h" />
     <ClInclude Include="SpriteRenderer.h" />
     <ClInclude Include="TextRenderer.h" />

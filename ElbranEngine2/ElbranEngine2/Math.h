@@ -124,7 +124,9 @@ struct AlignedRect {
 struct Matrix {
 	float values[4][4];
 
+	float Determinant() const;
 	Matrix Transpose() const;
+	Matrix Inverse() const;
 
 	static const Matrix Identity;
 	
@@ -135,6 +137,10 @@ struct Matrix {
 	static Matrix ProjectOrthographic(float viewWidth, float viewHeight, float viewRange);
 
 	Matrix operator-() const;
+
+private:
+	void CreateSubmatrix(float outSubmatrix[3][3], int removedRow, int removedCol) const;
+	static float Calc3x3Determinant(float matrix[3][3]);
 };
 
 Vector2 operator*(const Matrix& transform, const Vector2& vector);

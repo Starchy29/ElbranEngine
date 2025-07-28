@@ -1,5 +1,6 @@
 #include "Math.h"
 #include <math.h>
+#include <cassert>
 
 #pragma region Math
 float Math::Sign(float number) {
@@ -426,6 +427,37 @@ Matrix Matrix::operator-() const {
 	return result;
 }
 
+void Matrix::CreateSubmatrix(float outSubmatrix[3][3], int removedRow, int removedCol) const {
+	int writeRow = 0;
+	int writeCol = 0;
+	for(int r = 0; r < 4; r++) {
+		if(r == removedRow) continue;
+		for(int c = 0; c < 4; c++) {
+			if(c == removedCol) continue;
+			outSubmatrix[writeRow][writeCol] = values[r][c];
+			writeCol++;
+		}
+		writeRow++;
+		writeCol = 0;
+	}
+}
+
+float Matrix::Calc3x3Determinant(float matrix[3][3]) {
+	return matrix[0][0] * (matrix[1][1] * matrix[2][2] - matrix[2][1] * matrix[1][2])
+			- matrix[1][0] * (matrix[0][1] * matrix[2][2] - matrix[2][1] * matrix[0][2])
+			+ matrix[2][0] * (matrix[0][1] * matrix[1][2] - matrix[1][1] * matrix[0][2]);
+}
+
+float Matrix::Determinant() const {
+	float result = 0.f;
+	float subMatrix[3][3];
+	for(int r = 0; r < 4; r++) {
+		CreateSubmatrix(subMatrix, r, 0);
+		result += Calc3x3Determinant(subMatrix) * values[r][0] * (r % 2 == 0 ? 1 : -1);
+	}
+	return result;
+}
+
 Matrix Matrix::Transpose() const {
 	return Matrix{ {
 		{ values[0][0], values[1][0], values[2][0], values[3][0]},
@@ -433,6 +465,26 @@ Matrix Matrix::Transpose() const {
 		{ values[0][2], values[1][2], values[2][2], values[3][2] },
 		{ values[0][3], values[1][3], values[2][3], values[3][3] }
 	} };
+}
+
+Matrix Matrix::Inverse() const {
+	float determinant = Determinant();
+	if(determinant == 0.f) {
+		assert(false && "attempted to find the inverse of a matrix with a determinant of 0");
+		return Matrix{};
+	}
+
+	float invDet = 1.0f / determinant;
+	Matrix result;
+	float submatrix[3][3];
+	for(int r = 0; r < 4; r++) {
+		for(int c = 0; c < 4; c++) {
+			CreateSubmatrix(submatrix, c, r);
+			result.values[r][c] = Calc3x3Determinant(submatrix) * ((r+c) % 2 == 0 ? 1 : -1) * invDet;
+		}
+	}
+
+	return result;
 }
 
 Matrix Matrix::Rotation(float radians) {
