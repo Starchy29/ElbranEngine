@@ -21,6 +21,8 @@ public:
 
 	void OnFocused() override;
 	void OnUnfocused() override;
+	void OnDisabled() override;
+	void OnEnabled() override;
 	void OnScrolled(float wheelDelta) override;
 	void OnMouseDragged(Vector2 mouseDelta) override;
 	bool OnDirectionPressed(Direction direction) override;

@@ -10,6 +10,8 @@ struct UIElement {
 
 	virtual void OnFocused() {}
 	virtual void OnUnfocused() {}
+	virtual void OnDisabled() {}
+	virtual void OnEnabled() {}
 	virtual void OnSelected() {}
 	virtual void OnScrolled(float wheelDelta) {}
 	virtual void OnMouseDragged(Vector2 mouseDelta) {}
@@ -30,9 +32,12 @@ public:
 	void Update(float deltaTime) override;
 
 	void Join(UIElement* element);
+	void Disable(UIElement* element);
+	void Enable(UIElement* element);
 
 private:
 	FixedList<UIElement*> elements;
+	FixedList<UIElement*> disabled;
 	UIElement* focus;
 
 	UIElement* FindFurthest(Vector2 direction);

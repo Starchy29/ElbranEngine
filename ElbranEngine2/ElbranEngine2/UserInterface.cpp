@@ -11,10 +11,12 @@ UserInterface::UserInterface(unsigned int maxElements) {
 	gamepadEnabled = true;
 	focus = nullptr;
 	elements = FixedList<UIElement*>(maxElements);
+	disabled = FixedList<UIElement*>(maxElements);
 }
 
 UserInterface::~UserInterface() {
 	elements.Release();
+	disabled.Release();
 }
 
 void UserInterface::Update(float deltaTime) {
@@ -102,6 +104,25 @@ void UserInterface::Update(float deltaTime) {
 
 void UserInterface::Join(UIElement* element) {
 	elements.Add(element);
+}
+
+void UserInterface::Disable(UIElement* element) {
+	int index = elements.IndexOf(element);
+	if(index < 0) return;
+	elements.RemoveAt(index);
+	disabled.Add(element);
+	if(focus == element) {
+		ChangeFocus(nullptr);
+	}
+	element->OnDisabled();
+}
+
+void UserInterface::Enable(UIElement* element) {
+	int index = disabled.IndexOf(element);
+	if(index < 0) return;
+	disabled.RemoveAt(index);
+	elements.Add(element);
+	element->OnEnabled();
 }
 
 UIElement* UserInterface::FindFurthest(Vector2 direction) {

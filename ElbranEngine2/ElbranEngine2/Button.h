@@ -17,6 +17,8 @@ public:
 
 	void OnFocused() override;
 	void OnUnfocused() override;
+	void OnDisabled() override;
+	void OnEnabled() override;
 	void OnSelected() override;
 };
 

@@ -43,6 +43,15 @@ public:
 		dataArray[index] = dataArray[size - 1];
 		size--;
 	}
+	
+	int IndexOf(Type element) {
+		for(int i = 0; i < size; i++) {
+			if(dataArray[i] == element) {
+				return i;
+			}
+		}
+		return -1;
+	}
 
 	void Clear() {
 		size = 0;

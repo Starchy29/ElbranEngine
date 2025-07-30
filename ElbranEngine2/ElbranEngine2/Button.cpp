@@ -19,6 +19,14 @@ void Button::OnUnfocused() {
 	box.color = normalColor;
 }
 
+void Button::OnDisabled() {
+	box.color.alpha = 0.5f;
+}
+
+void Button::OnEnabled() {
+	box.color.alpha = 1.0f;
+}
+
 void Button::OnSelected() {
 	clickEffect(this);
 }

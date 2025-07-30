@@ -15,8 +15,8 @@ SliderUI::SliderUI(Scene* scene, float width, unsigned int segments, bool vertic
 	scene->ReserveTransform(&root, nullptr);
 	Transform* selectTransform;
 	scene->ReserveTransform(&selectTransform, &selectArea);
-	scene->AddRenderer(&track, false);
-	scene->AddRenderer(&mover, false);
+	scene->AddRenderer(&track, true);
+	scene->AddRenderer(&mover, true);
 	selectTransform->parent = root;
 	track.transform->parent = selectTransform;
 	mover.transform->parent = root;
@@ -57,6 +57,16 @@ void SliderUI::OnFocused() {
 
 void SliderUI::OnUnfocused() {
 	mover.color = Color::White;
+}
+
+void SliderUI::OnDisabled() {
+	track.color.alpha = 0.5f;
+	mover.color.alpha = 0.5f;
+}
+
+void SliderUI::OnEnabled() {
+	track.color.alpha = 1.f;
+	mover.color.alpha = 1.f;
 }
 
 void SliderUI::OnScrolled(float wheelDelta) {
