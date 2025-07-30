@@ -142,11 +142,6 @@ Font FontLoader::LoadFile(std::wstring file) {
         uint16_t platformSpecificID = ReadUInt16();
         uint32_t subtableOffset = ReadUInt32();
 
-        if(i == 2) {
-            cmapOffset = subtableOffset;
-            break;
-        }
-
         // check for a unicode encoding
         if(platformID == 0 || platformID == 3 && (platformSpecificID == 1 || platformSpecificID == 10)) {
             cmapOffset = subtableOffset;
@@ -197,7 +192,8 @@ Font FontLoader::LoadFile(std::wstring file) {
                     glyphIndex = (currCode + idDeltas[segment]) % 65536;
                 } else {
                     // look up glyph index from an array in the file
-                    fileReader.seekg(idRangeOffsetStart + 2*segment + idRangeOffsets[segment]/2 + (currCode - startCodes[segment]));
+                    uint16_t rangeOffsetLocation = idRangeOffsetStart + 2*segment + idRangeOffsets[segment];
+                    fileReader.seekg(2 * (currCode - startCodes[segment]) + rangeOffsetLocation);
                     glyphIndex = ReadUInt16();
                     if(glyphIndex != 0) glyphIndex = (glyphIndex + idDeltas[segment]) % 65536;
                 }

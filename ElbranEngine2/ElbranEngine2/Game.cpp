@@ -62,7 +62,7 @@ Game::Game() {
 	textBox->transform->parent = testTexter->transform;
 	textBox->transform->zOrder = 1;
 	
-	butt1 = new Button(testScene, RandomizeColor);
+	/*butt1 = new Button(testScene, RandomizeColor);
 	butt1->box.transform->position += Vector2(2, 2);
 	butt2 = new Button(testScene, RandomizeColor);
 	butt2->box.transform->position += Vector2(-2, 2);
@@ -91,7 +91,7 @@ Game::Game() {
 	testUI->Join(butt2);
 	testUI->Join(butt3);
 	testUI->Join(butt4);
-	testUI->Join(slider);
+	testUI->Join(slider);*/
 
 	//AtlasRenderer* testSheet = new AtlasRenderer(&app->assets->testAtlas);
 	//testScene->AddRenderer(testSheet, false);
