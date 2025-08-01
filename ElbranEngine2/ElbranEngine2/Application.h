@@ -8,6 +8,9 @@ class Game;
 class AssetContainer;
 class InputManager;
 class Random;
+#if defined(DEBUG) | defined(_DEBUG)
+class DebugHelper;
+#endif
 
 class Application
 {
@@ -19,6 +22,9 @@ public:
 	Game* game;
 	Random* rng;
 	MemoryArena perFrameData;
+#if defined(DEBUG) | defined(_DEBUG)
+	DebugHelper* debugger;
+#endif
 
 	std::wstring filePath;
 

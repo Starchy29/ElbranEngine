@@ -5,6 +5,9 @@
 #include "AssetContainer.h"
 #include "InputManager.h"
 #include "Random.h"
+#if defined(DEBUG) | defined(_DEBUG)
+#include "DebugHelper.h"
+#endif
 
 Application* app;
 
@@ -22,6 +25,9 @@ Application::Application(std::wstring filePath, GraphicsAPI* graphics, SoundMixe
 	this->audio = audio;
 	this->input = input;
 	rng = new Random();
+#if defined(DEBUG) | defined(_DEBUG)
+	debugger = new DebugHelper();
+#endif
 }
 
 void Application::Release() {
@@ -33,6 +39,9 @@ void Application::Release() {
 	graphics->Release();
 	delete graphics;
 	perFrameData.Release();
+#if defined(DEBUG) | defined(_DEBUG)
+	delete debugger;
+#endif
 }
 
 void Application::Update(float deltaTime) {

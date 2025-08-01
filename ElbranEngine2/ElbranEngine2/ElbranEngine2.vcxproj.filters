@@ -104,6 +104,7 @@
     <ClCompile Include="UserInterface.cpp" />
     <ClCompile Include="Button.cpp" />
     <ClCompile Include="SliderUI.cpp" />
+    <ClCompile Include="DebugHelper.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Application.h" />
@@ -204,6 +205,7 @@
     <ClInclude Include="UserInterface.h" />
     <ClInclude Include="Button.h" />
     <ClInclude Include="SliderUI.h" />
+    <ClInclude Include="DebugHelper.h" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="CameraVS.hlsl">

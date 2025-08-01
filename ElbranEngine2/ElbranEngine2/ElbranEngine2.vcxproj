@@ -152,6 +152,7 @@
     <ClCompile Include="BlurPostProcess.cpp" />
     <ClCompile Include="Button.cpp" />
     <ClCompile Include="Common.cpp" />
+    <ClCompile Include="DebugHelper.cpp" />
     <ClCompile Include="DirectXAPI.cpp" />
     <ClCompile Include="Font.cpp" />
     <ClCompile Include="Game.cpp" />
@@ -188,6 +189,7 @@
     <ClInclude Include="Button.h" />
     <ClInclude Include="Common.h" />
     <ClInclude Include="Configs.h" />
+    <ClInclude Include="DebugHelper.h" />
     <ClInclude Include="DirectXAPI.h" />
     <ClInclude Include="FixedList.h" />
     <ClInclude Include="FixedMap.h" />

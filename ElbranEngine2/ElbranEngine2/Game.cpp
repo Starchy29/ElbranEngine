@@ -22,6 +22,7 @@
 #include "UserInterface.h"
 #include "Button.h"
 #include "SliderUI.h"
+#include "DebugHelper.h"
 
 SpriteRenderer* background;
 UserInterface* testUI;
@@ -147,7 +148,7 @@ Game::~Game() {
 void Game::Update(float deltaTime) {
 	UInt2 viewSize = app->graphics->GetViewDimensions();
 
-	cursor->transform->position = app->input->GetMousePosition(&testScene->camera);
+	//cursor->transform->position = app->input->GetMousePosition(&testScene->camera);
 	testScene->Update(deltaTime);
 
 	if(app->input->JustPressed(InputAction::Select, 0)) {
@@ -164,18 +165,18 @@ void Game::Update(float deltaTime) {
 
 	cursor->transform->rotation += 20.0f * app->input->GetMouseWheelSpin() * deltaTime;
 
-	//if (app->input->IsPressed(InputAction::Up)) {
-	//	testScene->camera.transform->position.y += 3.f * deltaTime;
-	//}
-	//if(app->input->IsPressed(InputAction::Down)) {
-	//	testScene->camera.transform->position.y -= 3.f * deltaTime;
-	//}
-	//if(app->input->IsPressed(InputAction::Left)) {
-	//	testScene->camera.transform->position.x -= 3.f * deltaTime;
-	//}
-	//if(app->input->IsPressed(InputAction::Right)) {
-	//	testScene->camera.transform->position.x += 3.f * deltaTime;
-	//}
+	if(app->input->IsPressed(InputAction::Up)) {
+		testTexter->transform->scale.y += 2.0f * deltaTime;
+	}
+	if(app->input->IsPressed(InputAction::Down)) {
+		testTexter->transform->scale.y -= 2.0f * deltaTime;
+	}
+	if(app->input->IsPressed(InputAction::Left)) {
+		testTexter->transform->scale.x -= 2.0f * deltaTime;
+	}
+	if(app->input->IsPressed(InputAction::Right)) {
+		testTexter->transform->scale.x += 2.0f * deltaTime;
+	}
 }
 
 void Game::Draw() {
