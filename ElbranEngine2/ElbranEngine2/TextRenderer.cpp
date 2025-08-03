@@ -95,7 +95,7 @@ void TextRenderer::GenerateMesh() {
 			int glyphIndex = font->charToGlyphIndex.Get(text[i]);
 
 			Vector2 dimensions = font->glyphDimensions[glyphIndex];
-			float baseLine = font->glyphBaselines[glyphIndex];
+			float baseLine = font->glyphBaselines[glyphIndex] * dimensions.y;
 			AlignedRect glyphBox = AlignedRect(cursor.x, cursor.x + dimensions.x, cursor.y + dimensions.y - baseLine, cursor.y - baseLine);
 			glyphBox = glyphBox.Translate(Vector2(maxWidth * -0.5f, 0.5f * rows));
 			glyphBox.left /= maxWidth;

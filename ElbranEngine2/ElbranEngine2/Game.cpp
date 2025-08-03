@@ -64,8 +64,8 @@ Game::Game() {
 	textBox->transform->zOrder = 1;
 
 	testTexter->color = Color::Blue;
-	testTexter->transform->position.x += 0.5f;
-	testTexter->transform->rotation += 0.1f;
+	//testTexter->transform->position.x += 0.5f;
+	//testTexter->transform->rotation += 0.1f;
 	
 	/*butt1 = new Button(testScene, RandomizeColor);
 	butt1->box.transform->position += Vector2(2, 2);
