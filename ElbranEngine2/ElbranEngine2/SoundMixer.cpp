@@ -1,15 +1,5 @@
 #include "SoundMixer.h"
 
-SoundMixer::SoundMixer() {
-	faders = FixedList<AudioTrack*>(5);
-	fadeData = FixedList<FadeData>(5);
-}
-
-SoundMixer::~SoundMixer() {
-	faders.Release();
-	fadeData.Release();
-}
-
 void SoundMixer::Update(float deltaTime) {
 	for(int i = 0; i < faders.GetSize(); i++) {
 		faders[i]->mixVolume += fadeData[i].fadeRate * deltaTime;

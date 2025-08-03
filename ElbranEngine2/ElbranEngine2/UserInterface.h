@@ -36,8 +36,8 @@ public:
 	void Enable(UIElement* element);
 
 private:
-	FixedList<UIElement*> elements;
-	FixedList<UIElement*> disabled;
+	DynamicFixedList<UIElement*> elements;
+	DynamicFixedList<UIElement*> disabled;
 	UIElement* focus;
 
 	UIElement* FindFurthest(Vector2 direction);

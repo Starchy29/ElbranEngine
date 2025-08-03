@@ -5,8 +5,8 @@
 
 class SoundMixer {
 public:
-	SoundMixer();
-	virtual ~SoundMixer();
+	SoundMixer() {}
+	virtual ~SoundMixer() {}
 
 	void Update(float deltaTime);
 
@@ -37,8 +37,8 @@ private:
 		bool pauseAtEnd;
 	};
 
-	FixedList<AudioTrack*> faders;
-	FixedList<FadeData> fadeData;
+	FixedList<AudioTrack*,5> faders;
+	FixedList<FadeData,5> fadeData;
 
 	void CancelFader(AudioTrack* track);
 	void AddFader(AudioTrack* track, float targetVolume, float duration, bool pauseAtEnd);

@@ -19,10 +19,10 @@ Scene::Scene(unsigned int maxEntities, float cameraWidth)  {
 	localMatrices = new Matrix[maxEntities];
 	worldMatrices = new Matrix[maxEntities];
 
-	opaques = FixedList<IRenderer*>(maxEntities);
-	translucents = FixedList<IRenderer*>(maxEntities);
-	behaviors = FixedList<IBehavior*>(maxEntities);
-	lights = FixedList<LightSource>(maxEntities / 4);
+	opaques.Allocate(maxEntities);
+	translucents.Allocate(maxEntities);
+	behaviors.Allocate(maxEntities);
+	lights.Allocate(maxEntities / 4);
 
 	camera = {};
 	camera.viewWidth = cameraWidth;

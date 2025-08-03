@@ -5,7 +5,7 @@
 #include "FixedMap.h"
 
 struct Font {
-	FixedMap<unsigned short, unsigned short> charToGlyphIndex;
+	DynamicFixedMap<unsigned short, unsigned short> charToGlyphIndex;
 	ArrayBuffer glyphCurves;
 	ArrayBuffer firstCurveIndices;
 	Vector2* glyphDimensions;

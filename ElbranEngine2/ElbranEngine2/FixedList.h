@@ -1,66 +1,82 @@
 #pragma once
 #include <cassert>
-#include <iterator>
-#include <type_traits>
 
-// an array-based unordered list that is initialized with a set capacity which never changes
-template<class Type>
+// a locally-allocated unordered list with capacity known at compile time
+template<class Type, unsigned int capacity>
 class FixedList {
 public:
 	FixedList() {
-		dataArray = nullptr;
 		size = 0;
-		capacity = 0;
 	}
 
-	FixedList(unsigned int capacity) {
-		size = 0;
-		this->capacity = capacity;
-		dataArray = new Type[capacity] {};
-	}
-
-	void Release() {
-		// will not call delete on elements because it is unknown if Type is a pointer
-		delete[] dataArray; 
-	}
-
-	Type& operator[](int index) {
-		return dataArray[index];
-	}
-
-	unsigned int GetSize() const {
-		return size;
-	}
+	Type& operator[](int index) { return data[index]; }
+	void Clear() { size = 0; }
+	const Type* GetArray() const { return data; }
+	unsigned int GetSize() const { return size; }
 
 	void Add(Type element) {
 		assert(size < capacity && "attempted to add to a full FixedList");
-		dataArray[size] = element;
+		data[size] = element;
 		size++;
 	}
 
 	void RemoveAt(unsigned int index) {
 		assert(index < size && "attempted to remove from an index out of range");
-		dataArray[index] = dataArray[size - 1];
+		data[index] = data[size - 1];
+		size--;
+	}
+
+	int IndexOf(Type element) {
+		for(int i = 0; i < size; i++) {
+			if(data[i] == element) return i;
+		}
+		return -1;
+	}
+
+private:
+	Type data[capacity];
+	unsigned int size;
+};
+
+// a heap-allocated unordered list with capacity known at initialization
+template<class Type>
+class DynamicFixedList {
+public:
+	DynamicFixedList() {}
+
+	void Allocate(unsigned int capacity) {
+		size = 0;
+		this->capacity = capacity;
+		data = new Type[capacity] {};
+	}
+
+	void Release() { delete[] data; }
+	Type& operator[](int index) { return data[index]; }
+	unsigned int GetSize() const { return size; }
+	void Clear() { size = 0; }
+	const Type* GetArray() const { return data; }
+
+	void Add(Type element) {
+		assert(size < capacity && "attempted to add to a full FixedList");
+		data[size] = element;
+		size++;
+	}
+
+	void RemoveAt(unsigned int index) {
+		assert(index < size && "attempted to remove from an index out of range");
+		data[index] = data[size - 1];
 		size--;
 	}
 	
 	int IndexOf(Type element) {
 		for(int i = 0; i < size; i++) {
-			if(dataArray[i] == element) {
-				return i;
-			}
+			if(data[i] == element) return i;
 		}
 		return -1;
 	}
 
-	void Clear() {
-		size = 0;
-	}
-
-	const Type* GetArray() const { return dataArray; }
-
 private:
-	Type* dataArray;
+	Type* data;
 	unsigned int capacity;
 	unsigned int size;
 };

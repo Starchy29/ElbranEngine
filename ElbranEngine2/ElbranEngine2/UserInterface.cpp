@@ -10,8 +10,8 @@ UserInterface::UserInterface(unsigned int maxElements) {
 	mouseEnabled = true;
 	gamepadEnabled = true;
 	focus = nullptr;
-	elements = FixedList<UIElement*>(maxElements);
-	disabled = FixedList<UIElement*>(maxElements);
+	elements.Allocate(maxElements);
+	disabled.Allocate(maxElements);
 }
 
 UserInterface::~UserInterface() {

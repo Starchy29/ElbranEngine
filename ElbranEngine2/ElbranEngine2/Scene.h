@@ -52,10 +52,10 @@ private:
 	Matrix* worldMatrices;
 	std::vector<int> openSlots;
 
-	FixedList<IBehavior*> behaviors;
-	FixedList<LightSource> lights;
-	FixedList<IRenderer*> opaques;
-	FixedList<IRenderer*> translucents;
+	DynamicFixedList<IBehavior*> behaviors;
+	DynamicFixedList<LightSource> lights;
+	DynamicFixedList<IRenderer*> opaques;
+	DynamicFixedList<IRenderer*> translucents;
 
 	ConstantBuffer projectionBuffer;
 	ConstantBuffer lightInfoBuffer;

@@ -3,9 +3,9 @@
 
 AnimationGroup::AnimationGroup(AtlasRenderer* renderer, unsigned int numAnimations) {
 	this->renderer = renderer;
-	animators = FixedList<AtlasAnimator>(numAnimations);
-	animationSprites = FixedList<SpriteSheet*>(numAnimations);
-	nextAnimationIndices = FixedList<int>(numAnimations);
+	animators.Allocate(numAnimations);
+	animationSprites.Allocate(numAnimations);
+	nextAnimationIndices.Allocate(numAnimations);
 
 	currentAnimationIndex = -1;
 }

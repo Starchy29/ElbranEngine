@@ -55,8 +55,8 @@ Matrix2D operator*(const Matrix2D& left, const Matrix2D& right) {
 class FontLoader {
 public:
     std::ifstream fileReader;
-    FixedList<BezierCurve> curves;
-    FixedMap<Tag, uint32_t> tableStarts;
+    DynamicFixedList<BezierCurve> curves;
+    DynamicFixedMap<Tag, uint32_t> tableStarts;
     uint32_t locaStart;
     int16_t locFormat;
     uint16_t* contourEndIndices;
@@ -113,7 +113,7 @@ Font FontLoader::LoadFile(std::wstring file) {
     fileReader.ignore(6);
 
     // store the byte offsets of all data tables to support file navigation
-    tableStarts = FixedMap<Tag, uint32_t>(tableCount, Tag::Hash);
+    tableStarts.Initialize(tableCount, Tag::Hash);
     Tag newTag;
     for(uint16_t i = 0; i < tableCount; i++) {
         fileReader.read(newTag.chars, 4);
@@ -155,7 +155,7 @@ Font FontLoader::LoadFile(std::wstring file) {
     uint16_t format = ReadUInt16();
     assert((format == 4 || format == 12) && "font file uses an unsupported cmap format");
 
-    loaded.charToGlyphIndex = FixedMap<uint16_t, uint16_t>(numGlyphs, [](uint16_t let) { return (unsigned int)let; });
+    loaded.charToGlyphIndex.Initialize(numGlyphs, [](uint16_t let) { return (unsigned int)let; });
 
     if(format == 4) {
         fileReader.ignore(4);
@@ -247,8 +247,9 @@ Font FontLoader::LoadFile(std::wstring file) {
     locFormat = ReadInt16();
     assert((locFormat == 0 || locFormat == 1) && "font file has an invalid loc format");
 
-    curves = FixedList<BezierCurve>(numGlyphs * maxPoints);
-    FixedList<uint32_t> glyphStartIndices(numGlyphs + 1); // maps glyph index to index of first curve for that glyph
+    curves.Allocate(numGlyphs * maxPoints);
+    DynamicFixedList<uint32_t> glyphStartIndices;
+    glyphStartIndices.Allocate(numGlyphs + 1); // maps glyph index to index of first curve for that glyph
 
     contourEndIndices = new uint16_t[maxContours];
     flags = new uint8_t[maxPoints];

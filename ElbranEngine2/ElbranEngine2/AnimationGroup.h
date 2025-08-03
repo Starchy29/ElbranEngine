@@ -19,9 +19,9 @@ public:
 
 private:
     AtlasRenderer* renderer;
-    FixedList<AtlasAnimator> animators;
-    FixedList<SpriteSheet*> animationSprites;
-    FixedList<int> nextAnimationIndices; // input index is the current animation, the int at that index is the index of the next animation
+    DynamicFixedList<AtlasAnimator> animators;
+    DynamicFixedList<SpriteSheet*> animationSprites;
+    DynamicFixedList<int> nextAnimationIndices; // input index is the current animation, the int at that index is the index of the next animation
     int currentAnimationIndex;
 };
 
