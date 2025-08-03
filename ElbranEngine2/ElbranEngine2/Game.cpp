@@ -55,7 +55,7 @@ Game::Game() {
 	//testScene->AddRenderer(glyphAtlasShower, false);
 	//glyphAtlasShower->transform->scale *= 2.f;
 
-	testTexter = new TextRenderer("abcdefg\nhijklmnop\nqrstuvwxyz\nABCDEFG\nHIJKLMNOP\nQRSTUVWXYZ", &app->assets->testFont);
+	testTexter = new TextRenderer("abcdefghijklmnop\nqrstuvwxyz\nABCDEFGHIJKLMNOP\nQRSTUVWXYZ", &app->assets->testFont);
 	testScene->AddRenderer(testTexter, true);
 	testTexter->transform->scale = Vector2(5.0f, 4.0f);
 	textBox = new ShapeRenderer(ShapeRenderer::Shape::Square, Color::Black);
@@ -64,6 +64,8 @@ Game::Game() {
 	textBox->transform->zOrder = 1;
 
 	testTexter->color = Color::Blue;
+	testTexter->transform->position.x += 0.5f;
+	testTexter->transform->rotation += 0.1f;
 	
 	/*butt1 = new Button(testScene, RandomizeColor);
 	butt1->box.transform->position += Vector2(2, 2);
@@ -168,16 +170,16 @@ void Game::Update(float deltaTime) {
 	cursor->transform->rotation += 20.0f * app->input->GetMouseWheelSpin() * deltaTime;
 
 	if(app->input->IsPressed(InputAction::Up)) {
-		testTexter->transform->scale.y += 2.0f * deltaTime;
+		testTexter->transform->scale.y += 5.0f * deltaTime;
 	}
 	if(app->input->IsPressed(InputAction::Down)) {
-		testTexter->transform->scale.y -= 2.0f * deltaTime;
+		testTexter->transform->scale.y -= 5.0f * deltaTime;
 	}
 	if(app->input->IsPressed(InputAction::Left)) {
-		testTexter->transform->scale.x -= 2.0f * deltaTime;
+		testTexter->transform->scale.x -= 5.0f * deltaTime;
 	}
 	if(app->input->IsPressed(InputAction::Right)) {
-		testTexter->transform->scale.x += 2.0f * deltaTime;
+		testTexter->transform->scale.x += 5.0f * deltaTime;
 	}
 }
 

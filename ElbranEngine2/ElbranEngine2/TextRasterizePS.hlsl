@@ -29,13 +29,14 @@ float4 main(VertexToPixel input) : SV_TARGET {
 	
 	float pixelFourth = ddx(input.uv.x) / 4.0;
 	float numInGlyph = 0.0;
+	numInGlyph += IsInGlyph(localCoords, startCurve, lastCurve);
 	numInGlyph += IsInGlyph(localCoords + float2(pixelFourth, pixelFourth), startCurve, lastCurve);
 	numInGlyph += IsInGlyph(localCoords + float2(-pixelFourth, pixelFourth), startCurve, lastCurve);
 	numInGlyph += IsInGlyph(localCoords + float2(pixelFourth, -pixelFourth), startCurve, lastCurve);
 	numInGlyph += IsInGlyph(localCoords + float2(-pixelFourth, -pixelFourth), startCurve, lastCurve);
 	
 	float4 result = color;
-	result.a = numInGlyph / 4.0;
+	result.a = numInGlyph / 5.0;
 	clip(result.a - 0.00001);
 	return result;
 }

@@ -20,10 +20,17 @@ void TextRenderer::Draw() {
 	GraphicsAPI* graphics = app->graphics;
 
 	// calculate scalar
+	float boundAspectRatio = transform->scale.x / transform->scale.y;
+	Matrix unstretcher;
+	if(transform->scale.x > transform->scale.y * blockAspectRatio) {
+		unstretcher = Matrix::Scale(blockAspectRatio / boundAspectRatio, 1.0f);
+	} else {
+		unstretcher = Matrix::Scale(1.0f, boundAspectRatio / blockAspectRatio);
+	}
 	
 	// set vertex shader
 	CameraVSConstants vsInput;
-	vsInput.worldTransform = worldMatrix->Transpose();
+	vsInput.worldTransform = (*worldMatrix * unstretcher).Transpose();
 	vsInput.uvOffset = Vector2::Zero;
 	vsInput.uvScale = Vector2(1.f, 1.f);
 	graphics->SetVertexShader(&app->assets->cameraVS, &vsInput, sizeof(CameraVSConstants));
@@ -113,4 +120,5 @@ void TextRenderer::GenerateMesh() {
 	}
 
 	textMesh = app->graphics->CreateMesh(vertices, 4 * textLength, indices, 6 * textLength, false);
+	blockAspectRatio = maxWidth / rows;
 }

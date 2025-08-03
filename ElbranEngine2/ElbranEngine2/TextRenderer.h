@@ -29,6 +29,7 @@ private:
     const Font* font;
     std::string text;
     Mesh textMesh;
+    float blockAspectRatio;
 
     void GenerateMesh();
 };
