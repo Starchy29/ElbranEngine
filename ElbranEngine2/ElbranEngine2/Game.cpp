@@ -55,9 +55,9 @@ Game::Game() {
 	//testScene->AddRenderer(glyphAtlasShower, false);
 	//glyphAtlasShower->transform->scale *= 2.f;
 
-	testTexter = new TextRenderer("when the\ntext renders:", &app->assets->testFont);
+	testTexter = new TextRenderer("abcdefg\nhijklmnop\nqrstuvwxyz\nABCDEFG\nHIJKLMNOP\nQRSTUVWXYZ", &app->assets->testFont);
 	testScene->AddRenderer(testTexter, false);
-	testTexter->transform->scale.x = 3.0f;
+	testTexter->transform->scale = Vector2(5.0f, 4.0f);
 	textBox = new ShapeRenderer(ShapeRenderer::Shape::Square, Color::Black);
 	testScene->AddRenderer(textBox, false);
 	textBox->transform->parent = testTexter->transform;
@@ -148,7 +148,7 @@ Game::~Game() {
 void Game::Update(float deltaTime) {
 	UInt2 viewSize = app->graphics->GetViewDimensions();
 
-	//cursor->transform->position = app->input->GetMousePosition(&testScene->camera);
+	cursor->transform->position = app->input->GetMousePosition(&testScene->camera);
 	testScene->Update(deltaTime);
 
 	if(app->input->JustPressed(InputAction::Select, 0)) {

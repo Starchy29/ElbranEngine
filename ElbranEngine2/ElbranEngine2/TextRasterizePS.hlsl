@@ -23,7 +23,7 @@ float4 main(VertexToPixel input) : SV_TARGET {
 	localCoords.y = 1.0 - localCoords.y; // flip upside-down to match UV orientation
 	
 	// find all curve intersection for this row of pixels
-	uint intersections = 0;
+	uint windCount = 0; // add 1 for an intersection of a downward curve and -1 for an upward curve
 	uint startCurve = glyphStartIndices[glyphIndex];
 	uint lastCurve = glyphStartIndices[glyphIndex + 1] - 1;
 	
@@ -47,15 +47,18 @@ float4 main(VertexToPixel input) : SV_TARGET {
 				+ isLine * (-c / safeB); // simpler equation for straight lines
 		float t2 = isCurve * (-b - rootDeterminant) / (2.0*a);
 		
+		float slopeY1 = isCurve * (2*a*t1) + b;
+		float slopeY2 = isCurve * (2*a*t2) + b;
+		
 		float onCurve = isCurve * saturate(ceil(determinant)); // 1 when determinant > 0, 0 otherwise
 		uint hasIntersection = (onCurve + isLine) * Is0To1(t1) * (CalcBezierX(curves[curveIndex], t1) >= localCoords.x);
-		intersections += hasIntersection;
+		windCount += hasIntersection * sign(slopeY1);
 		
 		hasIntersection = onCurve * Is0To1(t2) * (CalcBezierX(curves[curveIndex], t2) >= localCoords.x); // straight lines have 1 intersection
-		intersections += hasIntersection;
+		windCount += hasIntersection * sign(slopeY2);
 	}
 	
-	float4 result = color * (intersections % 2 == 1);
+	float4 result = color * (windCount != 0);
 	clip(result.a - 0.00001);
 	return result;
 }

@@ -1,6 +1,7 @@
 #include "MemoryArena.h"
 #include <cassert>
 #include <cstring>
+#include <string>
 
 MemoryArena::MemoryArena(unsigned int size) {
 	data = new char[size];
