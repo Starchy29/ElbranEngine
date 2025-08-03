@@ -56,12 +56,14 @@ Game::Game() {
 	//glyphAtlasShower->transform->scale *= 2.f;
 
 	testTexter = new TextRenderer("abcdefg\nhijklmnop\nqrstuvwxyz\nABCDEFG\nHIJKLMNOP\nQRSTUVWXYZ", &app->assets->testFont);
-	testScene->AddRenderer(testTexter, false);
+	testScene->AddRenderer(testTexter, true);
 	testTexter->transform->scale = Vector2(5.0f, 4.0f);
 	textBox = new ShapeRenderer(ShapeRenderer::Shape::Square, Color::Black);
 	testScene->AddRenderer(textBox, false);
 	textBox->transform->parent = testTexter->transform;
 	textBox->transform->zOrder = 1;
+
+	testTexter->color = Color::Blue;
 	
 	/*butt1 = new Button(testScene, RandomizeColor);
 	butt1->box.transform->position += Vector2(2, 2);

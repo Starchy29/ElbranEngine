@@ -1,5 +1,5 @@
 #define GAME_TITLE "Elbran Engine"
-#define MAX_FPS 60.f
+#define MAX_FPS 240.f
 #define ASPECT_RATIO 16.f / 9.f
 #define MAX_PLAYERS 1
 
