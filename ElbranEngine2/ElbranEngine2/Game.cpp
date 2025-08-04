@@ -33,6 +33,8 @@ Button* butt4;
 TextRenderer* testTexter;
 ShapeRenderer* textBox;
 SliderUI* slider;
+ParticleRenderer* particles;
+ParticleBehavior* partUpdater;
 
 void RandomizeColor(Button* clicked) {
 	clicked->box.color = Color(app->rng->GenerateFloat(0, 1), app->rng->GenerateFloat(0, 1), app->rng->GenerateFloat(0, 1));
@@ -58,6 +60,7 @@ Game::Game() {
 	testTexter = new TextRenderer("abcdefghijklmnop\nqrstuvwxyz\nABCDEFGHIJKLMNOP\nQRSTUVWXYZ", &app->assets->testFont);
 	testScene->AddRenderer(testTexter, true);
 	testTexter->transform->scale = Vector2(5.0f, 4.0f);
+	testTexter->transform->zOrder = 50;
 	textBox = new ShapeRenderer(ShapeRenderer::Shape::Square, Color::Black);
 	testScene->AddRenderer(textBox, false);
 	textBox->transform->parent = testTexter->transform;
@@ -110,6 +113,19 @@ Game::Game() {
 
 	//checker->lit = true;
 
+	particles = new ParticleRenderer(200, app->assets->testParticle);
+	testScene->AddRenderer(particles, true);
+	particles->transform->scale *= 3.0f;
+	particles->blendAdditive = true;
+	particles->lifespan = 1.0f;
+	
+	partUpdater = new ParticleBehavior(particles);
+	testScene->AddBehavior(partUpdater);
+	partUpdater->SetSpawnRate(50);
+	partUpdater->moveStyle = ParticleBehavior::MoveStyle::Outward;
+	partUpdater->speed = -1.0f;
+	partUpdater->spinRate = 2.0f;
+
 	//ParticleRenderer* parts = new ParticleRenderer(200, app->assets->testSprite);
 	//ParticleBehavior* swarm = new ParticleBehavior(parts);
 	//testScene->AddRenderer(parts, true);
@@ -147,6 +163,8 @@ Game::~Game() {
 	delete butt3;
 	delete butt4;
 	delete slider;
+	delete particles;
+	delete partUpdater;
 }
 
 void Game::Update(float deltaTime) {

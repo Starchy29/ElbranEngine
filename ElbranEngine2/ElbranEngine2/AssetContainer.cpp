@@ -62,6 +62,7 @@ AssetContainer::AssetContainer(std::wstring filePath, GraphicsAPI* graphics, Sou
 	apple = graphics->LoadSprite(L"apple.jpeg");
 	testAtlas = LoadSpriteSheet(L"test atlas.png", 3, 3, 8);
 	testAnimation2 = LoadSpriteSheet(L"test animation.png", 2, 2, 4);
+	testParticle = graphics->LoadSprite(L"tset particle.png");
 
 	testSound = audio->LoadEffect(filePath, L"water plunk.wav");
 	testMusic = audio->LoadTrack(filePath, L"Menu song.wav", true);
@@ -103,6 +104,7 @@ AssetContainer::~AssetContainer() {
 	graphics->ReleaseTexture(&apple);
 	graphics->ReleaseTexture(&testAtlas.texture);
 	graphics->ReleaseTexture(&testAnimation2.texture);
+	graphics->ReleaseTexture(&testParticle);
 
 	audio->ReleaseSoundEffect(&testSound);
 	audio->ReleaseAudioTrack(&testMusic);

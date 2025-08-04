@@ -52,12 +52,18 @@ Scene::~Scene() {
 }
 
 void Scene::Update(float deltaTime) {
-	for(unsigned int i = 0; i < behaviors.GetSize(); i++) {
-		// behaviors may be added or deleted mid-update
+	unsigned int numBehaviors = behaviors.GetSize();
+	for(unsigned int i = 0; i < numBehaviors; i++) {
 		if(behaviors[i]->enabled) {
 			behaviors[i]->Update(deltaTime);
 		}
 	}
+
+	unsigned int numDeleted = toBeDeleted.GetSize();
+	for(unsigned int i = 0; i < numDeleted; i++) {
+		behaviors.RemoveAt(toBeDeleted[i] - behaviors[0]);
+	}
+	toBeDeleted.Clear();
 }
 
 void Scene::Draw() {
@@ -264,7 +270,7 @@ void Scene::RemoveRenderer(IRenderer* renderer) {
 }
 
 void Scene::RemoveBehavior(IBehavior* behavior) {
-	behaviors.RemoveAt(behavior - behaviors[0]);
+	if(toBeDeleted.IndexOf(behavior) < 0) toBeDeleted.Add(behavior);
 }
 
 void Scene::RemoveLight(LightSource* light) {

@@ -56,6 +56,7 @@ private:
 	DynamicFixedList<LightSource> lights;
 	DynamicFixedList<IRenderer*> opaques;
 	DynamicFixedList<IRenderer*> translucents;
+	FixedList<IBehavior*, 10> toBeDeleted;
 
 	ConstantBuffer projectionBuffer;
 	ConstantBuffer lightInfoBuffer;

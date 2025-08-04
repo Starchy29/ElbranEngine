@@ -37,6 +37,7 @@ public:
 
 	Texture2D testSprite;
 	Texture2D apple;
+	Texture2D testParticle;
 	SpriteSheet testAtlas;
 	SpriteSheet testAnimation2;
 
