@@ -61,6 +61,9 @@ public:
 	virtual ~GraphicsAPI() {}
 	virtual void Release();
 
+	virtual bool IsFullscreen() const = 0;
+	virtual void SetFullscreen(bool fullscreen) {}
+
 	void Render(Game* game);
 	void ApplyPostProcesses();
 	RenderTarget* GetPostProcessHelper(int slot);

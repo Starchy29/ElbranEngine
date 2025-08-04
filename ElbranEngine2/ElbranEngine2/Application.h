@@ -27,6 +27,7 @@ public:
 #endif
 
 	std::wstring filePath;
+	void (*quitFunction)();
 
 	static void InitApp(std::wstring filePath, GraphicsAPI* graphics, SoundMixer* audio, InputManager* input);
 	void Release();

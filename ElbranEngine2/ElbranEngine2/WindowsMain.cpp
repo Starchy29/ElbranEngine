@@ -162,6 +162,10 @@ void InitWindow(HINSTANCE hInstance) {
 	UpdateWindow(windowHandle);
 }
 
+void QuitApp() {
+	PostQuitMessage(0);
+}
+
 // entry point for desktop app
 int WINAPI WinMain(
 	_In_ HINSTANCE hInstance,
@@ -196,6 +200,7 @@ int WINAPI WinMain(
 	directX = new DirectXAPI(windowHandle, Int2(windowRect.right - windowRect.left, windowRect.bottom - windowRect.top), ASPECT_RATIO, directory);
 	input = new WindowsInput(windowHandle);
 	Application::InitApp(directory, directX, new WindowsAudio(), input);
+	app->quitFunction = QuitApp;
 	RunApp();
 	app->Release();
 	delete app;

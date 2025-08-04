@@ -69,7 +69,7 @@ void UserInterface::Update(float deltaTime) {
 		Vector2 mouseDelta = inputs->GetMouseDelta(&scene->camera);
 
 		// click and drag
-		if(focus && (mouseDelta != Vector2::Zero && inputs->IsPressed(InputAction::Select) || inputs->JustPressed(InputAction::Select))) { // select is left click
+		if(focus && (mouseDelta != Vector2::Zero && inputs->IsPressed(InputAction::LeftCLick) || inputs->JustPressed(InputAction::LeftCLick))) {
 			focus->OnMouseDragged(mouseDelta);
 		}
 

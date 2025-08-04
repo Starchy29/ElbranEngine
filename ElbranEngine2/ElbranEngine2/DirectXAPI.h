@@ -15,6 +15,8 @@ public:
     DirectXAPI(HWND windowHandle, Int2 windowDims, float viewAspectRatio, std::wstring directory);
     void Release() override;
 
+    bool IsFullscreen() const override;
+    void SetFullscreen(bool fullscreen) override;
     void Resize(Int2 windowDims, float viewAspectRatio);
 
     void DrawVertices(unsigned int numVertices) override;

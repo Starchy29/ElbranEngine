@@ -137,6 +137,16 @@ void DirectXAPI::Release() {
 	GraphicsAPI::Release();
 }
 
+bool DirectXAPI::IsFullscreen() const {
+	BOOL fullscreen;
+	swapChain->GetFullscreenState(&fullscreen, nullptr);
+	return fullscreen;
+}
+
+void DirectXAPI::SetFullscreen(bool fullscreen) {
+	swapChain->SetFullscreenState(fullscreen, nullptr);
+}
+
 void DirectXAPI::Resize(Int2 windowDims, float viewAspectRatio) {
 	this->viewAspectRatio = viewAspectRatio;
 	depthStencilView.Reset();

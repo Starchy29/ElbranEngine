@@ -11,6 +11,8 @@ enum class InputAction {
 	Right,
 	Select,
 	Back,
+	RightClick,
+	LeftCLick,
 
 	ACTION_COUNT // number of elements, must always be last
 };

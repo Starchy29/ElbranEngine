@@ -39,6 +39,9 @@ InputManager::InputManager() {
 		bindings[i][(int)InputAction::Back].keys[0] = KEY_BACKSPACE;
 		bindings[i][(int)InputAction::Back].keys[1] = KEY_ESCAPE;
 		bindings[i][(int)InputAction::Back].buttons[0] = GamepadButton::B;
+
+		bindings[i][(int)InputAction::LeftCLick].keys[0] = KEY_MOUSE_LEFT;
+		bindings[i][(int)InputAction::RightClick].keys[0] = KEY_MOUSE_RIGHT;
 	}
 }
 
