@@ -7,7 +7,7 @@ class AtlasRenderer :
     public IRenderer
 {
 public:
-    SpriteSheet* atlas;
+    const SpriteSheet* atlas;
     int row;
     int col;
 
@@ -16,7 +16,7 @@ public:
     bool flipX;
     bool flipY;
 
-    AtlasRenderer(SpriteSheet* atlas);
+    AtlasRenderer(const SpriteSheet* atlas);
 
     void Draw() override;
 };

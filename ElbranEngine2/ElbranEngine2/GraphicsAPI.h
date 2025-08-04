@@ -69,12 +69,12 @@ public:
 	UInt2 GetViewOffset() const;
 	float GetViewAspectRatio() const;
 
-	virtual VertexShader LoadVertexShader(std::wstring directory, std::wstring fileName) = 0;
-	virtual GeometryShader LoadGeometryShader(std::wstring directory, std::wstring fileName) = 0;
-	virtual PixelShader LoadPixelShader(std::wstring directory, std::wstring fileName) = 0;
-	virtual ComputeShader LoadComputeShader(std::wstring directory, std::wstring fileName) = 0;
+	virtual VertexShader LoadVertexShader(std::wstring fileName) = 0;
+	virtual GeometryShader LoadGeometryShader(std::wstring fileName) = 0;
+	virtual PixelShader LoadPixelShader(std::wstring fileName) = 0;
+	virtual ComputeShader LoadComputeShader(std::wstring fileName) = 0;
 
-	virtual Texture2D LoadSprite(std::wstring directory, std::wstring fileName) = 0;
+	virtual Texture2D LoadSprite(std::wstring fileName) = 0;
 	virtual Sampler CreateDefaultSampler() = 0;
 	virtual Mesh CreateMesh(const Vertex* vertices, int vertexCount, const unsigned int* indices, int indexCount, bool editable) = 0;
 	virtual ConstantBuffer CreateConstantBuffer(unsigned int byteLength) = 0;

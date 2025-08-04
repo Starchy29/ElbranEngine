@@ -5,7 +5,7 @@
 #include "ShaderConstants.h"
 #include "Math.h"
 
-PatternRenderer::PatternRenderer(Texture2D* sprite) {
+PatternRenderer::PatternRenderer(const Texture2D* sprite) {
 	this->sprite = sprite;
 	origin = Vector2::Zero;
 	blockSize = Vector2(1, 1);

@@ -4,7 +4,7 @@
 #include "AssetContainer.h"
 #include "ShaderConstants.h"
 
-AtlasRenderer::AtlasRenderer(SpriteSheet* atlas) {
+AtlasRenderer::AtlasRenderer(const SpriteSheet* atlas) {
 	transform = nullptr;
 	worldMatrix = nullptr;
 

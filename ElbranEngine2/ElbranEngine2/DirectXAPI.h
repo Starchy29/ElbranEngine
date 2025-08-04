@@ -20,12 +20,12 @@ public:
     void DrawVertices(unsigned int numVertices) override;
     void DrawMesh(const Mesh* mesh) override;
 
-    VertexShader LoadVertexShader(std::wstring directory, std::wstring fileName) override;
-    GeometryShader LoadGeometryShader(std::wstring directory, std::wstring fileName) override;
-    PixelShader LoadPixelShader(std::wstring directory, std::wstring fileName) override;
-    ComputeShader LoadComputeShader(std::wstring directory, std::wstring fileName) override;
+    VertexShader LoadVertexShader(std::wstring fileName) override;
+    GeometryShader LoadGeometryShader(std::wstring fileName) override;
+    PixelShader LoadPixelShader(std::wstring fileName) override;
+    ComputeShader LoadComputeShader(std::wstring fileName) override;
 
-    Texture2D LoadSprite(std::wstring directory, std::wstring fileName) override;
+    Texture2D LoadSprite(std::wstring fileName) override;
     Sampler CreateDefaultSampler() override;
     Mesh CreateMesh(const Vertex* vertices, int vertexCount, const unsigned int* indices, int indexCount, bool editable) override;
     ConstantBuffer CreateConstantBuffer(unsigned int byteLength) override;
@@ -94,7 +94,7 @@ private:
     TextureData* CreateTexture(unsigned int width, unsigned int height, bool renderTarget, bool computeWritable);
     Buffer* CreateIndexedBuffer(unsigned int elements, unsigned int elementBytes, bool structured, bool cpuWrite, bool gpuWrite);
 
-    ID3DBlob* LoadShader(std::wstring directory, std::wstring fileName);
+    ID3DBlob* LoadShader(std::wstring fileName);
     ConstantBuffer LoadConstantBuffer(ID3DBlob* shaderBlob);
 
     DXGI_FORMAT FormatOf(ShaderDataType type);

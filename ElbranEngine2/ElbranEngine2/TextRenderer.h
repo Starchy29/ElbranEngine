@@ -8,14 +8,10 @@ class TextRenderer :
     public IRenderer
 {
 public:
-    struct {
-        Direction horizontalAlignment;
-        Direction verticalAlignment;
-        float padding;
-    } positioning;
-
+    Direction horizontalAlignment;
+    Direction verticalAlignment;
+    float padding;
     Color color;
-    unsigned int hiddenChars; // number of omitted characters from the end of the text
 
     TextRenderer(std::string text, const Font* font);
     ~TextRenderer();

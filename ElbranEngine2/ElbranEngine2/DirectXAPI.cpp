@@ -213,8 +213,8 @@ void DirectXAPI::DrawMesh(const Mesh* mesh) {
 	context->DrawIndexed(mesh->indexCount, 0, 0);
 }
 
-VertexShader DirectXAPI::LoadVertexShader(std::wstring directory, std::wstring fileName) {
-	ID3DBlob* shaderBlob = LoadShader(directory, fileName);
+VertexShader DirectXAPI::LoadVertexShader(std::wstring fileName) {
+	ID3DBlob* shaderBlob = LoadShader(fileName);
 	VertexShader newShader = {};
 	HRESULT result = device->CreateVertexShader(shaderBlob->GetBufferPointer(), shaderBlob->GetBufferSize(), 0, &newShader.shader);
 	assert(result == S_OK && "failed to create vertex shader");
@@ -223,8 +223,8 @@ VertexShader DirectXAPI::LoadVertexShader(std::wstring directory, std::wstring f
 	return newShader;
 }
 
-GeometryShader DirectXAPI::LoadGeometryShader(std::wstring directory, std::wstring fileName) {
-	ID3DBlob* shaderBlob = LoadShader(directory, fileName);
+GeometryShader DirectXAPI::LoadGeometryShader(std::wstring fileName) {
+	ID3DBlob* shaderBlob = LoadShader(fileName);
 	GeometryShader newShader = {};
 	HRESULT result = device->CreateGeometryShader(shaderBlob->GetBufferPointer(), shaderBlob->GetBufferSize(), 0, &newShader.shader);
 	assert(result == S_OK && "failed to create geometry shader");
@@ -233,8 +233,8 @@ GeometryShader DirectXAPI::LoadGeometryShader(std::wstring directory, std::wstri
 	return newShader;
 }
 
-PixelShader DirectXAPI::LoadPixelShader(std::wstring directory, std::wstring fileName) {
-	ID3DBlob* shaderBlob = LoadShader(directory, fileName);
+PixelShader DirectXAPI::LoadPixelShader(std::wstring fileName) {
+	ID3DBlob* shaderBlob = LoadShader(fileName);
 	PixelShader newShader = {};
 	HRESULT result = device->CreatePixelShader(shaderBlob->GetBufferPointer(), shaderBlob->GetBufferSize(), 0, &newShader.shader);
 	assert(result == S_OK && "failed to create pixel shader");
@@ -243,8 +243,8 @@ PixelShader DirectXAPI::LoadPixelShader(std::wstring directory, std::wstring fil
 	return newShader;
 }
 
-ComputeShader DirectXAPI::LoadComputeShader(std::wstring directory, std::wstring fileName) {
-	ID3DBlob* shaderBlob = LoadShader(directory, fileName);
+ComputeShader DirectXAPI::LoadComputeShader(std::wstring fileName) {
+	ID3DBlob* shaderBlob = LoadShader(fileName);
 	ComputeShader newShader = {};
 	HRESULT result = device->CreateComputeShader(shaderBlob->GetBufferPointer(), shaderBlob->GetBufferSize(), 0, &newShader.shader);
 	assert(result == S_OK && "failed to create compute shader");
@@ -647,9 +647,9 @@ RenderTarget* DirectXAPI::GetBackBuffer() {
 	return &backBuffer;
 }
 
-Texture2D DirectXAPI::LoadSprite(std::wstring directory, std::wstring fileName) {
+Texture2D DirectXAPI::LoadSprite(std::wstring fileName) {
 	Texture2D result;
-	std::wstring fullPath = directory + L"Assets\\" + fileName;
+	std::wstring fullPath = app->filePath + L"Assets\\" + fileName;
 	ID3D11Resource* textureResource;
 	DirectX::CreateWICTextureFromFile(device.Get(), context.Get(), fullPath.c_str(), &textureResource, &result.inputView);
 	result.data = (TextureData*)textureResource;
@@ -741,8 +741,8 @@ Buffer* DirectXAPI::CreateIndexedBuffer(unsigned int elements, unsigned int elem
 	return result;
 }
 
-ID3DBlob* DirectXAPI::LoadShader(std::wstring directory, std::wstring fileName) {
-	std::wstring fileString = directory + fileName;
+ID3DBlob* DirectXAPI::LoadShader(std::wstring fileName) {
+	std::wstring fileString = app->filePath + fileName;
 	LPCWSTR filePath = fileString.c_str();
 	ID3DBlob* shaderBlob;
 	HRESULT hr = D3DReadFileToBlob(filePath, &shaderBlob);

@@ -7,7 +7,7 @@ class PatternRenderer :
     public IRenderer
 {
 public:
-	Texture2D* sprite;
+	const Texture2D* sprite;
 	Vector2 origin;
 	Vector2 blockSize;
 
@@ -16,7 +16,7 @@ public:
 	bool flipX;
 	bool flipY;
 
-	PatternRenderer(Texture2D* sprite);
+	PatternRenderer(const Texture2D* sprite);
 
 	void Draw() override;
 };

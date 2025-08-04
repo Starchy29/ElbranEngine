@@ -3,7 +3,7 @@
 #include "Application.h"
 #include "SoundMixer.h"
 
-#define LoadSpriteSheet(fileName, rows, cols, numSprites) SpriteSheet{ graphics->LoadSprite(filePath, fileName), rows, cols, numSprites }
+#define LoadSpriteSheet(fileName, rows, cols, numSprites) SpriteSheet{ graphics->LoadSprite(fileName), rows, cols, numSprites }
 
 AssetContainer::AssetContainer(std::wstring filePath, GraphicsAPI* graphics, SoundMixer* audio) {
 	defaultSampler = graphics->CreateDefaultSampler();
@@ -38,28 +38,28 @@ AssetContainer::AssetContainer(std::wstring filePath, GraphicsAPI* graphics, Sou
 	unitTriangle = graphics->CreateMesh(triVerts, 3, triIndices, 3, false);
 
 	// load shaders
-	fullscreenVS = graphics->LoadVertexShader(filePath, L"FullscreenVS.cso");
-	cameraVS = graphics->LoadVertexShader(filePath, L"CameraVS.cso");
-	particlePassPS = graphics->LoadVertexShader(filePath, L"ParticlePassVS.cso");
+	fullscreenVS = graphics->LoadVertexShader(L"FullscreenVS.cso");
+	cameraVS = graphics->LoadVertexShader(L"CameraVS.cso");
+	particlePassPS = graphics->LoadVertexShader(L"ParticlePassVS.cso");
 
-	particleQuadGS = graphics->LoadGeometryShader(filePath, L"ParticleQuadGS.cso");
+	particleQuadGS = graphics->LoadGeometryShader(L"ParticleQuadGS.cso");
 
-	solidColorPS = graphics->LoadPixelShader(filePath, L"SolidColorPS.cso");
-	texturePS = graphics->LoadPixelShader(filePath, L"TexturePS.cso");
-	circleFillPS = graphics->LoadPixelShader(filePath, L"CircleFillPS.cso");
+	solidColorPS = graphics->LoadPixelShader(L"SolidColorPS.cso");
+	texturePS = graphics->LoadPixelShader(L"TexturePS.cso");
+	circleFillPS = graphics->LoadPixelShader(L"CircleFillPS.cso");
 
-	conSatValPP = graphics->LoadPixelShader(filePath, L"ConSatValPP.cso");
-	blurPP = graphics->LoadPixelShader(filePath, L"BlurPP.cso");
-	bloomFilterPP = graphics->LoadPixelShader(filePath, L"BloomFilterPP.cso");
-	screenSumPP = graphics->LoadPixelShader(filePath, L"ScreenSumPP.cso");
+	conSatValPP = graphics->LoadPixelShader(L"ConSatValPP.cso");
+	blurPP = graphics->LoadPixelShader(L"BlurPP.cso");
+	bloomFilterPP = graphics->LoadPixelShader(L"BloomFilterPP.cso");
+	screenSumPP = graphics->LoadPixelShader(L"ScreenSumPP.cso");
 
-	brightnessSumCS = graphics->LoadComputeShader(filePath, L"BrightnessSumCS.cso");
-	particleSpawnCS = graphics->LoadComputeShader(filePath, L"ParticleSpawnCS.cso");
-	particleMoveCS = graphics->LoadComputeShader(filePath, L"ParticleMoveCS.cso");
-	textRasterizePS = graphics->LoadPixelShader(filePath, L"TextRasterizePS.cso");
+	brightnessSumCS = graphics->LoadComputeShader(L"BrightnessSumCS.cso");
+	particleSpawnCS = graphics->LoadComputeShader(L"ParticleSpawnCS.cso");
+	particleMoveCS = graphics->LoadComputeShader(L"ParticleMoveCS.cso");
+	textRasterizePS = graphics->LoadPixelShader(L"TextRasterizePS.cso");
 
-	testSprite = graphics->LoadSprite(filePath, L"elbran.png");
-	apple = graphics->LoadSprite(filePath, L"apple.jpeg");
+	testSprite = graphics->LoadSprite(L"elbran.png");
+	apple = graphics->LoadSprite(L"apple.jpeg");
 	testAtlas = LoadSpriteSheet(L"test atlas.png", 3, 3, 8);
 	testAnimation2 = LoadSpriteSheet(L"test animation.png", 2, 2, 4);
 

@@ -4,7 +4,7 @@
 #include "AssetContainer.h"
 #include "ShaderConstants.h"
 
-SpriteRenderer::SpriteRenderer(Texture2D* sprite) {
+SpriteRenderer::SpriteRenderer(const Texture2D* sprite) {
 	transform = nullptr;
 	worldMatrix = nullptr;
 
