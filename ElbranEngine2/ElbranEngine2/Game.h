@@ -14,6 +14,5 @@ public:
 
 private:
 	Scene* testScene;
-	ShapeRenderer* cursor;
 };
 

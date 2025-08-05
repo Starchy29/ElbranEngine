@@ -49,10 +49,6 @@ Game::Game() {
 	background->transform->zOrder = 99.f;
 	background->transform->scale = testScene->camera.GetWorldDimensions();
 
-	cursor = new ShapeRenderer(ShapeRenderer::Shape::Circle, Color(0, 1, 1, 0.6f));
-	testScene->AddRenderer(cursor, true);
-	cursor->transform->scale *= 0.3f;
-
 	//SpriteRenderer* glyphAtlasShower = new SpriteRenderer(&app->assets->testFont.glyphAtlas);
 	//testScene->AddRenderer(glyphAtlasShower, false);
 	//glyphAtlasShower->transform->scale *= 2.f;
@@ -66,64 +62,23 @@ Game::Game() {
 	textBox->transform->parent = testTexter->transform;
 	textBox->transform->zOrder = 1;
 
-	testTexter->color = Color::Blue;
+	//testTexter->color = Color::Blue;
 	//testTexter->transform->position.x += 0.5f;
 	//testTexter->transform->rotation += 0.1f;
-	
-	butt1 = new Button(testScene, RandomizeColor);
-	butt1->box.transform->position += Vector2(2, 2);
-	butt2 = new Button(testScene, RandomizeColor);
-	butt2->box.transform->position += Vector2(-2, 2);
-	butt3 = new Button(testScene, RandomizeColor);
-	butt3->box.transform->position += Vector2(2, -1);
-	butt4 = new Button(testScene, RandomizeColor);
-	butt4->box.transform->position += Vector2(0, 0);
-
-	butt1->box.transform->scale = Vector2(2.0f, 0.8f);
-	butt2->box.transform->scale = Vector2(2.0f, 0.8f);
-	butt3->box.transform->scale = Vector2(2.0f, 0.8f);
-	butt4->box.transform->scale = Vector2(2.0f, 0.8f);
-
-	butt1->box.transform->rotation = app->rng->GenerateFloat(0, 2.0f * PI);
-	butt2->box.transform->rotation = app->rng->GenerateFloat(0, 2.0f * PI);
-	butt3->box.transform->rotation = app->rng->GenerateFloat(0, 2.0f * PI);
-	butt4->box.transform->rotation = app->rng->GenerateFloat(0, 2.0f * PI);
-
-	slider = new SliderUI(testScene, 5.0f, 20);
-	slider->root->position.y -= 2.0f;
-	slider->root->zOrder = 5;
-	
-	testUI = new UserInterface(5);
-	testScene->AddBehavior(testUI);
-	testUI->Join(butt1);
-	testUI->Join(butt2);
-	testUI->Join(butt3);
-	testUI->Join(butt4);
-	testUI->Join(slider);
-
-	//AtlasRenderer* testSheet = new AtlasRenderer(&app->assets->testAtlas);
-	//testScene->AddRenderer(testSheet, false);
-	//testSheet->transform->scale *= 2.0f;
-	//testSheet->row = 1;
-	//testSheet->col = 1;
-
-	//animator = new AtlasAnimator(testSheet, 8.f);
-	//testScene->AddBehavior(animator);
-	//animator->looped = true;
-
-	//checker->lit = true;
 
 	particles = new ParticleRenderer(200, app->assets->testParticle);
 	testScene->AddRenderer(particles, true);
 	particles->transform->scale *= 3.0f;
 	particles->blendAdditive = true;
-	particles->lifespan = 1.0f;
+	particles->lifespan = 0.5f;
+	particles->startWidth = 0.5f;
+	particles->transform->scale *= 0.5f;
 	
 	partUpdater = new ParticleBehavior(particles);
 	testScene->AddBehavior(partUpdater);
-	partUpdater->SetSpawnRate(50);
+	partUpdater->SetSpawnRate(100);
 	partUpdater->moveStyle = ParticleBehavior::MoveStyle::Outward;
-	partUpdater->speed = -1.0f;
+	partUpdater->speed = -2.0f;
 	partUpdater->spinRate = 2.0f;
 
 	//ParticleRenderer* parts = new ParticleRenderer(200, app->assets->testSprite);
@@ -152,7 +107,6 @@ Game::Game() {
 Game::~Game() {
 	delete testScene;
 	delete background;
-	delete cursor;
 
 	delete testTexter;
 	delete textBox;
@@ -170,7 +124,7 @@ Game::~Game() {
 void Game::Update(float deltaTime) {
 	UInt2 viewSize = app->graphics->GetViewDimensions();
 
-	cursor->transform->position = app->input->GetMousePosition(&testScene->camera);
+	particles->transform->position = app->input->GetMousePosition(&testScene->camera);
 	testScene->Update(deltaTime);
 
 	if(app->input->JustPressed(InputAction::Select, 0)) {
@@ -184,8 +138,6 @@ void Game::Update(float deltaTime) {
 		//app->audio->PlayTrack(&app->assets->testMusic, true);
 		//app->audio->SetTrackVolume(&app->assets->testMusic, 1.0f, 1.0f);
 	}
-
-	cursor->transform->rotation += 20.0f * app->input->GetMouseWheelSpin() * deltaTime;
 
 	if(app->input->IsPressed(InputAction::Up)) {
 		testTexter->transform->scale.y += 5.0f * deltaTime;
