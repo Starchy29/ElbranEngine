@@ -29,6 +29,12 @@ float4 main(VertexToPixel input) : SV_TARGET {
 	float upDist = 1.0;
 	float downDist = 1.0;
 	
+	// to fix anti-aliasing on overlapped contours, note the wind direction of each crossed curve inside the pixel
+	float rightWind = 0.0;
+	float leftWind = 0.0;
+	float upWind = 0.0;
+	float downWind = 0.0;
+	
 	for(uint curveIndex = startCurve; curveIndex <= lastCurve; curveIndex++) {
 		BezierCurve curve = curves[curveIndex];
 		
@@ -49,46 +55,73 @@ float4 main(VertexToPixel input) : SV_TARGET {
 		float2 safeB = b + (b == 0.0);
 		
 		float2 t1 = onCurve * (-b + rootDeterminant) / (2.0*safeA) 
-				+ isLine * (-c / safeB); // simpler equation for straight lines
+					+ isLine * (-c / safeB); // simpler equation for straight lines
 		float2 t2 = onCurve * (-b - rootDeterminant) / (2.0*safeA);
 		
-		// test horizontally
-		float slopeY1 = onCurve.y * (2 * a.y * t1.y) + b.y;
-		float slopeY2 = 2 * a.y * t2.y + b.y; // unused for straight lines
+		float2 wind1 = sign(onCurve * (2*a*t1) + b);
+		float2 wind2 = sign(2*a*t2 + b); // unused for straight lines
 		
+		float lastRight = rightDist;
+		float lastLeft = leftDist;
+		float lastUp = upDist;
+		float lastDown = downDist;
+		
+		// test horizontally	
 		float bezierDiff = (a.x * t1.y * t1.y) + (b.x * t1.y) + c.x; // c was already shifted by the local position, making this relative to the pixel
 		int hasIntersection = (onCurve.y + isLine.y) * (t1.y >= 0.0) * (t1.y <= 1.0);
+		windCount += hasIntersection * (bezierDiff >= 0.0) * wind1.y;
 		rightDist = hasIntersection * (bezierDiff > 0.0) * (min(rightDist, bezierDiff) - rightDist) + rightDist;
+		rightWind = (rightDist != lastRight) * (wind1.y - rightWind) + rightWind;
 		leftDist = hasIntersection * (bezierDiff < 0.0) * (min(leftDist, -bezierDiff) - leftDist) + leftDist;
-		windCount += hasIntersection * (bezierDiff >= 0.0) * sign(slopeY1);
+		leftWind = (leftDist != lastLeft) * (wind1.y - leftWind) + leftWind;
+		
+		lastRight = rightDist;
+		lastLeft = leftDist;
 		
 		bezierDiff = (a.x * t2.y * t2.y) + (b.x * t2.y) + c.x;
 		hasIntersection = onCurve.y * (t2.y >= 0.0) * (t2.y <= 1.0); // straight lines have 1 intersection
+		windCount += hasIntersection * (bezierDiff >= 0.0) * wind2.y;
 		rightDist = hasIntersection * (bezierDiff > 0.0) * (min(rightDist, bezierDiff) - rightDist) + rightDist;
+		rightWind = (rightDist != lastRight) * (wind2.y - rightWind) + rightWind;
 		leftDist = hasIntersection * (bezierDiff < 0.0) * (min(leftDist, -bezierDiff) - leftDist) + leftDist;
-		windCount += hasIntersection * (bezierDiff >= 0.0) * sign(slopeY2);
+		leftWind = (leftDist != lastLeft) * (wind2.y - leftWind) + leftWind;
 	
 		// test vertically
 		bezierDiff = (a.y * t1.x * t1.x) + (b.y * t1.x) + c.y; 
 		hasIntersection = (onCurve.x + isLine.x) * (t1.x >= 0.0) * (t1.x <= 1.0);
 		upDist = hasIntersection * (bezierDiff > 0.0) * (min(upDist, bezierDiff) - upDist) + upDist;
+		upWind = (upDist != lastUp) * (wind1.x - upWind) + upWind;
 		downDist = hasIntersection * (bezierDiff < 0.0) * (min(downDist, -bezierDiff) - downDist) + downDist;
+		downWind = (downDist != lastDown) * (wind1.x - downWind) + downWind;
+		
+		lastUp = upDist;
+		lastDown = downDist;
 		
 		bezierDiff = (a.y * t2.x * t2.x) + (b.y * t2.x) + c.y;
 		hasIntersection = onCurve.x * (t2.x >= 0.0) * (t2.x <= 1.0);
 		upDist = hasIntersection * (bezierDiff > 0.0) * (min(upDist, bezierDiff) - upDist) + upDist;
+		upWind = (upDist != lastUp) * (wind2.x - upWind) + upWind;
 		downDist = hasIntersection * (bezierDiff < 0.0) * (min(downDist, -bezierDiff) - downDist) + downDist;
+		downWind = (downDist != lastDown) * (wind2.x - downWind) + downWind;
 	}
 	
-	float pixelWidth = 0.02;
+	int isInGlyph = windCount != 0;
+	
+	const float pixelWidth = ddx(input.uv.x);
 	float inversePixel = 1.0 / pixelWidth;
 	rightDist = min(rightDist * inversePixel, 0.5);
 	leftDist = min(leftDist * inversePixel, 0.5);
 	upDist = min(upDist * inversePixel, 0.5);
 	downDist = min(downDist * inversePixel, 0.5);
-	float coverArea = ((rightDist + leftDist) + (upDist + downDist)) * 0.5f;
 	
-	int isInGlyph = windCount != 0;
+	// fix antialiasing on overlapped contours
+	float insideOverlap = abs(windCount) > 1;
+	rightDist = saturate(insideOverlap + isInGlyph * (rightWind == 1)) * (0.5 - rightDist) + rightDist;
+	leftDist = saturate(insideOverlap + isInGlyph * (leftWind == -1)) * (0.5 - leftDist) + leftDist;
+	upDist = saturate(insideOverlap + isInGlyph * (upWind == -1)) * (0.5 - upDist) + upDist;
+	downDist = saturate(insideOverlap + isInGlyph * (downWind == 1)) * (0.5 - downDist) + downDist;
+	
+	float coverArea = ((rightDist + leftDist) + (upDist + downDist)) * 0.5;
 	
 	float4 result = color;
 	result.a = isInGlyph * coverArea + (1 - isInGlyph) * (1.0 - coverArea);
