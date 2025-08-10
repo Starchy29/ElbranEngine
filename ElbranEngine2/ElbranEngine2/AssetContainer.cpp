@@ -68,8 +68,8 @@ AssetContainer::AssetContainer(std::wstring filePath, GraphicsAPI* graphics, Sou
 	testMusic = audio->LoadTrack(filePath, L"Menu song.wav", true);
 
 	//testFont = Font::Load(L"Exile-Regular.ttf");
-	testFont = Font::Load(L"Roboto-Regular.ttf");
-	//testFont = Font::Load(L"arial.ttf");
+	//testFont = Font::Load(L"Roboto-Regular.ttf");
+	testFont = Font::Load(L"arial.ttf");
 }
 
 AssetContainer::~AssetContainer() {

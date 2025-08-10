@@ -4,16 +4,27 @@
 #include <string>
 #include "Common.h"
 
+enum class HorizontalAlignment {
+    Left,
+    Right,
+    Center
+};
+
+enum class VerticalAlignment {
+    Top,
+    Bottom,
+    Center
+};
+
 class TextRenderer :
     public IRenderer
 {
 public:
-    Direction horizontalAlignment;
-    Direction verticalAlignment;
+    VerticalAlignment verticalAlignment;
     float padding;
     Color color;
 
-    TextRenderer(std::string text, const Font* font, float lineSpacing = 0.0f);
+    TextRenderer(std::string text, const Font* font, HorizontalAlignment horizontalAlignment = HorizontalAlignment::Left, float lineSpacing = 0.0f);
     ~TextRenderer();
 
     void Draw() override;
@@ -21,11 +32,13 @@ public:
     void SetText(std::string text);
     void SetFont(const Font* font);
     void SetLineSpacing(float spacing);
+    void SetHorizontalAlignment(HorizontalAlignment horizontalAlignment);
 
 private:
     const Font* font;
     std::string text;
     float lineSpacing;
+    HorizontalAlignment horizontalAlignment;
     Mesh textMesh;
     float blockAspectRatio;
 
