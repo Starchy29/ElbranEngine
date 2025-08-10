@@ -14,6 +14,8 @@ struct BezierCurve {
 StructuredBuffer<BezierCurve> curves : register(t0);
 Buffer<uint> glyphStartIndices : register(t1);
 
+#define EPSILON 1e-5
+
 float4 main(VertexToPixel input) : SV_TARGET {
 	int glyphIndex = (int)input.uv.x;
 	float2 localCoords = frac(input.uv);
@@ -44,12 +46,12 @@ float4 main(VertexToPixel input) : SV_TARGET {
 		float2 c = curve.start - localCoords;
 	
 		// determine if this is a horizontal line, slanted line, or curve
-		float2 isLine = (abs(a) < 0.00001);
+		float2 isLine = (abs(a) < EPSILON);
 		float2 isCurve = 1.0 - isLine;
-		isLine *= (abs(b) > 0.00001); // omit horizontal lines
+		isLine *= (abs(b) > EPSILON); // omit horizontal lines
 		
 		float2 determinant = b*b - 4*a*c;
-		float2 onCurve = isCurve * saturate(ceil(determinant)); // 1 when determinant > 0, 0 otherwise
+		float2 onCurve = isCurve * (determinant > -EPSILON); 
 		float2 rootDeterminant = sqrt(max(determinant, 0));
 		float2 safeA = a + (a == 0.0); // avoid divide by 0
 		float2 safeB = b + (b == 0.0);
@@ -58,8 +60,10 @@ float4 main(VertexToPixel input) : SV_TARGET {
 					+ isLine * (-c / safeB); // simpler equation for straight lines
 		float2 t2 = onCurve * (-b - rootDeterminant) / (2.0*safeA);
 		
-		float2 wind1 = sign(onCurve * (2*a*t1) + b);
-		float2 wind2 = sign(2*a*t2 + b); // unused for straight lines
+		float2 wind1 = onCurve + isLine * sign(b);
+		// float2 wind2 = -onCurve + isLine * sign(b); // since this is unused for straight lines, it's always -1
+		
+		if((onCurve.y || isLine.y) && (wind1.y == 0.0)) return float4(1, 0, 0, 1);
 		
 		float lastRight = rightDist;
 		float lastLeft = leftDist;
@@ -68,7 +72,7 @@ float4 main(VertexToPixel input) : SV_TARGET {
 		
 		// test horizontally	
 		float bezierDiff = (a.x * t1.y * t1.y) + (b.x * t1.y) + c.x; // c was already shifted by the local position, making this relative to the pixel
-		int hasIntersection = (onCurve.y + isLine.y) * (t1.y >= 0.0) * (t1.y <= 1.0);
+		int hasIntersection = (onCurve.y + isLine.y) * (t1.y > -EPSILON) * (t1.y <= 1.0 + EPSILON);
 		windCount += hasIntersection * (bezierDiff >= 0.0) * wind1.y;
 		rightDist = hasIntersection * (bezierDiff > 0.0) * (min(rightDist, bezierDiff) - rightDist) + rightDist;
 		rightWind = (rightDist != lastRight) * (wind1.y - rightWind) + rightWind;
@@ -79,16 +83,16 @@ float4 main(VertexToPixel input) : SV_TARGET {
 		lastLeft = leftDist;
 		
 		bezierDiff = (a.x * t2.y * t2.y) + (b.x * t2.y) + c.x;
-		hasIntersection = onCurve.y * (t2.y >= 0.0) * (t2.y <= 1.0); // straight lines have 1 intersection
-		windCount += hasIntersection * (bezierDiff >= 0.0) * wind2.y;
+		hasIntersection = onCurve.y * (t2.y > -EPSILON) * (t2.y <= 1.0 + EPSILON); // straight lines have 1 intersection
+		windCount -= hasIntersection * (bezierDiff >= 0.0);
 		rightDist = hasIntersection * (bezierDiff > 0.0) * (min(rightDist, bezierDiff) - rightDist) + rightDist;
-		rightWind = (rightDist != lastRight) * (wind2.y - rightWind) + rightWind;
+		rightWind = (rightDist != lastRight) * (-1.0 - rightWind) + rightWind;
 		leftDist = hasIntersection * (bezierDiff < 0.0) * (min(leftDist, -bezierDiff) - leftDist) + leftDist;
-		leftWind = (leftDist != lastLeft) * (wind2.y - leftWind) + leftWind;
+		leftWind = (leftDist != lastLeft) * (-1.0 - leftWind) + leftWind;
 	
 		// test vertically
 		bezierDiff = (a.y * t1.x * t1.x) + (b.y * t1.x) + c.y; 
-		hasIntersection = (onCurve.x + isLine.x) * (t1.x >= 0.0) * (t1.x <= 1.0);
+		hasIntersection = (onCurve.x + isLine.x) * (t1.x > -EPSILON) * (t1.x <= 1.0 + EPSILON);
 		upDist = hasIntersection * (bezierDiff > 0.0) * (min(upDist, bezierDiff) - upDist) + upDist;
 		upWind = (upDist != lastUp) * (wind1.x - upWind) + upWind;
 		downDist = hasIntersection * (bezierDiff < 0.0) * (min(downDist, -bezierDiff) - downDist) + downDist;
@@ -98,11 +102,11 @@ float4 main(VertexToPixel input) : SV_TARGET {
 		lastDown = downDist;
 		
 		bezierDiff = (a.y * t2.x * t2.x) + (b.y * t2.x) + c.y;
-		hasIntersection = onCurve.x * (t2.x >= 0.0) * (t2.x <= 1.0);
+		hasIntersection = onCurve.x * (t2.x > -EPSILON) * (t2.x <= 1.0 + EPSILON);
 		upDist = hasIntersection * (bezierDiff > 0.0) * (min(upDist, bezierDiff) - upDist) + upDist;
-		upWind = (upDist != lastUp) * (wind2.x - upWind) + upWind;
+		upWind = (upDist != lastUp) * (-1.0 - upWind) + upWind;
 		downDist = hasIntersection * (bezierDiff < 0.0) * (min(downDist, -bezierDiff) - downDist) + downDist;
-		downWind = (downDist != lastDown) * (wind2.x - downWind) + downWind;
+		downWind = (downDist != lastDown) * (-1.0 - downWind) + downWind;
 	}
 	
 	int isInGlyph = windCount != 0;

@@ -55,7 +55,7 @@ Game::Game() {
 
 	testTexter = new TextRenderer("abcdefghijklmnop\nqrstuvwxyz\nABCDEFGHIJKLMNOP\nQRSTUVWXYZ", &app->assets->testFont, 0.5f);
 	testTexter->padding = 0.3f;
-	//testTexter->SetText("g");
+	//testTexter->SetText("f");
 	testScene->AddRenderer(testTexter, true);
 	testTexter->transform->scale = Vector2(5.0f, 4.0f);
 	testTexter->transform->zOrder = 50;
