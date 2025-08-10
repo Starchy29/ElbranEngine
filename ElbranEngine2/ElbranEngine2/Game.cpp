@@ -53,11 +53,13 @@ Game::Game() {
 	//testScene->AddRenderer(glyphAtlasShower, false);
 	//glyphAtlasShower->transform->scale *= 2.f;
 
-	testTexter = new TextRenderer("abcdefghijklmnop\nqrstuvwxyz\nABCDEFGHIJKLMNOP\nQRSTUVWXYZ", &app->assets->testFont);
+	testTexter = new TextRenderer("abcdefghijklmnop\nqrstuvwxyz\nABCDEFGHIJKLMNOP\nQRSTUVWXYZ", &app->assets->testFont, 0.5f);
+	testTexter->padding = 0.3f;
 	//testTexter->SetText("g");
 	testScene->AddRenderer(testTexter, true);
 	testTexter->transform->scale = Vector2(5.0f, 4.0f);
 	testTexter->transform->zOrder = 50;
+
 	textBox = new ShapeRenderer(ShapeRenderer::Shape::Square, Color::Black);
 	testScene->AddRenderer(textBox, false);
 	textBox->transform->parent = testTexter->transform;
