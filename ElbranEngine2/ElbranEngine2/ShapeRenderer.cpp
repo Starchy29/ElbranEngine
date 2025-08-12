@@ -4,15 +4,16 @@
 #include "AssetContainer.h"
 #include "ShaderConstants.h"
 
-ShapeRenderer::ShapeRenderer() {
-	shape = Shape::Square;
-	color = Color::White;
-}
+ShapeRenderer::ShapeRenderer() :
+	shape{Shape::Square},
+	color{Color::White}
+{ }
 
-ShapeRenderer::ShapeRenderer(Shape shape, Color color) {
-	this->shape = shape;
-	this->color = color;
-}
+ShapeRenderer::ShapeRenderer(Shape shape, Color color) :
+	shape{shape},
+	color{color}
+
+{ }
 
 void ShapeRenderer::Draw() {
 	GraphicsAPI* graphics = app->graphics;

@@ -13,9 +13,5 @@ public:
 
     void Render(GraphicsAPI* graphics, const RenderTarget* input, RenderTarget* output) override;
     bool IsActive() const override;
-
-private:
-    PixelShader* filterShader;
-    PixelShader* combineShader;
 };
 

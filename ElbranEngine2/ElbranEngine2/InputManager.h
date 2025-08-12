@@ -84,12 +84,12 @@ public:
 
 	void Update(float deltaTime);
 
-	bool IsPressed(InputAction action, int playerIndex = 0);
-	bool JustPressed(InputAction action, int playerIndex = 0);
-	bool JustReleased(InputAction action, int playerIndex = 0);
-	Vector2 GetStick(bool left, int playerIndex = 0);
+	bool IsPressed(InputAction action, uint8_t playerIndex = 0);
+	bool JustPressed(InputAction action, uint8_t playerIndex = 0);
+	bool JustReleased(InputAction action, uint8_t playerIndex = 0);
+	Vector2 GetStick(bool left, uint8_t playerIndex = 0);
 
-	void Rumble(int playerIndex, float strength0to1, float duration);
+	void Rumble(uint8_t playerIndex, float strength0to1, float duration);
 	Vector2 GetMousePosition(const Camera* camera);
 	Vector2 GetMouseDelta(const Camera* camera);
 	float GetMouseWheelSpin();
@@ -97,12 +97,12 @@ public:
 protected:
 	virtual void CheckInputs() = 0;
 	virtual void ClearInputs() = 0;
-	virtual bool IsKeyPressed(char key, int playerIndex) = 0;
-	virtual bool IsButtonPressed(GamepadButton button, int playerIndex) = 0;
-	virtual Vector2 GetGamepadStick(bool left, int playerIndex) = 0;
+	virtual bool IsKeyPressed(char key, uint8_t playerIndex) = 0;
+	virtual bool IsButtonPressed(GamepadButton button, uint8_t playerIndex) = 0;
+	virtual Vector2 GetGamepadStick(bool left, uint8_t playerIndex) = 0;
 	virtual Vector2 GetMouseScreenPosition() = 0;
 	virtual float DetermineMouseSpin() = 0;
-	virtual void SetRumble(int playerIndex, float strength) = 0;
+	virtual void SetRumble(uint8_t playerIndex, float strength) = 0;
 
 private:
 	InputState lastState[MAX_PLAYERS];

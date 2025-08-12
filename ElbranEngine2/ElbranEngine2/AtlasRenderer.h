@@ -8,8 +8,8 @@ class AtlasRenderer :
 {
 public:
     const SpriteSheet* atlas;
-    int row;
-    int col;
+    uint8_t row;
+    uint8_t col;
 
     Color tint;
     bool lit;

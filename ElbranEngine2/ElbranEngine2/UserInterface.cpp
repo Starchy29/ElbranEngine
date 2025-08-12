@@ -4,17 +4,16 @@
 #include "Scene.h"
 #include <cassert>
 
-UserInterface::UserInterface() {}
-
-UserInterface::UserInterface(unsigned int maxElements) {
-	mouseEnabled = true;
-	gamepadEnabled = true;
-	focus = nullptr;
+UserInterface::UserInterface(uint16_t maxElements) :
+	mouseEnabled{true},
+	gamepadEnabled{true},
+	focus{nullptr}
+{
 	elements.Allocate(maxElements);
 	disabled.Allocate(maxElements);
 }
 
-UserInterface::~UserInterface() {
+void UserInterface::Release() {
 	elements.Release();
 	disabled.Release();
 }
@@ -107,7 +106,7 @@ void UserInterface::Join(UIElement* element) {
 }
 
 void UserInterface::Disable(UIElement* element) {
-	int index = elements.IndexOf(element);
+	int16_t index = elements.IndexOf(element);
 	if(index < 0) return;
 	elements.RemoveAt(index);
 	disabled.Add(element);
@@ -118,7 +117,7 @@ void UserInterface::Disable(UIElement* element) {
 }
 
 void UserInterface::Enable(UIElement* element) {
-	int index = disabled.IndexOf(element);
+	int16_t index = disabled.IndexOf(element);
 	if(index < 0) return;
 	disabled.RemoveAt(index);
 	elements.Add(element);
@@ -128,7 +127,7 @@ void UserInterface::Enable(UIElement* element) {
 UIElement* UserInterface::FindFurthest(Vector2 direction) {
 	UIElement* furthest = nullptr;
 	float maxDistance;
-	for(int i = 0; i < elements.GetSize(); i++) {
+	for(uint16_t i = 0; i < elements.GetSize(); i++) {
 		Vector2 position = *elements[i]->selectArea * Vector2::Zero;
 		Vector2 weighted = position * direction;
 		float distance = weighted.x + weighted.y;
@@ -147,7 +146,7 @@ UIElement* UserInterface::FindClosest(Vector2 direction) {
 	Vector2 start = *focus->selectArea * Vector2::Zero;
 	float minDistance;
 	UIElement* closest = nullptr;
-	for(int i = 0; i < elements.GetSize(); i++) {
+	for(uint16_t i = 0; i < elements.GetSize(); i++) {
 		Vector2 position = *elements[i]->selectArea * Vector2::Zero;
 		float dotProd = (position - start).Dot(direction);
 		if(abs(dotProd) < 0.1f) {

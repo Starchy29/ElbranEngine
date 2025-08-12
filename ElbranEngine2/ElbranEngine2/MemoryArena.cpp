@@ -1,15 +1,14 @@
 #include "MemoryArena.h"
 #include <cassert>
-#include <cstring>
 #include <string>
 
-MemoryArena::MemoryArena(unsigned int size) {
+void MemoryArena::Allocate(size_t size) {
 	data = new char[size];
 	next = data;
 	this->size = size;
 }
 
-void* MemoryArena::Reserve(unsigned int bytes, bool zeroed) {
+void* MemoryArena::Reserve(size_t bytes, bool zeroed) {
 	char* address = next;
 	next += bytes;
 	assert(next - data < size && "memory arena exceeded capacity");

@@ -13,6 +13,7 @@ public:
 	Color normalColor;
 	Color hoveredColor;
 
+	Button() {}
 	Button(Scene* scene, void (*clickEffect)(Button*));
 
 	void OnFocused() override;

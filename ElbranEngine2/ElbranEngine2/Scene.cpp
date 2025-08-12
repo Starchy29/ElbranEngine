@@ -8,13 +8,14 @@
 #define LIGHTS_REGISTER 127
 #define LIGHT_INFO_REGISTER 1
 
-Scene::Scene(unsigned int maxEntities, float cameraWidth)  {
-	ambientLight = Color::White;
-	backgroundColor = Color::White;
-	backgroundImage = nullptr;
-
-	entityCount = 0;
-	this->maxEntities = maxEntities;
+Scene::Scene(uint16_t maxEntities, float cameraWidth) :
+	ambientLight{Color::White},
+	backgroundColor{Color::White},
+	backgroundImage{nullptr},
+	entityCount{0},
+	maxEntities{maxEntities},
+	camera{}
+{
 	transforms = new Transform[maxEntities];
 	localMatrices = new Matrix[maxEntities];
 	worldMatrices = new Matrix[maxEntities];
@@ -24,7 +25,6 @@ Scene::Scene(unsigned int maxEntities, float cameraWidth)  {
 	behaviors.Allocate(maxEntities);
 	lights.Allocate(maxEntities / 4);
 
-	camera = {};
 	camera.viewWidth = cameraWidth;
 	ReserveTransform(&camera.transform, &camera.worldMatrix);
 
@@ -52,15 +52,15 @@ Scene::~Scene() {
 }
 
 void Scene::Update(float deltaTime) {
-	unsigned int numBehaviors = behaviors.GetSize();
-	for(unsigned int i = 0; i < numBehaviors; i++) {
+	uint32_t numBehaviors = behaviors.GetSize();
+	for(uint32_t i = 0; i < numBehaviors; i++) {
 		if(behaviors[i]->enabled) {
 			behaviors[i]->Update(deltaTime);
 		}
 	}
 
-	unsigned int numDeleted = toBeDeleted.GetSize();
-	for(unsigned int i = 0; i < numDeleted; i++) {
+	uint32_t numDeleted = toBeDeleted.GetSize();
+	for(uint32_t i = 0; i < numDeleted; i++) {
 		behaviors.RemoveAt(toBeDeleted[i] - behaviors[0]);
 	}
 	toBeDeleted.Clear();
@@ -107,9 +107,9 @@ void Scene::Draw() {
 	lightConstants.ambientLight = ambientLight;
 	lightConstants.lightCount = 0;
 
-	int totalLights = lights.GetSize();
+	uint32_t totalLights = lights.GetSize();
 	AlignedRect screenArea = AlignedRect(-1.f, 1.f, 1.f, -1.f);
-	for(int i = 0; i < totalLights; i++) {
+	for(uint32_t i = 0; i < totalLights; i++) {
 		// omit offscreen lights
 		Vector2 closestPoint = lights[i].transform->position + (cameraPosition - lights[i].transform->position).SetLength(lights[i].radius);
 		closestPoint = viewProjection * closestPoint;
@@ -118,7 +118,7 @@ void Scene::Draw() {
 		}
 
 		// copy this light to the gpu
-		int nextLight = lightConstants.lightCount;
+		int32_t nextLight = lightConstants.lightCount;
 		lightData[nextLight].worldPosition = *(lights[i].worldMatrix) * Vector2::Zero;
 		Vector2 forward = *(lights[i].worldMatrix) * Vector2::Right;
 		lightData[nextLight].direction = (forward - lightData[i].worldPosition).Normalize();
@@ -127,7 +127,7 @@ void Scene::Draw() {
 		lightData[nextLight].radius = lights[i].radius;
 		lightData[nextLight].brightness = lights[i].brightness;
 
-		lightData[nextLight].coneEdge = *(lights[i].worldMatrix) * Vector2::FromAngle(lights[i].coneSize / 2.0f);
+		lightData[nextLight].coneEdge = *(lights[i].worldMatrix) * Vector2::FromAngle(lights[i].coneSize * 0.5f);
 
 		lightConstants.lightCount++;
 		if(lightConstants.lightCount >= MAX_LIGHTS_ONSCREEN) {
@@ -148,9 +148,9 @@ void Scene::Draw() {
 	graphics->SetConstants(ShaderStage::Geometry, &projectionBuffer, 1);
 
 	// draw opaques front to back
-	int numOpaques = opaques.GetSize();
-	for(int i = 1; i < numOpaques; i++) {
-		int index = i;
+	uint32_t numOpaques = opaques.GetSize();
+	for(uint32_t i = 1; i < numOpaques; i++) {
+		uint32_t index = i;
 		while(index > 0 && opaques[index]->worldMatrix->values[2][3] < opaques[index - 1]->worldMatrix->values[2][3]) { // global z is in row 3 col 4
 			IRenderer* swapper = opaques[index - 1];
 			opaques[index - 1] = opaques[index];
@@ -159,7 +159,7 @@ void Scene::Draw() {
 		}
 	}
 
-	for(int i = 0; i < numOpaques; i++) {
+	for(uint32_t i = 0; i < numOpaques; i++) {
 		opaques[i]->Draw();
 	}
 
@@ -177,9 +177,9 @@ void Scene::Draw() {
 	graphics->DrawFullscreen();
 
 	// draw translucents back to front
-	int numTranslucents = translucents.GetSize();
-	for(int i = 1; i < numTranslucents; i++) {
-		int index = i;
+	uint32_t numTranslucents = translucents.GetSize();
+	for(uint32_t i = 1; i < numTranslucents; i++) {
+		uint32_t index = i;
 		while(index > 0 && translucents[index]->worldMatrix->values[2][3] > translucents[index - 1]->worldMatrix->values[2][3]) { // global z is in row 3 col 4
 			IRenderer* swapper = translucents[index - 1];
 			translucents[index - 1] = translucents[index];
@@ -197,7 +197,7 @@ void Scene::Draw() {
 
 void Scene::ReserveTransform(Transform** outTransform, const Matrix** outMatrix) {
 	assert(entityCount < maxEntities && "scene capacity is unable to fit another transform");
-	int newSlot = entityCount;
+	uint16_t newSlot = entityCount;
 	if(openSlots.size() > 0) {
 		newSlot = openSlots[openSlots.size() - 1];
 		openSlots.pop_back();
@@ -245,11 +245,11 @@ LightSource* Scene::AddLight(Color color, float radius) {
 }
 
 void Scene::ReleaseTransform(Transform* transform) {
-	int openIndex = transform - transforms;
+	uint16_t openIndex = transform - transforms;
 	openSlots.push_back(openIndex);
 
 	// sort into the vector so that the largest index is the smallest integer
-	for(int i = openSlots.size() - 1; i > 0; i--) {
+	for(size_t i = openSlots.size() - 1; i > 0; i--) {
 		if(openSlots[i] < openSlots[i-1]) {
 			return;
 		}

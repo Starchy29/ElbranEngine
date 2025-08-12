@@ -24,7 +24,7 @@ void DebugHelper::AddDot(Vector2 position, Color color, float size) {
 	numBulk++;
 }
 
-void DebugHelper::PlaceDot(unsigned int index, Vector2 position, Color color, float size) {
+void DebugHelper::PlaceDot(uint8_t index, Vector2 position, Color color, float size) {
 	if(dots[index].transform == nullptr) {
 		debugScene->AddRenderer(&dots[index], true);
 		dots[index].shape = ShapeRenderer::Shape::Circle;
@@ -47,7 +47,7 @@ void DebugHelper::AddLine(Vector2 start, Vector2 end, Color color, float width) 
 	numBulk++;
 }
 
-void DebugHelper::PlaceLine(unsigned int index, Vector2 start, Vector2 end, Color color, float width) {
+void DebugHelper::PlaceLine(uint8_t index, Vector2 start, Vector2 end, Color color, float width) {
 	if(lines[index].transform == nullptr) {
 		debugScene->AddRenderer(&lines[index], true);
 		lines[index].shape = ShapeRenderer::Shape::Square;
@@ -70,7 +70,7 @@ void DebugHelper::AddBox(AlignedRect area, Color color) {
 	numBulk++;
 }
 
-void DebugHelper::PlaceBox(unsigned int index, AlignedRect area, Color color) {
+void DebugHelper::PlaceBox(uint8_t index, AlignedRect area, Color color) {
 	if(boxes[index].transform == nullptr) {
 		debugScene->AddRenderer(&boxes[index], true);
 		boxes[index].shape = ShapeRenderer::Shape::Square;

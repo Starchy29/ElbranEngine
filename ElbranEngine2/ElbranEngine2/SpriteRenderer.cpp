@@ -4,15 +4,15 @@
 #include "AssetContainer.h"
 #include "ShaderConstants.h"
 
-SpriteRenderer::SpriteRenderer(const Texture2D* sprite) {
+SpriteRenderer::SpriteRenderer(const Texture2D* sprite) :
+	sprite{sprite},
+	tint{Color::White},
+	flipX{false},
+	flipY{false},
+	lit{false}
+{
 	transform = nullptr;
 	worldMatrix = nullptr;
-
-	this->sprite = sprite;
-	tint = Color::White;
-	flipX = false;
-	flipY = false;
-	lit = false;
 }
 
 void SpriteRenderer::Draw() {

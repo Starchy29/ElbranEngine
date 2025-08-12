@@ -71,7 +71,7 @@ float WindowsInput::DetermineMouseSpin() {
     return mouseWheelDelta;
 }
 
-bool WindowsInput::IsKeyPressed(char key, int playerIndex) {
+bool WindowsInput::IsKeyPressed(char key, uint8_t playerIndex) {
     switch(key) {
     case KEY_NONE:
         return false;
@@ -122,7 +122,7 @@ bool WindowsInput::IsKeyPressed(char key, int playerIndex) {
     return keyboard[key] & 0x80; // high-order bit is 1 when the key is pressed
 }
 
-bool WindowsInput::IsButtonPressed(GamepadButton button, int playerIndex) {
+bool WindowsInput::IsButtonPressed(GamepadButton button, uint8_t playerIndex) {
     if(!gamepads[playerIndex].connected) {
         return false;
     }
@@ -181,7 +181,7 @@ bool WindowsInput::IsButtonPressed(GamepadButton button, int playerIndex) {
     return false;
 }
 
-Vector2 WindowsInput::GetGamepadStick(bool left, int playerIndex) {
+Vector2 WindowsInput::GetGamepadStick(bool left, uint8_t playerIndex) {
     if(!gamepads[playerIndex].connected) {
         return Vector2::Zero;
     }
@@ -205,7 +205,7 @@ Vector2 WindowsInput::GetMouseScreenPosition() {
     return mousePosition;
 }
 
-void WindowsInput::SetRumble(int playerIndex, float strength) {
+void WindowsInput::SetRumble(uint8_t playerIndex, float strength) {
     if(!gamepads[playerIndex].connected) {
         return;
     }

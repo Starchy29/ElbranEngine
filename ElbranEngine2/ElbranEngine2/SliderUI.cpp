@@ -2,13 +2,13 @@
 #include "Application.h"
 #include "InputManager.h"
 
-SliderUI::SliderUI(Scene* scene, float width, unsigned int segments, bool vertical) {
-	this->vertical = vertical;
-	this->segments = segments;
-	this->scene = scene;
-	sliderWidth = width;
-	value = 0.5f;
-
+SliderUI::SliderUI(Scene* scene, float width, uint16_t segments, bool vertical) :
+	vertical{vertical},
+	segments{segments},
+	scene{scene},
+	sliderWidth{width},
+	value{0.5f}
+{
 	track = ShapeRenderer(ShapeRenderer::Shape::Square, Color::White);
 	mover = ShapeRenderer(ShapeRenderer::Shape::Square, Color::White);
 
@@ -85,12 +85,12 @@ void SliderUI::OnMouseDragged(Vector2 mouseDelta) {
 bool SliderUI::OnDirectionPressed(Direction direction) {
 	if(vertical) {
 		if(direction == Direction::Right || direction == Direction::Left) return false;
-		SetValue(value + 1.0f / segments * (direction == Direction::Up ? 1 : -1));
+		SetValue(value + 1.0f / segments * (direction == Direction::Up ? 1.f : -1.f));
 		return true;
 	} 
 
 	// horizontal
 	if(direction == Direction::Up || direction == Direction::Down) return false;
-	SetValue(value + 1.0f / segments * (direction == Direction::Right ? 1 : -1));
+	SetValue(value + 1.0f / segments * (direction == Direction::Right ? 1.f : -1.f));
 	return true;
 }

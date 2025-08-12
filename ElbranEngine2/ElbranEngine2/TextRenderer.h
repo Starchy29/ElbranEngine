@@ -24,8 +24,9 @@ public:
     float padding;
     Color color;
 
+    TextRenderer() {}
     TextRenderer(std::string text, const Font* font, HorizontalAlignment horizontalAlignment = HorizontalAlignment::Left, float lineSpacing = 0.0f);
-    ~TextRenderer();
+    void Release();
 
     void Draw() override;
 

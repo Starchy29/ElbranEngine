@@ -5,16 +5,15 @@
 #include "ShaderConstants.h"
 #include "Math.h"
 
-PatternRenderer::PatternRenderer(const Texture2D* sprite) {
-	this->sprite = sprite;
-	origin = Vector2::Zero;
-	blockSize = Vector2(1, 1);
-
-	tint = Color::White;
-	flipX = false;
-	flipY = false;
-	lit = false;
-}
+PatternRenderer::PatternRenderer(const Texture2D* sprite) :
+	sprite{sprite},
+	origin{Vector2::Zero},
+	blockSize{Vector2(1.0f, 1.0f)},
+	tint{Color::White},
+	flipX{false},
+	flipY{false},
+	lit{false}
+{ }
 
 void PatternRenderer::Draw() {
 	GraphicsAPI* graphics = app->graphics;

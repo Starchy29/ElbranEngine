@@ -52,7 +52,7 @@ void InputManager::Update(float deltaTime) {
 	mouseScreenPos = GetMouseScreenPosition();
 	mouseWheelDelta = DetermineMouseSpin();
 
-	for(int player = 0; player < MAX_PLAYERS; player++) {
+	for(uint8_t player = 0; player < MAX_PLAYERS; player++) {
 		if(rumbleDurations[player] > 0.f) {
 			rumbleDurations[player] -= deltaTime;
 			if(rumbleDurations[player] <= 0.f) {
@@ -86,23 +86,23 @@ void InputManager::Update(float deltaTime) {
 	ClearInputs();
 }
 
-bool InputManager::IsPressed(InputAction action, int playerIndex) {
+bool InputManager::IsPressed(InputAction action, uint8_t playerIndex) {
 	return currentState[playerIndex].buttons[(int)action];
 }
 
-bool InputManager::JustPressed(InputAction action, int playerIndex) {
+bool InputManager::JustPressed(InputAction action, uint8_t playerIndex) {
 	return currentState[playerIndex].buttons[(int)action] && !lastState[playerIndex].buttons[(int)action];
 }
 
-bool InputManager::JustReleased(InputAction action, int playerIndex) {
+bool InputManager::JustReleased(InputAction action, uint8_t playerIndex) {
 	return !currentState[playerIndex].buttons[(int)action] && lastState[playerIndex].buttons[(int)action];
 }
 
-Vector2 InputManager::GetStick(bool left, int playerIndex) {
+Vector2 InputManager::GetStick(bool left, uint8_t playerIndex) {
 	return left ? currentState[playerIndex].leftStick : currentState[playerIndex].rightStick;
 }
 
-void InputManager::Rumble(int playerIndex, float strength0to1, float duration) {
+void InputManager::Rumble(uint8_t playerIndex, float strength0to1, float duration) {
 	assert(duration > 0.f && "attempted to rumble a controller for a non-positive duration");
 	SetRumble(playerIndex, strength0to1);
 	rumbleDurations[playerIndex] = duration;

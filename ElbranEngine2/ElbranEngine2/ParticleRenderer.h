@@ -24,17 +24,18 @@ public:
 	bool applyLights;
 	bool blendAdditive;
 
-	ParticleRenderer(unsigned int maxParticles, Texture2D sprite);
-	ParticleRenderer(unsigned int maxParticles, SpriteSheet animation, float animationFPS);
-	virtual ~ParticleRenderer();
+	ParticleRenderer() {}
+	ParticleRenderer(uint16_t maxParticles, Texture2D sprite);
+	ParticleRenderer(uint16_t maxParticles, SpriteSheet animation, float animationFPS);
+	void Release();
 
 	void Draw() override;
-	void Emit(unsigned int numParticles, const ArrayBuffer* initialData);
+	void Emit(uint16_t numParticles, const ArrayBuffer* initialData);
 
-	unsigned int GetMaxParticles() const;
+	uint16_t GetMaxParticles() const;
 
 private:
-	unsigned int maxParticles;
-	unsigned int lastParticle;
+	uint16_t maxParticles;
+	uint16_t lastParticle;
 };
 

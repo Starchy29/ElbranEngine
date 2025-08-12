@@ -11,11 +11,12 @@ public:
 	Transform* root;
 	ShapeRenderer track;
 	ShapeRenderer mover;
-	unsigned int segments;
+	uint16_t segments;
 
 	void (*onValueChanged)(SliderUI* slider, float newValue); // value is 0-1
 
-	SliderUI(Scene* scene, float width, unsigned int segments, bool vertical = false);
+	SliderUI() {}
+	SliderUI(Scene* scene, float width, uint16_t segments, bool vertical = false);
 	void SetValue(float newValue);
 	float GetValue() const;
 

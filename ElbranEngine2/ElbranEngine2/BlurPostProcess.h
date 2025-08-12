@@ -6,14 +6,11 @@ class BlurPostProcess :
     public IPostProcess
 {
 public:
-    int blurRadius;
+    uint16_t blurRadius;
 
     BlurPostProcess();
 
     void Render(GraphicsAPI* graphics, const RenderTarget* input, RenderTarget* output) override;
     bool IsActive() const override;
-
-private:
-    PixelShader* blurShader;
 };
 

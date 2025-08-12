@@ -1,4 +1,6 @@
 #pragma once
+#include <stdint.h>
+
 struct Vector2;
 struct Matrix;
 struct Circle;
@@ -9,9 +11,9 @@ struct AlignedRect;
 
 namespace Math {
 	float Sign(float number);
-	int Sign(int number);
+	int32_t Sign(int32_t number);
 	float Clamp(float value, float minimum, float maximum);
-	int Clamp(int value, int minimum, int maximum);
+	int Clamp(int32_t value, int32_t minimum, int32_t maximum);
 	float FractionOf(float number);
 	float InvSqrt(float number);
 }

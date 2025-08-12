@@ -2,7 +2,7 @@
 #include "Math.h"
 #include "Common.h"
 
-#define GPU_BOOL int // bools are 4 bytes on the gpu
+#define GPU_BOOL int32_t // bools are 4 bytes on the gpu
 
 struct CameraVSConstants {
 	Matrix worldTransform;
@@ -25,21 +25,21 @@ struct ConSatValPPConstants {
 struct BlurPPConstants {
 	UInt2 viewMin;
 	UInt2 viewMax;
-	int blurRadius;
+	uint32_t blurRadius;
 	GPU_BOOL horizontal;
 };
 
 struct ParticleQuadGSConstants {
 	float z;
 	float spriteAspectRatio;
-	int animationFrames;
+	int32_t animationFrames;
 	float animationFPS;
-	int atlasRows;
-	int atlasCols;
+	int32_t atlasRows;
+	int32_t atlasCols;
 };
 
 struct ParticleMoveCSConstants {
-	unsigned int maxParticles;
+	uint32_t maxParticles;
 	float deltaTime;
 	float growthRate;
 	float spinRate;
@@ -47,15 +47,15 @@ struct ParticleMoveCSConstants {
 };
 
 struct ParticleSpawnCSConstants {
-	unsigned int spawnCount;
-	unsigned int lastParticle;
-	unsigned int maxParticles;
+	uint32_t spawnCount;
+	uint32_t lastParticle;
+	uint32_t maxParticles;
 	float lifespan;
 	float width;
 };
 
 struct GlyphAtlasDrawCSConstants {
-	unsigned int numGlyphs;
-	unsigned int glyphSize; // pixel width of square for each glyph
-	unsigned int rowsCols; // rows and cols are equal
+	uint32_t numGlyphs;
+	uint32_t glyphSize; // pixel width of square for each glyph
+	uint32_t rowsCols; // rows and cols are equal
 };

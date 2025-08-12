@@ -7,27 +7,25 @@
 
 #define CONTINUOUS_SPAWN -1
 
-ParticleBehavior::ParticleBehavior(ParticleRenderer* renderer) {
-    this->renderer = renderer;
-
-    moveStyle = MoveStyle::None;
-    moveDirection = Vector2::Zero;
-    speed = 0.f;
-    totalGrowth = 0.f;
-    spinRate = 0.f;
-    fadeOutDuration = 0.f;
-    faceMoveDirection = false;
-    spawnCircular = false;
-
-    timer = 0.f;
-    spawnInterval = 0.f;
-    spawnsPerInterval = 0;
-    spawnsLeft = 0;
-
+ParticleBehavior::ParticleBehavior(ParticleRenderer* renderer) :
+    renderer{renderer},
+    moveStyle{MoveStyle::None},
+    moveDirection{Vector2::Zero},
+    speed{0.f},
+    totalGrowth{0.f},
+    spinRate{0.f},
+    fadeOutDuration{0.f},
+    faceMoveDirection{false},
+    spawnCircular{false},
+    timer{0.f},
+    spawnInterval{0.f},
+    spawnsPerInterval{0u},
+    spawnsLeft{0}
+{
     spawnData = app->graphics->CreateArrayBuffer(ShaderDataType::Structured, renderer->GetMaxParticles(), sizeof(ParticleSpawnState));
 }
 
-ParticleBehavior::~ParticleBehavior() {
+void ParticleBehavior::Release() {
     app->graphics->ReleaseArrayBuffer(&spawnData);
 }
 
@@ -66,7 +64,7 @@ void ParticleBehavior::Update(float deltaTime) {
     }
 }
 
-void ParticleBehavior::Spawn(unsigned int amount, float duration) {
+void ParticleBehavior::Spawn(uint16_t amount, float duration) {
     if(duration > 0.f) {
         spawnsLeft += amount;
         spawnInterval = duration / amount;
@@ -83,7 +81,7 @@ void ParticleBehavior::Spawn(unsigned int amount, float duration) {
         trueSpeed *= CalcParentScaler();
     }
 
-    for(unsigned int i = 0; i < amount; i++) {
+    for(uint16_t i = 0; i < amount; i++) {
         spawnStates[i].position = *(renderer->worldMatrix) * (spawnCircular ? rng->GenerateInCircle() * 0.5f : Vector2(rng->GenerateFloat(-0.5f, 0.5f), rng->GenerateFloat(-0.5f, 0.5f)));
     }
         
@@ -96,7 +94,7 @@ void ParticleBehavior::Spawn(unsigned int amount, float duration) {
         forward = *(renderer->worldMatrix) * Vector2::Right;
         forward = (forward - center).SetLength(trueSpeed);
         rotation = faceMoveDirection ? forward.Angle() : 0.f;
-        for(unsigned int i = 0; i < amount; i++) {
+        for(uint16_t i = 0; i < amount; i++) {
             spawnStates[i].velocity = forward;
             spawnStates[i].rotation = rotation;
         }
@@ -104,20 +102,20 @@ void ParticleBehavior::Spawn(unsigned int amount, float duration) {
     case MoveStyle::Directional:
         forward = moveDirection.SetLength(trueSpeed);
         rotation = faceMoveDirection ? moveDirection.Angle() : 0;
-        for(unsigned int i = 0; i < amount; i++) {
+        for(uint16_t i = 0; i < amount; i++) {
             spawnStates[i].velocity = forward;
             spawnStates[i].rotation = rotation;
         }
         break;
     case MoveStyle::Outward:
         center = *(renderer->worldMatrix) * Vector2::Zero;
-        for(unsigned int i = 0; i < amount; i++) {
+        for(uint16_t i = 0; i < amount; i++) {
             spawnStates[i].velocity = (spawnStates[i].position - center).SetLength(trueSpeed);
             spawnStates[i].rotation = faceMoveDirection ? spawnStates[i].velocity.Angle() : 0.f;
         }
         break;
     case MoveStyle::Random:
-        for(unsigned int i = 0; i < amount; i++) {
+        for(uint16_t i = 0; i < amount; i++) {
             spawnStates[i].rotation = rng->GenerateFloat(0.f, 2.f * PI);
             spawnStates[i].velocity = trueSpeed * Vector2::FromAngle(spawnStates[i].rotation);
             if(!faceMoveDirection) {
@@ -131,7 +129,7 @@ void ParticleBehavior::Spawn(unsigned int amount, float duration) {
     renderer->Emit(amount, &spawnData);
 }
 
-void ParticleBehavior::SetSpawnRate(float perSec, unsigned int groupSize) {
+void ParticleBehavior::SetSpawnRate(float perSec, uint16_t groupSize) {
     if(perSec <= 0.f) {
         // stop spawning
         spawnsLeft = 0;

@@ -4,17 +4,17 @@
 #include "AssetContainer.h"
 #include "ShaderConstants.h"
 
-AtlasRenderer::AtlasRenderer(const SpriteSheet* atlas) {
+AtlasRenderer::AtlasRenderer(const SpriteSheet* atlas) :
+	atlas{atlas},
+	row{0},
+	col{0},
+	tint{Color::White},
+	flipX{false},
+	flipY{false},
+	lit{false}
+{
 	transform = nullptr;
 	worldMatrix = nullptr;
-
-	this->atlas = atlas;
-	row = 0;
-	col = 0;
-	tint = Color::White;
-	flipX = false;
-	flipY = false;
-	lit = false;
 }
 
 void AtlasRenderer::Draw() {

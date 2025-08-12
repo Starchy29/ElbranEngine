@@ -6,7 +6,7 @@
 // matches buffer in Lighting.hlsli
 struct LightConstants {
 	Color ambientLight;
-	int lightCount;
+	int32_t lightCount;
 };
 
 // matches struct in Lighting.hlsli

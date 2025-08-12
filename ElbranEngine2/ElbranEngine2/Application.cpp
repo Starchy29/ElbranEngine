@@ -17,9 +17,8 @@ void Application::InitApp(std::wstring filePath, GraphicsAPI* graphics, SoundMix
 	app->game = new Game();
 }
 
-Application::Application(std::wstring filePath, GraphicsAPI* graphics, SoundMixer* audio, InputManager* input) 
-	: perFrameData(8192)
-{
+Application::Application(std::wstring filePath, GraphicsAPI* graphics, SoundMixer* audio, InputManager* input) {
+	perFrameData.Allocate(8192);
 	this->filePath = filePath;
 	this->graphics = graphics;
 	this->audio = audio;

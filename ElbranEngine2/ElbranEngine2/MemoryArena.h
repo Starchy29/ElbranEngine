@@ -1,10 +1,13 @@
 #pragma once
+#include <stdint.h>
+
 class MemoryArena
 {
 public:
-	MemoryArena(unsigned int size);
+	MemoryArena() {}
 
-	void* Reserve(unsigned int bytes, bool zeroed = false);
+	void Allocate(size_t size);
+	void* Reserve(size_t bytes, bool zeroed = false);
 	void Reset();
 	void Release();
 
@@ -14,6 +17,6 @@ public:
 private:
 	char* data;
 	char* next;
-	unsigned int size;
+	size_t size;
 };
 

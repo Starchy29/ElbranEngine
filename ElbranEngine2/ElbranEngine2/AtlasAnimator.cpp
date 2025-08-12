@@ -2,15 +2,12 @@
 
 #define LAST_FRAME renderer->atlas->spriteCount - 1
 
-AtlasAnimator::AtlasAnimator() {}
-
-AtlasAnimator::AtlasAnimator(AtlasRenderer* renderer, float frameRate) {
-	this->renderer = renderer;
-	this->frameRate = frameRate;
-
-	looped = false;
-	rebounds = false;
-
+AtlasAnimator::AtlasAnimator(AtlasRenderer* renderer, float frameRate) :
+	renderer{renderer},
+	frameRate{frameRate},
+	looped{false},
+	rebounds{false}
+{
 	Restart();
 }
 

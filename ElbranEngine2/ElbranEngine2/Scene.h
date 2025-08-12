@@ -28,7 +28,8 @@ public:
 	Color backgroundColor;
 	Texture2D* backgroundImage;
 
-	Scene(unsigned int maxEntities, float cameraWidth);
+	Scene() {}
+	Scene(uint16_t maxEntities, float cameraWidth);
 	virtual ~Scene();
 
 	virtual void Update(float deltaTime);
@@ -45,12 +46,12 @@ public:
 	void RemoveLight(LightSource* light);
 
 private:
-	int entityCount;
-	unsigned int maxEntities;
+	uint16_t entityCount;
+	uint16_t maxEntities;
 	Transform* transforms;
 	Matrix* localMatrices;
 	Matrix* worldMatrices;
-	std::vector<int> openSlots;
+	std::vector<uint16_t> openSlots;
 
 	DynamicFixedList<IBehavior*> behaviors;
 	DynamicFixedList<LightSource> lights;

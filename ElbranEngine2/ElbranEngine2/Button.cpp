@@ -1,12 +1,11 @@
 #include "Button.h"
 #include "Scene.h"
 
-Button::Button(Scene* scene, void (*clickEffect)(Button*)) {
-	this->clickEffect = clickEffect;
-
-	normalColor = Color::White;
-	hoveredColor = Color(0.5f, 0.5f, 0.5f);
-
+Button::Button(Scene* scene, void (*clickEffect)(Button*)) :
+	clickEffect{clickEffect},
+	normalColor{Color::White},
+	hoveredColor{Color(0.5f, 0.5f, 0.5f)}
+{
 	scene->AddRenderer(&box, true);
 	selectArea = box.worldMatrix;
 }

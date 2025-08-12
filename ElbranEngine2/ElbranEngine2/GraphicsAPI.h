@@ -66,7 +66,7 @@ public:
 
 	void Render(Game* game);
 	void ApplyPostProcesses();
-	RenderTarget* GetPostProcessHelper(int slot);
+	RenderTarget* GetPostProcessHelper(uint8_t slot);
 
 	UInt2 GetViewDimensions() const;
 	UInt2 GetViewOffset() const;
@@ -79,44 +79,44 @@ public:
 
 	virtual Texture2D LoadSprite(std::wstring fileName) = 0;
 	virtual Sampler CreateDefaultSampler() = 0;
-	virtual Mesh CreateMesh(const Vertex* vertices, int vertexCount, const unsigned int* indices, int indexCount, bool editable) = 0;
-	virtual ConstantBuffer CreateConstantBuffer(unsigned int byteLength) = 0;
-	virtual ArrayBuffer CreateArrayBuffer(ShaderDataType type, unsigned int elements, unsigned int structBytes = 0u) = 0;
-	virtual EditBuffer CreateEditBuffer(ShaderDataType type, unsigned int elements, unsigned int structBytes = 0u) = 0;
-	virtual OutputBuffer CreateOutputBuffer(ShaderDataType type, unsigned int elements, unsigned int structBytes = 0u) = 0;
-	virtual RenderTarget CreateRenderTarget(unsigned int width, unsigned int height) = 0;
-	virtual ComputeTexture CreateComputeTexture(unsigned int width, unsigned int height) = 0;
+	virtual Mesh CreateMesh(const Vertex* vertices, uint16_t vertexCount, const uint32_t* indices, uint16_t indexCount, bool editable) = 0;
+	virtual ConstantBuffer CreateConstantBuffer(uint32_t byteLength) = 0;
+	virtual ArrayBuffer CreateArrayBuffer(ShaderDataType type, uint32_t elements, uint32_t structBytes = 0u) = 0;
+	virtual EditBuffer CreateEditBuffer(ShaderDataType type, uint32_t elements, uint32_t structBytes = 0u) = 0;
+	virtual OutputBuffer CreateOutputBuffer(ShaderDataType type, uint32_t elements, uint32_t structBytes = 0u) = 0;
+	virtual RenderTarget CreateRenderTarget(uint32_t width, uint32_t height) = 0;
+	virtual ComputeTexture CreateComputeTexture(uint32_t width, uint32_t height) = 0;
 	
-	virtual void WriteBuffer(const void* data, unsigned int byteLength, Buffer* buffer) = 0; // fails if the buffer was not created with cpu write access
-	virtual void SetConstants(ShaderStage stage, const ConstantBuffer* buffer, unsigned int slot) = 0;
-	virtual void SetArray(ShaderStage stage, const ArrayBuffer* buffer, unsigned int slot) = 0;
-	virtual void SetTexture(ShaderStage stage, const Texture2D* texture, unsigned int slot) = 0;
-	virtual void SetSampler(ShaderStage stage, Sampler* sampler, unsigned int slot) = 0;
+	virtual void WriteBuffer(const void* data, uint32_t byteLength, Buffer* buffer) = 0; // fails if the buffer was not created with cpu write access
+	virtual void SetConstants(ShaderStage stage, const ConstantBuffer* buffer, uint8_t slot) = 0;
+	virtual void SetArray(ShaderStage stage, const ArrayBuffer* buffer, uint8_t slot) = 0;
+	virtual void SetTexture(ShaderStage stage, const Texture2D* texture, uint8_t slot) = 0;
+	virtual void SetSampler(ShaderStage stage, Sampler* sampler, uint8_t slot) = 0;
 	virtual void CopyTexture(Texture2D* source, Texture2D* destination) = 0;
 	virtual void ClearMesh() = 0;
 
 	virtual void SetVertexShader(const VertexShader* shader) = 0;
 	virtual void SetGeometryShader(const GeometryShader* shader) = 0;
 	virtual void SetPixelShader(const PixelShader* shader) = 0;
-	void SetVertexShader(const VertexShader* shader, void* constantInput, unsigned int inputBytes);
-	void SetGeometryShader(const GeometryShader* shader, void* constantInput, unsigned int inputBytes);
-	void SetPixelShader(const PixelShader* shader, void* constantInput, unsigned int inputBytes);
+	void SetVertexShader(const VertexShader* shader, void* constantInput, uint32_t inputBytes);
+	void SetGeometryShader(const GeometryShader* shader, void* constantInput, uint32_t inputBytes);
+	void SetPixelShader(const PixelShader* shader, void* constantInput, uint32_t inputBytes);
 
 	virtual void SetBlendMode(BlendState mode) = 0;
 	virtual void SetPrimitive(RenderPrimitive primitive) = 0;
 	virtual void SetRenderTarget(const RenderTarget* renderTarget, bool useDepthStencil) = 0;
 	virtual void ResetRenderTarget() = 0;
 
-	virtual void DrawVertices(unsigned int numVertices) = 0;
+	virtual void DrawVertices(uint16_t numVertices) = 0;
 	virtual void DrawMesh(const Mesh* mesh) = 0;
 	void DrawFullscreen();
 
 	// compute shader functions
-	virtual void SetComputeTexture(const ComputeTexture* texture, unsigned int slot) = 0;
-	virtual void SetEditBuffer(EditBuffer* buffer, unsigned int slot) = 0;
-	virtual void SetOutputBuffer(OutputBuffer* buffer, unsigned int slot, const void* initialData = nullptr) = 0;
+	virtual void SetComputeTexture(const ComputeTexture* texture, uint8_t slot) = 0;
+	virtual void SetEditBuffer(EditBuffer* buffer, uint8_t slot) = 0;
+	virtual void SetOutputBuffer(OutputBuffer* buffer, uint8_t, const void* initialData = nullptr) = 0;
 	virtual void ReadBuffer(const OutputBuffer* buffer, void* destination) = 0;
-	virtual void RunComputeShader(const ComputeShader* shader, unsigned int xThreads, unsigned int yThreads, unsigned int zThreads = 1) = 0;
+	virtual void RunComputeShader(const ComputeShader* shader, uint16_t xThreads, uint16_t yThreads, uint16_t zThreads = 1) = 0;
 
 	// gpu memory release functions
 	virtual void ReleaseShader(VertexShader* shader) = 0;

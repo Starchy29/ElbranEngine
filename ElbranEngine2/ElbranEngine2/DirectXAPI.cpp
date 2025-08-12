@@ -124,7 +124,6 @@ DirectXAPI::DirectXAPI(HWND windowHandle, Int2 windowDims, float viewAspectRatio
 
 	// set other defaults
 	context->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-	//spriteBatch = new DirectX::SpriteBatch(context.Get());
 }
 
 void DirectXAPI::Release() {
@@ -211,7 +210,7 @@ void DirectXAPI::Resize(Int2 windowDims, float viewAspectRatio) {
 	}
 }
 
-void DirectXAPI::DrawVertices(unsigned int numVertices) {
+void DirectXAPI::DrawVertices(uint16_t numVertices) {
 	context->Draw(numVertices, 0);
 }
 
@@ -235,7 +234,7 @@ VertexShader DirectXAPI::LoadVertexShader(std::wstring fileName) {
 
 GeometryShader DirectXAPI::LoadGeometryShader(std::wstring fileName) {
 	ID3DBlob* shaderBlob = LoadShader(fileName);
-	GeometryShader newShader = {};
+	GeometryShader newShader{};
 	HRESULT result = device->CreateGeometryShader(shaderBlob->GetBufferPointer(), shaderBlob->GetBufferSize(), 0, &newShader.shader);
 	assert(result == S_OK && "failed to create geometry shader");
 	newShader.constants = LoadConstantBuffer(shaderBlob);
@@ -245,7 +244,7 @@ GeometryShader DirectXAPI::LoadGeometryShader(std::wstring fileName) {
 
 PixelShader DirectXAPI::LoadPixelShader(std::wstring fileName) {
 	ID3DBlob* shaderBlob = LoadShader(fileName);
-	PixelShader newShader = {};
+	PixelShader newShader{};
 	HRESULT result = device->CreatePixelShader(shaderBlob->GetBufferPointer(), shaderBlob->GetBufferSize(), 0, &newShader.shader);
 	assert(result == S_OK && "failed to create pixel shader");
 	newShader.constants = LoadConstantBuffer(shaderBlob);
@@ -255,7 +254,7 @@ PixelShader DirectXAPI::LoadPixelShader(std::wstring fileName) {
 
 ComputeShader DirectXAPI::LoadComputeShader(std::wstring fileName) {
 	ID3DBlob* shaderBlob = LoadShader(fileName);
-	ComputeShader newShader = {};
+	ComputeShader newShader{};
 	HRESULT result = device->CreateComputeShader(shaderBlob->GetBufferPointer(), shaderBlob->GetBufferSize(), 0, &newShader.shader);
 	assert(result == S_OK && "failed to create compute shader");
 	newShader.constants = LoadConstantBuffer(shaderBlob);
@@ -268,7 +267,7 @@ ComputeShader DirectXAPI::LoadComputeShader(std::wstring fileName) {
 	return newShader;
 }
 
-Mesh DirectXAPI::CreateMesh(const Vertex* vertices, int vertexCount, const unsigned int* indices, int indexCount, bool editable) {
+Mesh DirectXAPI::CreateMesh(const Vertex* vertices, uint16_t vertexCount, const uint32_t* indices, uint16_t indexCount, bool editable) {
 	Mesh result = {};
 	result.indexCount = indexCount;
 
@@ -302,7 +301,7 @@ Mesh DirectXAPI::CreateMesh(const Vertex* vertices, int vertexCount, const unsig
 	return result;
 }
 
-ConstantBuffer DirectXAPI::CreateConstantBuffer(unsigned int byteLength) {
+ConstantBuffer DirectXAPI::CreateConstantBuffer(uint32_t byteLength) {
 	ConstantBuffer result = {};
 
 	D3D11_BUFFER_DESC description;
@@ -317,7 +316,7 @@ ConstantBuffer DirectXAPI::CreateConstantBuffer(unsigned int byteLength) {
 	return result;
 }
 
-ArrayBuffer DirectXAPI::CreateArrayBuffer(ShaderDataType type, unsigned int elements, unsigned int structBytes) {
+ArrayBuffer DirectXAPI::CreateArrayBuffer(ShaderDataType type, uint32_t elements, uint32_t structBytes) {
 	ArrayBuffer result = {};
 	bool structured = type == ShaderDataType::Structured;
 	result.buffer = CreateIndexedBuffer(elements, structured ? structBytes: ByteLengthOf(type), structured, true, false);
@@ -332,9 +331,9 @@ ArrayBuffer DirectXAPI::CreateArrayBuffer(ShaderDataType type, unsigned int elem
 	return result;
 }
 
-EditBuffer DirectXAPI::CreateEditBuffer(ShaderDataType type, unsigned int elements, unsigned int structBytes) {
+EditBuffer DirectXAPI::CreateEditBuffer(ShaderDataType type, uint32_t elements, uint32_t structBytes) {
 	bool structured = type == ShaderDataType::Structured;
-	unsigned int elementBytes = structured ? structBytes : ByteLengthOf(type);
+	uint32_t elementBytes = structured ? structBytes : ByteLengthOf(type);
 	DXGI_FORMAT format = FormatOf(type);
 
 	EditBuffer result = {};
@@ -359,9 +358,9 @@ EditBuffer DirectXAPI::CreateEditBuffer(ShaderDataType type, unsigned int elemen
 	return result;
 }
 
-OutputBuffer DirectXAPI::CreateOutputBuffer(ShaderDataType type, unsigned int elements, unsigned int structBytes) {
+OutputBuffer DirectXAPI::CreateOutputBuffer(ShaderDataType type, uint32_t elements, uint32_t structBytes) {
 	bool structured = type == ShaderDataType::Structured;
-	unsigned int elementBytes = structured ? structBytes : ByteLengthOf(type);
+	uint32_t elementBytes = structured ? structBytes : ByteLengthOf(type);
 
 	OutputBuffer result = {};
 	result.gpuBuffer = CreateIndexedBuffer(elements, elementBytes, structured, false, true);
@@ -380,7 +379,7 @@ OutputBuffer DirectXAPI::CreateOutputBuffer(ShaderDataType type, unsigned int el
 	return result;
 }
 
-RenderTarget DirectXAPI::CreateRenderTarget(unsigned int width, unsigned int height) {
+RenderTarget DirectXAPI::CreateRenderTarget(uint32_t width, uint32_t height) {
 	RenderTarget result = {};
 	result.aspectRatio = (float)width / height;
 	result.data = CreateTexture(width, height, true, false);
@@ -391,7 +390,7 @@ RenderTarget DirectXAPI::CreateRenderTarget(unsigned int width, unsigned int hei
 	return result;
 }
 
-ComputeTexture DirectXAPI::CreateComputeTexture(unsigned int width, unsigned int height) {
+ComputeTexture DirectXAPI::CreateComputeTexture(uint32_t width, uint32_t height) {
 	ComputeTexture result = {};
 	result.aspectRatio = (float)width / height;
 	result.data = CreateTexture(width, height, false, true);
@@ -406,19 +405,19 @@ void DirectXAPI::CopyTexture(Texture2D* source, Texture2D* destination) {
 	context->CopyResource(destination->data, source->data);
 }
 
-void DirectXAPI::SetEditBuffer(EditBuffer* buffer, unsigned int slot) {
+void DirectXAPI::SetEditBuffer(EditBuffer* buffer, uint8_t slot) {
 	UnorderedAccessView* view = buffer ? buffer->computeView : nullptr;
 	context->CSSetUnorderedAccessViews(slot, 1, &view, nullptr);
 }
 
-void DirectXAPI::WriteBuffer(const void* data, unsigned int byteLength, Buffer* buffer) {
+void DirectXAPI::WriteBuffer(const void* data, uint32_t byteLength, Buffer* buffer) {
 	D3D11_MAPPED_SUBRESOURCE mappedResource = {};
 	context->Map(buffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
 	memcpy(mappedResource.pData, data, byteLength);
 	context->Unmap(buffer, 0);
 }
 
-void DirectXAPI::SetOutputBuffer(OutputBuffer* buffer, unsigned int slot, const void* initialData) {
+void DirectXAPI::SetOutputBuffer(OutputBuffer* buffer, uint8_t slot, const void* initialData) {
 	if(initialData) {
 		D3D11_MAPPED_SUBRESOURCE mappedResource = {};
 		context->Map(buffer->cpuBuffer, 0, D3D11_MAP_WRITE, 0, &mappedResource);
@@ -468,7 +467,7 @@ void DirectXAPI::SetBlendMode(BlendState mode) {
 	}
 }
 
-void DirectXAPI::SetConstants(ShaderStage stage, const ConstantBuffer* constantBuffer, unsigned int slot) {
+void DirectXAPI::SetConstants(ShaderStage stage, const ConstantBuffer* constantBuffer, uint8_t slot) {
 	Buffer* data = constantBuffer ? constantBuffer->data : nullptr;
 	switch (stage) {
 	case ShaderStage::Vertex:
@@ -486,7 +485,7 @@ void DirectXAPI::SetConstants(ShaderStage stage, const ConstantBuffer* constantB
 	}
 }
 
-void DirectXAPI::SetArray(ShaderStage stage, const ArrayBuffer* buffer, unsigned int slot) {
+void DirectXAPI::SetArray(ShaderStage stage, const ArrayBuffer* buffer, uint8_t slot) {
 	ShaderResourceView* view = buffer ? buffer->view : nullptr;
 	switch(stage) {
 	case ShaderStage::Vertex:
@@ -504,7 +503,7 @@ void DirectXAPI::SetArray(ShaderStage stage, const ArrayBuffer* buffer, unsigned
 	}
 }
 
-void DirectXAPI::SetTexture(ShaderStage stage, const Texture2D* texture, unsigned int slot) {
+void DirectXAPI::SetTexture(ShaderStage stage, const Texture2D* texture, uint8_t slot) {
 	ShaderResourceView* view = texture ? texture->inputView : nullptr;
 	switch(stage) {
 	case ShaderStage::Vertex:
@@ -522,7 +521,7 @@ void DirectXAPI::SetTexture(ShaderStage stage, const Texture2D* texture, unsigne
 	}
 }
 
-void DirectXAPI::SetSampler(ShaderStage stage, Sampler* sampler, unsigned int slot) {
+void DirectXAPI::SetSampler(ShaderStage stage, Sampler* sampler, uint8_t slot) {
 	SamplerState* state = sampler ? sampler->state : nullptr;
 	switch(stage) {
 	case ShaderStage::Vertex:
@@ -540,7 +539,7 @@ void DirectXAPI::SetSampler(ShaderStage stage, Sampler* sampler, unsigned int sl
 	}
 }
 
-void DirectXAPI::SetComputeTexture(const ComputeTexture* texture, unsigned int slot) {
+void DirectXAPI::SetComputeTexture(const ComputeTexture* texture, uint8_t slot) {
 	UnorderedAccessView* view = texture ? texture->outputView : nullptr;
 	context->CSSetUnorderedAccessViews(slot, 1, &view, nullptr);
 }
@@ -563,7 +562,7 @@ void DirectXAPI::SetPixelShader(const PixelShader* shader) {
 	context->PSSetShader(shader->shader, 0, 0);
 }
 
-void DirectXAPI::RunComputeShader(const ComputeShader* shader, unsigned int xThreads, unsigned int yThreads, unsigned int zThreads) {
+void DirectXAPI::RunComputeShader(const ComputeShader* shader, uint16_t xThreads, uint16_t yThreads, uint16_t zThreads) {
 	context->CSSetShader(shader->shader, 0, 0);
 	context->Dispatch(ceil((double)xThreads / shader->xGroupSize), ceil((double)yThreads / shader->yGroupSize), ceil((double)zThreads / shader->zGroupSize));
 }
@@ -685,7 +684,7 @@ Sampler DirectXAPI::CreateDefaultSampler() {
 	return result;
 }
 
-TextureData* DirectXAPI::CreateTexture(unsigned int width, int unsigned height, bool renderTarget, bool computeWritable) {
+TextureData* DirectXAPI::CreateTexture(uint32_t width, uint32_t height, bool renderTarget, bool computeWritable) {
 	TextureData* output;
 
 	D3D11_TEXTURE2D_DESC textureDesc;
@@ -712,7 +711,7 @@ TextureData* DirectXAPI::CreateTexture(unsigned int width, int unsigned height, 
 	return output;
 }
 
-Buffer* DirectXAPI::CreateIndexedBuffer(unsigned int elements, unsigned int elementBytes, bool structured, bool cpuWrite, bool gpuWrite) {
+Buffer* DirectXAPI::CreateIndexedBuffer(uint32_t elements, uint32_t elementBytes, bool structured, bool cpuWrite, bool gpuWrite) {
 	Buffer* result;
 
 	D3D11_BUFFER_DESC bufferDescription = {};
@@ -806,7 +805,7 @@ DXGI_FORMAT DirectXAPI::FormatOf(ShaderDataType type) {
 	return DXGI_FORMAT_UNKNOWN;
 }
 
-unsigned int DirectXAPI::ByteLengthOf(ShaderDataType type) {
+uint32_t DirectXAPI::ByteLengthOf(ShaderDataType type) {
 	switch(type) {
 	case ShaderDataType::Float: return sizeof(float);
 	case ShaderDataType::Int: return sizeof(int);

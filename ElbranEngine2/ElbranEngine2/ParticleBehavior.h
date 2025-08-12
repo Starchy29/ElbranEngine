@@ -25,21 +25,22 @@ public:
     bool faceMoveDirection;
     bool spawnCircular;
 
+    ParticleBehavior() {}
     ParticleBehavior(ParticleRenderer* renderer);
-    ~ParticleBehavior();
+    void Release();
 
     void Update(float deltaTime);
 
-    void Spawn(unsigned int amount, float duration = 0.f);
-    void SetSpawnRate(float perSec, unsigned int groupSize = 1);
+    void Spawn(uint16_t amount, float duration = 0.f);
+    void SetSpawnRate(float perSec, uint16_t groupSize = 1);
 
 private:
     ArrayBuffer spawnData;
 
     float timer;
     float spawnInterval;
-    unsigned int spawnsPerInterval;
-    int spawnsLeft;
+    uint16_t spawnsPerInterval;
+    int16_t spawnsLeft;
 
     float CalcParentScaler();
 };

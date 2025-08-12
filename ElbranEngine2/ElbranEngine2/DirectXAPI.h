@@ -1,8 +1,9 @@
 #ifdef WINDOWS
 #pragma once
-#include "GraphicsAPI.h"
 #pragma comment(lib,"d3d11.lib")
 #pragma comment(lib, "dxguid.lib")
+
+#include "GraphicsAPI.h"
 #include <d3d11.h>
 #include <dxgi1_3.h>
 #include <wrl/client.h>
@@ -19,7 +20,7 @@ public:
     void SetFullscreen(bool fullscreen) override;
     void Resize(Int2 windowDims, float viewAspectRatio);
 
-    void DrawVertices(unsigned int numVertices) override;
+    void DrawVertices(uint16_t numVertices) override;
     void DrawMesh(const Mesh* mesh) override;
 
     VertexShader LoadVertexShader(std::wstring fileName) override;
@@ -29,35 +30,35 @@ public:
 
     Texture2D LoadSprite(std::wstring fileName) override;
     Sampler CreateDefaultSampler() override;
-    Mesh CreateMesh(const Vertex* vertices, int vertexCount, const unsigned int* indices, int indexCount, bool editable) override;
-    ConstantBuffer CreateConstantBuffer(unsigned int byteLength) override;
-    ArrayBuffer CreateArrayBuffer(ShaderDataType type, unsigned int elements, unsigned int structBytes = 0u) override;
-    EditBuffer CreateEditBuffer(ShaderDataType type, unsigned int elements, unsigned int structBytes = 0u) override;
-    OutputBuffer CreateOutputBuffer(ShaderDataType type, unsigned int elements, unsigned int structBytes = 0u) override;
-    RenderTarget CreateRenderTarget(unsigned int width, unsigned int height) override;
-    ComputeTexture CreateComputeTexture(unsigned int width, unsigned int height) override;
+    Mesh CreateMesh(const Vertex* vertices, uint16_t vertexCount, const uint32_t* indices, uint16_t indexCount, bool editable) override;
+    ConstantBuffer CreateConstantBuffer(uint32_t byteLength) override;
+    ArrayBuffer CreateArrayBuffer(ShaderDataType type, uint32_t elements, uint32_t structBytes = 0u) override;
+    EditBuffer CreateEditBuffer(ShaderDataType type, uint32_t elements, uint32_t structBytes = 0u) override;
+    OutputBuffer CreateOutputBuffer(ShaderDataType type, uint32_t elements, uint32_t structBytes = 0u) override;
+    RenderTarget CreateRenderTarget(uint32_t width, uint32_t height) override;
+    ComputeTexture CreateComputeTexture(uint32_t width, uint32_t height) override;
     void CopyTexture(Texture2D* source, Texture2D* destination) override;
 
-    void SetEditBuffer(EditBuffer* buffer, unsigned int slot) override;
-    void WriteBuffer(const void* data, unsigned int byteLength, Buffer* buffer) override;
-    void SetOutputBuffer(OutputBuffer* buffer, unsigned int slot, const void* initialData) override;
+    void SetEditBuffer(EditBuffer* buffer, uint8_t slot) override;
+    void WriteBuffer(const void* data, uint32_t byteLength, Buffer* buffer) override;
+    void SetOutputBuffer(OutputBuffer* buffer, uint8_t slot, const void* initialData) override;
     void ReadBuffer(const OutputBuffer* buffer, void* destination) override;
 
     void SetPrimitive(RenderPrimitive primitive) override;
     void SetBlendMode(BlendState mode) override;
 
-    void SetConstants(ShaderStage stage, const ConstantBuffer* buffer, unsigned int slot) override;
-    void SetArray(ShaderStage stage, const ArrayBuffer* buffer, unsigned int slot) override;
-    void SetTexture(ShaderStage stage, const Texture2D* texture, unsigned int slot) override;
-    void SetSampler(ShaderStage stage, Sampler* sampler, unsigned int slot) override;
+    void SetConstants(ShaderStage stage, const ConstantBuffer* buffer, uint8_t slot) override;
+    void SetArray(ShaderStage stage, const ArrayBuffer* buffer, uint8_t slot) override;
+    void SetTexture(ShaderStage stage, const Texture2D* texture, uint8_t slot) override;
+    void SetSampler(ShaderStage stage, Sampler* sampler, uint8_t slot) override;
 
-    void SetComputeTexture(const ComputeTexture* texture, unsigned int slot) override;
+    void SetComputeTexture(const ComputeTexture* texture, uint8_t slot) override;
     void ClearMesh() override;
 
     void SetVertexShader(const VertexShader* shader) override;
     void SetGeometryShader(const GeometryShader* shader) override;
     void SetPixelShader(const PixelShader* shader) override;
-    void RunComputeShader(const ComputeShader* shader, unsigned int xThreads, unsigned int yThreads, unsigned int zThreads = 1) override;
+    void RunComputeShader(const ComputeShader* shader, uint16_t xThreads, uint16_t yThreads, uint16_t zThreads = 1) override;
     void SetRenderTarget(const RenderTarget* renderTarget, bool useDepthStencil) override;
 
     void ReleaseShader(VertexShader* shader) override;
@@ -93,13 +94,13 @@ private:
     Microsoft::WRL::ComPtr<ID3D11BlendState> alphaBlendState;
     Microsoft::WRL::ComPtr<ID3D11BlendState> additiveBlendState;
 
-    TextureData* CreateTexture(unsigned int width, unsigned int height, bool renderTarget, bool computeWritable);
-    Buffer* CreateIndexedBuffer(unsigned int elements, unsigned int elementBytes, bool structured, bool cpuWrite, bool gpuWrite);
+    TextureData* CreateTexture(uint32_t width, uint32_t height, bool renderTarget, bool computeWritable);
+    Buffer* CreateIndexedBuffer(uint32_t elements, uint32_t elementBytes, bool structured, bool cpuWrite, bool gpuWrite);
 
     ID3DBlob* LoadShader(std::wstring fileName);
     ConstantBuffer LoadConstantBuffer(ID3DBlob* shaderBlob);
 
     DXGI_FORMAT FormatOf(ShaderDataType type);
-    unsigned int ByteLengthOf(ShaderDataType type);
+    uint32_t ByteLengthOf(ShaderDataType type);
 };
 #endif

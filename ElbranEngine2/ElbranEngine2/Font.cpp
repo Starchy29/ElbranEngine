@@ -37,7 +37,7 @@ struct Tag {
         chars[3] = literal[3];
     }
     
-    static unsigned int Hash(Tag tag) {
+    static uint32_t Hash(Tag tag) {
         return tag.chars[0] + tag.chars[1] + tag.chars[2] + tag.chars[3];
     }
 };
@@ -155,7 +155,7 @@ Font FontLoader::LoadFile(std::wstring file) {
     uint16_t format = ReadUInt16();
     assert((format == 4 || format == 12) && "font file uses an unsupported cmap format");
 
-    loaded.charToGlyphIndex.Initialize(numGlyphs, [](uint16_t let) { return (unsigned int)let; });
+    loaded.charToGlyphIndex.Initialize(numGlyphs, [](uint16_t let) { return (uint32_t)let; });
 
     if(format == 4) {
         fileReader.ignore(4);
@@ -269,10 +269,13 @@ Font FontLoader::LoadFile(std::wstring file) {
     fileReader.close();
 
     // send curve data to the GPU
+    int curveCount = curves.GetSize();
+    int sizeCheck = sizeof(BezierCurve);
+
     loaded.glyphCurves = app->graphics->CreateArrayBuffer(ShaderDataType::Structured, curves.GetSize(), sizeof(BezierCurve));
     loaded.firstCurveIndices = app->graphics->CreateArrayBuffer(ShaderDataType::UInt, glyphStartIndices.GetSize());
     app->graphics->WriteBuffer(curves.GetArray(), curves.GetSize() * sizeof(BezierCurve), loaded.glyphCurves.buffer);
-    app->graphics->WriteBuffer(glyphStartIndices.GetArray(), glyphStartIndices.GetSize() * sizeof(unsigned int), loaded.firstCurveIndices.buffer);
+    app->graphics->WriteBuffer(glyphStartIndices.GetArray(), glyphStartIndices.GetSize() * sizeof(uint32_t), loaded.firstCurveIndices.buffer);
     curves.Release();
     glyphStartIndices.Release();
 

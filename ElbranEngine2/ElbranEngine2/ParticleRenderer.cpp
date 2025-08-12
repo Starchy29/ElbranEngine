@@ -6,31 +6,29 @@
 
 #define PARTICLE_BYTES 32 // based on struct in ShaderStructs.hlsli
 
-ParticleRenderer::ParticleRenderer(unsigned int maxParticles, Texture2D sprite) 
+ParticleRenderer::ParticleRenderer(uint16_t maxParticles, Texture2D sprite) 
 	: ParticleRenderer(maxParticles, SpriteSheet { sprite, 1, 1, 1 }, 0.f)
 { }
 
-ParticleRenderer::ParticleRenderer(unsigned int maxParticles, SpriteSheet animation, float animationFPS) {
+ParticleRenderer::ParticleRenderer(uint16_t maxParticles, SpriteSheet animation, float animationFPS) :
+	sprites{animation},
+	animationFPS{animationFPS},
+	maxParticles{maxParticles},
+	lastParticle{(uint16_t)-1},
+	tint{Color::White},
+	applyLights{false},
+	blendAdditive{false},
+	scaleWithParent{true},
+	startWidth{1.0f},
+	lifespan{1.0f}
+{
 	transform = nullptr;
 	worldMatrix = nullptr;
-
-	sprites = animation;
-	this->animationFPS = animationFPS;
-
-	this->maxParticles = maxParticles;
-	lastParticle = -1;
-
-	tint = Color::White;
-	applyLights = false;
-	blendAdditive = false;
-	scaleWithParent = true;
-	startWidth = 1.0f;
-	lifespan = 1.0f;
 
 	particleBuffer = app->graphics->CreateEditBuffer(ShaderDataType::Structured, maxParticles, PARTICLE_BYTES);
 }
 
-ParticleRenderer::~ParticleRenderer() {
+void ParticleRenderer::Release() {
 	app->graphics->ReleaseEditBuffer(&particleBuffer);
 }
 
@@ -83,7 +81,7 @@ void ParticleRenderer::Draw() {
 	graphics->SetArray(ShaderStage::Vertex, nullptr, 0); // unbind particles
 }
 
-void ParticleRenderer::Emit(unsigned int numParticles, const ArrayBuffer* initialData) {
+void ParticleRenderer::Emit(uint16_t numParticles, const ArrayBuffer* initialData) {
 	GraphicsAPI* graphics = app->graphics;
 	ComputeShader* spawnShader = &app->assets->particleSpawnCS;
 
@@ -114,6 +112,6 @@ void ParticleRenderer::Emit(unsigned int numParticles, const ArrayBuffer* initia
 	lastParticle %= maxParticles;
 }
 
-unsigned int ParticleRenderer::GetMaxParticles() const {
+uint16_t ParticleRenderer::GetMaxParticles() const {
 	return maxParticles;
 }

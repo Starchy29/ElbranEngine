@@ -1,22 +1,23 @@
 #pragma once
+#include <stdint.h>
 #include <cassert>
 
 // a hashmap with a set capacity known at compile time
-template<class KeyType, class ValueType, unsigned int capacity>
+template<class KeyType, class ValueType, uint32_t capacity>
 class FixedMap {
 public:
-	unsigned int (*hasher)(KeyType);
+	uint32_t (*hasher)(KeyType);
 
-	FixedMap() {
-		size = 0;
-		hasher = nullptr;
-	}
+	FixedMap() : 
+		size{0u},
+		hasher{nullptr}
+	{ }
 
 	void Set(const KeyType& key, ValueType value) {
 		// check if the key already exists in the map
-		unsigned int hashIndex = Hash(key);
-		unsigned int index = hashIndex;
-		for(unsigned int i = 0; i < capacity; i++) {
+		uint32_t hashIndex = Hash(key);
+		uint32_t index = hashIndex;
+		for(uint32_t i = 0; i < capacity; i++) {
 			index = (hashIndex + i) % capacity;
 			if(keys[index] == key) {
 				// key exists, update value
@@ -56,17 +57,12 @@ public:
 
 		keys[hashIndex] = key;
 		values[hashIndex] = value;
-
-		if(size == capacity) {
-			delete[] fullSlots;
-			fullSlots = nullptr;
-		}
 	}
 
 	ValueType Get(const KeyType& key) const {
-		unsigned int startIndex = Hash(key);
-		for(unsigned int i = 0; i < capacity; i++) {
-			unsigned int checkIndex = (startIndex + i) % capacity;
+		uint32_t startIndex = Hash(key);
+		for(uint32_t i = 0; i < capacity; i++) {
+			uint32_t checkIndex = (startIndex + i) % capacity;
 			if(key == keys[checkIndex]) return values[checkIndex];
 		}
 
@@ -75,12 +71,12 @@ public:
 	}
 
 private:
-	unsigned int size;
+	uint32_t size;
 	KeyType keys[capacity];
 	ValueType values[capacity];
 	bool fullSlots[capacity];
 
-	unsigned int Hash(const KeyType& key) const {
+	uint32_t Hash(const KeyType& key) const {
 		if(hasher) { return hasher(key) % capacity; }
 		return size; // when there is no hash function, add to the first open slot
 	}
@@ -92,7 +88,7 @@ class DynamicFixedMap {
 public:
 	DynamicFixedMap() {}
 
-	void Initialize(unsigned int capacity, unsigned int (*hashFunction)(KeyType) = nullptr) {
+	void Initialize(uint16_t capacity, uint32_t (*hashFunction)(KeyType) = nullptr) {
 		size = 0;
 		this->capacity = capacity;
 		hasher = hashFunction;
@@ -109,9 +105,9 @@ public:
 
 	void Set(const KeyType& key, ValueType value) {
 		// check if the key already exists in the map
-		unsigned int hashIndex = Hash(key);
-		unsigned int index = hashIndex;
-		for(unsigned int i = 0; i < capacity; i++) {
+		uint32_t hashIndex = Hash(key);
+		uint32_t index = hashIndex;
+		for(uint32_t i = 0; i < capacity; i++) {
 			index = (hashIndex + i) % capacity;
 			if(keys[index] == key) {
 				// key exists, update value
@@ -159,9 +155,9 @@ public:
 	}
 
 	ValueType Get(const KeyType& key) const {
-		unsigned int startIndex = Hash(key);
-		for(unsigned int i = 0; i < capacity; i++) {
-			unsigned int checkIndex = (startIndex + i) % capacity;
+		uint32_t startIndex = Hash(key);
+		for(uint32_t i = 0; i < capacity; i++) {
+			uint32_t checkIndex = (startIndex + i) % capacity;
 			if(key == keys[checkIndex]) return values[checkIndex];
 		}
 
@@ -170,14 +166,14 @@ public:
 	}
 
 private:
-	unsigned int capacity;
-	unsigned int size;
-	unsigned int (*hasher)(KeyType);
+	uint32_t capacity;
+	uint32_t size;
+	uint32_t (*hasher)(KeyType);
 	KeyType* keys;
 	ValueType* values;
 	bool* fullSlots;
 
-	unsigned int Hash(const KeyType& key) const {
+	uint32_t Hash(const KeyType& key) const {
 		if(hasher) { return hasher(key) % capacity; }
 		return size; // when there is no hash function, add to the first open slot
 	}

@@ -3,14 +3,11 @@
 #include "Application.h"
 #include "AssetContainer.h"
 
-BloomPostProcess::BloomPostProcess() {
-    threshold = 1.0f;
-    blurStep = BlurPostProcess();
+BloomPostProcess::BloomPostProcess() :
+    threshold{1.0f},
+    blurStep{BlurPostProcess()}
+{
     blurStep.blurRadius = 50;
-
-    filterShader = &app->assets->bloomFilterPP;
-    combineShader = &app->assets->screenSumPP;
-
 }
 
 void BloomPostProcess::Render(GraphicsAPI* graphics, const RenderTarget* input, RenderTarget* output) {
@@ -18,7 +15,7 @@ void BloomPostProcess::Render(GraphicsAPI* graphics, const RenderTarget* input, 
     RenderTarget* brightPixels = graphics->GetPostProcessHelper(1); // blur shader uses slot 0
     graphics->SetRenderTarget(brightPixels, false);
     graphics->SetTexture(ShaderStage::Pixel, input, 0);
-    graphics->SetPixelShader(filterShader, &threshold, sizeof(float));
+    graphics->SetPixelShader(&app->assets->bloomFilterPP, &threshold, sizeof(float));
     graphics->DrawFullscreen();
 
     // blur bright pixels
@@ -29,7 +26,7 @@ void BloomPostProcess::Render(GraphicsAPI* graphics, const RenderTarget* input, 
     graphics->SetRenderTarget(output, false);
     graphics->SetTexture(ShaderStage::Pixel, input, 0);
     graphics->SetTexture(ShaderStage::Pixel, blurredBrightness, 1);
-    graphics->SetPixelShader(combineShader);
+    graphics->SetPixelShader(&app->assets->screenSumPP);
     graphics->DrawFullscreen();
 
     graphics->SetTexture(ShaderStage::Pixel, nullptr, 0);

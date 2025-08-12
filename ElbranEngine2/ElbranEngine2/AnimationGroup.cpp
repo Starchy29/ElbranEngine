@@ -1,16 +1,16 @@
 #include "AnimationGroup.h"
 #include <cassert>
 
-AnimationGroup::AnimationGroup(AtlasRenderer* renderer, unsigned int numAnimations) {
-	this->renderer = renderer;
+AnimationGroup::AnimationGroup(AtlasRenderer* renderer, uint8_t numAnimations) :
+	renderer{renderer},
+	currentAnimationIndex{-1}
+{
 	animators.Allocate(numAnimations);
 	animationSprites.Allocate(numAnimations);
 	nextAnimationIndices.Allocate(numAnimations);
-
-	currentAnimationIndex = -1;
 }
 
-AnimationGroup::~AnimationGroup() {
+void AnimationGroup::Release() {
 	animators.Release();
 	animationSprites.Release();
 	nextAnimationIndices.Release();
@@ -24,7 +24,7 @@ void AnimationGroup::Update(float deltaTime) {
 	}
 }
 
-AtlasAnimator* AnimationGroup::AddAnimation(SpriteSheet* frames, float frameRate, bool looped, bool rebounds, int nextAnimationIndex) {
+AtlasAnimator* AnimationGroup::AddAnimation(SpriteSheet* frames, float frameRate, bool looped, bool rebounds, int8_t nextAnimationIndex) {
 	animationSprites.Add(frames);
 	nextAnimationIndices.Add(nextAnimationIndex);
 	animators.Add(AtlasAnimator(renderer, frameRate));
@@ -34,7 +34,7 @@ AtlasAnimator* AnimationGroup::AddAnimation(SpriteSheet* frames, float frameRate
 	return added;
 }
 
-AtlasAnimator* AnimationGroup::GetAnimation(unsigned int index) {
+AtlasAnimator* AnimationGroup::GetAnimation(uint8_t index) {
 	assert(index < animators.GetSize() && "animation index was out of range");
 	return &animators[index];
 }
@@ -44,7 +44,7 @@ AtlasAnimator* AnimationGroup::GetCurrentAnimation() {
 	return &animators[currentAnimationIndex];
 }
 
-void AnimationGroup::StartAnimation(int index, bool reversed) {
+void AnimationGroup::StartAnimation(uint8_t index, bool reversed) {
 	currentAnimationIndex = index;
 	renderer->atlas = animationSprites[index];
 	animators[index].Restart(reversed);

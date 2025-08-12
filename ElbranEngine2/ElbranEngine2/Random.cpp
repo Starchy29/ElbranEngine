@@ -16,7 +16,7 @@ Random::~Random() {
 	delete generator;
 }
 
-int Random::GenerateInt(int min, int max) const {
+int32_t Random::GenerateInt(int32_t min, int32_t max) const {
 	std::uniform_int_distribution<uint_least32_t> distribute = std::uniform_int_distribution<uint_least32_t>(min, max);
 	return distribute(*generator);
 }

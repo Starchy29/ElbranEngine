@@ -16,7 +16,7 @@ TextRenderer::TextRenderer(std::string text, const Font* font, HorizontalAlignme
 	GenerateMesh();
 }
 
-TextRenderer::~TextRenderer() {
+void TextRenderer::Release() {
 	app->graphics->ReleaseMesh(&textMesh);
 }
 
@@ -82,17 +82,17 @@ void TextRenderer::GenerateMesh() {
 	app->graphics->ReleaseMesh(&textMesh);
 
 	// determine dimensions
-	unsigned int textLength = text.size();
-	int rows = 1;
-	for(int i = 0; i < textLength; i++) {
+	size_t textLength = text.size();
+	uint16_t rows = 1;
+	for(size_t i = 0; i < textLength; i++) {
 		if(text[i] == '\n') {
 			rows++;
 		}
 	}
 	float* rowWidths = (float*)app->perFrameData.Reserve(sizeof(float) * rows, true);
 
-	int currentRow = 0;
-	for(int i = 0; i < textLength; i++) {
+	uint16_t currentRow = 0;
+	for(size_t i = 0; i < textLength; i++) {
 		if(text[i] == '\n') {
 			currentRow++;
 		} else {
@@ -101,19 +101,19 @@ void TextRenderer::GenerateMesh() {
 	}
 
 	float maxWidth = rowWidths[0];
-	for(int i = 1; i < rows; i++) {
+	for(uint16_t i = 1; i < rows; i++) {
 		maxWidth = max(maxWidth, rowWidths[i]);
 	}
 	float totalHeight = rows + (rows - 1) * lineSpacing;
 
 	// create mesh to fit in a 1x1 square
 	Vertex* vertices = (Vertex*)app->perFrameData.Reserve(sizeof(Vertex) * 4 * textLength);
-	unsigned int* indices = (unsigned int*)app->perFrameData.Reserve(sizeof(unsigned int) * 6 * textLength);
+	uint32_t* indices = (uint32_t*)app->perFrameData.Reserve(sizeof(uint32_t) * 6 * textLength);
 	Vector2 cursor = Vector2(0.f, -1.f); // start at y=-1 so the top is at y=0
 	if(horizontalAlignment == HorizontalAlignment::Right) cursor.x = maxWidth - rowWidths[0];
 	else if(horizontalAlignment == HorizontalAlignment::Center) cursor.x = (maxWidth - rowWidths[0]) * 0.5f;
 	currentRow = 0;
-	for(int i = 0; i < text.size(); i++) {
+	for(size_t i = 0; i < text.size(); i++) {
 		if(text[i] == '\n') {
 			cursor.y -= (1.0f + lineSpacing);
 			currentRow++;
@@ -121,7 +121,7 @@ void TextRenderer::GenerateMesh() {
 			if(horizontalAlignment == HorizontalAlignment::Right) cursor.x = maxWidth - rowWidths[currentRow];
 			else if(horizontalAlignment == HorizontalAlignment::Center) cursor.x = (maxWidth - rowWidths[currentRow]) * 0.5f;
 		} else {
-			int glyphIndex = font->charToGlyphIndex.Get(text[i]);
+			uint16_t glyphIndex = font->charToGlyphIndex.Get(text[i]);
 
 			Vector2 dimensions = font->glyphDimensions[glyphIndex];
 			float baseLine = font->glyphBaselines[glyphIndex] * dimensions.y;

@@ -9,7 +9,7 @@ float Math::Sign(float number) {
 	return 0.0f;
 }
 
-int Math::Sign(int number) {
+int32_t Math::Sign(int32_t number) {
 	if(number > 0) return 1;
 	if(number < 0) return -1;
 	return 0;
@@ -92,15 +92,15 @@ const Vector2 Vector2::Down = Vector2(0.f, -1.f);
 const Vector2 Vector2::Left = Vector2(-1.f, 0.f);
 const Vector2 Vector2::Right = Vector2(1.f, 0.f);
 
-Vector2::Vector2() {
-	x = 0.f;
-	y = 0.f;
-}
+Vector2::Vector2() :
+	x{0.f},
+	y{0.f}
+{ }
 
-Vector2::Vector2(float x, float y) {
-	this->x = x;
-	this->y = y;
-}
+Vector2::Vector2(float x, float y) :
+	x{x},
+	y{y}
+{ }
 
 Vector2 Vector2::FromAngle(float radians) {
 	return Vector2(cosf(radians), sinf(radians));
@@ -269,26 +269,26 @@ bool Circle::Intersects(const AlignedRect& rectangle) const {
 #pragma endregion
 
 #pragma region AlignedRect
-AlignedRect::AlignedRect() {
-	left = 0.f;
-	right = 0.f;
-	top = 0.f;
-	bottom = 0.f;
-}
+AlignedRect::AlignedRect() :
+	left{0.f},
+	right{0.f},
+	top{0.f},
+	bottom{0.f}
+{ }
 
-AlignedRect::AlignedRect(Vector2 center, Vector2 size) {
-	left = center.x - size.x / 2.0f;
-	right = center.x + size.x / 2.0f;
-	top = center.y + size.y / 2.0f;
-	bottom = center.y - size.y / 2.0f;
-}
+AlignedRect::AlignedRect(Vector2 center, Vector2 size) :
+	left{center.x - size.x * 0.5f},
+	right{center.x + size.x * 0.5f},
+	top{center.y + size.y * 0.5f},
+	bottom{center.y - size.y * 0.5f}
+{ }
 
-AlignedRect::AlignedRect(float left, float right, float top, float bottom) {
-	this->left = left;
-	this->right = right;
-	this->top = top;
-	this->bottom = bottom;
-}
+AlignedRect::AlignedRect(float left, float right, float top, float bottom) :
+	left{left},
+	right{right},
+	top{top},
+	bottom{bottom}
+{ }
 
 Vector2 AlignedRect::Center() const {
 	return Vector2((right + left) / 2.0f, (top + bottom) / 2.0f);

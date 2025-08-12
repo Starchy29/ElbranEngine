@@ -17,12 +17,12 @@ public:
 protected:
     void CheckInputs() override;
     void ClearInputs() override;
-    bool IsKeyPressed(char key, int playerIndex) override;
-    bool IsButtonPressed(GamepadButton button, int playerIndex) override;
-    Vector2 GetGamepadStick(bool left, int playerIndex) override;
+    bool IsKeyPressed(char key, uint8_t playerIndex) override;
+    bool IsButtonPressed(GamepadButton button, uint8_t playerIndex) override;
+    Vector2 GetGamepadStick(bool left, uint8_t playerIndex) override;
     Vector2 GetMouseScreenPosition() override;
     float DetermineMouseSpin() override;
-    void SetRumble(int playerIndex, float strength) override;
+    void SetRumble(uint8_t playerIndex, float strength) override;
 
 private:
     struct GamepadData {
@@ -34,7 +34,7 @@ private:
 
     HWND windowHandle;
 
-    BYTE keyboard[KEY_COUNT];
+    uint8_t keyboard[KEY_COUNT];
     GamepadData gamepads[4];
 };
 #endif

@@ -2,6 +2,7 @@
 #include "GraphicsAPI.h"
 #include "Application.h"
 #include "SoundMixer.h"
+#include <stdint.h>
 
 #define LoadSpriteSheet(fileName, rows, cols, numSprites) SpriteSheet{ graphics->LoadSprite(fileName), rows, cols, numSprites }
 
@@ -20,7 +21,7 @@ AssetContainer::AssetContainer(std::wstring filePath, GraphicsAPI* graphics, Sou
 		{ Vector2(0.5f, -0.5f), Vector2(1.0f, 1.0f) }
 	};
 
-	unsigned int indices[] = {
+	uint32_t indices[] = {
 		0, 1, 3, // clockwise winding order
 		1, 2, 3
 	};
@@ -34,7 +35,7 @@ AssetContainer::AssetContainer(std::wstring filePath, GraphicsAPI* graphics, Sou
 		{ Vector2(-0.5f, -0.5f), Vector2(0.0f, 1.0f) }
 	};
 
-	unsigned int triIndices[] = { 0, 1, 2 };
+	uint32_t triIndices[] = { 0, 1, 2 };
 	unitTriangle = graphics->CreateMesh(triVerts, 3, triIndices, 3, false);
 
 	// load shaders

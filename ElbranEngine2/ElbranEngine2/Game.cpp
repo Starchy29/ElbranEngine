@@ -115,6 +115,7 @@ Game::~Game() {
 	delete testScene;
 	delete background;
 
+	testTexter->Release();
 	delete testTexter;
 	delete textBox;
 
@@ -124,7 +125,9 @@ Game::~Game() {
 	delete butt3;
 	delete butt4;
 	delete slider;
+	particles->Release();
 	delete particles;
+	partUpdater->Release();
 	delete partUpdater;
 }
 

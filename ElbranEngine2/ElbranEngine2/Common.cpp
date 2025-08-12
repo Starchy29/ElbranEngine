@@ -1,44 +1,44 @@
 #include "Common.h"
 
-Int2::Int2() {
-	x = 0;
-	y = 0;
-}
+Int2::Int2() :
+	x{0},
+	y{0}
+{ }
 
-Int2::Int2(int x, int y) {
-	this->x = x;
-	this->y = y;
-}
+Int2::Int2(int32_t x, int32_t y) :
+	x{x},
+	y{y}
+{ }
 
 Int2 Int2::operator+(const Int2& other) { return Int2(x + other.x, y + other.y); }
 Int2 Int2::operator-(const Int2& other) { return Int2(x - other.x, y - other.y); }
 Int2 Int2::operator-() { return Int2(-x, -y); }
 
-UInt2::UInt2() {
-	x = 0u;
-	y = 0u;
-}
+UInt2::UInt2() :
+	x{0u},
+	y{0u}
+{ }
 
-UInt2::UInt2(unsigned int x, unsigned int y) {
-	this->x = x;
-	this->y = y;
-}
+UInt2::UInt2(uint32_t x, uint32_t y) :
+	x{x},
+	y{y}
+{ }
 
 UInt2 UInt2::operator+(const UInt2& other) { return UInt2(x + other.x, y + other.y); }
 
-Color::Color() {
-	red = 0.f;
-	green = 0.f;
-	blue = 0.f;
-	alpha = 1.0f;
-}
+Color::Color() :
+	red{0.f},
+	green{0.f},
+	blue{0.f},
+	alpha{1.0f}
+{ }
 
-Color::Color(float r, float g, float b, float a) {
-	this->red = r;
-	this->green = g;
-	this->blue = b;
-	this->alpha = a;
-}
+Color::Color(float r, float g, float b, float a) :
+	red{r},
+	green{g},
+	blue{b},
+	alpha{a}
+{ }
 
 const Color Color::Clear = Color(0, 0, 0, 0);
 const Color Color::Black = Color(0, 0, 0, 1);

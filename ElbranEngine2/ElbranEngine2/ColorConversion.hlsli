@@ -1,4 +1,5 @@
 // helper functions for converting between RGB and HSV
+#define EPSILON 1.0e-10
 
 float3 toHSV(float3 color) {
     // hue is based on the ratio from the greatest channel to the second greatest. (The minimum channel only decreases saturation)
@@ -11,8 +12,7 @@ float3 toHSV(float3 color) {
     float4 channels = color.r < bgComp.x ? float4(bgComp.xyw, color.r) : float4(color.r, bgComp.yzx); // x is max(r,g,b), z is a constant, y and w are the non-max channels
     
     float delta = channels.x - min(channels.w, channels.y); // max channel - min channel
-    float tiny = 1.0e-10; // avoid divide by 0 without branching
-    return float3(abs(channels.z + (channels.w - channels.y) / (6.0 * delta + tiny)), delta / (channels.x + tiny), channels.x);
+    return float3(abs(channels.z + (channels.w - channels.y) / (6.0 * delta + EPSILON)), delta / (channels.x + EPSILON), channels.x);
 }
 
 float3 toRGB(float3 hsv) {

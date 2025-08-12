@@ -1,18 +1,21 @@
 #pragma once
+#include <stdint.h>
 #include <cassert>
 
 // a locally-allocated unordered list with capacity known at compile time
-template<class Type, unsigned int capacity>
+template<class Type, uint32_t capacity>
 class FixedList {
-public:
-	FixedList() {
-		size = 0;
-	}
+private:
+	Type data[capacity];
+	uint32_t size;
 
-	Type& operator[](int index) { return data[index]; }
+public:
+	FixedList() : size{0u} {}
+
+	Type& operator[](uint32_t index) { return data[index]; }
 	void Clear() { size = 0; }
 	const Type* GetArray() const { return data; }
-	unsigned int GetSize() const { return size; }
+	uint32_t GetSize() const { return size; }
 
 	void Add(Type element) {
 		assert(size < capacity && "attempted to add to a full FixedList");
@@ -20,39 +23,40 @@ public:
 		size++;
 	}
 
-	void RemoveAt(unsigned int index) {
+	void RemoveAt(uint16_t index) {
 		assert(index < size && "attempted to remove from an index out of range");
 		data[index] = data[size - 1];
 		size--;
 	}
 
-	int IndexOf(Type element) {
-		for(int i = 0; i < size; i++) {
+	int32_t IndexOf(Type element) {
+		for(uint32_t i = 0; i < size; i++) {
 			if(data[i] == element) return i;
 		}
 		return -1;
 	}
-
-private:
-	Type data[capacity];
-	unsigned int size;
 };
 
 // a heap-allocated unordered list with capacity known at initialization
 template<class Type>
 class DynamicFixedList {
+private:
+	Type* data;
+	uint32_t capacity;
+	uint32_t size;
+
 public:
 	DynamicFixedList() {}
 
-	void Allocate(unsigned int capacity) {
-		size = 0;
+	void Allocate(uint32_t capacity) {
+		size = 0u;
 		this->capacity = capacity;
 		data = new Type[capacity] {};
 	}
 
 	void Release() { delete[] data; }
-	Type& operator[](int index) { return data[index]; }
-	unsigned int GetSize() const { return size; }
+	Type& operator[](uint32_t index) { return data[index]; }
+	uint32_t GetSize() const { return size; }
 	void Clear() { size = 0; }
 	const Type* GetArray() const { return data; }
 
@@ -62,21 +66,16 @@ public:
 		size++;
 	}
 
-	void RemoveAt(unsigned int index) {
+	void RemoveAt(uint32_t index) {
 		assert(index < size && "attempted to remove from an index out of range");
 		data[index] = data[size - 1];
 		size--;
 	}
 	
-	int IndexOf(Type element) {
-		for(int i = 0; i < size; i++) {
+	int32_t IndexOf(Type element) {
+		for(uint32_t i = 0; i < size; i++) {
 			if(data[i] == element) return i;
 		}
 		return -1;
 	}
-
-private:
-	Type* data;
-	unsigned int capacity;
-	unsigned int size;
 };

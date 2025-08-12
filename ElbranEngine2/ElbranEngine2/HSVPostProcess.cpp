@@ -4,17 +4,15 @@
 #include "Application.h"
 #include "AssetContainer.h"
 
-HSVPostProcess::HSVPostProcess() {
-	contrast = 0.f;
-	saturation = 0.f;
-	brightness = 0.f;
-
-	ppShader = &app->assets->conSatValPP;
-	totalShader = &app->assets->brightnessSumCS;
+HSVPostProcess::HSVPostProcess() :
+	contrast{0.f},
+	saturation{0.f},
+	brightness{0.f}
+{
 	totalBrightnessBuffer = app->graphics->CreateOutputBuffer(ShaderDataType::UInt, 4); // should match BrightnessSumCS.hlsl
 }
 
-HSVPostProcess::~HSVPostProcess() {
+void HSVPostProcess::Release() {
 	app->graphics->ReleaseOuputBuffer(&totalBrightnessBuffer);
 }
 
@@ -28,12 +26,13 @@ void HSVPostProcess::Render(GraphicsAPI* graphics, const RenderTarget* input, Re
 
 	if(contrast != 0) {
 		// determine average brightness for contrast adjustment
+		ComputeShader* totalShader = &app->assets->brightnessSumCS;
 		UInt2 viewDims = graphics->GetViewDimensions();
 		graphics->WriteBuffer(&viewDims, sizeof(UInt2), totalShader->constants.data);
 		graphics->SetConstants(ShaderStage::Compute, &totalShader->constants, 0);
 		graphics->SetTexture(ShaderStage::Compute, input, 0);
 		
-		unsigned int sums[4] = {};
+		uint32_t sums[4] = {};
 		graphics->SetOutputBuffer(&totalBrightnessBuffer, 0, &sums);
 		graphics->RunComputeShader(totalShader, viewDims.x, viewDims.y);
 		graphics->ReadBuffer(&totalBrightnessBuffer, &sums);
@@ -44,7 +43,7 @@ void HSVPostProcess::Render(GraphicsAPI* graphics, const RenderTarget* input, Re
 	}
 
 	graphics->SetTexture(ShaderStage::Pixel, input, 0);
-	graphics->SetPixelShader(ppShader, &psInput, sizeof(ConSatValPPConstants));
+	graphics->SetPixelShader(&app->assets->conSatValPP, &psInput, sizeof(ConSatValPPConstants));
 
 	graphics->DrawFullscreen();
 	graphics->SetTexture(ShaderStage::Pixel, nullptr, 0);

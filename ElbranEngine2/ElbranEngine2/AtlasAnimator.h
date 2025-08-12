@@ -10,7 +10,7 @@ public:
     bool looped;
     bool rebounds;
 
-    AtlasAnimator();
+    AtlasAnimator() {}
     AtlasAnimator(AtlasRenderer* renderer, float frameRate);
 
     void Update(float deltaTime) override;
@@ -22,7 +22,7 @@ private:
     AtlasRenderer* renderer;
 
     float timer;
-    int currentIndex;
+    int16_t currentIndex;
     bool reversed;
     bool completed;
 

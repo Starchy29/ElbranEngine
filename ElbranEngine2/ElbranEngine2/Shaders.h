@@ -31,7 +31,7 @@ struct PixelShader {
 struct ComputeShader {
 	CSData* shader;
 	ConstantBuffer constants;
-	unsigned int xGroupSize;
-	unsigned int yGroupSize;
-	unsigned int zGroupSize;
+	uint32_t xGroupSize;
+	uint32_t yGroupSize;
+	uint32_t zGroupSize;
 };

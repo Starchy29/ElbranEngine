@@ -8,7 +8,7 @@ public:
 	Random();
 	~Random();
 
-	int GenerateInt(int min, int max) const;
+	int32_t GenerateInt(int32_t min, int32_t max) const;
 	float GenerateFloat(float min, float max) const;
 	Vector2 GenerateInCircle() const;
 	Vector2 GenerateOnCircle() const;

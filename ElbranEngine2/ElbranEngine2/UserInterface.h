@@ -25,9 +25,9 @@ public:
 	bool gamepadEnabled;
 	bool mouseEnabled;
 
-	UserInterface();
-	UserInterface(unsigned int maxElements);
-	~UserInterface();
+	UserInterface() {}
+	UserInterface(uint16_t maxElements);
+	void Release();
 
 	void Update(float deltaTime) override;
 

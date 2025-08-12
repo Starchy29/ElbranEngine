@@ -12,13 +12,12 @@ public:
     float brightness;
 
     HSVPostProcess();
-    ~HSVPostProcess();
+    void Release();
+
     void Render(GraphicsAPI* graphics, const RenderTarget* input, RenderTarget* output) override;
     bool IsActive() const override;
 
 private:
-    PixelShader* ppShader;
-    ComputeShader* totalShader;
     OutputBuffer totalBrightnessBuffer;
 };
 

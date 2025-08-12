@@ -1,5 +1,6 @@
 #pragma once
 #include "Math.h"
+#include <stdint.h>
 
 enum class Direction {
 	None,
@@ -10,11 +11,11 @@ enum class Direction {
 };
 
 struct Int2 {
-	int x;
-	int y;
+	int32_t x;
+	int32_t y;
 
 	Int2();
-	Int2(int x, int y);
+	Int2(int32_t x, int32_t y);
 
 	Int2 operator+(const Int2& other);
 	Int2 operator-(const Int2& other);
@@ -22,11 +23,11 @@ struct Int2 {
 };
 
 struct UInt2 {
-	unsigned int x;
-	unsigned int y;
+	uint32_t x;
+	uint32_t y;
 
 	UInt2();
-	UInt2(unsigned int x, unsigned int y);
+	UInt2(uint32_t x, uint32_t y);
 
 	UInt2 operator+(const UInt2& other);
 };

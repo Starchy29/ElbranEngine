@@ -1,4 +1,6 @@
 #pragma once
+#include <stdint.h>
+
 #ifdef WINDOWS
 struct ID3D11Buffer;
 struct ID3D11Texture2D;
@@ -27,9 +29,9 @@ struct Texture2D {
 
 struct SpriteSheet {
 	Texture2D texture;
-	unsigned int rows;
-	unsigned int cols;
-	unsigned int spriteCount;
+	uint8_t rows;
+	uint8_t cols;
+	uint8_t spriteCount;
 	float SpriteAspectRatio() const { return texture.aspectRatio * rows / cols; }
 };
 
@@ -42,7 +44,7 @@ struct ComputeTexture : Texture2D {
 };
 
 struct Mesh {
-	int indexCount;
+	uint16_t indexCount;
 	Buffer* vertices;
 	Buffer* indices;
 };
@@ -66,5 +68,5 @@ struct OutputBuffer {
 	Buffer* gpuBuffer;
 	Buffer* cpuBuffer;
 	UnorderedAccessView* view;
-	int byteLength;
+	size_t byteLength;
 };
