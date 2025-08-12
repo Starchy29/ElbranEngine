@@ -29,6 +29,12 @@
     <Filter Include="Toolkit\Behaviors">
       <UniqueIdentifier>{daac94b3-951d-4812-be0b-a41bb4b0d73e}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Toolkit\UI">
+      <UniqueIdentifier>{03f58e52-b6ff-4c38-815d-a24c723d7213}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Audio">
+      <UniqueIdentifier>{62ad4878-c20f-4339-967d-d31ad308cae9}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Application.cpp" />
@@ -75,7 +81,6 @@
     <ClCompile Include="ShapeRenderer.cpp">
       <Filter>Graphics\Renderers</Filter>
     </ClCompile>
-    <ClCompile Include="SoundMixer.cpp" />
     <ClCompile Include="MemoryArena.cpp">
       <Filter>Toolkit</Filter>
     </ClCompile>
@@ -97,15 +102,26 @@
     <ClCompile Include="PatternRenderer.cpp">
       <Filter>Graphics\Renderers</Filter>
     </ClCompile>
-    <ClCompile Include="Font.cpp" />
     <ClCompile Include="TextRenderer.cpp">
       <Filter>Graphics\Renderers</Filter>
     </ClCompile>
-    <ClCompile Include="UserInterface.cpp" />
-    <ClCompile Include="Button.cpp" />
-    <ClCompile Include="SliderUI.cpp" />
     <ClCompile Include="DebugHelper.cpp">
       <Filter>Toolkit</Filter>
+    </ClCompile>
+    <ClCompile Include="UserInterface.cpp">
+      <Filter>Toolkit\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="SoundMixer.cpp">
+      <Filter>Toolkit\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="SliderUI.cpp">
+      <Filter>Toolkit\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="Button.cpp">
+      <Filter>Toolkit\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="Font.cpp">
+      <Filter>Graphics</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -174,14 +190,12 @@
     <ClInclude Include="ShapeRenderer.h">
       <Filter>Graphics\Renderers</Filter>
     </ClInclude>
-    <ClInclude Include="SoundMixer.h" />
     <ClInclude Include="MemoryArena.h">
       <Filter>Toolkit</Filter>
     </ClInclude>
     <ClInclude Include="WindowsAudio.h">
       <Filter>Windows</Filter>
     </ClInclude>
-    <ClInclude Include="AudioData.h" />
     <ClInclude Include="AtlasRenderer.h">
       <Filter>Graphics\Renderers</Filter>
     </ClInclude>
@@ -197,18 +211,32 @@
     <ClInclude Include="PatternRenderer.h">
       <Filter>Graphics\Renderers</Filter>
     </ClInclude>
-    <ClInclude Include="Font.h" />
     <ClInclude Include="TextRenderer.h">
       <Filter>Graphics\Renderers</Filter>
     </ClInclude>
     <ClInclude Include="FixedMap.h">
       <Filter>Toolkit</Filter>
     </ClInclude>
-    <ClInclude Include="UserInterface.h" />
-    <ClInclude Include="Button.h" />
-    <ClInclude Include="SliderUI.h" />
     <ClInclude Include="DebugHelper.h">
       <Filter>Toolkit</Filter>
+    </ClInclude>
+    <ClInclude Include="UserInterface.h">
+      <Filter>Toolkit\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="Button.h">
+      <Filter>Toolkit\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="SliderUI.h">
+      <Filter>Toolkit\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="AudioData.h">
+      <Filter>Audio</Filter>
+    </ClInclude>
+    <ClInclude Include="SoundMixer.h">
+      <Filter>Audio</Filter>
+    </ClInclude>
+    <ClInclude Include="Font.h">
+      <Filter>Graphics</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
