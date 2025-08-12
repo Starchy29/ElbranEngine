@@ -11,6 +11,6 @@ public:
 	void Draw();
 
 private:
-	Scene* testScene;
+	Scene sampleScene;
 };
 

@@ -60,17 +60,7 @@ AssetContainer::AssetContainer(std::wstring filePath, GraphicsAPI* graphics, Sou
 	textRasterizePS = graphics->LoadPixelShader(L"TextRasterizePS.cso");
 
 	testSprite = graphics->LoadSprite(L"elbran.png");
-	apple = graphics->LoadSprite(L"apple.jpeg");
-	testAtlas = LoadSpriteSheet(L"test atlas.png", 3, 3, 8);
-	testAnimation2 = LoadSpriteSheet(L"test animation.png", 2, 2, 4);
-	testParticle = graphics->LoadSprite(L"tset particle.png");
-
-	testSound = audio->LoadEffect(filePath, L"water plunk.wav");
-	testMusic = audio->LoadTrack(filePath, L"Menu song.wav", true);
-
-	//testFont = Font::Load(L"Exile-Regular.ttf");
-	//testFont = Font::Load(L"Roboto-Regular.ttf");
-	testFont = Font::Load(L"arial.ttf");
+	arial = Font::Load(L"arial.ttf");
 }
 
 AssetContainer::~AssetContainer() {
@@ -102,13 +92,6 @@ AssetContainer::~AssetContainer() {
 	graphics->ReleaseShader(&textRasterizePS);
 
 	graphics->ReleaseTexture(&testSprite);
-	graphics->ReleaseTexture(&apple);
-	graphics->ReleaseTexture(&testAtlas.texture);
-	graphics->ReleaseTexture(&testAnimation2.texture);
-	graphics->ReleaseTexture(&testParticle);
 
-	audio->ReleaseSoundEffect(&testSound);
-	audio->ReleaseAudioTrack(&testMusic);
-
-	testFont.Release();
+	arial.Release();
 }

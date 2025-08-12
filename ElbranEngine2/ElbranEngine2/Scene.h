@@ -30,7 +30,7 @@ public:
 
 	Scene() {}
 	Scene(uint16_t maxEntities, float cameraWidth);
-	virtual ~Scene();
+	void Release();
 
 	virtual void Update(float deltaTime);
 	virtual void Draw();

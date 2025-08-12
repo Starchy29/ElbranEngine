@@ -35,7 +35,7 @@ Scene::Scene(uint16_t maxEntities, float cameraWidth) :
 	lightsBuffer = graphics->CreateArrayBuffer(ShaderDataType::Structured, MAX_LIGHTS_ONSCREEN, sizeof(LightData));
 }
 
-Scene::~Scene() {
+void Scene::Release() {
 	GraphicsAPI* graphics = app->graphics;
 	graphics->ReleaseConstantBuffer(&projectionBuffer);
 	graphics->ReleaseConstantBuffer(&lightInfoBuffer);

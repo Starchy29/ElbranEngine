@@ -36,15 +36,7 @@ public:
 	ComputeShader particleMoveCS;
 
 	Texture2D testSprite;
-	Texture2D apple;
-	Texture2D testParticle;
-	SpriteSheet testAtlas;
-	SpriteSheet testAnimation2;
-
-	SoundEffect testSound;
-	AudioTrack testMusic;
-
-	Font testFont;
+	Font arial;
 
 	AssetContainer(std::wstring filePath, GraphicsAPI* graphics, SoundMixer* audio);
 	~AssetContainer();
