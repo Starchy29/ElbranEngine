@@ -29,7 +29,7 @@ public:
 	Texture2D* backgroundImage;
 
 	Scene() {}
-	Scene(uint16_t maxEntities, float cameraWidth);
+	void Initialize(uint16_t maxEntities, float cameraWidth);
 	void Release();
 
 	virtual void Update(float deltaTime);

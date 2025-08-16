@@ -1,7 +1,5 @@
 #include "GraphicsAPI.h"
-#include "Game.h"
 #include "Application.h"
-#include "AssetContainer.h"
 #include <cassert>
 
 GraphicsAPI::GraphicsAPI() :
@@ -17,24 +15,19 @@ GraphicsAPI::GraphicsAPI() :
 	}
 }
 
-void GraphicsAPI::Release() {
-	for(IPostProcess* pp : postProcesses) {
-		delete pp;
-	}
-}
-
 void GraphicsAPI::Render(Game* game) {
 	postProcessed = false;
 	ClearBackBuffer();
 	ClearDepthStencil();
 
-	if(postProcesses.size() > 0) {
+	uint32_t numPostProcesses = postProcesses.Size();
+	if(numPostProcesses > 0) {
 		SetRenderTarget(&postProcessTargets[0], true);
 	}
 
 	game->Draw();
 
-	if(!postProcessed && postProcesses.size() > 0) {
+	if(!postProcessed && numPostProcesses > 0) {
 		ApplyPostProcesses();
 	}
 
@@ -46,10 +39,11 @@ void GraphicsAPI::ApplyPostProcesses() {
 	assert(!postProcessed && "attempted to run post processes twice in the same frame");
 	postProcessed = true;
 
-	for(size_t i = 0; i < postProcesses.size(); i++) {
+	uint32_t numPostProcesses = postProcesses.Size();
+	for(uint32_t i = 0; i < numPostProcesses; i++) {
 		RenderTarget* input = &postProcessTargets[i%2];
 		RenderTarget* output = &postProcessTargets[1 - (i%2)];
-		if(i == postProcesses.size() - 1) {
+		if(i == numPostProcesses - 1) {
 			output = GetBackBuffer();
 		}
 
@@ -82,7 +76,7 @@ float GraphicsAPI::GetViewAspectRatio() const {
 }
 
 void GraphicsAPI::DrawFullscreen() {
-	SetVertexShader(&app->assets->fullscreenVS);
+	SetVertexShader(&app.assets.fullscreenVS);
 	DrawVertices(3); // fullscreen triangle
 }
 

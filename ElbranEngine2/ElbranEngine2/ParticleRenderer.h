@@ -25,8 +25,8 @@ public:
 	bool blendAdditive;
 
 	ParticleRenderer() {}
-	ParticleRenderer(uint16_t maxParticles, Texture2D sprite);
-	ParticleRenderer(uint16_t maxParticles, SpriteSheet animation, float animationFPS);
+	void Initialize(uint16_t maxParticles, Texture2D sprite);
+	void Initialize(uint16_t maxParticles, SpriteSheet animation, float animationFPS);
 	void Release();
 
 	void Draw() override;

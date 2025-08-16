@@ -8,7 +8,7 @@ public:
 
 	void Allocate(size_t size);
 	void* Reserve(size_t bytes, bool zeroed = false);
-	void Reset();
+	void Clear();
 	void Release();
 
 	void operator=(const MemoryArena&) = delete;

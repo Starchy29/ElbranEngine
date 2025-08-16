@@ -18,7 +18,7 @@ void* MemoryArena::Reserve(size_t bytes, bool zeroed) {
 	return address;
 }
 
-void MemoryArena::Reset() {
+void MemoryArena::Clear() {
 	next = data;
 }
 

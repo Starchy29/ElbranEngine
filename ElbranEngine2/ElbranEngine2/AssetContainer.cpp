@@ -6,7 +6,7 @@
 
 #define LoadSpriteSheet(fileName, rows, cols, numSprites) SpriteSheet{ graphics->LoadSprite(fileName), rows, cols, numSprites }
 
-AssetContainer::AssetContainer(std::wstring filePath, GraphicsAPI* graphics, SoundMixer* audio) {
+void AssetContainer::Initialize(std::wstring filePath, GraphicsAPI* graphics, SoundMixer* audio) {
 	defaultSampler = graphics->CreateDefaultSampler();
 	graphics->SetSampler(ShaderStage::Vertex, &defaultSampler, 0);
 	graphics->SetSampler(ShaderStage::Geometry, &defaultSampler, 0);
@@ -48,6 +48,7 @@ AssetContainer::AssetContainer(std::wstring filePath, GraphicsAPI* graphics, Sou
 	solidColorPS = graphics->LoadPixelShader(L"SolidColorPS.cso");
 	texturePS = graphics->LoadPixelShader(L"TexturePS.cso");
 	circleFillPS = graphics->LoadPixelShader(L"CircleFillPS.cso");
+	textRasterizePS = graphics->LoadPixelShader(L"TextRasterizePS.cso");
 
 	conSatValPP = graphics->LoadPixelShader(L"ConSatValPP.cso");
 	blurPP = graphics->LoadPixelShader(L"BlurPP.cso");
@@ -57,15 +58,14 @@ AssetContainer::AssetContainer(std::wstring filePath, GraphicsAPI* graphics, Sou
 	brightnessSumCS = graphics->LoadComputeShader(L"BrightnessSumCS.cso");
 	particleSpawnCS = graphics->LoadComputeShader(L"ParticleSpawnCS.cso");
 	particleMoveCS = graphics->LoadComputeShader(L"ParticleMoveCS.cso");
-	textRasterizePS = graphics->LoadPixelShader(L"TextRasterizePS.cso");
 
 	testSprite = graphics->LoadSprite(L"elbran.png");
 	arial = Font::Load(L"arial.ttf");
 }
 
-AssetContainer::~AssetContainer() {
-	GraphicsAPI* graphics = app->graphics;
-	SoundMixer* audio = app->audio;
+void AssetContainer::Release() {
+	GraphicsAPI* graphics = app.graphics;
+	SoundMixer* audio = app.audio;
 
 	graphics->ReleaseSampler(&defaultSampler);
 	graphics->ReleaseMesh(&unitSquare);
@@ -80,6 +80,7 @@ AssetContainer::~AssetContainer() {
 	graphics->ReleaseShader(&solidColorPS);
 	graphics->ReleaseShader(&texturePS);
 	graphics->ReleaseShader(&circleFillPS);
+	graphics->ReleaseShader(&textRasterizePS);
 
 	graphics->ReleaseShader(&conSatValPP);
 	graphics->ReleaseShader(&blurPP);
@@ -89,7 +90,6 @@ AssetContainer::~AssetContainer() {
 	graphics->ReleaseShader(&brightnessSumCS);
 	graphics->ReleaseShader(&particleSpawnCS);
 	graphics->ReleaseShader(&particleMoveCS);
-	graphics->ReleaseShader(&textRasterizePS);
 
 	graphics->ReleaseTexture(&testSprite);
 

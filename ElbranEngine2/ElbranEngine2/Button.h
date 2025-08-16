@@ -14,7 +14,7 @@ public:
 	Color hoveredColor;
 
 	Button() {}
-	Button(Scene* scene, void (*clickEffect)(Button*));
+	void Initialize(Scene* scene, void (*clickEffect)(Button*));
 
 	void OnFocused() override;
 	void OnUnfocused() override;

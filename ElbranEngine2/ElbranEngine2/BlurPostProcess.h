@@ -8,7 +8,7 @@ class BlurPostProcess :
 public:
     uint16_t blurRadius;
 
-    BlurPostProcess();
+    BlurPostProcess() {}
 
     void Render(GraphicsAPI* graphics, const RenderTarget* input, RenderTarget* output) override;
     bool IsActive() const override;

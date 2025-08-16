@@ -11,7 +11,7 @@ public:
     bool rebounds;
 
     AtlasAnimator() {}
-    AtlasAnimator(AtlasRenderer* renderer, float frameRate);
+    void Initialize(AtlasRenderer* renderer, float frameRate);
 
     void Update(float deltaTime) override;
     

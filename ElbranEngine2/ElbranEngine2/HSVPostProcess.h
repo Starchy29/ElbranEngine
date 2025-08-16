@@ -11,7 +11,8 @@ public:
     float saturation;
     float brightness;
 
-    HSVPostProcess();
+    HSVPostProcess(){}
+    void Initialize();
     void Release();
 
     void Render(GraphicsAPI* graphics, const RenderTarget* input, RenderTarget* output) override;

@@ -15,8 +15,8 @@ public:
     Shape shape;
     Color color;
 
-    ShapeRenderer();
-    ShapeRenderer(Shape shape, Color color);
+    ShapeRenderer() {}
+    void Initialize(Shape shape, Color color);
 
     void Draw() override;
 };

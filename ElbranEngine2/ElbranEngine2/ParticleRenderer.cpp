@@ -1,44 +1,43 @@
 #include "ParticleRenderer.h"
 #include "Application.h"
 #include "GraphicsAPI.h"
-#include "AssetContainer.h"
 #include "ShaderConstants.h"
 
 #define PARTICLE_BYTES 32 // based on struct in ShaderStructs.hlsli
 
-ParticleRenderer::ParticleRenderer(uint16_t maxParticles, Texture2D sprite) 
-	: ParticleRenderer(maxParticles, SpriteSheet { sprite, 1, 1, 1 }, 0.f)
-{ }
+void ParticleRenderer::Initialize(uint16_t maxParticles, Texture2D sprite) { 
+	Initialize(maxParticles, SpriteSheet { sprite, 1, 1, 1 }, 0.f);
+}
 
-ParticleRenderer::ParticleRenderer(uint16_t maxParticles, SpriteSheet animation, float animationFPS) :
-	sprites{animation},
-	animationFPS{animationFPS},
-	maxParticles{maxParticles},
-	lastParticle{(uint16_t)-1},
-	tint{Color::White},
-	applyLights{false},
-	blendAdditive{false},
-	scaleWithParent{true},
-	startWidth{1.0f},
-	lifespan{1.0f}
-{
+void ParticleRenderer::Initialize(uint16_t maxParticles, SpriteSheet animation, float animationFPS) {
 	transform = nullptr;
 	worldMatrix = nullptr;
 
-	particleBuffer = app->graphics->CreateEditBuffer(ShaderDataType::Structured, maxParticles, PARTICLE_BYTES);
+	sprites = animation;
+	this->animationFPS = animationFPS;
+	this->maxParticles = maxParticles;
+	lastParticle = 0;
+	tint = Color::White;
+	applyLights = false;
+	blendAdditive = false;
+	scaleWithParent = true;
+	startWidth = 1.0f;
+	lifespan = 1.0f;
+
+	particleBuffer = app.graphics->CreateEditBuffer(ShaderDataType::Structured, maxParticles, PARTICLE_BYTES);
 }
 
 void ParticleRenderer::Release() {
-	app->graphics->ReleaseEditBuffer(&particleBuffer);
+	app.graphics->ReleaseEditBuffer(&particleBuffer);
 }
 
 void ParticleRenderer::Draw() {
-	GraphicsAPI* graphics = app->graphics;
+	GraphicsAPI* graphics = app.graphics;
 
 	// vertex shader
 	graphics->ClearMesh();
 	graphics->SetArray(ShaderStage::Vertex, &particleBuffer, 0);
-	graphics->SetVertexShader(&app->assets->particlePassPS);
+	graphics->SetVertexShader(&app.assets.particlePassPS);
 
 	// geometry shader
 	float globalZ = 0.f;
@@ -56,14 +55,14 @@ void ParticleRenderer::Draw() {
 	gsInput.animationFrames = sprites.spriteCount;
 	gsInput.atlasRows = sprites.rows;
 	gsInput.atlasCols = sprites.cols;
-	graphics->SetGeometryShader(&app->assets->particleQuadGS, &gsInput, sizeof(ParticleQuadGSConstants));
+	graphics->SetGeometryShader(&app.assets.particleQuadGS, &gsInput, sizeof(ParticleQuadGSConstants));
 
 	// pixel shader
 	TexturePSConstants psInput;
 	psInput.lit = applyLights;
 	psInput.tint = tint;
 	graphics->SetTexture(ShaderStage::Pixel, &sprites.texture, 0);
-	graphics->SetPixelShader(&app->assets->texturePS, &psInput, sizeof(psInput));
+	graphics->SetPixelShader(&app.assets.texturePS, &psInput, sizeof(psInput));
 
 	// draw
 	if(blendAdditive) {
@@ -82,8 +81,8 @@ void ParticleRenderer::Draw() {
 }
 
 void ParticleRenderer::Emit(uint16_t numParticles, const ArrayBuffer* initialData) {
-	GraphicsAPI* graphics = app->graphics;
-	ComputeShader* spawnShader = &app->assets->particleSpawnCS;
+	GraphicsAPI* graphics = app.graphics;
+	ComputeShader* spawnShader = &app.assets.particleSpawnCS;
 
 	ParticleSpawnCSConstants csInput = {};
 	csInput.spawnCount = numParticles;

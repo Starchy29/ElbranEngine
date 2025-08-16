@@ -26,7 +26,7 @@ public:
     bool spawnCircular;
 
     ParticleBehavior() {}
-    ParticleBehavior(ParticleRenderer* renderer);
+    void Initialize(ParticleRenderer* renderer);
     void Release();
 
     void Update(float deltaTime);

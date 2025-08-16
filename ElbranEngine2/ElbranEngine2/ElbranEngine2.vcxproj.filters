@@ -111,9 +111,6 @@
     <ClCompile Include="UserInterface.cpp">
       <Filter>Toolkit\UI</Filter>
     </ClCompile>
-    <ClCompile Include="SoundMixer.cpp">
-      <Filter>Toolkit\UI</Filter>
-    </ClCompile>
     <ClCompile Include="SliderUI.cpp">
       <Filter>Toolkit\UI</Filter>
     </ClCompile>
@@ -122,6 +119,9 @@
     </ClCompile>
     <ClCompile Include="Font.cpp">
       <Filter>Graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="SoundMixer.cpp">
+      <Filter>Audio</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

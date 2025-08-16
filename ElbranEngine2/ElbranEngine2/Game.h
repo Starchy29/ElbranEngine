@@ -4,8 +4,9 @@
 class Game
 {
 public:
-	Game();
-	~Game();
+	Game() {}
+	void Initialize();
+	void Release();
 
 	void Update(float deltaTime);
 	void Draw();

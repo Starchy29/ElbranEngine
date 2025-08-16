@@ -128,7 +128,7 @@ float4 main(VertexToPixel input) : SV_TARGET {
 	float coverArea = ((rightDist + leftDist) + (upDist + downDist)) * 0.5;
 	
 	float4 result = color;
-	result.a = isInGlyph * coverArea + (1 - isInGlyph) * (1.0 - coverArea);
+	result.a *= isInGlyph * coverArea + (1 - isInGlyph) * (1.0 - coverArea);
 	clip(result.a - 0.00001);
 	return result;
 }

@@ -12,7 +12,7 @@ public:
 	bool flipY;
 
 	SpriteRenderer() {}
-	SpriteRenderer(const Texture2D* sprite);
+	void Initialize(const Texture2D* sprite);
 	
 	void Draw() override;
 };

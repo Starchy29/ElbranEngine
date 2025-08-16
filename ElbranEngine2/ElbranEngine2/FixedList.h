@@ -14,8 +14,7 @@ public:
 
 	Type& operator[](uint32_t index) { return data[index]; }
 	void Clear() { size = 0; }
-	const Type* GetArray() const { return data; }
-	uint32_t GetSize() const { return size; }
+	uint32_t Size() const { return size; }
 
 	void Add(Type element) {
 		assert(size < capacity && "attempted to add to a full FixedList");
@@ -56,9 +55,8 @@ public:
 
 	void Release() { delete[] data; }
 	Type& operator[](uint32_t index) { return data[index]; }
-	uint32_t GetSize() const { return size; }
+	uint32_t Size() const { return size; }
 	void Clear() { size = 0; }
-	const Type* GetArray() const { return data; }
 
 	void Add(Type element) {
 		assert(size < capacity && "attempted to add to a full FixedList");

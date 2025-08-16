@@ -38,7 +38,8 @@ public:
 	Texture2D testSprite;
 	Font arial;
 
-	AssetContainer(std::wstring filePath, GraphicsAPI* graphics, SoundMixer* audio);
-	~AssetContainer();
+	AssetContainer() {}
+	void Initialize(std::wstring filePath, GraphicsAPI* graphics, SoundMixer* audio);
+	void Release();
 };
 

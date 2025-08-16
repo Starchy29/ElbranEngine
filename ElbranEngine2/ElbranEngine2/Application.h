@@ -1,15 +1,15 @@
 #pragma once
+#include "Game.h"
+#include "AssetContainer.h"
+#include "Random.h"
 #include <string>
 #include "MemoryArena.h"
 
 class GraphicsAPI;
 class SoundMixer;
-class Game;
-class AssetContainer;
 class InputManager;
-class Random;
 #if defined(DEBUG) | defined(_DEBUG)
-class DebugHelper;
+#include "DebugHelper.h"
 #endif
 
 class Application
@@ -18,24 +18,23 @@ public:
 	GraphicsAPI* graphics;
 	SoundMixer* audio;
 	InputManager* input;
-	AssetContainer* assets;
-	Game* game;
-	Random* rng;
+
+	AssetContainer assets;
+	Game game;
+	Random rng;
 	MemoryArena perFrameData;
 #if defined(DEBUG) | defined(_DEBUG)
-	DebugHelper* debugger;
+	DebugHelper debugger;
 #endif
 
 	std::wstring filePath;
 	void (*quitFunction)();
 
-	static void InitApp(std::wstring filePath, GraphicsAPI* graphics, SoundMixer* audio, InputManager* input);
+	Application() {}
+	void Initialize(std::wstring filePath, GraphicsAPI* graphics, SoundMixer* audio, InputManager* input);
 	void Release();
 
 	void Update(float deltaTime);
-
-private:
-	Application(std::wstring filePath, GraphicsAPI* graphics, SoundMixer* audio, InputManager* input);
 };
 
-extern Application* app; // pointer to the app singleton, created and destroyed by the platform
+extern Application app;

@@ -25,7 +25,7 @@ public:
     Color color;
 
     TextRenderer() {}
-    TextRenderer(std::string text, const Font* font, HorizontalAlignment horizontalAlignment = HorizontalAlignment::Left, float lineSpacing = 0.0f);
+    void Initialize(std::string text, const Font* font, HorizontalAlignment horizontalAlignment = HorizontalAlignment::Center, float lineSpacing = 0.0f);
     void Release();
 
     void Draw() override;

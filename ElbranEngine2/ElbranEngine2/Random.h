@@ -5,8 +5,9 @@
 
 class Random {
 public:
-	Random();
-	~Random();
+	Random() {}
+	void Initialize();
+	void Release();
 
 	int32_t GenerateInt(int32_t min, int32_t max) const;
 	float GenerateFloat(float min, float max) const;

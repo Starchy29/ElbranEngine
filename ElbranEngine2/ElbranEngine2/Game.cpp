@@ -1,14 +1,13 @@
 #include "Game.h"
 #include "Scene.h"
 #include "Application.h"
-#include "AssetContainer.h"
 
-Game::Game() {
-	sampleScene = Scene(2, 5.0f);
+void Game::Initialize() {
+	sampleScene.Initialize(5, 5.0f);
 	sampleScene.backgroundColor = Color(0.1f, 0.1f, 0.1f);
 }
 
-Game::~Game() {
+void Game::Release() {
 	sampleScene.Release();
 }
 

@@ -6,13 +6,13 @@
 
 std::mt19937* generator;
 
-Random::Random() {
+void Random::Initialize() {
 	std::random_device os_seed;
 	uint_least32_t seed = os_seed();
 	generator = new std::mt19937(seed);
 }
 
-Random::~Random() {
+void Random::Release() {
 	delete generator;
 }
 

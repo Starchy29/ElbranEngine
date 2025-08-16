@@ -2,15 +2,15 @@
 #include "Application.h"
 #include "InputManager.h"
 
-SliderUI::SliderUI(Scene* scene, float width, uint16_t segments, bool vertical) :
-	vertical{vertical},
-	segments{segments},
-	scene{scene},
-	sliderWidth{width},
-	value{0.5f}
-{
-	track = ShapeRenderer(ShapeRenderer::Shape::Square, Color::White);
-	mover = ShapeRenderer(ShapeRenderer::Shape::Square, Color::White);
+void SliderUI::Initialize(Scene* scene, float width, uint16_t segments, bool vertical) {
+	this->vertical = vertical;
+	this->segments = segments;
+	this->scene = scene;
+	sliderWidth = width;
+	value = 0.5f;
+
+	track.Initialize(ShapeRenderer::Shape::Square, Color::White);
+	mover.Initialize(ShapeRenderer::Shape::Square, Color::White);
 
 	scene->ReserveTransform(&root, nullptr);
 	Transform* selectTransform;
@@ -74,7 +74,7 @@ void SliderUI::OnScrolled(float wheelDelta) {
 }
 
 void SliderUI::OnMouseDragged(Vector2 mouseDelta) {
-	Vector2 normalizedPos = selectArea->Inverse() * app->input->GetMousePosition(&scene->camera);
+	Vector2 normalizedPos = selectArea->Inverse() * app.input->GetMousePosition(&scene->camera);
 	if(vertical) {
 		SetValue(normalizedPos.y + 0.5f);
 	} else {

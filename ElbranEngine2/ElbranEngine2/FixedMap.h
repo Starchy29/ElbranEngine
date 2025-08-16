@@ -19,13 +19,13 @@ public:
 		uint32_t index = hashIndex;
 		for(uint32_t i = 0; i < capacity; i++) {
 			index = (hashIndex + i) % capacity;
+			if(!fullSlots[index]) {
+				break;
+			}
 			if(keys[index] == key) {
 				// key exists, update value
 				values[index] = value;
 				return;
-			}
-			if(fullSlots && !fullSlots[index]) {
-				break;
 			}
 		}
 
@@ -109,13 +109,13 @@ public:
 		uint32_t index = hashIndex;
 		for(uint32_t i = 0; i < capacity; i++) {
 			index = (hashIndex + i) % capacity;
+			if(!fullSlots[index]) {
+				break;
+			}
 			if(keys[index] == key) {
 				// key exists, update value
 				values[index] = value;
 				return;
-			}
-			if(fullSlots && !fullSlots[index]) {
-				break;
 			}
 		}
 
@@ -147,11 +147,6 @@ public:
 
 		keys[hashIndex] = key;
 		values[hashIndex] = value;
-
-		if(size == capacity) {
-			delete[] fullSlots;
-			fullSlots = nullptr;
-		}
 	}
 
 	ValueType Get(const KeyType& key) const {

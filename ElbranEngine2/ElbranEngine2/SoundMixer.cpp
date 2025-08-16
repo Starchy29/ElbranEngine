@@ -1,7 +1,7 @@
 #include "SoundMixer.h"
 
 void SoundMixer::Update(float deltaTime) {
-	for(uint16_t i = 0; i < faders.GetSize(); i++) {
+	for(uint16_t i = 0; i < faders.Size(); i++) {
 		faders[i]->mixVolume += fadeData[i].fadeRate * deltaTime;
 		if(fadeData[i].fadeRate > 0.f && faders[i]->mixVolume > fadeData[i].targetVolume ||
 			fadeData[i].fadeRate < 0.f && faders[i]->mixVolume < fadeData[i].targetVolume
@@ -60,7 +60,7 @@ void SoundMixer::SetTrackVolume(AudioTrack* track, float volume, float fadeDurat
 }
 
 void SoundMixer::CancelFader(AudioTrack* track) {
-	uint16_t numFaders = faders.GetSize();
+	uint16_t numFaders = faders.Size();
 	for(uint16_t i = 0; i < numFaders; i++) {
 		if(faders[i] == track) {
 			faders.RemoveAt(i);

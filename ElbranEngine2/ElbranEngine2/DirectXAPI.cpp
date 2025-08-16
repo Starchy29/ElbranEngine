@@ -658,7 +658,7 @@ RenderTarget* DirectXAPI::GetBackBuffer() {
 
 Texture2D DirectXAPI::LoadSprite(std::wstring fileName) {
 	Texture2D result;
-	std::wstring fullPath = app->filePath + L"Assets\\" + fileName;
+	std::wstring fullPath = app.filePath + L"Assets\\" + fileName;
 	ID3D11Resource* textureResource;
 	DirectX::CreateWICTextureFromFile(device.Get(), context.Get(), fullPath.c_str(), &textureResource, &result.inputView);
 	result.data = (TextureData*)textureResource;
@@ -751,7 +751,7 @@ Buffer* DirectXAPI::CreateIndexedBuffer(uint32_t elements, uint32_t elementBytes
 }
 
 ID3DBlob* DirectXAPI::LoadShader(std::wstring fileName) {
-	std::wstring fileString = app->filePath + fileName;
+	std::wstring fileString = app.filePath + fileName;
 	LPCWSTR filePath = fileString.c_str();
 	ID3DBlob* shaderBlob;
 	HRESULT hr = D3DReadFileToBlob(filePath, &shaderBlob);

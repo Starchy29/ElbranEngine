@@ -9,7 +9,8 @@ public:
     float threshold; // 0-1
     BlurPostProcess blurStep;
 
-    BloomPostProcess();
+    BloomPostProcess() {}
+    void Initialize();
 
     void Render(GraphicsAPI* graphics, const RenderTarget* input, RenderTarget* output) override;
     bool IsActive() const override;

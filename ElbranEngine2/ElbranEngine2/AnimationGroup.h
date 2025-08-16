@@ -8,7 +8,7 @@ class AnimationGroup :
 {
 public:
     AnimationGroup() {}
-    AnimationGroup(AtlasRenderer* renderer, uint8_t numAnimations);
+    void Initialize(AtlasRenderer* renderer, uint8_t numAnimations);
     void Release();
 
     void Update(float deltaTime) override;

@@ -1,7 +1,6 @@
 #include "Font.h"
 #include "Application.h"
 #include "GraphicsAPI.h"
-#include "AssetContainer.h"
 #include "FixedList.h"
 #include "ShaderConstants.h"
 #include "FixedMap.h"
@@ -77,8 +76,8 @@ public:
 };
 
 void Font::Release() {
-    app->graphics->ReleaseArrayBuffer(&glyphCurves);
-    app->graphics->ReleaseArrayBuffer(&firstCurveIndices);
+    app.graphics->ReleaseArrayBuffer(&glyphCurves);
+    app.graphics->ReleaseArrayBuffer(&firstCurveIndices);
     delete[] glyphBaselines;
     delete[] glyphDimensions;
     charToGlyphIndex.Release();
@@ -104,7 +103,7 @@ Font FontLoader::LoadFile(std::wstring file) {
     Font loaded = {};
 
     // parse file
-    fileReader.open(app->filePath + L"Assets\\" + file, std::ifstream::binary);
+    fileReader.open(app.filePath + L"Assets\\" + file, std::ifstream::binary);
     assert(!fileReader.fail() && "failed to read font file");
 
     // determine number of data tables in this file
@@ -259,23 +258,23 @@ Font FontLoader::LoadFile(std::wstring file) {
     loaded.glyphBaselines = new float[numGlyphs];
     Matrix2D identity = {{ 1, 0 }, { 0, 1 }};
     for(uint16_t glyphIndex = 0; glyphIndex < numGlyphs; glyphIndex++) {
-        glyphStartIndices.Add(curves.GetSize());
+        glyphStartIndices.Add(curves.Size());
         AlignedRect glyphArea;
         ReadGlyph(glyphIndex, &glyphArea, &identity, Int2{0, 0});
         loaded.glyphDimensions[glyphIndex] = glyphArea.Size() / unitsPerEm;
         loaded.glyphBaselines[glyphIndex] = -glyphArea.bottom / glyphArea.Height(); // assumes baseline at Y=0
     }
-    glyphStartIndices.Add(curves.GetSize());
+    glyphStartIndices.Add(curves.Size());
     fileReader.close();
 
     // send curve data to the GPU
-    int curveCount = curves.GetSize();
+    int curveCount = curves.Size();
     int sizeCheck = sizeof(BezierCurve);
 
-    loaded.glyphCurves = app->graphics->CreateArrayBuffer(ShaderDataType::Structured, curves.GetSize(), sizeof(BezierCurve));
-    loaded.firstCurveIndices = app->graphics->CreateArrayBuffer(ShaderDataType::UInt, glyphStartIndices.GetSize());
-    app->graphics->WriteBuffer(curves.GetArray(), curves.GetSize() * sizeof(BezierCurve), loaded.glyphCurves.buffer);
-    app->graphics->WriteBuffer(glyphStartIndices.GetArray(), glyphStartIndices.GetSize() * sizeof(uint32_t), loaded.firstCurveIndices.buffer);
+    loaded.glyphCurves = app.graphics->CreateArrayBuffer(ShaderDataType::Structured, curves.Size(), sizeof(BezierCurve));
+    loaded.firstCurveIndices = app.graphics->CreateArrayBuffer(ShaderDataType::UInt, glyphStartIndices.Size());
+    app.graphics->WriteBuffer(&curves[0], curves.Size() * sizeof(BezierCurve), loaded.glyphCurves.buffer);
+    app.graphics->WriteBuffer(&glyphStartIndices[0], glyphStartIndices.Size() * sizeof(uint32_t), loaded.firstCurveIndices.buffer);
     curves.Release();
     glyphStartIndices.Release();
 

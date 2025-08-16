@@ -26,14 +26,13 @@ public:
 	bool mouseEnabled;
 
 	UserInterface() {}
-	UserInterface(uint16_t maxElements);
+	void Initialize(uint16_t maxElements);
 	void Release();
 
 	void Update(float deltaTime) override;
 
 	void Join(UIElement* element);
-	void Disable(UIElement* element);
-	void Enable(UIElement* element);
+	void SetEnabled(UIElement* element, bool enabled);
 
 private:
 	DynamicFixedList<UIElement*> elements;

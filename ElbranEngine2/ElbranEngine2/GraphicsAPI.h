@@ -4,8 +4,8 @@
 #include "Shaders.h"
 #include "IPostProcess.h"
 #include "Math.h"
+#include "FixedList.h"
 #include <string>
-#include <vector>
 
 #define OBJECT_CONSTANT_REGISTER 0 // shaders with per-object constant buffers should use register 0
 #define MAX_POST_PROCESS_HELPER_TEXTURES 3
@@ -55,11 +55,11 @@ struct Vertex {
 class GraphicsAPI
 {
 public:
-	std::vector<IPostProcess*> postProcesses;
+	FixedList<IPostProcess*, 3> postProcesses;
 
 	GraphicsAPI();
 	virtual ~GraphicsAPI() {}
-	virtual void Release();
+	virtual void Release() {}
 
 	virtual bool IsFullscreen() const = 0;
 	virtual void SetFullscreen(bool fullscreen) {}
@@ -114,7 +114,7 @@ public:
 	// compute shader functions
 	virtual void SetComputeTexture(const ComputeTexture* texture, uint8_t slot) = 0;
 	virtual void SetEditBuffer(EditBuffer* buffer, uint8_t slot) = 0;
-	virtual void SetOutputBuffer(OutputBuffer* buffer, uint8_t, const void* initialData = nullptr) = 0;
+	virtual void SetOutputBuffer(OutputBuffer* buffer, uint8_t slot, const void* initialData = nullptr) = 0;
 	virtual void ReadBuffer(const OutputBuffer* buffer, void* destination) = 0;
 	virtual void RunComputeShader(const ComputeShader* shader, uint16_t xThreads, uint16_t yThreads, uint16_t zThreads = 1) = 0;
 

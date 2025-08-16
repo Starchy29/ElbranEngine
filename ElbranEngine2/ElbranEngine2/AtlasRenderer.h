@@ -16,7 +16,8 @@ public:
     bool flipX;
     bool flipY;
 
-    AtlasRenderer(const SpriteSheet* atlas);
+    AtlasRenderer() {}
+    void Initialize(const SpriteSheet* atlas);
 
     void Draw() override;
 };

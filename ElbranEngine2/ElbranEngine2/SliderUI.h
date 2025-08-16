@@ -16,7 +16,7 @@ public:
 	void (*onValueChanged)(SliderUI* slider, float newValue); // value is 0-1
 
 	SliderUI() {}
-	SliderUI(Scene* scene, float width, uint16_t segments, bool vertical = false);
+	void Initialize(Scene* scene, float width, uint16_t segments, bool vertical = false);
 	void SetValue(float newValue);
 	float GetValue() const;
 

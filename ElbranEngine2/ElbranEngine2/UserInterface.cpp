@@ -4,11 +4,11 @@
 #include "Scene.h"
 #include <cassert>
 
-UserInterface::UserInterface(uint16_t maxElements) :
-	mouseEnabled{true},
-	gamepadEnabled{true},
-	focus{nullptr}
-{
+void UserInterface::Initialize(uint16_t maxElements) {
+	mouseEnabled = true;
+	gamepadEnabled = true;
+	focus = nullptr;
+
 	elements.Allocate(maxElements);
 	disabled.Allocate(maxElements);
 }
@@ -19,7 +19,7 @@ void UserInterface::Release() {
 }
 
 void UserInterface::Update(float deltaTime) {
-	InputManager* inputs = app->input;
+	InputManager* inputs = app.input;
 
 	if(gamepadEnabled) {
 		if(inputs->JustPressed(InputAction::Up)) {
@@ -77,7 +77,7 @@ void UserInterface::Update(float deltaTime) {
 			Vector2 mousePos = inputs->GetMousePosition(&scene->camera);
 			UIElement* hovered = nullptr;
 			AlignedRect unitSquare = AlignedRect(Vector2::Zero, Vector2(1.f, 1.f));
-			for(int i = 0; i < elements.GetSize(); i++) {
+			for(int i = 0; i < elements.Size(); i++) {
 				Vector2 normalizedMouse = elements[i]->selectArea->Inverse() * mousePos;
 				if(unitSquare.Contains(normalizedMouse)) {
 					hovered = elements[i];
@@ -105,29 +105,30 @@ void UserInterface::Join(UIElement* element) {
 	elements.Add(element);
 }
 
-void UserInterface::Disable(UIElement* element) {
-	int16_t index = elements.IndexOf(element);
-	if(index < 0) return;
-	elements.RemoveAt(index);
-	disabled.Add(element);
-	if(focus == element) {
-		ChangeFocus(nullptr);
+void UserInterface::SetEnabled(UIElement* element, bool enabled) {
+	if(enabled) {
+		int16_t index = disabled.IndexOf(element);
+		if(index < 0) return;
+		disabled.RemoveAt(index);
+		elements.Add(element);
+		element->OnEnabled();
+	} else {
+		int16_t index = elements.IndexOf(element);
+		if(index < 0) return;
+		elements.RemoveAt(index);
+		disabled.Add(element);
+		if(focus == element) {
+			ChangeFocus(nullptr);
+		}
+		element->OnDisabled();
 	}
-	element->OnDisabled();
-}
-
-void UserInterface::Enable(UIElement* element) {
-	int16_t index = disabled.IndexOf(element);
-	if(index < 0) return;
-	disabled.RemoveAt(index);
-	elements.Add(element);
-	element->OnEnabled();
 }
 
 UIElement* UserInterface::FindFurthest(Vector2 direction) {
 	UIElement* furthest = nullptr;
 	float maxDistance;
-	for(uint16_t i = 0; i < elements.GetSize(); i++) {
+	uint32_t numElements = elements.Size();
+	for(uint32_t i = 0; i < numElements; i++) {
 		Vector2 position = *elements[i]->selectArea * Vector2::Zero;
 		Vector2 weighted = position * direction;
 		float distance = weighted.x + weighted.y;
@@ -146,7 +147,8 @@ UIElement* UserInterface::FindClosest(Vector2 direction) {
 	Vector2 start = *focus->selectArea * Vector2::Zero;
 	float minDistance;
 	UIElement* closest = nullptr;
-	for(uint16_t i = 0; i < elements.GetSize(); i++) {
+	uint32_t numElements = elements.Size();
+	for(uint16_t i = 0; i < numElements; i++) {
 		Vector2 position = *elements[i]->selectArea * Vector2::Zero;
 		float dotProd = (position - start).Dot(direction);
 		if(abs(dotProd) < 0.1f) {

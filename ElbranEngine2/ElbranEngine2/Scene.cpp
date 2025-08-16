@@ -1,6 +1,5 @@
 #include "Scene.h"
 #include "Application.h"
-#include "AssetContainer.h"
 #include "GraphicsAPI.h"
 #include "ShaderConstants.h"
 
@@ -8,14 +7,14 @@
 #define LIGHTS_REGISTER 127
 #define LIGHT_INFO_REGISTER 1
 
-Scene::Scene(uint16_t maxEntities, float cameraWidth) :
-	ambientLight{Color::White},
-	backgroundColor{Color::White},
-	backgroundImage{nullptr},
-	entityCount{0},
-	maxEntities{maxEntities},
-	camera{}
-{
+void Scene::Initialize(uint16_t maxEntities, float cameraWidth) {
+	ambientLight = Color::White;
+	backgroundColor = Color::White;
+	backgroundImage = nullptr;
+	entityCount = 0;
+	this->maxEntities = maxEntities;
+	camera = {};
+
 	transforms = new Transform[maxEntities];
 	localMatrices = new Matrix[maxEntities];
 	worldMatrices = new Matrix[maxEntities];
@@ -28,7 +27,7 @@ Scene::Scene(uint16_t maxEntities, float cameraWidth) :
 	camera.viewWidth = cameraWidth;
 	ReserveTransform(&camera.transform, &camera.worldMatrix);
 
-	GraphicsAPI* graphics = app->graphics;
+	GraphicsAPI* graphics = app.graphics;
 
 	projectionBuffer = graphics->CreateConstantBuffer(sizeof(Matrix));
 	lightInfoBuffer = graphics->CreateConstantBuffer(sizeof(LightConstants));
@@ -36,7 +35,7 @@ Scene::Scene(uint16_t maxEntities, float cameraWidth) :
 }
 
 void Scene::Release() {
-	GraphicsAPI* graphics = app->graphics;
+	GraphicsAPI* graphics = app.graphics;
 	graphics->ReleaseConstantBuffer(&projectionBuffer);
 	graphics->ReleaseConstantBuffer(&lightInfoBuffer);
 	graphics->ReleaseArrayBuffer(&lightsBuffer);
@@ -52,14 +51,14 @@ void Scene::Release() {
 }
 
 void Scene::Update(float deltaTime) {
-	uint32_t numBehaviors = behaviors.GetSize();
+	uint32_t numBehaviors = behaviors.Size();
 	for(uint32_t i = 0; i < numBehaviors; i++) {
 		if(behaviors[i]->enabled) {
 			behaviors[i]->Update(deltaTime);
 		}
 	}
 
-	uint32_t numDeleted = toBeDeleted.GetSize();
+	uint32_t numDeleted = toBeDeleted.Size();
 	for(uint32_t i = 0; i < numDeleted; i++) {
 		behaviors.RemoveAt(toBeDeleted[i] - behaviors[0]);
 	}
@@ -67,7 +66,7 @@ void Scene::Update(float deltaTime) {
 }
 
 void Scene::Draw() {
-	GraphicsAPI* graphics = app->graphics;
+	GraphicsAPI* graphics = app.graphics;
 
 	// convert all transforms into matrices
 	Transform* lastTransform = &transforms[entityCount];
@@ -107,7 +106,7 @@ void Scene::Draw() {
 	lightConstants.ambientLight = ambientLight;
 	lightConstants.lightCount = 0;
 
-	uint32_t totalLights = lights.GetSize();
+	uint32_t totalLights = lights.Size();
 	AlignedRect screenArea = AlignedRect(-1.f, 1.f, 1.f, -1.f);
 	for(uint32_t i = 0; i < totalLights; i++) {
 		// omit offscreen lights
@@ -148,7 +147,7 @@ void Scene::Draw() {
 	graphics->SetConstants(ShaderStage::Geometry, &projectionBuffer, 1);
 
 	// draw opaques front to back
-	uint32_t numOpaques = opaques.GetSize();
+	uint32_t numOpaques = opaques.Size();
 	for(uint32_t i = 1; i < numOpaques; i++) {
 		uint32_t index = i;
 		while(index > 0 && opaques[index]->worldMatrix->values[2][3] < opaques[index - 1]->worldMatrix->values[2][3]) { // global z is in row 3 col 4
@@ -170,14 +169,14 @@ void Scene::Draw() {
 		psInput.lit = false;
 
 		graphics->SetTexture(ShaderStage::Pixel, backgroundImage, 0);
-		graphics->SetPixelShader(&app->assets->texturePS, &psInput, sizeof(TexturePSConstants));
+		graphics->SetPixelShader(&app.assets.texturePS, &psInput, sizeof(TexturePSConstants));
 	} else {
-		graphics->SetPixelShader(&app->assets->solidColorPS, &backgroundColor, sizeof(Color));
+		graphics->SetPixelShader(&app.assets.solidColorPS, &backgroundColor, sizeof(Color));
 	}
 	graphics->DrawFullscreen();
 
 	// draw translucents back to front
-	uint32_t numTranslucents = translucents.GetSize();
+	uint32_t numTranslucents = translucents.Size();
 	for(uint32_t i = 1; i < numTranslucents; i++) {
 		uint32_t index = i;
 		while(index > 0 && translucents[index]->worldMatrix->values[2][3] > translucents[index - 1]->worldMatrix->values[2][3]) { // global z is in row 3 col 4
@@ -218,6 +217,7 @@ void Scene::ReserveTransform(Transform** outTransform, const Matrix** outMatrix)
 }
 
 void Scene::AddRenderer(IRenderer* renderer, bool translucent) {
+	assert(opaques.IndexOf(renderer) < 0 && translucents.IndexOf(renderer) < 0 && "attempted to add a renderer to a scene twice");
 	ReserveTransform(&renderer->transform, &renderer->worldMatrix);
 	if(translucent) {
 		translucents.Add(renderer);
@@ -227,6 +227,7 @@ void Scene::AddRenderer(IRenderer* renderer, bool translucent) {
 }
 
 void Scene::AddBehavior(IBehavior* behavior) {
+	assert(behaviors.IndexOf(behavior) < 0 && "attempted to add a behavior to a scene twice");
 	behaviors.Add(behavior);
 	behavior->scene = this;
 }
@@ -241,7 +242,7 @@ LightSource* Scene::AddLight(Color color, float radius) {
 	ReserveTransform(&added.transform, &added.worldMatrix);
 	lights.Add(added);
 
-	return &lights[lights.GetSize() - 1];
+	return &lights[lights.Size() - 1];
 }
 
 void Scene::ReleaseTransform(Transform* transform) {
@@ -260,10 +261,10 @@ void Scene::ReleaseTransform(Transform* transform) {
 }
 
 void Scene::RemoveRenderer(IRenderer* renderer) {
-	if(renderer >= opaques[0] && renderer < opaques[opaques.GetSize()]) {
+	if(renderer >= opaques[0] && renderer < opaques[opaques.Size()]) {
 		opaques.RemoveAt(renderer - opaques[0]);
 	}
-	else if(renderer >= translucents[0] && renderer < translucents[translucents.GetSize()]) {
+	else if(renderer >= translucents[0] && renderer < translucents[translucents.Size()]) {
 		translucents.RemoveAt(renderer - translucents[0]);
 	}
 	ReleaseTransform(renderer->transform);
@@ -279,9 +280,9 @@ void Scene::RemoveLight(LightSource* light) {
 }
 
 float Camera::GetViewHeight() const {
-	return viewWidth / app->graphics->GetViewAspectRatio();
+	return viewWidth / app.graphics->GetViewAspectRatio();
 }
 
 Vector2 Camera::GetWorldDimensions() const {
-	return Vector2(viewWidth, viewWidth / app->graphics->GetViewAspectRatio());
+	return Vector2(viewWidth, viewWidth / app.graphics->GetViewAspectRatio());
 }

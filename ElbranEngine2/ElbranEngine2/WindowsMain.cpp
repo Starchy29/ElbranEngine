@@ -30,7 +30,7 @@ void UpdateApp() {
 			
 	float fDeltaTime = (float)deltaTime;
 
-	app->Update(fDeltaTime);
+	app.Update(fDeltaTime);
 
 	#if defined(DEBUG) | defined(_DEBUG)
 	if(SHOW_FPS) {
@@ -199,11 +199,10 @@ int WINAPI WinMain(
 	GetClientRect(windowHandle, &windowRect);
 	directX = new DirectXAPI(windowHandle, Int2(windowRect.right - windowRect.left, windowRect.bottom - windowRect.top), ASPECT_RATIO, directory);
 	input = new WindowsInput(windowHandle);
-	Application::InitApp(directory, directX, new WindowsAudio(), input);
-	app->quitFunction = QuitApp;
+	app.Initialize(directory, directX, new WindowsAudio(), input);
+	app.quitFunction = QuitApp;
 	RunApp();
-	app->Release();
-	delete app;
+	app.Release();
 	return 0;
 }
 #endif

@@ -1,10 +1,10 @@
 #include "AnimationGroup.h"
 #include <cassert>
 
-AnimationGroup::AnimationGroup(AtlasRenderer* renderer, uint8_t numAnimations) :
-	renderer{renderer},
-	currentAnimationIndex{-1}
-{
+void AnimationGroup::Initialize(AtlasRenderer* renderer, uint8_t numAnimations) {
+	this->renderer = renderer;
+	currentAnimationIndex = -1;
+
 	animators.Allocate(numAnimations);
 	animationSprites.Allocate(numAnimations);
 	nextAnimationIndices.Allocate(numAnimations);
@@ -27,15 +27,17 @@ void AnimationGroup::Update(float deltaTime) {
 AtlasAnimator* AnimationGroup::AddAnimation(SpriteSheet* frames, float frameRate, bool looped, bool rebounds, int8_t nextAnimationIndex) {
 	animationSprites.Add(frames);
 	nextAnimationIndices.Add(nextAnimationIndex);
-	animators.Add(AtlasAnimator(renderer, frameRate));
-	AtlasAnimator* added = &animators[animators.GetSize() - 1];
+	AtlasAnimator inserted;
+	inserted.Initialize(renderer, frameRate);
+	animators.Add(inserted);
+	AtlasAnimator* added = &animators[animators.Size() - 1];
 	added->looped = looped;
 	added->rebounds = rebounds;
 	return added;
 }
 
 AtlasAnimator* AnimationGroup::GetAnimation(uint8_t index) {
-	assert(index < animators.GetSize() && "animation index was out of range");
+	assert(index < animators.Size() && "animation index was out of range");
 	return &animators[index];
 }
 
