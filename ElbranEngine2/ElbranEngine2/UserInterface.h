@@ -1,5 +1,6 @@
 #pragma once
 #include "IBehavior.h"
+#include "Scene.h"
 #include "Math.h"
 #include "FixedList.h"
 #include "Common.h"
@@ -26,7 +27,7 @@ public:
 	bool mouseEnabled;
 
 	UserInterface() {}
-	void Initialize(uint16_t maxElements);
+	void Initialize(Scene* scene, uint16_t maxElements);
 	void Release();
 
 	void Update(float deltaTime) override;
@@ -35,6 +36,7 @@ public:
 	void SetEnabled(UIElement* element, bool enabled);
 
 private:
+	Scene* scene;
 	DynamicFixedList<UIElement*> elements;
 	DynamicFixedList<UIElement*> disabled;
 	UIElement* focus;

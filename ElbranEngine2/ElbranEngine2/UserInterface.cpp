@@ -1,10 +1,11 @@
 #include "UserInterface.h"
 #include "Application.h"
 #include "InputManager.h"
-#include "Scene.h"
 #include <cassert>
 
-void UserInterface::Initialize(uint16_t maxElements) {
+void UserInterface::Initialize(Scene* scene, uint16_t maxElements) {
+	this->scene = scene;
+	scene->AddBehavior(this);
 	mouseEnabled = true;
 	gamepadEnabled = true;
 	focus = nullptr;

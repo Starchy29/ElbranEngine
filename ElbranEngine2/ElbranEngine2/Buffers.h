@@ -24,7 +24,9 @@ struct Sampler {
 struct Texture2D {
 	TextureData* data;
 	ShaderResourceView* inputView;
-	float aspectRatio;
+	uint32_t width;
+	uint32_t height;
+	inline float AspectRatio() const { return (float)width / height; }
 };
 
 struct SpriteSheet {
@@ -32,7 +34,7 @@ struct SpriteSheet {
 	uint8_t rows;
 	uint8_t cols;
 	uint8_t spriteCount;
-	float SpriteAspectRatio() const { return texture.aspectRatio * rows / cols; }
+	float SpriteAspectRatio() const { return texture.AspectRatio() * rows / cols; }
 };
 
 struct RenderTarget : Texture2D {

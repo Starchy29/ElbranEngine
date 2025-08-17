@@ -7,22 +7,22 @@
 #define LIGHTS_REGISTER 127
 #define LIGHT_INFO_REGISTER 1
 
-void Scene::Initialize(uint16_t maxEntities, float cameraWidth) {
+void Scene::Initialize(uint32_t maxTransforms, uint32_t maxRenderers, uint32_t maxBehaviors, uint32_t maxLights, float cameraWidth) {
 	ambientLight = Color::White;
 	backgroundColor = Color::White;
 	backgroundImage = nullptr;
-	entityCount = 0;
-	this->maxEntities = maxEntities;
+	transformSize = 0;
+	transformCapacity = maxTransforms;
 	camera = {};
 
-	transforms = new Transform[maxEntities];
-	localMatrices = new Matrix[maxEntities];
-	worldMatrices = new Matrix[maxEntities];
+	transforms = new Transform[maxTransforms];
+	localMatrices = new Matrix[maxTransforms];
+	worldMatrices = new Matrix[maxTransforms];
 
-	opaques.Allocate(maxEntities);
-	translucents.Allocate(maxEntities);
-	behaviors.Allocate(maxEntities);
-	lights.Allocate(maxEntities / 4);
+	opaques.Allocate(maxRenderers);
+	translucents.Allocate(maxRenderers);
+	behaviors.Allocate(maxBehaviors);
+	lights.Allocate(maxLights);
 
 	camera.viewWidth = cameraWidth;
 	ReserveTransform(&camera.transform, &camera.worldMatrix);
@@ -53,9 +53,7 @@ void Scene::Release() {
 void Scene::Update(float deltaTime) {
 	uint32_t numBehaviors = behaviors.Size();
 	for(uint32_t i = 0; i < numBehaviors; i++) {
-		if(behaviors[i]->enabled) {
-			behaviors[i]->Update(deltaTime);
-		}
+		behaviors[i]->Update(deltaTime);
 	}
 
 	uint32_t numDeleted = toBeDeleted.Size();
@@ -69,10 +67,10 @@ void Scene::Draw() {
 	GraphicsAPI* graphics = app.graphics;
 
 	// convert all transforms into matrices
-	Transform* lastTransform = &transforms[entityCount];
+	Transform* transformEnd = &transforms[transformSize];
 	Matrix* currentLocal = localMatrices;
 	Matrix* currentGlobal = worldMatrices;
-	for(Transform* transform = transforms; transform < lastTransform; transform++) {
+	for(Transform* transform = transforms; transform < transformEnd; transform++) {
 		*currentLocal =
 			Matrix::Translation(transform->position.x, transform->position.y, transform->zOrder) *
 			Matrix::Rotation(transform->rotation) *
@@ -85,7 +83,7 @@ void Scene::Draw() {
 
 	// convert from local to global matrices
 	currentGlobal = worldMatrices;
-	for(Transform* transform = transforms; transform < lastTransform; transform++) {
+	for(Transform* transform = transforms; transform < transformEnd; transform++) {
 		Transform* parent = transform->parent;
 		while(parent) {
 			*currentGlobal = localMatrices[parent - transforms] * (*currentGlobal);
@@ -195,14 +193,14 @@ void Scene::Draw() {
 }
 
 void Scene::ReserveTransform(Transform** outTransform, const Matrix** outMatrix) {
-	assert(entityCount < maxEntities && "scene capacity is unable to fit another transform");
-	uint16_t newSlot = entityCount;
+	assert(transformSize < transformCapacity && "scene capacity is unable to fit another transform");
+	uint16_t newSlot = transformSize;
 	if(openSlots.size() > 0) {
 		newSlot = openSlots[openSlots.size() - 1];
 		openSlots.pop_back();
 	}
 
-	entityCount++;
+	transformSize++;
 
 	transforms[newSlot] = {};
 	transforms[newSlot].scale = Vector2(1.f, 1.f);
@@ -229,7 +227,6 @@ void Scene::AddRenderer(IRenderer* renderer, bool translucent) {
 void Scene::AddBehavior(IBehavior* behavior) {
 	assert(behaviors.IndexOf(behavior) < 0 && "attempted to add a behavior to a scene twice");
 	behaviors.Add(behavior);
-	behavior->scene = this;
 }
 
 LightSource* Scene::AddLight(Color color, float radius) {

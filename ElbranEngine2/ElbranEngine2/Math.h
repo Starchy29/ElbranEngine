@@ -12,6 +12,13 @@ struct AlignedRect;
 namespace Math {
 	float Sign(float number);
 	int32_t Sign(int32_t number);
+	float Min(float val1, float val2);
+	float Max(float val1, float val2);
+	int32_t Min(int32_t val1, int32_t val2);
+	int32_t Max(int32_t val1, int32_t val2);
+	int32_t Floor(float decimal);
+	int32_t Ceil(float decimal);
+	int32_t Round(float decimal);
 	float Clamp(float value, float minimum, float maximum);
 	int Clamp(int32_t value, int32_t minimum, int32_t maximum);
 	float FractionOf(float number);

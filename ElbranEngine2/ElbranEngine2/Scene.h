@@ -29,7 +29,7 @@ public:
 	Texture2D* backgroundImage;
 
 	Scene() {}
-	void Initialize(uint16_t maxEntities, float cameraWidth);
+	void Initialize(uint32_t maxTransforms, uint32_t maxRenderers, uint32_t maxBehaviors, uint32_t maxLights, float cameraWidth);
 	void Release();
 
 	virtual void Update(float deltaTime);
@@ -46,8 +46,8 @@ public:
 	void RemoveLight(LightSource* light);
 
 private:
-	uint16_t entityCount;
-	uint16_t maxEntities;
+	uint32_t transformSize;
+	uint32_t transformCapacity;
 	Transform* transforms;
 	Matrix* localMatrices;
 	Matrix* worldMatrices;

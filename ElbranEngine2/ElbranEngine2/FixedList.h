@@ -22,6 +22,12 @@ public:
 		size++;
 	}
 
+	Type* ReserveNext() {
+		assert(size < capacity && "attempted to add to a full FixedList");
+		size++;
+		return &data[size-1];
+	}
+
 	void RemoveAt(uint16_t index) {
 		assert(index < size && "attempted to remove from an index out of range");
 		data[index] = data[size - 1];
@@ -62,6 +68,12 @@ public:
 		assert(size < capacity && "attempted to add to a full FixedList");
 		data[size] = element;
 		size++;
+	}
+
+	Type* ReserveNext() {
+		assert(size < capacity && "attempted to add to a full FixedList");
+		size++;
+		return &data[size-1];
 	}
 
 	void RemoveAt(uint32_t index) {

@@ -27,10 +27,9 @@ void AnimationGroup::Update(float deltaTime) {
 AtlasAnimator* AnimationGroup::AddAnimation(SpriteSheet* frames, float frameRate, bool looped, bool rebounds, int8_t nextAnimationIndex) {
 	animationSprites.Add(frames);
 	nextAnimationIndices.Add(nextAnimationIndex);
-	AtlasAnimator inserted;
-	inserted.Initialize(renderer, frameRate);
-	animators.Add(inserted);
-	AtlasAnimator* added = &animators[animators.Size() - 1];
+
+	AtlasAnimator* added = animators.ReserveNext();
+	added->Initialize(renderer, frameRate);
 	added->looped = looped;
 	added->rebounds = rebounds;
 	return added;

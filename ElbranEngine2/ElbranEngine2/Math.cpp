@@ -15,6 +15,36 @@ int32_t Math::Sign(int32_t number) {
 	return 0;
 }
 
+float Math::Min(float val1, float val2) {
+	return (val1 < val2 ? val1 : val2);
+}
+
+float Math::Max(float val1, float val2) {
+	return (val1 > val2 ? val1 : val2);
+}
+
+int32_t Math::Min(int32_t val1, int32_t val2) {
+	return (val1 < val2 ? val1 : val2);
+}
+
+int32_t Math::Max(int32_t val1, int32_t val2) {
+	return (val1 > val2 ? val1 : val2);
+}
+
+int32_t Math::Floor(float decimal) {
+	if(FractionOf(decimal) == 0.f) return decimal;
+	return decimal >= 0.f ? (int32_t)decimal : (int32_t)(decimal - 1.0f);
+}
+
+int32_t Math::Ceil(float decimal) {
+	if(FractionOf(decimal) == 0.f) return decimal;
+	return decimal >= 0.f ? (int32_t)(decimal + 1.0f) : (int32_t)decimal;
+}
+
+int32_t Math::Round(float decimal) {
+	return (int32_t)(decimal + Sign(decimal) * 0.5f);
+}
+
 float Math::Clamp(float value, float minimum, float maximum) {
 	if(value > maximum) return maximum;
 	return (value < minimum ? minimum : value);

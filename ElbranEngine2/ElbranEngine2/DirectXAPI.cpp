@@ -381,7 +381,8 @@ OutputBuffer DirectXAPI::CreateOutputBuffer(ShaderDataType type, uint32_t elemen
 
 RenderTarget DirectXAPI::CreateRenderTarget(uint32_t width, uint32_t height) {
 	RenderTarget result = {};
-	result.aspectRatio = (float)width / height;
+	result.width = width;
+	result.height = height;
 	result.data = CreateTexture(width, height, true, false);
 
 	device->CreateShaderResourceView(result.data, 0, &(result.inputView));
@@ -392,7 +393,8 @@ RenderTarget DirectXAPI::CreateRenderTarget(uint32_t width, uint32_t height) {
 
 ComputeTexture DirectXAPI::CreateComputeTexture(uint32_t width, uint32_t height) {
 	ComputeTexture result = {};
-	result.aspectRatio = (float)width / height;
+	result.width = width;
+	result.height = height;
 	result.data = CreateTexture(width, height, false, true);
 
 	device->CreateShaderResourceView(result.data, 0, &(result.inputView));
@@ -665,7 +667,8 @@ Texture2D DirectXAPI::LoadSprite(std::wstring fileName) {
 
 	D3D11_TEXTURE2D_DESC description;
 	result.data->GetDesc(&description);
-	result.aspectRatio = (float)description.Width / description.Height;
+	result.width = description.Width;
+	result.height = description.Height;
 	return result;
 }
 
