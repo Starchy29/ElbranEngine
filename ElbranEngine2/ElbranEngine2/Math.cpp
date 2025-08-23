@@ -15,6 +15,14 @@ int32_t Math::Sign(int32_t number) {
 	return 0;
 }
 
+float Math::Abs(float number) {
+	return (number >= 0.f ? number : -number);
+}
+
+int32_t Math::Abs(int32_t number) {
+	return (number >= 0 ? number : -number);
+}
+
 float Math::Min(float val1, float val2) {
 	return (val1 < val2 ? val1 : val2);
 }
@@ -50,7 +58,7 @@ float Math::Clamp(float value, float minimum, float maximum) {
 	return (value < minimum ? minimum : value);
 }
 
-int Math::Clamp(int value, int minimum, int maximum) {
+int32_t Math::Clamp(int32_t value, int32_t minimum, int32_t maximum) {
 	if(value > maximum) return maximum;
 	return (value < minimum ? minimum : value);
 }
