@@ -141,7 +141,7 @@ void Scene::Draw() {
 	}
 
 	for(uint32_t i = 0; i < numOpaques; i++) {
-		opaques[i]->Draw();
+		if(!opaques[i]->hidden) opaques[i]->Draw();
 	}
 
 	// draw the background
@@ -171,7 +171,7 @@ void Scene::Draw() {
 
 	graphics->SetBlendMode(BlendState::AlphaBlend);
 	for(int i = 0; i < numTranslucents; i++) {
-		translucents[i]->Draw();
+		if(!translucents[i]->hidden) translucents[i]->Draw();
 	}
 	graphics->SetBlendMode(BlendState::None);
 }
