@@ -148,6 +148,7 @@
     <ClCompile Include="AssetContainer.cpp" />
     <ClCompile Include="AtlasAnimator.cpp" />
     <ClCompile Include="AtlasRenderer.cpp" />
+    <ClCompile Include="Battle.cpp" />
     <ClCompile Include="BloomPostProcess.cpp" />
     <ClCompile Include="BlurPostProcess.cpp" />
     <ClCompile Include="Button.cpp" />
@@ -171,6 +172,9 @@
     <ClCompile Include="SoundMixer.cpp" />
     <ClCompile Include="SpriteRenderer.cpp" />
     <ClCompile Include="TextRenderer.cpp" />
+    <ClCompile Include="Tilemap.cpp" />
+    <ClCompile Include="Unit.cpp" />
+    <ClCompile Include="UnitData.cpp" />
     <ClCompile Include="UserInterface.cpp" />
     <ClCompile Include="WindowsAudio.cpp" />
     <ClCompile Include="WindowsInput.cpp" />
@@ -183,6 +187,7 @@
     <ClInclude Include="AtlasAnimator.h" />
     <ClInclude Include="AtlasRenderer.h" />
     <ClInclude Include="AudioData.h" />
+    <ClInclude Include="Battle.h" />
     <ClInclude Include="BloomPostProcess.h" />
     <ClInclude Include="BlurPostProcess.h" />
     <ClInclude Include="Buffers.h" />
@@ -204,6 +209,7 @@
     <ClInclude Include="Lights.h" />
     <ClInclude Include="Math.h" />
     <ClInclude Include="MemoryArena.h" />
+    <ClInclude Include="Move.h" />
     <ClInclude Include="ParticleBehavior.h" />
     <ClInclude Include="ParticleRenderer.h" />
     <ClInclude Include="PatternRenderer.h" />
@@ -216,7 +222,10 @@
     <ClInclude Include="SoundMixer.h" />
     <ClInclude Include="SpriteRenderer.h" />
     <ClInclude Include="TextRenderer.h" />
+    <ClInclude Include="Tilemap.h" />
     <ClInclude Include="Transform.h" />
+    <ClInclude Include="Unit.h" />
+    <ClInclude Include="UnitData.h" />
     <ClInclude Include="UserInterface.h" />
     <ClInclude Include="WindowsAudio.h" />
     <ClInclude Include="WindowsInput.h" />

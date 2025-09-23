@@ -123,6 +123,10 @@
     <ClCompile Include="SoundMixer.cpp">
       <Filter>Audio</Filter>
     </ClCompile>
+    <ClCompile Include="Tilemap.cpp" />
+    <ClCompile Include="Battle.cpp" />
+    <ClCompile Include="Unit.cpp" />
+    <ClCompile Include="UnitData.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Application.h" />
@@ -238,6 +242,11 @@
     <ClInclude Include="Font.h">
       <Filter>Graphics</Filter>
     </ClInclude>
+    <ClInclude Include="Move.h" />
+    <ClInclude Include="Tilemap.h" />
+    <ClInclude Include="Battle.h" />
+    <ClInclude Include="Unit.h" />
+    <ClInclude Include="UnitData.h" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="CameraVS.hlsl">
