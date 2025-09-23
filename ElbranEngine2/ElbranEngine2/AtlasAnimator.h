@@ -1,9 +1,7 @@
 #pragma once
-#include "IBehavior.h"
 #include "AtlasRenderer.h"
 
-class AtlasAnimator :
-    public IBehavior
+class AtlasAnimator
 {
 public:
     float frameRate;
@@ -13,7 +11,7 @@ public:
     AtlasAnimator() {}
     void Initialize(AtlasRenderer* renderer, float frameRate);
 
-    void Update(float deltaTime) override;
+    void Update(float deltaTime);
     
     void Restart(bool reversed = false);
     bool IsComplete() const;

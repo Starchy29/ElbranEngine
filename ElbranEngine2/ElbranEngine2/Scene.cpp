@@ -7,7 +7,7 @@
 #define LIGHTS_REGISTER 127
 #define LIGHT_INFO_REGISTER 1
 
-void Scene::Initialize(uint32_t maxTransforms, uint32_t maxRenderers, uint32_t maxBehaviors, uint32_t maxLights, float cameraWidth) {
+void Scene::Initialize(uint32_t maxTransforms, uint32_t maxRenderers, uint32_t maxLights, float cameraWidth) {
 	ambientLight = Color::White;
 	backgroundColor = Color::White;
 	backgroundImage = nullptr;
@@ -21,7 +21,6 @@ void Scene::Initialize(uint32_t maxTransforms, uint32_t maxRenderers, uint32_t m
 
 	opaques.Allocate(maxRenderers);
 	translucents.Allocate(maxRenderers);
-	behaviors.Allocate(maxBehaviors);
 	lights.Allocate(maxLights);
 
 	camera.viewWidth = cameraWidth;
@@ -35,10 +34,9 @@ void Scene::Initialize(uint32_t maxTransforms, uint32_t maxRenderers, uint32_t m
 }
 
 void Scene::Release() {
-	GraphicsAPI* graphics = app.graphics;
-	graphics->ReleaseConstantBuffer(&projectionBuffer);
-	graphics->ReleaseConstantBuffer(&lightInfoBuffer);
-	graphics->ReleaseArrayBuffer(&lightsBuffer);
+	app.graphics->ReleaseConstantBuffer(&projectionBuffer);
+	app.graphics->ReleaseConstantBuffer(&lightInfoBuffer);
+	app.graphics->ReleaseArrayBuffer(&lightsBuffer);
 
 	delete[] transforms;
 	delete[] localMatrices;
@@ -46,21 +44,7 @@ void Scene::Release() {
 
 	opaques.Release();
 	translucents.Release();
-	behaviors.Release();
 	lights.Release();
-}
-
-void Scene::Update(float deltaTime) {
-	uint32_t numBehaviors = behaviors.Size();
-	for(uint32_t i = 0; i < numBehaviors; i++) {
-		behaviors[i]->Update(deltaTime);
-	}
-
-	uint32_t numDeleted = toBeDeleted.Size();
-	for(uint32_t i = 0; i < numDeleted; i++) {
-		behaviors.RemoveAt(toBeDeleted[i] - behaviors[0]);
-	}
-	toBeDeleted.Clear();
 }
 
 void Scene::Draw() {
@@ -194,24 +178,19 @@ void Scene::Draw() {
 
 void Scene::ReserveTransform(Transform** outTransform, const Matrix** outMatrix) {
 	assert(transformSize < transformCapacity && "scene capacity is unable to fit another transform");
-	uint16_t newSlot = transformSize;
-	if(openSlots.size() > 0) {
-		newSlot = openSlots[openSlots.size() - 1];
-		openSlots.pop_back();
+
+	transforms[transformSize] = {};
+	transforms[transformSize].scale = Vector2(1.f, 1.f);
+	worldMatrices[transformSize] = Matrix::Identity;
+
+	if(outTransform) {
+		*outTransform = &transforms[transformSize];
+	}
+	if(outMatrix) {
+		*outMatrix = &worldMatrices[transformSize];
 	}
 
 	transformSize++;
-
-	transforms[newSlot] = {};
-	transforms[newSlot].scale = Vector2(1.f, 1.f);
-	worldMatrices[newSlot] = Matrix::Identity;
-
-	if(outTransform) {
-		*outTransform = &transforms[newSlot];
-	}
-	if(outMatrix) {
-		*outMatrix = &worldMatrices[newSlot];
-	}
 }
 
 void Scene::AddRenderer(IRenderer* renderer, bool translucent) {
@@ -222,11 +201,6 @@ void Scene::AddRenderer(IRenderer* renderer, bool translucent) {
 	} else {
 		opaques.Add(renderer);
 	}
-}
-
-void Scene::AddBehavior(IBehavior* behavior) {
-	assert(behaviors.IndexOf(behavior) < 0 && "attempted to add a behavior to a scene twice");
-	behaviors.Add(behavior);
 }
 
 LightSource* Scene::AddLight(Color color, float radius) {
@@ -240,40 +214,6 @@ LightSource* Scene::AddLight(Color color, float radius) {
 	lights.Add(added);
 
 	return &lights[lights.Size() - 1];
-}
-
-void Scene::ReleaseTransform(Transform* transform) {
-	uint16_t openIndex = transform - transforms;
-	openSlots.push_back(openIndex);
-
-	// sort into the vector so that the largest index is the smallest integer
-	for(size_t i = openSlots.size() - 1; i > 0; i--) {
-		if(openSlots[i] < openSlots[i-1]) {
-			return;
-		}
-
-		openSlots[i] = openSlots[i-1];
-		openSlots[i-1] = openIndex;
-	}
-}
-
-void Scene::RemoveRenderer(IRenderer* renderer) {
-	if(renderer >= opaques[0] && renderer < opaques[opaques.Size()]) {
-		opaques.RemoveAt(renderer - opaques[0]);
-	}
-	else if(renderer >= translucents[0] && renderer < translucents[translucents.Size()]) {
-		translucents.RemoveAt(renderer - translucents[0]);
-	}
-	ReleaseTransform(renderer->transform);
-}
-
-void Scene::RemoveBehavior(IBehavior* behavior) {
-	if(toBeDeleted.IndexOf(behavior) < 0) toBeDeleted.Add(behavior);
-}
-
-void Scene::RemoveLight(LightSource* light) {
-	ReleaseTransform(light->transform);
-	lights.RemoveAt(light - &lights[0]);
 }
 
 float Camera::GetViewHeight() const {

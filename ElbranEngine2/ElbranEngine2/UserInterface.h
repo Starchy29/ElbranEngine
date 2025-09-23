@@ -1,5 +1,4 @@
 #pragma once
-#include "IBehavior.h"
 #include "Scene.h"
 #include "Math.h"
 #include "FixedList.h"
@@ -19,8 +18,7 @@ struct UIElement {
 	virtual bool OnDirectionPressed(Direction direction) { return false; } // return true if the input is used, false otherwise
 };
 
-class UserInterface 
-	: public IBehavior
+class UserInterface
 {
 public:
 	bool gamepadEnabled;
@@ -30,7 +28,7 @@ public:
 	void Initialize(Scene* scene, uint16_t maxElements);
 	void Release();
 
-	void Update(float deltaTime) override;
+	void Update(float deltaTime);
 
 	void Join(UIElement* element);
 	void SetEnabled(UIElement* element, bool enabled);

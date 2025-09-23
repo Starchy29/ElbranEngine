@@ -197,7 +197,6 @@
     <ClInclude Include="Game.h" />
     <ClInclude Include="GraphicsAPI.h" />
     <ClInclude Include="HSVPostProcess.h" />
-    <ClInclude Include="IBehavior.h" />
     <ClInclude Include="InputManager.h" />
     <ClInclude Include="IPostProcess.h" />
     <ClInclude Include="IRenderer.h" />

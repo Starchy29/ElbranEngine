@@ -1,9 +1,7 @@
 #pragma once
-#include "IBehavior.h"
 #include "ParticleRenderer.h"
 
-class ParticleBehavior :
-    public IBehavior
+class ParticleBehavior
 {
 public:
     enum class MoveStyle {

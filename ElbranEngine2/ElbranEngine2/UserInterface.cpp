@@ -5,7 +5,6 @@
 
 void UserInterface::Initialize(Scene* scene, uint16_t maxElements) {
 	this->scene = scene;
-	scene->AddBehavior(this);
 	mouseEnabled = true;
 	gamepadEnabled = true;
 	focus = nullptr;

@@ -1,17 +1,15 @@
 #pragma once
-#include "IBehavior.h"
 #include "AtlasAnimator.h"
 #include "FixedList.h"
 
-class AnimationGroup :
-    public IBehavior
+class AnimationGroup
 {
 public:
     AnimationGroup() {}
     void Initialize(AtlasRenderer* renderer, uint8_t numAnimations);
     void Release();
 
-    void Update(float deltaTime) override;
+    void Update(float deltaTime);
 
     AtlasAnimator* AddAnimation(SpriteSheet* frames, float frameRate, bool looped = false, bool rebounds = false, int8_t nextAnimationIndex = -1);
     void StartAnimation(uint8_t index, bool reversed = false);
