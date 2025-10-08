@@ -5,6 +5,9 @@
 void Game::Initialize() {
 	sampleScene.Initialize(10, 10, 10, 5.0f);
 	sampleScene.backgroundColor = Color(0.1f, 0.1f, 0.1f);
+
+	LoadedFile load = app.LoadFile(app.filePath + L"Assets\\elbran.png", true);
+	load.Release();
 }
 
 void Game::Release() {

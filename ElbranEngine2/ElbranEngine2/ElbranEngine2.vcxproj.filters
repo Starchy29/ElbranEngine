@@ -123,6 +123,7 @@
     <ClCompile Include="SoundMixer.cpp">
       <Filter>Audio</Filter>
     </ClCompile>
+    <ClCompile Include="LoadedFile.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Application.h" />
@@ -158,7 +159,6 @@
     <ClInclude Include="FixedList.h">
       <Filter>Toolkit</Filter>
     </ClInclude>
-    <ClInclude Include="IBehavior.h" />
     <ClInclude Include="Lights.h">
       <Filter>Graphics</Filter>
     </ClInclude>
@@ -238,6 +238,7 @@
     <ClInclude Include="Font.h">
       <Filter>Graphics</Filter>
     </ClInclude>
+    <ClInclude Include="LoadedFile.h" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="CameraVS.hlsl">

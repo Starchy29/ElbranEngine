@@ -4,6 +4,7 @@
 #include "Random.h"
 #include <string>
 #include "MemoryArena.h"
+#include "LoadedFile.h"
 
 class GraphicsAPI;
 class SoundMixer;
@@ -28,10 +29,11 @@ public:
 #endif
 
 	std::wstring filePath;
+	LoadedFile (*LoadFile)(std::wstring fileName, bool littleEndian);
 	void (*quitFunction)();
 
 	Application() {}
-	void Initialize(std::wstring filePath, GraphicsAPI* graphics, SoundMixer* audio, InputManager* input);
+	void Initialize(std::wstring filePath, LoadedFile (*fileLoadFunction)(std::wstring fileName, bool littleEndian), GraphicsAPI* graphics, SoundMixer* audio, InputManager* input);
 	void Release();
 
 	void Update(float deltaTime);
