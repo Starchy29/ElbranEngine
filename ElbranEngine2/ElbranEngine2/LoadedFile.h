@@ -10,6 +10,7 @@ struct LoadedFile {
 	void Release();
 
 	uint8_t ReadByte();
+	void ReadBytes(uint64_t numBytes, uint8_t* outLocation);
 	uint16_t ReadUInt16();
 	int16_t ReadInt16();
 	uint32_t ReadUInt32();

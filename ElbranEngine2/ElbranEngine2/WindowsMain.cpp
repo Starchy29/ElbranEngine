@@ -184,6 +184,7 @@ LoadedFile LoadWindowsFile(std::wstring fileName, bool littleEndian) {
 	file.bytes = new uint8_t[file.fileSize];
 	DWORD bytesRead;
 	success = ReadFile(fileHandle, file.bytes, file.fileSize, &bytesRead, 0);
+	CloseHandle(fileHandle);
 	if(!success || bytesRead != file.fileSize) {
 		delete[] file.bytes;
 		return {};
