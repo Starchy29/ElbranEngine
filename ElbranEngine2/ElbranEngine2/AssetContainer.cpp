@@ -174,15 +174,48 @@ Texture2D AssetContainer::LoadBMP(std::wstring fileName) {
 		blueMask = file.ReadUInt32();
 	}
 
+	uint8_t redMaskShift = 0;
+	uint8_t greenMaskShift = 0;
+	uint8_t blueMaskShift = 0;
+	if(compressionMethod == 3) {
+		uint32_t testMask;
+		if(redMask > 0) {
+			testMask = redMask;
+			while(!(testMask & 0x00000001)) {
+				redMaskShift++;
+				testMask = testMask << 1;
+			}
+		}
+		if(greenMask > 0) {
+			testMask = greenMask;
+			while(!(testMask & 0x00000001)) {
+				greenMaskShift++;
+				testMask = testMask << 1;
+			}
+		}
+		if(blueMask > 0) {
+			testMask = blueMask;
+			while(!(testMask & 0x00000001)) {
+				blueMaskShift++;
+				testMask = testMask << 1;
+			}
+		}
+	}
+
 	// load bits
 	ByteColor* loadedBits = new ByteColor[width*height];
 	file.readLocation = bitmapOffset;
 	bool topDown = height < 0;
+
+	if(version == 3 && bitsPerPixel == 16) {
+		file.swappedEndian = !file.swappedEndian;
+	}
 	
 	for(int32_t i = 0; i < height; i++) {
 		// read each scan line
 		int32_t y = topDown ? i : height - 1 - i;
 		uint8_t colorByte;
+		uint8_t encodeByte;
 		uint16_t colorWord;
 		uint32_t colorDWord;
 		uint8_t red;
@@ -201,25 +234,92 @@ Texture2D AssetContainer::LoadBMP(std::wstring fileName) {
 				}
 				break;
 			case 4:
-				colorByte = file.ReadByte();
-				loadedBits[x + y * width] = palette[colorByte & 0b00001111];
-				x++;
-				if(x >= width) break;
-				colorByte = colorByte >> 4;
-				loadedBits[x + y * width] = palette[colorByte];
+				if(compressionMethod == 2) {
+					encodeByte = file.ReadByte();
+					if(encodeByte == 0) {
+						encodeByte = file.ReadByte();
+						if(encodeByte == 0) {
+							// end scan line
+							x = width;
+							break;
+						}
+						else if(encodeByte == 2) {
+							// jump to another part of the image
+							x = file.ReadByte();
+							i = file.ReadByte();
+							break;
+						}
+
+						// unencoded run
+						for(uint8_t j = 0; j < encodeByte; j++) {
+							if(j % 2 == 0) colorByte = file.ReadByte();
+							loadedBits[x + y * width] = palette[j % 2 == 0? colorByte & 0b11110000 : colorByte & 0b00001111];
+							x++;
+						}
+						if(encodeByte % 2 == 1) file.readLocation++;
+					} else {
+						// encoded run
+						colorByte = file.ReadByte();;
+						for(uint8_t j = 0; j < encodeByte; j++) {
+							loadedBits[x + y * width] = palette[j % 2 == 0? colorByte & 0b11110000 : colorByte & 0b00001111];
+							x++;
+						}
+					}
+				} else {
+					colorByte = file.ReadByte();
+					loadedBits[x + y * width] = palette[colorByte & 0b00001111];
+					x++;
+					if(x >= width) break;
+					colorByte = colorByte >> 4;
+					loadedBits[x + y * width] = palette[colorByte];
+				}
 				break;
 			case 8:
-				loadedBits[x + y * width] = palette[file.ReadByte()];
-				x++;
+				if(compressionMethod == 1) {
+					encodeByte = file.ReadByte();
+					if(encodeByte == 0) {
+						encodeByte = file.ReadByte();
+						if(encodeByte == 0) {
+							// end scan line
+							x = width;
+							break;
+						}
+						else if(encodeByte == 2) {
+							// jump to another part of the image
+							x = file.ReadByte();
+							i = file.ReadByte();
+							break;
+						}
+
+						// unencoded run
+						for(uint8_t j = 0; j < encodeByte; j++) {
+							loadedBits[x + y * width] = palette[file.ReadByte()];
+							x++;
+						}
+						if(encodeByte % 2 == 1) file.readLocation++;
+					} else {
+						// encoded run
+						colorByte = file.ReadByte();;
+						for(uint8_t j = 0; j < encodeByte; j++) {
+							loadedBits[x + y * width] = palette[colorByte];
+							x++;
+						}
+					}
+				} else {
+					loadedBits[x + y * width] = palette[file.ReadByte()];
+					x++;
+				}
 				break;
 			case 16:
-				if(version == 3) {
-					file.swappedEndian = !file.swappedEndian;
-				}
 				colorWord = file.ReadUInt16();
-				if(version == 3) {
-					file.swappedEndian = !file.swappedEndian;
-				}
+				colorDWord = colorWord << 16;
+				loadedBits[x + y * width] = ByteColor(
+					(colorDWord & redMask) >> redMaskShift, 
+					(colorDWord & greenMask) >> greenMaskShift, 
+					(colorDWord & blueMask) >> blueMaskShift, 
+					255
+				);
+				x++;
 				break;
 			case 24:
 				blue = file.ReadByte();
@@ -230,6 +330,12 @@ Texture2D AssetContainer::LoadBMP(std::wstring fileName) {
 				break;
 			case 32:
 				colorDWord = file.ReadUInt32();
+				loadedBits[x + y * width] = ByteColor(
+					(colorDWord & redMask) >> redMaskShift, 
+					(colorDWord & greenMask) >> greenMaskShift, 
+					(colorDWord & blueMask) >> blueMaskShift, 
+					255
+				);
 				x++;
 				break;
 			default:
