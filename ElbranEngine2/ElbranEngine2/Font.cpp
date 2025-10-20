@@ -266,10 +266,10 @@ Font FontLoader::LoadFile(std::wstring file) {
     loaded.firstCurveIndices = app.graphics->CreateArrayBuffer(ShaderDataType::UInt, glyphStartIndices.Size());
     app.graphics->WriteBuffer(&curves[0], curves.Size() * sizeof(BezierCurve), loaded.glyphCurves.buffer);
     app.graphics->WriteBuffer(&glyphStartIndices[0], glyphStartIndices.Size() * sizeof(uint32_t), loaded.firstCurveIndices.buffer);
-    curves.Release();
-    glyphStartIndices.Release();
 
     // clean up
+    curves.Release();
+    glyphStartIndices.Release();
     fontFile.Release();
     tableStarts.Release();
     delete[] contourEndIndices;

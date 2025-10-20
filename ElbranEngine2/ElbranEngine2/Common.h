@@ -2,6 +2,12 @@
 #include "Math.h"
 #include <stdint.h>
 
+#if defined(DEBUG) | defined(_DEBUG)
+#define ASSERT(condition) if(!(condition)) *(int*)0 = 0;
+#else
+#define ASSERT(condition)
+#endif
+
 enum class Direction {
 	None,
 	Up,

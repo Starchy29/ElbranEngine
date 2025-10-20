@@ -77,7 +77,7 @@ public:
 	virtual PixelShader LoadPixelShader(std::wstring fileName) = 0;
 	virtual ComputeShader LoadComputeShader(std::wstring fileName) = 0;
 
-	virtual Texture2D LoadSprite(std::wstring fileName) = 0;
+	virtual Texture2D CreateConstantTexture(uint32_t width, uint32_t height, uint8_t* textureData) = 0;
 	virtual Sampler CreateDefaultSampler() = 0;
 	virtual Mesh CreateMesh(const Vertex* vertices, uint16_t vertexCount, const uint32_t* indices, uint16_t indexCount, bool editable) = 0;
 	virtual ConstantBuffer CreateConstantBuffer(uint32_t byteLength) = 0;

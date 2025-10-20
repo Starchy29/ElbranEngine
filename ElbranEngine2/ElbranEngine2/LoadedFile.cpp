@@ -1,19 +1,19 @@
 #include "LoadedFile.h"
-#include <cassert>
+#include "Common.h"
 
 void LoadedFile::Release() {
 	delete[] bytes;
 }
 
 uint8_t LoadedFile::ReadByte() {
-	assert(readLocation >= 0 && readLocation < fileSize - 1);
+	ASSERT(readLocation >= 0 && readLocation <= fileSize - 1);
 	uint8_t result = bytes[readLocation];
 	readLocation++;
 	return result;
 }
 
 void LoadedFile::ReadBytes(uint64_t numBytes, uint8_t* outLocation) {
-	assert(readLocation >= 0 && readLocation < fileSize - numBytes);
+	ASSERT(readLocation >= 0 && readLocation <= fileSize - numBytes);
 	for(uint64_t i = 0; i < numBytes; i++) {
 		outLocation[i] = bytes[readLocation + i];
 	}
@@ -21,7 +21,7 @@ void LoadedFile::ReadBytes(uint64_t numBytes, uint8_t* outLocation) {
 }
 
 uint16_t LoadedFile::ReadUInt16() {
-	assert(readLocation >= 0 && readLocation < fileSize - 2);
+	ASSERT(readLocation >= 0 && readLocation <= fileSize - 2);
 	uint16_t result = 0;
 	if(swappedEndian) {
 		result = bytes[readLocation];
@@ -41,7 +41,7 @@ int16_t LoadedFile::ReadInt16() {
 }
 
 uint32_t LoadedFile::ReadUInt32() {
-	assert(readLocation >= 0 && readLocation < fileSize - 4);
+	ASSERT(readLocation >= 0 && readLocation <= fileSize - 4);
 	uint32_t result = 0;
 	if(swappedEndian) {
 		result = bytes[readLocation];

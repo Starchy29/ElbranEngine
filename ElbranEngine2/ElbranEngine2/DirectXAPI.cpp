@@ -379,6 +379,18 @@ OutputBuffer DirectXAPI::CreateOutputBuffer(ShaderDataType type, uint32_t elemen
 	return result;
 }
 
+Texture2D DirectXAPI::CreateConstantTexture(uint32_t width, uint32_t height, uint8_t* textureData) {
+	assert(textureData); // must initalize constant texture
+
+	Texture2D result;
+	result.width = width;
+	result.height = height;
+
+	result.data = CreateTexture(width, height, false, false, textureData);
+	device->CreateShaderResourceView(result.data, 0, &(result.inputView));
+	return result;
+}
+
 RenderTarget DirectXAPI::CreateRenderTarget(uint32_t width, uint32_t height) {
 	RenderTarget result = {};
 	result.width = width;
@@ -658,20 +670,6 @@ RenderTarget* DirectXAPI::GetBackBuffer() {
 	return &backBuffer;
 }
 
-Texture2D DirectXAPI::LoadSprite(std::wstring fileName) {
-	Texture2D result;
-	std::wstring fullPath = app.filePath + L"Assets\\" + fileName;
-	ID3D11Resource* textureResource;
-	DirectX::CreateWICTextureFromFile(device.Get(), context.Get(), fullPath.c_str(), &textureResource, &result.inputView);
-	result.data = (TextureData*)textureResource;
-
-	D3D11_TEXTURE2D_DESC description;
-	result.data->GetDesc(&description);
-	result.width = description.Width;
-	result.height = description.Height;
-	return result;
-}
-
 Sampler DirectXAPI::CreateDefaultSampler() {
 	Sampler result;
 
@@ -687,13 +685,13 @@ Sampler DirectXAPI::CreateDefaultSampler() {
 	return result;
 }
 
-TextureData* DirectXAPI::CreateTexture(uint32_t width, uint32_t height, bool renderTarget, bool computeWritable) {
+TextureData* DirectXAPI::CreateTexture(uint32_t width, uint32_t height, bool renderTarget, bool computeWritable, void* initialData) {
 	TextureData* output;
 
 	D3D11_TEXTURE2D_DESC textureDesc;
 	textureDesc.Width = width;
 	textureDesc.Height = height;
-	textureDesc.MipLevels = (renderTarget || computeWritable) ? 1 : 0; // include all mip levels unless gpu writable
+	textureDesc.MipLevels = 1;
 	textureDesc.ArraySize = 1;
 	textureDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
 	textureDesc.SampleDesc.Count = 1;
@@ -709,7 +707,13 @@ TextureData* DirectXAPI::CreateTexture(uint32_t width, uint32_t height, bool ren
 		textureDesc.BindFlags |= D3D11_BIND_UNORDERED_ACCESS;
 	}
 	
-	device->CreateTexture2D(&textureDesc, 0, &output);
+	D3D11_SUBRESOURCE_DATA inputData = {};
+	if(initialData) {
+		inputData.pSysMem = initialData;
+		inputData.SysMemPitch = width * sizeof(uint8_t) * 4;
+	}
+
+	device->CreateTexture2D(&textureDesc, initialData ? &inputData : 0, &output);
 
 	return output;
 }

@@ -28,7 +28,7 @@ public:
     PixelShader LoadPixelShader(std::wstring fileName) override;
     ComputeShader LoadComputeShader(std::wstring fileName) override;
 
-    Texture2D LoadSprite(std::wstring fileName) override;
+    Texture2D CreateConstantTexture(uint32_t width, uint32_t height, uint8_t* textureData) override;
     Sampler CreateDefaultSampler() override;
     Mesh CreateMesh(const Vertex* vertices, uint16_t vertexCount, const uint32_t* indices, uint16_t indexCount, bool editable) override;
     ConstantBuffer CreateConstantBuffer(uint32_t byteLength) override;
@@ -94,7 +94,7 @@ private:
     Microsoft::WRL::ComPtr<ID3D11BlendState> alphaBlendState;
     Microsoft::WRL::ComPtr<ID3D11BlendState> additiveBlendState;
 
-    TextureData* CreateTexture(uint32_t width, uint32_t height, bool renderTarget, bool computeWritable);
+    TextureData* CreateTexture(uint32_t width, uint32_t height, bool renderTarget, bool computeWritable, void* initialData = nullptr);
     Buffer* CreateIndexedBuffer(uint32_t elements, uint32_t elementBytes, bool structured, bool cpuWrite, bool gpuWrite);
 
     ID3DBlob* LoadShader(std::wstring fileName);
