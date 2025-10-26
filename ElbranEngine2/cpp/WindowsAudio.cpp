@@ -135,7 +135,7 @@ void WindowsAudio::LoadAudio(XAUDIO2_BUFFER* destination, WAVEFORMATEXTENSIBLE* 
     *destination = {};
 
     // Open the file
-    HANDLE file = CreateFileW(
+    HANDLE file = CreateFile(
         fullFilePath.c_str(),
         GENERIC_READ,
         FILE_SHARE_READ,
