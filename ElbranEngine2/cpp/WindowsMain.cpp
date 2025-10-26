@@ -7,6 +7,8 @@
 #include "WindowsAudio.h"
 #include "WindowsInput.h"
 #include "Configs.h"
+#include "LoadedFile.h"
+#include <bit>
 
 HWND windowHandle;
 __int64 lastPerfCount;
@@ -166,6 +168,33 @@ void QuitApp() {
 	PostQuitMessage(0);
 }
 
+LoadedFile LoadWindowsFile(std::wstring fileName) {
+	HANDLE fileHandle = CreateFileW(fileName.c_str(), GENERIC_READ, FILE_SHARE_READ, nullptr, OPEN_EXISTING, 0, nullptr);
+	if(fileHandle == INVALID_HANDLE_VALUE) return {};
+	LoadedFile file = {};
+
+	// determine file size
+	LARGE_INTEGER size;
+	bool success = GetFileSizeEx(fileHandle, &size);
+	if(!success) return {};
+	file.fileSize = (uint64_t)size.QuadPart;
+	assert(file.fileSize < 0xFFFFFFFF); // windows file read has max size
+
+	// read file
+	file.bytes = new uint8_t[file.fileSize];
+	DWORD bytesRead;
+	success = ReadFile(fileHandle, file.bytes, file.fileSize, &bytesRead, 0);
+	CloseHandle(fileHandle);
+	if(!success || bytesRead != file.fileSize) {
+		delete[] file.bytes;
+		return {};
+	}
+	
+	bool platformLittleEndian = std::endian::native == std::endian::little;
+	bool platformBigEndian = std::endian::native == std::endian::big;
+	return file;
+}
+
 // entry point for desktop app
 int WINAPI WinMain(
 	_In_ HINSTANCE hInstance,
@@ -199,7 +228,7 @@ int WINAPI WinMain(
 	GetClientRect(windowHandle, &windowRect);
 	directX = new DirectXAPI(windowHandle, Int2(windowRect.right - windowRect.left, windowRect.bottom - windowRect.top), ASPECT_RATIO, directory);
 	input = new WindowsInput(windowHandle);
-	app.Initialize(directory, directX, new WindowsAudio(), input);
+	app.Initialize(std::endian::native == std::endian::little, directory, LoadWindowsFile, directX, new WindowsAudio(), input);
 	app.quitFunction = QuitApp;
 	RunApp();
 	app.Release();

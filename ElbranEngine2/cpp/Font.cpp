@@ -4,8 +4,6 @@
 #include "FixedList.h"
 #include "ShaderConstants.h"
 #include "FixedMap.h"
-#include <iostream>
-#include <fstream>
 #include <cassert>
 
 // must match TextRasterizePS.hlsl
@@ -53,7 +51,7 @@ Matrix2D operator*(const Matrix2D& left, const Matrix2D& right) {
 
 class FontLoader {
 public:
-    std::ifstream fileReader;
+    LoadedFile fontFile;
     DynamicFixedList<BezierCurve> curves;
     DynamicFixedMap<Tag, uint32_t> tableStarts;
     uint32_t locaStart;
@@ -66,10 +64,6 @@ public:
 
     Font LoadFile(std::wstring file);
 
-    uint16_t ReadUInt16();
-    int16_t ReadInt16();
-    uint32_t ReadUInt32();
-    float ReadF2Dot14();
     void ReadGlyph(uint16_t glyphIndex, AlignedRect* outArea, const Matrix2D* transform, Int2 offset, const AlignedRect* baseArea = nullptr);
     void ReadSimpleGlyph(int16_t contourCount, AlignedRect glyphArea, const Matrix2D* transform, Int2 offset);
     void ReadCompositeGlyph(const Matrix2D* transform, Int2 offset, const AlignedRect* baseArea);
@@ -97,49 +91,48 @@ Font Font::Load(std::wstring file) {
 #define DUPLICATE_X_BIT 0b00010000
 #define DUPLICATE_Y_BIT 0b00100000
 
-// loads a .ttf font file. Note: .ttf files are big-endian
+// loads a .ttf font file
 // https://developer.apple.com/fonts/TrueType-Reference-Manual/RM06/Chap6.html
 Font FontLoader::LoadFile(std::wstring file) {
     Font loaded = {};
 
     // parse file
-    fileReader.open(app.filePath + L"Assets\\" + file, std::ifstream::binary);
-    assert(!fileReader.fail() && "failed to read font file");
+    fontFile = app.LoadFile(app.filePath + L"Assets\\" + file);
+    fontFile.littleEndian = false;
+    assert(fontFile.bytes != nullptr && "failed to read font file");
 
     // determine number of data tables in this file
-    fileReader.ignore(4);
-    uint16_t tableCount = ReadUInt16();
-    fileReader.ignore(6);
+    fontFile.readLocation += 4;
+    uint16_t tableCount = fontFile.ReadUInt16();
+    fontFile.readLocation += 6;
 
     // store the byte offsets of all data tables to support file navigation
     tableStarts.Initialize(tableCount, Tag::Hash);
     Tag newTag;
     for(uint16_t i = 0; i < tableCount; i++) {
-        fileReader.read(newTag.chars, 4);
-        fileReader.ignore(4);
-        tableStarts.Set(newTag, ReadUInt32());
-        fileReader.ignore(4);
+        fontFile.ReadBytes(4, (uint8_t*)&newTag.chars);
+        fontFile.readLocation += 4;
+        tableStarts.Set(newTag, fontFile.ReadUInt32());
+        fontFile.readLocation += 4;
     }
     locaStart = tableStarts.Get(Tag{"loca"});
 
     // determine number of glyphs and other limits
-    fileReader.seekg(tableStarts.Get(Tag{"maxp"}));
-    fileReader.ignore(4);
-    uint16_t numGlyphs = ReadUInt16();
-    uint16_t maxPoints = ReadUInt16();
-    uint16_t maxContours = ReadUInt16();
+    fontFile.readLocation = tableStarts.Get(Tag{"maxp"}) + 4;
+    uint16_t numGlyphs = fontFile.ReadUInt16();
+    uint16_t maxPoints = fontFile.ReadUInt16();
+    uint16_t maxContours = fontFile.ReadUInt16();
 
     // load the character map
-    fileReader.seekg(tableStarts.Get(Tag{"cmap"}));
-    fileReader.ignore(2);
-    uint16_t cmapSubtables = ReadUInt16();
+    fontFile.readLocation = tableStarts.Get(Tag{"cmap"}) + 2;
+    uint16_t cmapSubtables = fontFile.ReadUInt16();
     uint32_t cmapOffset = 0;
 
     for(uint16_t i = 0; i < cmapSubtables; i++) {
         // find a usable cmap table from the subtables
-        uint16_t platformID = ReadUInt16();
-        uint16_t platformSpecificID = ReadUInt16();
-        uint32_t subtableOffset = ReadUInt32();
+        uint16_t platformID = fontFile.ReadUInt16();
+        uint16_t platformSpecificID = fontFile.ReadUInt16();
+        uint32_t subtableOffset = fontFile.ReadUInt32();
 
         // check for a unicode encoding
         if(platformID == 0 || platformID == 3 && (platformSpecificID == 1 || platformSpecificID == 10)) {
@@ -150,37 +143,37 @@ Font FontLoader::LoadFile(std::wstring file) {
 
     assert(cmapOffset > 0 && "font file contains no unicode encoding");
 
-    fileReader.seekg(tableStarts.Get(Tag{"cmap"}) + cmapOffset);
-    uint16_t format = ReadUInt16();
+    fontFile.readLocation = tableStarts.Get(Tag{"cmap"}) + cmapOffset;
+    uint16_t format = fontFile.ReadUInt16();
     assert((format == 4 || format == 12) && "font file uses an unsupported cmap format");
 
     loaded.charToGlyphIndex.Initialize(numGlyphs, [](uint16_t let) { return (uint32_t)let; });
 
     if(format == 4) {
-        fileReader.ignore(4);
-        uint16_t numSegments = ReadUInt16() / 2;
-        fileReader.ignore(6);
+        fontFile.readLocation += 4;
+        uint16_t numSegments = fontFile.ReadUInt16() / 2;
+        fontFile.readLocation += 6;
 
         uint16_t* endCodes = new uint16_t[numSegments];
         for(uint16_t i = 0; i < numSegments; i++) {
-            endCodes[i] = ReadUInt16();
+            endCodes[i] = fontFile.ReadUInt16();
         }
 
-        fileReader.ignore(2);
+        fontFile.readLocation += 2;
         uint16_t* startCodes = new uint16_t[numSegments];
         for(uint16_t i = 0; i < numSegments; i++) {
-            startCodes[i] = ReadUInt16();
+            startCodes[i] = fontFile.ReadUInt16();
         }
 
         int16_t* idDeltas = new int16_t[numSegments];
         for(uint16_t i = 0; i < numSegments; i++) {
-            idDeltas[i] = ReadInt16();
+            idDeltas[i] = fontFile.ReadInt16();
         }
 
-        uint16_t idRangeOffsetStart = fileReader.tellg();
+        uint16_t idRangeOffsetStart = fontFile.readLocation;
         uint16_t* idRangeOffsets = new uint16_t[numSegments];
         for(uint16_t i = 0; i < numSegments; i++) {
-            idRangeOffsets[i] = ReadUInt16();
+            idRangeOffsets[i] = fontFile.ReadUInt16();
         }
 
         for(uint16_t segment = 0; segment < numSegments - 1; segment++) { // last segment has no mappings
@@ -192,8 +185,8 @@ Font FontLoader::LoadFile(std::wstring file) {
                 } else {
                     // look up glyph index from an array in the file
                     uint16_t rangeOffsetLocation = idRangeOffsetStart + 2*segment + idRangeOffsets[segment];
-                    fileReader.seekg(2 * (currCode - startCodes[segment]) + rangeOffsetLocation);
-                    glyphIndex = ReadUInt16();
+                    fontFile.readLocation = 2 * (currCode - startCodes[segment]) + rangeOffsetLocation;
+                    glyphIndex = fontFile.ReadUInt16();
                     if(glyphIndex != 0) glyphIndex = (glyphIndex + idDeltas[segment]) % 65536;
                 }
 
@@ -207,12 +200,12 @@ Font FontLoader::LoadFile(std::wstring file) {
         delete[] idRangeOffsets;
     }
     else if(format == 12) {
-        fileReader.ignore(10);
-        uint32_t numGroups = ReadUInt32();
+        fontFile.readLocation += 10;
+        uint32_t numGroups = fontFile.ReadUInt32();
         for(uint32_t group = 0; group < numGroups; group++) {
-            uint32_t startCharCode = ReadUInt32();
-            uint32_t endCharCode = ReadUInt32();
-            uint32_t startGlyphCode = ReadUInt32();
+            uint32_t startCharCode = fontFile.ReadUInt32();
+            uint32_t endCharCode = fontFile.ReadUInt32();
+            uint32_t startGlyphCode = fontFile.ReadUInt32();
 
             uint32_t groupLength = endCharCode - startCharCode + 1;
             for(uint32_t i = 0; i < groupLength; i++) {
@@ -223,27 +216,27 @@ Font FontLoader::LoadFile(std::wstring file) {
     loaded.charToGlyphIndex.Set(0xFFFF, 0);
 
     // load glyph advance widths
-    fileReader.seekg(tableStarts.Get(Tag{"hhea"}) + 34);
-    uint16_t numHMetrics = ReadUInt16();
-    fileReader.seekg(tableStarts.Get(Tag{"hmtx"}));
+    fontFile.readLocation = tableStarts.Get(Tag{"hhea"}) + 34;
+    uint16_t numHMetrics = fontFile.ReadUInt16();
+    fontFile.readLocation = tableStarts.Get(Tag{"hmtx"});
     leftSideBearings = new int16_t[numGlyphs];
     advanceWidths = new uint16_t[numGlyphs];
     
     for(uint16_t glyphIndex = 0; glyphIndex < numHMetrics; glyphIndex++) {
-        advanceWidths[glyphIndex] = ReadUInt16();
-        leftSideBearings[glyphIndex] = ReadInt16();
+        advanceWidths[glyphIndex] = fontFile.ReadUInt16();
+        leftSideBearings[glyphIndex] = fontFile.ReadInt16();
     }
     for(uint16_t glyphIndex = numHMetrics; glyphIndex < numGlyphs; glyphIndex++) {
         // the remaining glyphs have the same advance width
         advanceWidths[glyphIndex] = advanceWidths[numHMetrics - 1];
-        leftSideBearings[glyphIndex] = ReadInt16();
+        leftSideBearings[glyphIndex] = fontFile.ReadInt16();
     }
 
     // load the glyph contour data
-    fileReader.seekg(tableStarts.Get(Tag{"head"}) + 18);
-    float unitsPerEm = ReadUInt16();
-    fileReader.ignore(30);
-    locFormat = ReadInt16();
+    fontFile.readLocation = tableStarts.Get(Tag{"head"}) + 18;
+    float unitsPerEm = fontFile.ReadUInt16();
+    fontFile.readLocation += 30;
+    locFormat = fontFile.ReadInt16();
     assert((locFormat == 0 || locFormat == 1) && "font file has an invalid loc format");
 
     curves.Allocate(numGlyphs * maxPoints);
@@ -265,7 +258,6 @@ Font FontLoader::LoadFile(std::wstring file) {
         loaded.glyphBaselines[glyphIndex] = -glyphArea.bottom / glyphArea.Height(); // assumes baseline at Y=0
     }
     glyphStartIndices.Add(curves.Size());
-    fileReader.close();
 
     // send curve data to the GPU
     int curveCount = curves.Size();
@@ -275,10 +267,11 @@ Font FontLoader::LoadFile(std::wstring file) {
     loaded.firstCurveIndices = app.graphics->CreateArrayBuffer(ShaderDataType::UInt, glyphStartIndices.Size());
     app.graphics->WriteBuffer(&curves[0], curves.Size() * sizeof(BezierCurve), loaded.glyphCurves.buffer);
     app.graphics->WriteBuffer(&glyphStartIndices[0], glyphStartIndices.Size() * sizeof(uint32_t), loaded.firstCurveIndices.buffer);
-    curves.Release();
-    glyphStartIndices.Release();
 
     // clean up
+    curves.Release();
+    glyphStartIndices.Release();
+    fontFile.Release();
     tableStarts.Release();
     delete[] contourEndIndices;
     delete[] flags;
@@ -290,18 +283,18 @@ Font FontLoader::LoadFile(std::wstring file) {
 }
 
 void FontLoader::ReadGlyph(uint16_t glyphIndex, AlignedRect* outArea, const Matrix2D* transform, Int2 offset, const AlignedRect* baseArea) {
-    fileReader.seekg(locaStart + glyphIndex * (locFormat == 0 ? 2 : 4));
-    uint32_t glyphOffset = (locFormat == 0 ? ReadUInt16() * 2u : ReadUInt32());
-    uint32_t nextOffset = (locFormat == 0 ? ReadUInt16() * 2u : ReadUInt32());
-    fileReader.seekg(tableStarts.Get(Tag{"glyf"}) + glyphOffset);
+    fontFile.readLocation = locaStart + glyphIndex * (locFormat == 0 ? 2 : 4);
+    uint32_t glyphOffset = (locFormat == 0 ? fontFile.ReadUInt16() * 2u : fontFile.ReadUInt32());
+    uint32_t nextOffset = (locFormat == 0 ? fontFile.ReadUInt16() * 2u : fontFile.ReadUInt32());
+    fontFile.readLocation = tableStarts.Get(Tag{"glyf"}) + glyphOffset;
 
-    int16_t contourCount = ReadInt16();
+    int16_t contourCount = fontFile.ReadInt16();
     AlignedRect glyphArea;
-    glyphArea.left = (float)(ReadInt16() - leftSideBearings[glyphIndex]);
-    glyphArea.bottom = (float)ReadInt16();
-    fileReader.ignore(2); // skip xMax
+    glyphArea.left = (float)(fontFile.ReadInt16() - leftSideBearings[glyphIndex]);
+    glyphArea.bottom = (float)fontFile.ReadInt16();
+    fontFile.readLocation += 2; // skip xMax
     glyphArea.right = glyphArea.left + advanceWidths[glyphIndex];
-    glyphArea.top = (float)ReadInt16();
+    glyphArea.top = (float)fontFile.ReadInt16();
 
     if(outArea) {
         *outArea = glyphArea;
@@ -320,17 +313,17 @@ void FontLoader::ReadSimpleGlyph(int16_t contourCount, AlignedRect glyphArea, co
     Vector2 glyphSize = glyphArea.Size();
 
     for(int16_t i = 0; i < contourCount; i++) {
-        contourEndIndices[i] = ReadUInt16();
+        contourEndIndices[i] = fontFile.ReadUInt16();
     }
     uint8_t numPoints = contourEndIndices[contourCount - 1] + 1;
-    uint16_t instructionLength = ReadUInt16();
-    fileReader.ignore(instructionLength);
+    uint16_t instructionLength = fontFile.ReadUInt16();
+    fontFile.readLocation += instructionLength;
 
     // read flags
     for(uint8_t pointIndex = 0; pointIndex < numPoints; pointIndex++) {
-        flags[pointIndex] = fileReader.get();
+        flags[pointIndex] = fontFile.ReadByte();
         if(flags[pointIndex] & REPEAT_BIT) {
-            uint8_t repetitions = fileReader.get();
+            uint8_t repetitions = fontFile.ReadByte();
             for(uint8_t r = 0; r < repetitions; r++) {
                 pointIndex++;
                 flags[pointIndex] = flags[pointIndex - 1];
@@ -342,11 +335,11 @@ void FontLoader::ReadSimpleGlyph(int16_t contourCount, AlignedRect glyphArea, co
     int16_t currentX = 0;
     for(uint8_t pointIndex = 0; pointIndex < numPoints; pointIndex++) {
         if(flags[pointIndex] & UNSIGNED_X_BIT) {
-            uint8_t byte = fileReader.get();
+            uint8_t byte = fontFile.ReadByte();
             currentX += (flags[pointIndex] & POSITIVE_X_BIT ? byte : -byte);
         } 
         else if(!(flags[pointIndex] & DUPLICATE_X_BIT)) {
-            currentX += ReadInt16();
+            currentX += fontFile.ReadInt16();
         }
         points[pointIndex].x = (currentX - glyphArea.left + offset.x);
     }
@@ -355,11 +348,11 @@ void FontLoader::ReadSimpleGlyph(int16_t contourCount, AlignedRect glyphArea, co
     int16_t currentY = 0;
     for(uint8_t pointIndex = 0; pointIndex < numPoints; pointIndex++) {
         if(flags[pointIndex] & UNSIGNED_Y_BIT) {
-            uint8_t byte = fileReader.get();
+            uint8_t byte = fontFile.ReadByte();
             currentY += (flags[pointIndex] & POSITIVE_Y_BIT ? byte : -byte);
         } 
         else if(!(flags[pointIndex] & DUPLICATE_Y_BIT)) {
-            currentY += ReadInt16();
+            currentY += fontFile.ReadInt16();
         }
         points[pointIndex].y = (currentY - glyphArea.bottom + offset.y);
     }
@@ -460,28 +453,28 @@ void FontLoader::ReadSimpleGlyph(int16_t contourCount, AlignedRect glyphArea, co
 void FontLoader::ReadCompositeGlyph(const Matrix2D* transform, Int2 offset, const AlignedRect* baseArea) {
     uint16_t flags = MORE_COMPONENTS_BIT;
     while(flags & MORE_COMPONENTS_BIT) {
-        flags = ReadUInt16();
-        uint16_t glyphIndex = ReadUInt16();
+        flags = fontFile.ReadUInt16();
+        uint16_t glyphIndex = fontFile.ReadUInt16();
 
         Int2 newOffset;
-        newOffset.x = (flags & TWO_BYTE_BIT) ? ReadInt16() : fileReader.get();
-        newOffset.y = (flags & TWO_BYTE_BIT) ? ReadInt16() : fileReader.get();
+        newOffset.x = (flags & TWO_BYTE_BIT) ? fontFile.ReadInt16() : fontFile.ReadByte();
+        newOffset.y = (flags & TWO_BYTE_BIT) ? fontFile.ReadInt16() : fontFile.ReadByte();
         assert((flags & ARGS_XY_VALUES_BIT) && "font file uses point-to-point component glyph composition, which is not supported");
 
         Matrix2D newTransform = { {1, 0}, {0, 1} };
         if(flags & SAME_SCALE_BIT) {
-            newTransform.left.x = ReadF2Dot14();
+            newTransform.left.x = fontFile.ReadF2Dot14();
             newTransform.right.y = newTransform.left.x;
         }
         else if(flags & XY_SCALE_BIT) {
-            newTransform.left.x = ReadF2Dot14();
-            newTransform.right.y = ReadF2Dot14();
+            newTransform.left.x = fontFile.ReadF2Dot14();
+            newTransform.right.y = fontFile.ReadF2Dot14();
         }
         else if(flags & MATRIX_BIT) {
-            newTransform.left.x = ReadF2Dot14();
-            newTransform.left.y = ReadF2Dot14();
-            newTransform.right.x = ReadF2Dot14();
-            newTransform.right.y = ReadF2Dot14();
+            newTransform.left.x = fontFile.ReadF2Dot14();
+            newTransform.left.y = fontFile.ReadF2Dot14();
+            newTransform.right.x = fontFile.ReadF2Dot14();
+            newTransform.right.y = fontFile.ReadF2Dot14();
         }
 
         // combine new transform with old transform
@@ -492,30 +485,8 @@ void FontLoader::ReadCompositeGlyph(const Matrix2D* transform, Int2 offset, cons
             newOffset.y = newTransform.left.y * newOffset.x + newTransform.right.y * newOffset.y;
         }
 
-        std::streampos savedPos = fileReader.tellg();
+        uint64_t savedPos = fontFile.readLocation;
         ReadGlyph(glyphIndex, nullptr, &newTransform, newOffset, baseArea);
-        fileReader.seekg(savedPos);
+        fontFile.readLocation = savedPos;
     }
-}
-
-uint16_t FontLoader::ReadUInt16() {
-    uint16_t result;
-    fileReader.read((char*)&result, 2);
-    result = (result >> 8 | result << 8); // swap bytes because file is big-endian
-    return result;
-}
-
-int16_t FontLoader::ReadInt16() {
-    return (int16_t)ReadUInt16();
-}
-
-uint32_t FontLoader::ReadUInt32() {
-    uint32_t result;
-    fileReader.read((char*)&result, 4);
-    result = (result >> 24 | result << 24 | (result >> 8 & 0x0000FF00) | (result << 8 & 0x00FF0000)); // swap bytes because file is big-endian
-    return result;
-}
-
-float FontLoader::ReadF2Dot14() {
-    return ReadInt16() / (float)(1 << 14);
 }

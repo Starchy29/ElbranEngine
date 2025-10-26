@@ -36,10 +36,15 @@ public:
 	ComputeShader particleMoveCS;
 
 	Texture2D testSprite;
+	Texture2D testBMP;
 	Font arial;
 
 	AssetContainer() {}
 	void Initialize(std::wstring filePath, GraphicsAPI* graphics, SoundMixer* audio);
 	void Release();
+
+	Texture2D LoadBMP(std::wstring fileName);
+	Texture2D LoadPNG(std::wstring fileName);
+	void LoadWAV(std::wstring fileName);
 };
 
