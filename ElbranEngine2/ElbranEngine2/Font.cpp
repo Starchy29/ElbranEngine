@@ -91,13 +91,14 @@ Font Font::Load(std::wstring file) {
 #define DUPLICATE_X_BIT 0b00010000
 #define DUPLICATE_Y_BIT 0b00100000
 
-// loads a .ttf font file. Note: .ttf files are big-endian
+// loads a .ttf font file
 // https://developer.apple.com/fonts/TrueType-Reference-Manual/RM06/Chap6.html
 Font FontLoader::LoadFile(std::wstring file) {
     Font loaded = {};
 
     // parse file
-    fontFile = app.LoadFile(app.filePath + L"Assets\\" + file, false);
+    fontFile = app.LoadFile(app.filePath + L"Assets\\" + file);
+    fontFile.littleEndian = false;
     assert(fontFile.bytes != nullptr && "failed to read font file");
 
     // determine number of data tables in this file

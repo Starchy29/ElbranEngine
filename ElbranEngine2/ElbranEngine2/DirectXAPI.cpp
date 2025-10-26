@@ -4,7 +4,6 @@
 #include "DirectXAPI.h"
 #include "Application.h"
 #include <cassert>
-#include <WICTextureLoader.h>
 
 #define SafeRelease(x) if(x) x->Release()
 

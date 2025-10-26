@@ -162,6 +162,7 @@
     <ClCompile Include="HSVPostProcess.cpp" />
     <ClCompile Include="InputManager.cpp" />
     <ClCompile Include="LoadedFile.cpp" />
+    <ClCompile Include="lodepng.cpp" />
     <ClCompile Include="Math.cpp" />
     <ClCompile Include="MemoryArena.cpp" />
     <ClCompile Include="ParticleBehavior.cpp" />
@@ -205,6 +206,7 @@
     <ClInclude Include="IRenderer.h" />
     <ClInclude Include="Lights.h" />
     <ClInclude Include="LoadedFile.h" />
+    <ClInclude Include="lodepng.h" />
     <ClInclude Include="Math.h" />
     <ClInclude Include="MemoryArena.h" />
     <ClInclude Include="ParticleBehavior.h" />

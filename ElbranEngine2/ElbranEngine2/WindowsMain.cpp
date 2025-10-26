@@ -168,7 +168,7 @@ void QuitApp() {
 	PostQuitMessage(0);
 }
 
-LoadedFile LoadWindowsFile(std::wstring fileName, bool littleEndian) {
+LoadedFile LoadWindowsFile(std::wstring fileName) {
 	HANDLE fileHandle = CreateFile(fileName.c_str(), GENERIC_READ, FILE_SHARE_READ, nullptr, OPEN_EXISTING, 0, nullptr);
 	if(fileHandle == INVALID_HANDLE_VALUE) return {};
 	LoadedFile file = {};
@@ -192,7 +192,6 @@ LoadedFile LoadWindowsFile(std::wstring fileName, bool littleEndian) {
 	
 	bool platformLittleEndian = std::endian::native == std::endian::little;
 	bool platformBigEndian = std::endian::native == std::endian::big;
-	file.swappedEndian = (littleEndian && !platformLittleEndian || !littleEndian && !platformBigEndian);
 	return file;
 }
 
@@ -229,7 +228,7 @@ int WINAPI WinMain(
 	GetClientRect(windowHandle, &windowRect);
 	directX = new DirectXAPI(windowHandle, Int2(windowRect.right - windowRect.left, windowRect.bottom - windowRect.top), ASPECT_RATIO, directory);
 	input = new WindowsInput(windowHandle);
-	app.Initialize(directory, LoadWindowsFile, directX, new WindowsAudio(), input);
+	app.Initialize(std::endian::native == std::endian::little, directory, LoadWindowsFile, directX, new WindowsAudio(), input);
 	app.quitFunction = QuitApp;
 	RunApp();
 	app.Release();

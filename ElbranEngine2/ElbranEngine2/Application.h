@@ -29,11 +29,12 @@ public:
 #endif
 
 	std::wstring filePath;
-	LoadedFile (*LoadFile)(std::wstring filePath, bool littleEndian);
+	LoadedFile (*LoadFile)(std::wstring filePath);
 	void (*quitFunction)();
+	bool littleEndian;
 
 	Application() {}
-	void Initialize(std::wstring filePath, LoadedFile (*fileLoadFunction)(std::wstring filePath, bool littleEndian), GraphicsAPI* graphics, SoundMixer* audio, InputManager* input);
+	void Initialize(bool littleEndian, std::wstring filePath, LoadedFile (*fileLoadFunction)(std::wstring filePath), GraphicsAPI* graphics, SoundMixer* audio, InputManager* input);
 	void Release();
 
 	void Update(float deltaTime);

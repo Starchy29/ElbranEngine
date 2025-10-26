@@ -124,6 +124,7 @@
       <Filter>Audio</Filter>
     </ClCompile>
     <ClCompile Include="LoadedFile.cpp" />
+    <ClCompile Include="lodepng.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Application.h" />
@@ -239,6 +240,7 @@
       <Filter>Graphics</Filter>
     </ClInclude>
     <ClInclude Include="LoadedFile.h" />
+    <ClInclude Include="lodepng.h" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="CameraVS.hlsl">
