@@ -12,12 +12,9 @@ void Game::Initialize() {
 	sampleScene.Initialize(10, 10, 10, 5.0f);
 	sampleScene.backgroundColor = Color(0.1f, 0.1f, 0.1f);
 
-	LoadedFile load = app.LoadFile(app.filePath + L"Assets\\elbran.png", true);
-	load.Release();
-
 	text.Initialize("text", &app.assets.arial);
 	//sampleScene.AddRenderer(&text, true);
-	sprite.Initialize(&app.assets.testBMP);
+	sprite.Initialize(&app.assets.testSprite);
 	sampleScene.AddRenderer(&sprite, true);
 }
 
