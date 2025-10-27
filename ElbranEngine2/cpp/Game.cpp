@@ -16,6 +16,7 @@ void Game::Initialize() {
 	//sampleScene.AddRenderer(&text, true);
 	sprite.Initialize(&app.assets.testSprite);
 	sampleScene.AddRenderer(&sprite, true);
+	sprite.flipX = true;
 }
 
 void Game::Release() {
