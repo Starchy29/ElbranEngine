@@ -26,7 +26,7 @@ void WindowsAudio::SetEffectsVolume(float volume) {
 AudioTrack WindowsAudio::LoadTrack(std::wstring directory, std::wstring fileName, bool looped) {
     AudioTrack track = {};
     WAVEFORMATEXTENSIBLE wfx = {};
-    LoadAudio(&track.soundBuffer, &wfx, directory + L"Assets\\" + fileName);
+    LoadAudio(&track.soundBuffer, &wfx, directory + L"assets\\" + fileName);
     track.baseVolume = 1.0f;
     track.mixVolume = 0.0f;
     track.soundBuffer.LoopCount = looped ? XAUDIO2_LOOP_INFINITE : XAUDIO2_NO_LOOP_REGION;
@@ -49,7 +49,7 @@ void WindowsAudio::ReleaseAudioTrack(AudioTrack* track) {
 
 SoundEffect WindowsAudio::LoadEffect(std::wstring directory, std::wstring fileName) {
     SoundEffect effect = {};
-    LoadAudio(&effect.soundBuffer, &effect.format, directory + L"Assets\\" + fileName);
+    LoadAudio(&effect.soundBuffer, &effect.format, directory + L"assets\\" + fileName);
     effect.baseVolume = 1.0f;
     effect.soundBuffer.LoopCount = XAUDIO2_NO_LOOP_REGION;
 	return effect;

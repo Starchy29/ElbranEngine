@@ -6,6 +6,7 @@ mkdir assets
 mkdir shaders
 cl /std:c++20 /DWINDOWS /Zi ..\..\cpp\*.cpp /FeElbranGame_DEBUG kernel32.lib user32.lib DXGI.lib XInput.lib Xinput9_1_0.lib Xaudio2.lib
 del *.obj
+del *.ilk
 
 for %%I in (..\..\hlsl\*PS.hlsl ..\..\hlsl\*PP.hlsl) do fxc /T ps_5_1 /Fo shaders\%%~nI.cso %%I
 for %%I in (..\..\hlsl\*VS.hlsl) do fxc /T vs_5_1 /Fo shaders\%%~nI.cso %%I

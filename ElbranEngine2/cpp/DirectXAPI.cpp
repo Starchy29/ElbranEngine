@@ -112,7 +112,7 @@ DirectXAPI::DirectXAPI(HWND windowHandle, Int2 windowDims, float viewAspectRatio
 	inputDescriptions[1] = { "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT };
 
 	Microsoft::WRL::ComPtr<ID3DBlob> shaderBlob;
-	std::wstring fileString = directory + L"CameraVS.cso";
+	std::wstring fileString = directory + L"shaders\\CameraVS.cso";
 	HRESULT hr = D3DReadFileToBlob(fileString.c_str(), shaderBlob.GetAddressOf()); // read a specific shader to validate input layout
 	assert(hr == S_OK && "failed to read shader for input layout creation");
 
@@ -757,7 +757,7 @@ Buffer* DirectXAPI::CreateIndexedBuffer(uint32_t elements, uint32_t elementBytes
 }
 
 ID3DBlob* DirectXAPI::LoadShader(std::wstring fileName) {
-	std::wstring fileString = app.filePath + fileName;
+	std::wstring fileString = app.filePath + L"shaders\\" + fileName;
 	LPCWSTR filePath = fileString.c_str();
 	ID3DBlob* shaderBlob;
 	HRESULT hr = D3DReadFileToBlob(filePath, &shaderBlob);

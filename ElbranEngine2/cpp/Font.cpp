@@ -97,7 +97,7 @@ Font FontLoader::LoadFile(std::wstring file) {
     Font loaded = {};
 
     // parse file
-    fontFile = app.LoadFile(app.filePath + L"Assets\\" + file);
+    fontFile = app.LoadFile(app.filePath + L"assets\\" + file);
     fontFile.littleEndian = false;
     assert(fontFile.bytes != nullptr && "failed to read font file");
 

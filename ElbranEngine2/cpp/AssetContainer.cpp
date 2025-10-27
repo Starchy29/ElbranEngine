@@ -107,7 +107,7 @@ void AssetContainer::Release() {
 }
 
 Texture2D AssetContainer::LoadBMP(std::wstring fileName) {
-	LoadedFile file = app.LoadFile(app.filePath + L"Assets\\" + fileName);
+	LoadedFile file = app.LoadFile(app.filePath + L"assets\\" + fileName);
 	file.littleEndian = true;
 	assert(file.ReadUInt16() == 0x4D42); // file type must be "BM"
 	file.readLocation = 10;
@@ -369,7 +369,7 @@ Texture2D AssetContainer::LoadBMP(std::wstring fileName) {
 }
 
 Texture2D AssetContainer::LoadPNG(std::wstring fileName) {
-	LoadedFile file = app.LoadFile(app.filePath + L"Assets\\" + fileName);
+	LoadedFile file = app.LoadFile(app.filePath + L"assets\\" + fileName);
 	std::vector<uint8_t> lodeFile(file.bytes, file.bytes + file.fileSize);
 	std::vector<uint8_t> loadedImage;
 	uint32_t width;

@@ -1,0 +1,88 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="..\cpp\AnimationGroup.cpp" />
+    <ClCompile Include="..\cpp\Application.cpp" />
+    <ClCompile Include="..\cpp\AssetContainer.cpp" />
+    <ClCompile Include="..\cpp\AtlasAnimator.cpp" />
+    <ClCompile Include="..\cpp\AtlasRenderer.cpp" />
+    <ClCompile Include="..\cpp\BloomPostProcess.cpp" />
+    <ClCompile Include="..\cpp\BlurPostProcess.cpp" />
+    <ClCompile Include="..\cpp\Button.cpp" />
+    <ClCompile Include="..\cpp\Common.cpp" />
+    <ClCompile Include="..\cpp\DebugHelper.cpp" />
+    <ClCompile Include="..\cpp\DirectXAPI.cpp" />
+    <ClCompile Include="..\cpp\Font.cpp" />
+    <ClCompile Include="..\cpp\Game.cpp" />
+    <ClCompile Include="..\cpp\GraphicsAPI.cpp" />
+    <ClCompile Include="..\cpp\HSVPostProcess.cpp" />
+    <ClCompile Include="..\cpp\InputManager.cpp" />
+    <ClCompile Include="..\cpp\LoadedFile.cpp" />
+    <ClCompile Include="..\cpp\lodepng.cpp" />
+    <ClCompile Include="..\cpp\Math.cpp" />
+    <ClCompile Include="..\cpp\MemoryArena.cpp" />
+    <ClCompile Include="..\cpp\ParticleBehavior.cpp" />
+    <ClCompile Include="..\cpp\ParticleRenderer.cpp" />
+    <ClCompile Include="..\cpp\PatternRenderer.cpp" />
+    <ClCompile Include="..\cpp\Random.cpp" />
+    <ClCompile Include="..\cpp\Scene.cpp" />
+    <ClCompile Include="..\cpp\ShapeRenderer.cpp" />
+    <ClCompile Include="..\cpp\SliderUI.cpp" />
+    <ClCompile Include="..\cpp\SoundMixer.cpp" />
+    <ClCompile Include="..\cpp\SpriteRenderer.cpp" />
+    <ClCompile Include="..\cpp\TextRenderer.cpp" />
+    <ClCompile Include="..\cpp\UserInterface.cpp" />
+    <ClCompile Include="..\cpp\WindowsAudio.cpp" />
+    <ClCompile Include="..\cpp\WindowsInput.cpp" />
+    <ClCompile Include="..\cpp\WindowsMain.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\cpp\AnimationGroup.h" />
+    <ClInclude Include="..\cpp\Application.h" />
+    <ClInclude Include="..\cpp\AssetContainer.h" />
+    <ClInclude Include="..\cpp\AtlasAnimator.h" />
+    <ClInclude Include="..\cpp\AtlasRenderer.h" />
+    <ClInclude Include="..\cpp\AudioData.h" />
+    <ClInclude Include="..\cpp\BloomPostProcess.h" />
+    <ClInclude Include="..\cpp\BlurPostProcess.h" />
+    <ClInclude Include="..\cpp\Buffers.h" />
+    <ClInclude Include="..\cpp\Button.h" />
+    <ClInclude Include="..\cpp\Common.h" />
+    <ClInclude Include="..\cpp\Configs.h" />
+    <ClInclude Include="..\cpp\DebugHelper.h" />
+    <ClInclude Include="..\cpp\DirectXAPI.h" />
+    <ClInclude Include="..\cpp\FixedList.h" />
+    <ClInclude Include="..\cpp\FixedMap.h" />
+    <ClInclude Include="..\cpp\Font.h" />
+    <ClInclude Include="..\cpp\Game.h" />
+    <ClInclude Include="..\cpp\GraphicsAPI.h" />
+    <ClInclude Include="..\cpp\HSVPostProcess.h" />
+    <ClInclude Include="..\cpp\InputManager.h" />
+    <ClInclude Include="..\cpp\IPostProcess.h" />
+    <ClInclude Include="..\cpp\IRenderer.h" />
+    <ClInclude Include="..\cpp\Lights.h" />
+    <ClInclude Include="..\cpp\LoadedFile.h" />
+    <ClInclude Include="..\cpp\lodepng.h" />
+    <ClInclude Include="..\cpp\Math.h" />
+    <ClInclude Include="..\cpp\MemoryArena.h" />
+    <ClInclude Include="..\cpp\ParticleBehavior.h" />
+    <ClInclude Include="..\cpp\ParticleRenderer.h" />
+    <ClInclude Include="..\cpp\PatternRenderer.h" />
+    <ClInclude Include="..\cpp\Random.h" />
+    <ClInclude Include="..\cpp\Scene.h" />
+    <ClInclude Include="..\cpp\ShaderConstants.h" />
+    <ClInclude Include="..\cpp\Shaders.h" />
+    <ClInclude Include="..\cpp\ShapeRenderer.h" />
+    <ClInclude Include="..\cpp\SliderUI.h" />
+    <ClInclude Include="..\cpp\SoundMixer.h" />
+    <ClInclude Include="..\cpp\SpriteRenderer.h" />
+    <ClInclude Include="..\cpp\TextRenderer.h" />
+    <ClInclude Include="..\cpp\Transform.h" />
+    <ClInclude Include="..\cpp\UserInterface.h" />
+    <ClInclude Include="..\cpp\WindowsAudio.h" />
+    <ClInclude Include="..\cpp\WindowsInput.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\cpp\packages.config" />
+  </ItemGroup>
+</Project>
