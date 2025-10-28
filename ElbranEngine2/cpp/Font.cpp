@@ -4,7 +4,6 @@
 #include "FixedList.h"
 #include "ShaderConstants.h"
 #include "FixedMap.h"
-#include <cassert>
 
 // must match TextRasterizePS.hlsl
 struct BezierCurve {
@@ -99,7 +98,7 @@ Font FontLoader::LoadFile(std::wstring file) {
     // parse file
     fontFile = app.LoadFile(app.filePath + L"assets\\" + file);
     fontFile.littleEndian = false;
-    assert(fontFile.bytes != nullptr && "failed to read font file");
+    ASSERT(fontFile.bytes != nullptr);
 
     // determine number of data tables in this file
     fontFile.readLocation += 4;
@@ -141,11 +140,11 @@ Font FontLoader::LoadFile(std::wstring file) {
         }
     }
 
-    assert(cmapOffset > 0 && "font file contains no unicode encoding");
+    ASSERT(cmapOffset > 0); // font file must contain unicode encoding
 
     fontFile.readLocation = tableStarts.Get(Tag{"cmap"}) + cmapOffset;
     uint16_t format = fontFile.ReadUInt16();
-    assert((format == 4 || format == 12) && "font file uses an unsupported cmap format");
+    ASSERT(format == 4 || format == 12); // font file must support one of these cmap formats
 
     loaded.charToGlyphIndex.Initialize(numGlyphs, [](uint16_t let) { return (uint32_t)let; });
 
@@ -237,7 +236,7 @@ Font FontLoader::LoadFile(std::wstring file) {
     float unitsPerEm = fontFile.ReadUInt16();
     fontFile.readLocation += 30;
     locFormat = fontFile.ReadInt16();
-    assert((locFormat == 0 || locFormat == 1) && "font file has an invalid loc format");
+    ASSERT(locFormat == 0 || locFormat == 1);
 
     curves.Allocate(numGlyphs * maxPoints);
     DynamicFixedList<uint32_t> glyphStartIndices;
@@ -459,7 +458,7 @@ void FontLoader::ReadCompositeGlyph(const Matrix2D* transform, Int2 offset, cons
         Int2 newOffset;
         newOffset.x = (flags & TWO_BYTE_BIT) ? fontFile.ReadInt16() : fontFile.ReadByte();
         newOffset.y = (flags & TWO_BYTE_BIT) ? fontFile.ReadInt16() : fontFile.ReadByte();
-        assert((flags & ARGS_XY_VALUES_BIT) && "font file uses point-to-point component glyph composition, which is not supported");
+        ASSERT(flags & ARGS_XY_VALUES_BIT); // point-to-point glyph composition is not supported
 
         Matrix2D newTransform = { {1, 0}, {0, 1} };
         if(flags & SAME_SCALE_BIT) {

@@ -1,4 +1,3 @@
-#pragma once
 #include "Application.h"
 #include "LoadedFile.h"
 #include "Common.h"

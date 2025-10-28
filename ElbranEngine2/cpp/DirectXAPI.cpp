@@ -1,9 +1,7 @@
 #ifdef WINDOWS
-#pragma comment(lib, "d3dcompiler.lib")
 #include <d3dcompiler.h>
 #include "DirectXAPI.h"
 #include "Application.h"
-#include <cassert>
 
 #define SafeRelease(x) if(x) x->Release()
 
@@ -114,7 +112,7 @@ DirectXAPI::DirectXAPI(HWND windowHandle, Int2 windowDims, float viewAspectRatio
 	Microsoft::WRL::ComPtr<ID3DBlob> shaderBlob;
 	std::wstring fileString = directory + L"shaders\\CameraVS.cso";
 	HRESULT hr = D3DReadFileToBlob(fileString.c_str(), shaderBlob.GetAddressOf()); // read a specific shader to validate input layout
-	assert(hr == S_OK && "failed to read shader for input layout creation");
+	ASSERT(hr == S_OK); // fails when failed to read shader for input layout creation
 
 	ID3D11InputLayout* defaultLayout;
 	device->CreateInputLayout(inputDescriptions, 2, shaderBlob->GetBufferPointer(), shaderBlob->GetBufferSize(), &defaultLayout);
@@ -225,7 +223,7 @@ VertexShader DirectXAPI::LoadVertexShader(std::wstring fileName) {
 	ID3DBlob* shaderBlob = LoadShader(fileName);
 	VertexShader newShader = {};
 	HRESULT result = device->CreateVertexShader(shaderBlob->GetBufferPointer(), shaderBlob->GetBufferSize(), 0, &newShader.shader);
-	assert(result == S_OK && "failed to create vertex shader");
+	ASSERT(result == S_OK);
 	newShader.constants = LoadConstantBuffer(shaderBlob);
 	shaderBlob->Release();
 	return newShader;
@@ -235,7 +233,7 @@ GeometryShader DirectXAPI::LoadGeometryShader(std::wstring fileName) {
 	ID3DBlob* shaderBlob = LoadShader(fileName);
 	GeometryShader newShader{};
 	HRESULT result = device->CreateGeometryShader(shaderBlob->GetBufferPointer(), shaderBlob->GetBufferSize(), 0, &newShader.shader);
-	assert(result == S_OK && "failed to create geometry shader");
+	ASSERT(result == S_OK);
 	newShader.constants = LoadConstantBuffer(shaderBlob);
 	shaderBlob->Release();
 	return newShader;
@@ -245,7 +243,7 @@ PixelShader DirectXAPI::LoadPixelShader(std::wstring fileName) {
 	ID3DBlob* shaderBlob = LoadShader(fileName);
 	PixelShader newShader{};
 	HRESULT result = device->CreatePixelShader(shaderBlob->GetBufferPointer(), shaderBlob->GetBufferSize(), 0, &newShader.shader);
-	assert(result == S_OK && "failed to create pixel shader");
+	ASSERT(result == S_OK);
 	newShader.constants = LoadConstantBuffer(shaderBlob);
 	shaderBlob->Release();
 	return newShader;
@@ -255,7 +253,7 @@ ComputeShader DirectXAPI::LoadComputeShader(std::wstring fileName) {
 	ID3DBlob* shaderBlob = LoadShader(fileName);
 	ComputeShader newShader{};
 	HRESULT result = device->CreateComputeShader(shaderBlob->GetBufferPointer(), shaderBlob->GetBufferSize(), 0, &newShader.shader);
-	assert(result == S_OK && "failed to create compute shader");
+	ASSERT(result == S_OK);
 	newShader.constants = LoadConstantBuffer(shaderBlob);
 
 	Microsoft::WRL::ComPtr<ID3D11ShaderReflection> reflection;
@@ -379,7 +377,7 @@ OutputBuffer DirectXAPI::CreateOutputBuffer(ShaderDataType type, uint32_t elemen
 }
 
 Texture2D DirectXAPI::CreateConstantTexture(uint32_t width, uint32_t height, uint8_t* textureData) {
-	assert(textureData); // must initalize constant texture
+	ASSERT(textureData); // must initalize constant texture
 
 	Texture2D result;
 	result.width = width;
@@ -761,7 +759,7 @@ ID3DBlob* DirectXAPI::LoadShader(std::wstring fileName) {
 	LPCWSTR filePath = fileString.c_str();
 	ID3DBlob* shaderBlob;
 	HRESULT hr = D3DReadFileToBlob(filePath, &shaderBlob);
-	assert(hr == S_OK && "failed to read shader file");
+	ASSERT(hr == S_OK);
 	return shaderBlob;
 }
 

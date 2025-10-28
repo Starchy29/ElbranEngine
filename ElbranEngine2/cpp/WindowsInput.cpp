@@ -4,9 +4,6 @@
 #include "GraphicsAPI.h"
 #include "Math.h"
 
-#pragma comment(lib,"XInput.lib")
-#pragma comment(lib,"Xinput9_1_0.lib")
-
 #define STICK_MAX 32767.0f
 #define GAMEPAD_DEAD_ZONE 0.2f
 #define MAX_VIBRATION 65535.0f

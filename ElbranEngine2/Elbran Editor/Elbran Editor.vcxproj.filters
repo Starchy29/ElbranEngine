@@ -1,88 +1,309 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <ClCompile Include="..\cpp\AnimationGroup.cpp" />
-    <ClCompile Include="..\cpp\Application.cpp" />
     <ClCompile Include="..\cpp\AssetContainer.cpp" />
-    <ClCompile Include="..\cpp\AtlasAnimator.cpp" />
-    <ClCompile Include="..\cpp\AtlasRenderer.cpp" />
-    <ClCompile Include="..\cpp\BloomPostProcess.cpp" />
-    <ClCompile Include="..\cpp\BlurPostProcess.cpp" />
-    <ClCompile Include="..\cpp\Button.cpp" />
-    <ClCompile Include="..\cpp\Common.cpp" />
-    <ClCompile Include="..\cpp\DebugHelper.cpp" />
-    <ClCompile Include="..\cpp\DirectXAPI.cpp" />
-    <ClCompile Include="..\cpp\Font.cpp" />
     <ClCompile Include="..\cpp\Game.cpp" />
-    <ClCompile Include="..\cpp\GraphicsAPI.cpp" />
-    <ClCompile Include="..\cpp\HSVPostProcess.cpp" />
     <ClCompile Include="..\cpp\InputManager.cpp" />
-    <ClCompile Include="..\cpp\LoadedFile.cpp" />
-    <ClCompile Include="..\cpp\lodepng.cpp" />
-    <ClCompile Include="..\cpp\Math.cpp" />
-    <ClCompile Include="..\cpp\MemoryArena.cpp" />
-    <ClCompile Include="..\cpp\ParticleBehavior.cpp" />
-    <ClCompile Include="..\cpp\ParticleRenderer.cpp" />
-    <ClCompile Include="..\cpp\PatternRenderer.cpp" />
-    <ClCompile Include="..\cpp\Random.cpp" />
-    <ClCompile Include="..\cpp\Scene.cpp" />
-    <ClCompile Include="..\cpp\ShapeRenderer.cpp" />
-    <ClCompile Include="..\cpp\SliderUI.cpp" />
-    <ClCompile Include="..\cpp\SoundMixer.cpp" />
-    <ClCompile Include="..\cpp\SpriteRenderer.cpp" />
-    <ClCompile Include="..\cpp\TextRenderer.cpp" />
-    <ClCompile Include="..\cpp\UserInterface.cpp" />
-    <ClCompile Include="..\cpp\WindowsAudio.cpp" />
-    <ClCompile Include="..\cpp\WindowsInput.cpp" />
-    <ClCompile Include="..\cpp\WindowsMain.cpp" />
+    <ClCompile Include="..\cpp\WindowsAudio.cpp">
+      <Filter>Engine\Platforms\Windows</Filter>
+    </ClCompile>
+    <ClCompile Include="..\cpp\WindowsInput.cpp">
+      <Filter>Engine\Platforms\Windows</Filter>
+    </ClCompile>
+    <ClCompile Include="..\cpp\WindowsMain.cpp">
+      <Filter>Engine\Platforms\Windows</Filter>
+    </ClCompile>
+    <ClCompile Include="..\cpp\DirectXAPI.cpp">
+      <Filter>Engine\Platforms\Windows</Filter>
+    </ClCompile>
+    <ClCompile Include="..\cpp\TextRenderer.cpp">
+      <Filter>Engine\Rendering</Filter>
+    </ClCompile>
+    <ClCompile Include="..\cpp\SpriteRenderer.cpp">
+      <Filter>Engine\Rendering</Filter>
+    </ClCompile>
+    <ClCompile Include="..\cpp\ShapeRenderer.cpp">
+      <Filter>Engine\Rendering</Filter>
+    </ClCompile>
+    <ClCompile Include="..\cpp\AtlasRenderer.cpp">
+      <Filter>Engine\Rendering</Filter>
+    </ClCompile>
+    <ClCompile Include="..\cpp\BloomPostProcess.cpp">
+      <Filter>Engine\Rendering</Filter>
+    </ClCompile>
+    <ClCompile Include="..\cpp\BlurPostProcess.cpp">
+      <Filter>Engine\Rendering</Filter>
+    </ClCompile>
+    <ClCompile Include="..\cpp\Font.cpp">
+      <Filter>Engine\Rendering</Filter>
+    </ClCompile>
+    <ClCompile Include="..\cpp\GraphicsAPI.cpp">
+      <Filter>Engine\Rendering</Filter>
+    </ClCompile>
+    <ClCompile Include="..\cpp\HSVPostProcess.cpp">
+      <Filter>Engine\Rendering</Filter>
+    </ClCompile>
+    <ClCompile Include="..\cpp\lodepng.cpp">
+      <Filter>Engine\Rendering</Filter>
+    </ClCompile>
+    <ClCompile Include="..\cpp\ParticleBehavior.cpp">
+      <Filter>Engine\Rendering</Filter>
+    </ClCompile>
+    <ClCompile Include="..\cpp\ParticleRenderer.cpp">
+      <Filter>Engine\Rendering</Filter>
+    </ClCompile>
+    <ClCompile Include="..\cpp\PatternRenderer.cpp">
+      <Filter>Engine\Rendering</Filter>
+    </ClCompile>
+    <ClCompile Include="..\cpp\Scene.cpp">
+      <Filter>Engine\Rendering</Filter>
+    </ClCompile>
+    <ClCompile Include="..\cpp\AnimationGroup.cpp">
+      <Filter>Engine\Toolkit</Filter>
+    </ClCompile>
+    <ClCompile Include="..\cpp\AtlasAnimator.cpp">
+      <Filter>Engine\Toolkit</Filter>
+    </ClCompile>
+    <ClCompile Include="..\cpp\Button.cpp">
+      <Filter>Engine\Toolkit</Filter>
+    </ClCompile>
+    <ClCompile Include="..\cpp\DebugHelper.cpp">
+      <Filter>Engine\Toolkit</Filter>
+    </ClCompile>
+    <ClCompile Include="..\cpp\Math.cpp">
+      <Filter>Engine\Toolkit</Filter>
+    </ClCompile>
+    <ClCompile Include="..\cpp\MemoryArena.cpp">
+      <Filter>Engine\Toolkit</Filter>
+    </ClCompile>
+    <ClCompile Include="..\cpp\Random.cpp">
+      <Filter>Engine\Toolkit</Filter>
+    </ClCompile>
+    <ClCompile Include="..\cpp\SliderUI.cpp">
+      <Filter>Engine\Toolkit</Filter>
+    </ClCompile>
+    <ClCompile Include="..\cpp\UserInterface.cpp">
+      <Filter>Engine\Toolkit</Filter>
+    </ClCompile>
+    <ClCompile Include="..\cpp\LoadedFile.cpp">
+      <Filter>Engine</Filter>
+    </ClCompile>
+    <ClCompile Include="..\cpp\SoundMixer.cpp">
+      <Filter>Engine</Filter>
+    </ClCompile>
+    <ClCompile Include="..\cpp\Common.cpp">
+      <Filter>Engine</Filter>
+    </ClCompile>
+    <ClCompile Include="..\cpp\Application.cpp">
+      <Filter>Engine</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\cpp\AnimationGroup.h" />
-    <ClInclude Include="..\cpp\Application.h" />
     <ClInclude Include="..\cpp\AssetContainer.h" />
-    <ClInclude Include="..\cpp\AtlasAnimator.h" />
-    <ClInclude Include="..\cpp\AtlasRenderer.h" />
-    <ClInclude Include="..\cpp\AudioData.h" />
-    <ClInclude Include="..\cpp\BloomPostProcess.h" />
-    <ClInclude Include="..\cpp\BlurPostProcess.h" />
-    <ClInclude Include="..\cpp\Buffers.h" />
-    <ClInclude Include="..\cpp\Button.h" />
-    <ClInclude Include="..\cpp\Common.h" />
     <ClInclude Include="..\cpp\Configs.h" />
-    <ClInclude Include="..\cpp\DebugHelper.h" />
-    <ClInclude Include="..\cpp\DirectXAPI.h" />
-    <ClInclude Include="..\cpp\FixedList.h" />
-    <ClInclude Include="..\cpp\FixedMap.h" />
-    <ClInclude Include="..\cpp\Font.h" />
     <ClInclude Include="..\cpp\Game.h" />
-    <ClInclude Include="..\cpp\GraphicsAPI.h" />
-    <ClInclude Include="..\cpp\HSVPostProcess.h" />
     <ClInclude Include="..\cpp\InputManager.h" />
-    <ClInclude Include="..\cpp\IPostProcess.h" />
-    <ClInclude Include="..\cpp\IRenderer.h" />
-    <ClInclude Include="..\cpp\Lights.h" />
-    <ClInclude Include="..\cpp\LoadedFile.h" />
-    <ClInclude Include="..\cpp\lodepng.h" />
-    <ClInclude Include="..\cpp\Math.h" />
-    <ClInclude Include="..\cpp\MemoryArena.h" />
-    <ClInclude Include="..\cpp\ParticleBehavior.h" />
-    <ClInclude Include="..\cpp\ParticleRenderer.h" />
-    <ClInclude Include="..\cpp\PatternRenderer.h" />
-    <ClInclude Include="..\cpp\Random.h" />
-    <ClInclude Include="..\cpp\Scene.h" />
-    <ClInclude Include="..\cpp\ShaderConstants.h" />
-    <ClInclude Include="..\cpp\Shaders.h" />
-    <ClInclude Include="..\cpp\ShapeRenderer.h" />
-    <ClInclude Include="..\cpp\SliderUI.h" />
-    <ClInclude Include="..\cpp\SoundMixer.h" />
-    <ClInclude Include="..\cpp\SpriteRenderer.h" />
-    <ClInclude Include="..\cpp\TextRenderer.h" />
-    <ClInclude Include="..\cpp\Transform.h" />
-    <ClInclude Include="..\cpp\UserInterface.h" />
-    <ClInclude Include="..\cpp\WindowsAudio.h" />
-    <ClInclude Include="..\cpp\WindowsInput.h" />
+    <ClInclude Include="..\cpp\WindowsAudio.h">
+      <Filter>Engine\Platforms\Windows</Filter>
+    </ClInclude>
+    <ClInclude Include="..\cpp\WindowsInput.h">
+      <Filter>Engine\Platforms\Windows</Filter>
+    </ClInclude>
+    <ClInclude Include="..\cpp\DirectXAPI.h">
+      <Filter>Engine\Platforms\Windows</Filter>
+    </ClInclude>
+    <ClInclude Include="..\cpp\Transform.h">
+      <Filter>Engine\Rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="..\cpp\TextRenderer.h">
+      <Filter>Engine\Rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="..\cpp\SpriteRenderer.h">
+      <Filter>Engine\Rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="..\cpp\ShapeRenderer.h">
+      <Filter>Engine\Rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="..\cpp\Shaders.h">
+      <Filter>Engine\Rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="..\cpp\ShaderConstants.h">
+      <Filter>Engine\Rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="..\cpp\AtlasRenderer.h">
+      <Filter>Engine\Rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="..\cpp\BloomPostProcess.h">
+      <Filter>Engine\Rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="..\cpp\BlurPostProcess.h">
+      <Filter>Engine\Rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="..\cpp\Buffers.h">
+      <Filter>Engine\Rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="..\cpp\Font.h">
+      <Filter>Engine\Rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="..\cpp\GraphicsAPI.h">
+      <Filter>Engine\Rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="..\cpp\HSVPostProcess.h">
+      <Filter>Engine\Rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="..\cpp\IPostProcess.h">
+      <Filter>Engine\Rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="..\cpp\IRenderer.h">
+      <Filter>Engine\Rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="..\cpp\Lights.h">
+      <Filter>Engine\Rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="..\cpp\lodepng.h">
+      <Filter>Engine\Rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="..\cpp\ParticleBehavior.h">
+      <Filter>Engine\Rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="..\cpp\ParticleRenderer.h">
+      <Filter>Engine\Rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="..\cpp\PatternRenderer.h">
+      <Filter>Engine\Rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="..\cpp\Scene.h">
+      <Filter>Engine\Rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="..\cpp\AnimationGroup.h">
+      <Filter>Engine\Toolkit</Filter>
+    </ClInclude>
+    <ClInclude Include="..\cpp\AtlasAnimator.h">
+      <Filter>Engine\Toolkit</Filter>
+    </ClInclude>
+    <ClInclude Include="..\cpp\Button.h">
+      <Filter>Engine\Toolkit</Filter>
+    </ClInclude>
+    <ClInclude Include="..\cpp\DebugHelper.h">
+      <Filter>Engine\Toolkit</Filter>
+    </ClInclude>
+    <ClInclude Include="..\cpp\FixedList.h">
+      <Filter>Engine\Toolkit</Filter>
+    </ClInclude>
+    <ClInclude Include="..\cpp\FixedMap.h">
+      <Filter>Engine\Toolkit</Filter>
+    </ClInclude>
+    <ClInclude Include="..\cpp\Math.h">
+      <Filter>Engine\Toolkit</Filter>
+    </ClInclude>
+    <ClInclude Include="..\cpp\MemoryArena.h">
+      <Filter>Engine\Toolkit</Filter>
+    </ClInclude>
+    <ClInclude Include="..\cpp\Random.h">
+      <Filter>Engine\Toolkit</Filter>
+    </ClInclude>
+    <ClInclude Include="..\cpp\SliderUI.h">
+      <Filter>Engine\Toolkit</Filter>
+    </ClInclude>
+    <ClInclude Include="..\cpp\UserInterface.h">
+      <Filter>Engine\Toolkit</Filter>
+    </ClInclude>
+    <ClInclude Include="..\cpp\LoadedFile.h">
+      <Filter>Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="..\cpp\SoundMixer.h">
+      <Filter>Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="..\cpp\Common.h">
+      <Filter>Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="..\cpp\AudioData.h">
+      <Filter>Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="..\cpp\Application.h">
+      <Filter>Engine</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\cpp\packages.config" />
+    <None Include="..\hlsl\ColorConversion.hlsli">
+      <Filter>Engine\Shaders\HLSL</Filter>
+    </None>
+    <None Include="..\hlsl\Lighting.hlsli">
+      <Filter>Engine\Shaders\HLSL</Filter>
+    </None>
+    <None Include="..\hlsl\ShaderStructs.hlsli">
+      <Filter>Engine\Shaders\HLSL</Filter>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="Engine">
+      <UniqueIdentifier>{1bdf09ca-a1f4-4527-b74f-1a14ed8d3aef}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\Platforms">
+      <UniqueIdentifier>{dae90f85-284e-4a02-8a84-575645901bb2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\Shaders">
+      <UniqueIdentifier>{1e6d8481-631c-4ece-9a84-da2b57b13b32}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\Shaders\HLSL">
+      <UniqueIdentifier>{94787536-8e77-4fda-b0f1-197120db3dc0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\Platforms\Windows">
+      <UniqueIdentifier>{1b756258-60e6-49bd-acde-35ce9959bd23}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\Rendering">
+      <UniqueIdentifier>{83a44bee-8cd3-41cc-a573-09fc4b644906}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\Toolkit">
+      <UniqueIdentifier>{0c0a114d-b0a7-4c81-ba7a-9be7085c0230}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <FxCompile Include="..\hlsl\BloomFilterPP.hlsl">
+      <Filter>Engine\Shaders\HLSL</Filter>
+    </FxCompile>
+    <FxCompile Include="..\hlsl\BlurPP.hlsl">
+      <Filter>Engine\Shaders\HLSL</Filter>
+    </FxCompile>
+    <FxCompile Include="..\hlsl\BrightnessSumCS.hlsl">
+      <Filter>Engine\Shaders\HLSL</Filter>
+    </FxCompile>
+    <FxCompile Include="..\hlsl\CameraVS.hlsl">
+      <Filter>Engine\Shaders\HLSL</Filter>
+    </FxCompile>
+    <FxCompile Include="..\hlsl\CircleFillPS.hlsl">
+      <Filter>Engine\Shaders\HLSL</Filter>
+    </FxCompile>
+    <FxCompile Include="..\hlsl\ConSatValPP.hlsl">
+      <Filter>Engine\Shaders\HLSL</Filter>
+    </FxCompile>
+    <FxCompile Include="..\hlsl\FullscreenVS.hlsl">
+      <Filter>Engine\Shaders\HLSL</Filter>
+    </FxCompile>
+    <FxCompile Include="..\hlsl\ParticleMoveCS.hlsl">
+      <Filter>Engine\Shaders\HLSL</Filter>
+    </FxCompile>
+    <FxCompile Include="..\hlsl\ParticlePassVS.hlsl">
+      <Filter>Engine\Shaders\HLSL</Filter>
+    </FxCompile>
+    <FxCompile Include="..\hlsl\ParticleQuadGS.hlsl">
+      <Filter>Engine\Shaders\HLSL</Filter>
+    </FxCompile>
+    <FxCompile Include="..\hlsl\ParticleSpawnCS.hlsl">
+      <Filter>Engine\Shaders\HLSL</Filter>
+    </FxCompile>
+    <FxCompile Include="..\hlsl\ScreenSumPP.hlsl">
+      <Filter>Engine\Shaders\HLSL</Filter>
+    </FxCompile>
+    <FxCompile Include="..\hlsl\SolidColorPS.hlsl">
+      <Filter>Engine\Shaders\HLSL</Filter>
+    </FxCompile>
+    <FxCompile Include="..\hlsl\TextRasterizePS.hlsl">
+      <Filter>Engine\Shaders\HLSL</Filter>
+    </FxCompile>
+    <FxCompile Include="..\hlsl\TexturePS.hlsl">
+      <Filter>Engine\Shaders\HLSL</Filter>
+    </FxCompile>
   </ItemGroup>
 </Project>

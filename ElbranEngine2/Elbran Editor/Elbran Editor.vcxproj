@@ -104,6 +104,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions);WINDOWS;DEBUG</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
+      <LanguageStandard>stdcpp20</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -118,6 +119,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions);WINDOWS;DEBUG</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
+      <LanguageStandard>stdcpp20</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -210,6 +212,26 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="..\cpp\packages.config" />
+    <None Include="..\hlsl\ColorConversion.hlsli" />
+    <None Include="..\hlsl\Lighting.hlsli" />
+    <None Include="..\hlsl\ShaderStructs.hlsli" />
+  </ItemGroup>
+  <ItemGroup>
+    <FxCompile Include="..\hlsl\BloomFilterPP.hlsl" />
+    <FxCompile Include="..\hlsl\BlurPP.hlsl" />
+    <FxCompile Include="..\hlsl\BrightnessSumCS.hlsl" />
+    <FxCompile Include="..\hlsl\CameraVS.hlsl" />
+    <FxCompile Include="..\hlsl\CircleFillPS.hlsl" />
+    <FxCompile Include="..\hlsl\ConSatValPP.hlsl" />
+    <FxCompile Include="..\hlsl\FullscreenVS.hlsl" />
+    <FxCompile Include="..\hlsl\ParticleMoveCS.hlsl" />
+    <FxCompile Include="..\hlsl\ParticlePassVS.hlsl" />
+    <FxCompile Include="..\hlsl\ParticleQuadGS.hlsl" />
+    <FxCompile Include="..\hlsl\ParticleSpawnCS.hlsl" />
+    <FxCompile Include="..\hlsl\ScreenSumPP.hlsl" />
+    <FxCompile Include="..\hlsl\SolidColorPS.hlsl" />
+    <FxCompile Include="..\hlsl\TextRasterizePS.hlsl" />
+    <FxCompile Include="..\hlsl\TexturePS.hlsl" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

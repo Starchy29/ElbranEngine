@@ -1,6 +1,6 @@
 #pragma once
 #include <stdint.h>
-#include <cassert>
+#include "Common.h"
 
 // a locally-allocated unordered list with capacity known at compile time
 template<class Type, uint32_t capacity>
@@ -17,19 +17,19 @@ public:
 	uint32_t Size() const { return size; }
 
 	void Add(Type element) {
-		assert(size < capacity && "attempted to add to a full FixedList");
+		ASSERT(size < capacity);
 		data[size] = element;
 		size++;
 	}
 
 	Type* ReserveNext() {
-		assert(size < capacity && "attempted to add to a full FixedList");
+		ASSERT(size < capacity);
 		size++;
 		return &data[size-1];
 	}
 
 	void RemoveAt(uint16_t index) {
-		assert(index < size && "attempted to remove from an index out of range");
+		ASSERT(index < size);
 		data[index] = data[size - 1];
 		size--;
 	}
@@ -65,19 +65,19 @@ public:
 	void Clear() { size = 0; }
 
 	void Add(Type element) {
-		assert(size < capacity && "attempted to add to a full FixedList");
+		ASSERT(size < capacity);
 		data[size] = element;
 		size++;
 	}
 
 	Type* ReserveNext() {
-		assert(size < capacity && "attempted to add to a full FixedList");
+		ASSERT(size < capacity);
 		size++;
 		return &data[size-1];
 	}
 
 	void RemoveAt(uint32_t index) {
-		assert(index < size && "attempted to remove from an index out of range");
+		ASSERT(index < size);
 		data[index] = data[size - 1];
 		size--;
 	}

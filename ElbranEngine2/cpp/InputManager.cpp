@@ -1,7 +1,6 @@
 #include "InputManager.h"
 #include "Scene.h"
 #include "Math.h"
-#include <cassert>
 
 InputManager::InputManager() {
 	memset(&lastState, 0, sizeof(InputState) * MAX_PLAYERS);
@@ -103,7 +102,7 @@ Vector2 InputManager::GetStick(bool left, uint8_t playerIndex) {
 }
 
 void InputManager::Rumble(uint8_t playerIndex, float strength0to1, float duration) {
-	assert(duration > 0.f && "attempted to rumble a controller for a non-positive duration");
+	ASSERT(duration > 0.f);
 	SetRumble(playerIndex, strength0to1);
 	rumbleDurations[playerIndex] = duration;
 }

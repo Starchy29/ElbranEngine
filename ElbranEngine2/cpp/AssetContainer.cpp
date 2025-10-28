@@ -109,7 +109,7 @@ void AssetContainer::Release() {
 Texture2D AssetContainer::LoadBMP(std::wstring fileName) {
 	LoadedFile file = app.LoadFile(app.filePath + L"assets\\" + fileName);
 	file.littleEndian = true;
-	assert(file.ReadUInt16() == 0x4D42); // file type must be "BM"
+	ASSERT(file.ReadUInt16() == 0x4D42); // file type must be "BM"
 	file.readLocation = 10;
 	uint32_t bitmapOffset = file.ReadUInt32();
 
@@ -119,7 +119,7 @@ Texture2D AssetContainer::LoadBMP(std::wstring fileName) {
 	case 12: version = 2; break;
 	case 40: version = 3; break;
 	case 108: version = 4; break;
-	default: assert(false); break;
+	default: ASSERT(false); break;
 	}
 
 	int32_t width;
@@ -351,7 +351,7 @@ Texture2D AssetContainer::LoadBMP(std::wstring fileName) {
 				x++;
 				break;
 			default:
-				assert(false);
+				ASSERT(false);
 				break;
 			}
 		}

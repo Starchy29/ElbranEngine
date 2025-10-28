@@ -1,6 +1,5 @@
 #include "GraphicsAPI.h"
 #include "Application.h"
-#include <cassert>
 
 GraphicsAPI::GraphicsAPI() :
 	postProcessed{false},
@@ -36,7 +35,7 @@ void GraphicsAPI::Render(Game* game) {
 }
 
 void GraphicsAPI::ApplyPostProcesses() {
-	assert(!postProcessed && "attempted to run post processes twice in the same frame");
+	ASSERT(!postProcessed); // can only post process once per frame
 	postProcessed = true;
 
 	uint32_t numPostProcesses = postProcesses.Size();
@@ -59,7 +58,7 @@ void GraphicsAPI::ApplyPostProcesses() {
 }
 
 RenderTarget* GraphicsAPI::GetPostProcessHelper(uint8_t slot) {
-	assert(slot >= 0 && slot < MAX_POST_PROCESS_HELPER_TEXTURES && "index was out of range");
+	ASSERT(slot >= 0 && slot < MAX_POST_PROCESS_HELPER_TEXTURES);
 	return &postProcessHelpers[slot];
 }
 

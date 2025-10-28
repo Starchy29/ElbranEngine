@@ -1,5 +1,4 @@
 #include "AnimationGroup.h"
-#include <cassert>
 
 void AnimationGroup::Initialize(AtlasRenderer* renderer, uint8_t numAnimations) {
 	this->renderer = renderer;
@@ -36,7 +35,7 @@ AtlasAnimator* AnimationGroup::AddAnimation(SpriteSheet* frames, float frameRate
 }
 
 AtlasAnimator* AnimationGroup::GetAnimation(uint8_t index) {
-	assert(index < animators.Size() && "animation index was out of range");
+	ASSERT(index < animators.Size());
 	return &animators[index];
 }
 

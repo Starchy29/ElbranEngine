@@ -177,7 +177,7 @@ void Scene::Draw() {
 }
 
 void Scene::ReserveTransform(Transform** outTransform, const Matrix** outMatrix) {
-	assert(transformSize < transformCapacity && "scene capacity is unable to fit another transform");
+	ASSERT(transformSize < transformCapacity);
 
 	transforms[transformSize] = {};
 	transforms[transformSize].scale = Vector2(1.f, 1.f);
@@ -194,7 +194,7 @@ void Scene::ReserveTransform(Transform** outTransform, const Matrix** outMatrix)
 }
 
 void Scene::AddRenderer(IRenderer* renderer, bool translucent) {
-	assert(opaques.IndexOf(renderer) < 0 && translucents.IndexOf(renderer) < 0 && "attempted to add a renderer to a scene twice");
+	ASSERT(opaques.IndexOf(renderer) < 0 && translucents.IndexOf(renderer) < 0);
 	ReserveTransform(&renderer->transform, &renderer->worldMatrix);
 	if(translucent) {
 		translucents.Add(renderer);

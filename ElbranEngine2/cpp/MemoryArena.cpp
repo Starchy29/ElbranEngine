@@ -1,6 +1,6 @@
 #include "MemoryArena.h"
-#include <cassert>
 #include <string>
+#include "Common.h"
 
 void MemoryArena::Allocate(size_t size) {
 	data = new char[size];
@@ -11,7 +11,7 @@ void MemoryArena::Allocate(size_t size) {
 void* MemoryArena::Reserve(size_t bytes, bool zeroed) {
 	char* address = next;
 	next += bytes;
-	assert(next - data < size && "memory arena exceeded capacity");
+	ASSERT(next - data < size);
 	if(zeroed) {
 		memset(address, 0, bytes);
 	}

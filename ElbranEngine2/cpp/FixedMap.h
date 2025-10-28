@@ -1,6 +1,6 @@
 #pragma once
 #include <stdint.h>
-#include <cassert>
+#include "Common.h"
 
 // a hashmap with a set capacity known at compile time
 template<class KeyType, class ValueType, uint32_t capacity>
@@ -31,7 +31,7 @@ public:
 
 		// add the new key/value pair
 		if(size >= capacity) {
-			assert(false && "Attempted to add to a full FixedMap");
+			ASSERT(false);
 			return;
 		}
 		size++;
@@ -66,7 +66,7 @@ public:
 			if(key == keys[checkIndex]) return values[checkIndex];
 		}
 
-		assert(false && "Attempted to get a value from a FixedMap from a key not yet added");
+		ASSERT(false); // Attempted to get a value from a FixedMap from a key not yet added
 		return {};
 	}
 
@@ -121,7 +121,7 @@ public:
 
 		// add the new key/value pair
 		if(size >= capacity) {
-			assert(false && "Attempted to add to a full FixedMap");
+			ASSERT(false);
 			return;
 		}
 		size++;
@@ -156,7 +156,7 @@ public:
 			if(key == keys[checkIndex]) return values[checkIndex];
 		}
 
-		assert(false && "Attempted to get a value from a FixedMap from a key not yet added");
+		ASSERT(false); // Attempted to get a value from a FixedMap from a key not yet added
 		return {};
 	}
 

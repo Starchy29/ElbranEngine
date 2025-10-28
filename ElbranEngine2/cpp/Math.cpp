@@ -1,6 +1,6 @@
 #include "Math.h"
 #include <math.h>
-#include <cassert>
+#include "Common.h"
 
 #pragma region Math
 float Math::Sign(float number) {
@@ -508,7 +508,7 @@ Matrix Matrix::Transpose() const {
 Matrix Matrix::Inverse() const {
 	float determinant = Determinant();
 	if(determinant == 0.f) {
-		assert(false && "attempted to find the inverse of a matrix with a determinant of 0");
+		ASSERT(false);
 		return Matrix{};
 	}
 

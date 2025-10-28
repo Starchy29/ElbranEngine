@@ -1,7 +1,6 @@
 #include "UserInterface.h"
 #include "Application.h"
 #include "InputManager.h"
-#include <cassert>
 
 void UserInterface::Initialize(Scene* scene, uint16_t maxElements) {
 	this->scene = scene;

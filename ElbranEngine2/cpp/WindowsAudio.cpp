@@ -1,6 +1,6 @@
 #ifdef WINDOWS
 #include "WindowsAudio.h"
-#include <cassert>
+#include "Common.h"
 
 #define DEFAULT_SAMPLE_RATE 44100
 
@@ -144,10 +144,10 @@ void WindowsAudio::LoadAudio(XAUDIO2_BUFFER* destination, WAVEFORMATEXTENSIBLE* 
         0,
         NULL);
 
-    assert(file != INVALID_HANDLE_VALUE && "sound file not found");
+    ASSERT(file != INVALID_HANDLE_VALUE);
 
     DWORD result = SetFilePointer(file, 0, NULL, FILE_BEGIN);
-    assert(result != INVALID_SET_FILE_POINTER && "failed to load sound file");
+    ASSERT(result != INVALID_SET_FILE_POINTER);
 
     DWORD chunkSize;
     DWORD chunkPosition;
@@ -156,7 +156,7 @@ void WindowsAudio::LoadAudio(XAUDIO2_BUFFER* destination, WAVEFORMATEXTENSIBLE* 
     FindChunk(file, fourccRIFF, chunkSize, chunkPosition);
     DWORD filetype;
     ReadChunkData(file, &filetype, sizeof(DWORD), chunkPosition);
-    assert(filetype == fourccWAVE && "invalid audio file format");
+    ASSERT(filetype == fourccWAVE); // fails for invalid audio formats
 
     // load the 'fmt' chunk
     FindChunk(file, fourccFMT, chunkSize, chunkPosition);

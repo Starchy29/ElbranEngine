@@ -178,7 +178,7 @@ LoadedFile LoadWindowsFile(std::wstring fileName) {
 	bool success = GetFileSizeEx(fileHandle, &size);
 	if(!success) return {};
 	file.fileSize = (uint64_t)size.QuadPart;
-	assert(file.fileSize < 0xFFFFFFFF); // windows file read has max size
+	ASSERT(file.fileSize < 0xFFFFFFFF); // windows file read has max size
 
 	// read file
 	file.bytes = new uint8_t[file.fileSize];
