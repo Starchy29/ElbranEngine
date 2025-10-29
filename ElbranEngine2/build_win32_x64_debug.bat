@@ -5,7 +5,7 @@ pushd builds\windows-x64-debug
 mkdir assets
 mkdir shaders
 del ElbranGame_DEBUG.exe
-cl /std:c++20 /DWINDOWS /Zi ..\..\cpp\*.cpp /FeElbranGame_DEBUG kernel32.lib user32.lib d3d11.lib dxguid.lib DXGI.lib XInput.lib Xinput9_1_0.lib Xaudio2.lib d3dcompiler.lib
+cl /std:c++20 /MDd /DWINDOWS /D_DEBUG /DDEBUG /D_UNICODE /D_MBCS /Zi ..\..\cpp\*.cpp /FeElbranGame_DEBUG kernel32.lib user32.lib d3d11.lib dxguid.lib DXGI.lib XInput.lib Xinput9_1_0.lib Xaudio2.lib d3dcompiler.lib
 del *.obj
 del *.ilk
 

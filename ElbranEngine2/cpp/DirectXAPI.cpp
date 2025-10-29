@@ -5,7 +5,7 @@
 
 #define SafeRelease(x) if(x) x->Release()
 
-DirectXAPI::DirectXAPI(HWND windowHandle, Int2 windowDims, float viewAspectRatio, std::wstring directory) {
+DirectXAPI::DirectXAPI(HWND windowHandle, Int2 windowDims, float viewAspectRatio, const LoadedFile* sampleShader) {
 	D3D_FEATURE_LEVEL levels[] = {
 		D3D_FEATURE_LEVEL_11_1,
 		D3D_FEATURE_LEVEL_11_0,
@@ -109,13 +109,8 @@ DirectXAPI::DirectXAPI(HWND windowHandle, Int2 windowDims, float viewAspectRatio
 	inputDescriptions[0] = { "POSITION", 0, DXGI_FORMAT_R32G32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT };
 	inputDescriptions[1] = { "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT };
 
-	Microsoft::WRL::ComPtr<ID3DBlob> shaderBlob;
-	std::wstring fileString = directory + L"shaders\\CameraVS.cso";
-	HRESULT hr = D3DReadFileToBlob(fileString.c_str(), shaderBlob.GetAddressOf()); // read a specific shader to validate input layout
-	ASSERT(hr == S_OK); // fails when failed to read shader for input layout creation
-
 	ID3D11InputLayout* defaultLayout;
-	device->CreateInputLayout(inputDescriptions, 2, shaderBlob->GetBufferPointer(), shaderBlob->GetBufferSize(), &defaultLayout);
+	device->CreateInputLayout(inputDescriptions, 2, sampleShader->bytes, sampleShader->fileSize, &defaultLayout);
 	context->IASetInputLayout(defaultLayout);
 	defaultLayout->Release();
 

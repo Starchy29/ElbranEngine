@@ -5,12 +5,13 @@
 #include <dxgi1_3.h>
 #include <wrl/client.h>
 #include "Common.h"
+#include "LoadedFile.h"
 
 class DirectXAPI :
     public GraphicsAPI
 {
 public:
-    DirectXAPI(HWND windowHandle, Int2 windowDims, float viewAspectRatio, std::wstring directory);
+    DirectXAPI(HWND windowHandle, Int2 windowDims, float viewAspectRatio, const LoadedFile* sampleShader);
     void Release() override;
 
     bool IsFullscreen() const override;

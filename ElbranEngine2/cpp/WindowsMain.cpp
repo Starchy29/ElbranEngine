@@ -1,6 +1,5 @@
 #ifdef WINDOWS
 #include <Windows.h>
-#include <tchar.h>
 #include <memory>
 #include "Application.h"
 #include "DirectXAPI.h"
@@ -9,6 +8,7 @@
 #include "Configs.h"
 #include "LoadedFile.h"
 #include <bit>
+#include <string>
 
 HWND windowHandle;
 __int64 lastPerfCount;
@@ -39,7 +39,9 @@ void UpdateApp() {
 		timeSinceFPSUpdate += fDeltaTime;
 		if(timeSinceFPSUpdate >= 0.5) {
 			timeSinceFPSUpdate = 0.0f;
-			SetWindowText(windowHandle, (_T(GAME_TITLE) + std::wstring(L" FPS: ") + std::to_wstring(1.0 / deltaTime)).c_str());
+			std::wstring message = L"";
+			message = message + GAME_TITLE + L" FPS: " + std::to_wstring(1.0 / deltaTime);
+			SetWindowTextW(windowHandle, message.c_str());
 		}
 	}
 	#endif
@@ -107,11 +109,11 @@ LRESULT CALLBACK WndProc(_In_ HWND hWnd, _In_ UINT message, _In_ WPARAM wParam, 
 }
 
 void InitWindow(HINSTANCE hInstance) {
-	static TCHAR szWindowClass[] = _T("ElbranEngineWindow");
-	static TCHAR szTitle[] = _T(GAME_TITLE);
+	static wchar_t szWindowClass[] = L"ElbranEngineWindow";
+	static wchar_t szTitle[] = GAME_TITLE;
 
-	WNDCLASSEX wcex = {};
-	wcex.cbSize = sizeof(WNDCLASSEX);
+	WNDCLASSEXW wcex = {};
+	wcex.cbSize = sizeof(WNDCLASSEXW);
 	wcex.style = CS_HREDRAW | CS_VREDRAW;
 	wcex.lpfnWndProc = WndProc;
 	wcex.cbClsExtra = 0;
@@ -128,17 +130,17 @@ void InitWindow(HINSTANCE hInstance) {
 	//wcex.hIcon = icon;
 	//wcex.hIconSm = icon;
 
-	if(!RegisterClassEx(&wcex)) {
-		MessageBox(NULL,
-			_T("Call to RegisterClassEx failed!"),
-			_T("Windows Desktop Guided Tour"),
+	if(!RegisterClassExW(&wcex)) {
+		MessageBoxW(NULL,
+			L"Call to RegisterClassEx failed!",
+			L"Windows Desktop Guided Tour",
 			NULL
 		);
 		return;
 	}
 
 	int barHeight = GetSystemMetrics(SM_CYFRAME) + GetSystemMetrics(SM_CYCAPTION) + GetSystemMetrics(SM_CXPADDEDBORDER);
-	windowHandle = CreateWindowEx(
+	windowHandle = CreateWindowExW(
 		WS_EX_OVERLAPPEDWINDOW,
 		szWindowClass,
 		szTitle,
@@ -152,9 +154,9 @@ void InitWindow(HINSTANCE hInstance) {
 	);
 
 	if(!windowHandle) {
-		MessageBox(NULL,
-			_T("Call to CreateWindowEx failed!"),
-			_T("Windows Desktop Guided Tour"),
+		MessageBoxW(NULL,
+			L"Call to CreateWindowEx failed!",
+			L"Windows Desktop Guided Tour",
 			NULL);
 		return;
 	}
@@ -226,7 +228,10 @@ int WINAPI WinMain(
 	InitWindow(hInstance);
 	RECT windowRect;
 	GetClientRect(windowHandle, &windowRect);
-	directX = new DirectXAPI(windowHandle, Int2(windowRect.right - windowRect.left, windowRect.bottom - windowRect.top), ASPECT_RATIO, directory);
+	std::wstring shaderName = std::wstring(directory) + L"shaders\\CameraVS.cso";
+	LoadedFile sampleShader = LoadWindowsFile(shaderName);
+	directX = new DirectXAPI(windowHandle, Int2(windowRect.right - windowRect.left, windowRect.bottom - windowRect.top), ASPECT_RATIO, &sampleShader);
+	sampleShader.Release();
 	input = new WindowsInput(windowHandle);
 	app.Initialize(std::endian::native == std::endian::little, directory, LoadWindowsFile, directX, new WindowsAudio(), input);
 	app.quitFunction = QuitApp;
