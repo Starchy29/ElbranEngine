@@ -15,7 +15,7 @@ void PatternRenderer::Initialize(const Texture2D* sprite) {
 }
 
 void PatternRenderer::Draw() {
-	GraphicsAPI* graphics = app.graphics;
+	GraphicsAPI* graphics = app->graphics;
 
 	Vector2 mid = *worldMatrix * Vector2::Zero;
 	Vector2 right = *worldMatrix * Vector2(0.5f, 0.f);
@@ -30,13 +30,13 @@ void PatternRenderer::Draw() {
 	worldOffset.y *= -1.f; // uvs are flipped vertically
 	vsInput.uvOffset = worldOffset / blockSize + Vector2(0.f, -Math::FractionOf(globalScale.y / blockSize.y));
 	vsInput.uvOffset *= flips;
-	graphics->SetVertexShader(&app.assets.cameraVS, &vsInput, sizeof(CameraVSConstants));
+	graphics->SetVertexShader(&app->assets.cameraVS, &vsInput, sizeof(CameraVSConstants));
 
 	TexturePSConstants psInput;
 	psInput.tint = tint;
 	psInput.lit = lit;
 	graphics->SetTexture(ShaderStage::Pixel, sprite, 0);
-	graphics->SetPixelShader(&app.assets.texturePS, &psInput, sizeof(TexturePSConstants));
+	graphics->SetPixelShader(&app->assets.texturePS, &psInput, sizeof(TexturePSConstants));
 
-	graphics->DrawMesh(&app.assets.unitSquare);
+	graphics->DrawMesh(&app->assets.unitSquare);
 }

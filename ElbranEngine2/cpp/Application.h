@@ -2,7 +2,6 @@
 #include "Game.h"
 #include "AssetContainer.h"
 #include "Random.h"
-#include <string>
 #include "MemoryArena.h"
 #include "LoadedFile.h"
 
@@ -28,16 +27,15 @@ public:
 	DebugHelper debugger;
 #endif
 
-	std::wstring filePath;
 	LoadedFile (*LoadFile)(std::wstring filePath);
 	void (*quitFunction)();
 	bool littleEndian;
 
 	Application() {}
-	void Initialize(bool littleEndian, std::wstring filePath, LoadedFile (*fileLoadFunction)(std::wstring filePath), GraphicsAPI* graphics, SoundMixer* audio, InputManager* input);
+	void Initialize(bool littleEndian, LoadedFile (*fileLoadFunction)(std::wstring filePath), GraphicsAPI* graphics, SoundMixer* audio, InputManager* input);
 	void Release();
 
 	void Update(float deltaTime);
 };
 
-extern Application app;
+extern Application* app;

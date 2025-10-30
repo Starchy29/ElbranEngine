@@ -26,7 +26,7 @@ void Scene::Initialize(uint32_t maxTransforms, uint32_t maxRenderers, uint32_t m
 	camera.viewWidth = cameraWidth;
 	ReserveTransform(&camera.transform, &camera.worldMatrix);
 
-	GraphicsAPI* graphics = app.graphics;
+	GraphicsAPI* graphics = app->graphics;
 
 	projectionBuffer = graphics->CreateConstantBuffer(sizeof(Matrix));
 	lightInfoBuffer = graphics->CreateConstantBuffer(sizeof(LightConstants));
@@ -34,9 +34,9 @@ void Scene::Initialize(uint32_t maxTransforms, uint32_t maxRenderers, uint32_t m
 }
 
 void Scene::Release() {
-	app.graphics->ReleaseConstantBuffer(&projectionBuffer);
-	app.graphics->ReleaseConstantBuffer(&lightInfoBuffer);
-	app.graphics->ReleaseArrayBuffer(&lightsBuffer);
+	app->graphics->ReleaseConstantBuffer(&projectionBuffer);
+	app->graphics->ReleaseConstantBuffer(&lightInfoBuffer);
+	app->graphics->ReleaseArrayBuffer(&lightsBuffer);
 
 	delete[] transforms;
 	delete[] localMatrices;
@@ -48,7 +48,7 @@ void Scene::Release() {
 }
 
 void Scene::Draw() {
-	GraphicsAPI* graphics = app.graphics;
+	GraphicsAPI* graphics = app->graphics;
 
 	// convert all transforms into matrices
 	Transform* transformEnd = &transforms[transformSize];
@@ -151,9 +151,9 @@ void Scene::Draw() {
 		psInput.lit = false;
 
 		graphics->SetTexture(ShaderStage::Pixel, backgroundImage, 0);
-		graphics->SetPixelShader(&app.assets.texturePS, &psInput, sizeof(TexturePSConstants));
+		graphics->SetPixelShader(&app->assets.texturePS, &psInput, sizeof(TexturePSConstants));
 	} else {
-		graphics->SetPixelShader(&app.assets.solidColorPS, &backgroundColor, sizeof(Color));
+		graphics->SetPixelShader(&app->assets.solidColorPS, &backgroundColor, sizeof(Color));
 	}
 	graphics->DrawFullscreen();
 
@@ -217,9 +217,9 @@ LightSource* Scene::AddLight(Color color, float radius) {
 }
 
 float Camera::GetViewHeight() const {
-	return viewWidth / app.graphics->GetViewAspectRatio();
+	return viewWidth / app->graphics->GetViewAspectRatio();
 }
 
 Vector2 Camera::GetWorldDimensions() const {
-	return Vector2(viewWidth, viewWidth / app.graphics->GetViewAspectRatio());
+	return Vector2(viewWidth, viewWidth / app->graphics->GetViewAspectRatio());
 }

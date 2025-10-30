@@ -75,7 +75,7 @@ float GraphicsAPI::GetViewAspectRatio() const {
 }
 
 void GraphicsAPI::DrawFullscreen() {
-	SetVertexShader(&app.assets.fullscreenVS);
+	SetVertexShader(&app->assets.fullscreenVS);
 	DrawVertices(3); // fullscreen triangle
 }
 

@@ -43,7 +43,7 @@ uint16_t LoadedFile::ReadUInt16() {
 	ASSERT(readLocation >= 0 && readLocation <= fileSize - 2);
 	bitsLeftOfLastByte = 0;
 	uint16_t result = 0;
-	if(littleEndian != app.littleEndian) {
+	if(littleEndian != app->littleEndian) {
 		result = bytes[readLocation];
 		result = result << 8;
 		result += bytes[readLocation+1];
@@ -64,7 +64,7 @@ uint32_t LoadedFile::ReadUInt32() {
 	ASSERT(readLocation >= 0 && readLocation <= fileSize - 4);
 	bitsLeftOfLastByte = 0;
 	uint32_t result = 0;
-	if(littleEndian != app.littleEndian) {
+	if(littleEndian != app->littleEndian) {
 		result = bytes[readLocation];
 		result = result << 8;
 		result += bytes[readLocation+1];

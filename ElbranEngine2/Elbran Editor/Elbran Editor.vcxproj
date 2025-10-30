@@ -167,6 +167,7 @@
   <ItemGroup>
     <ClInclude Include="..\cpp\AnimationGroup.h" />
     <ClInclude Include="..\cpp\Application.h" />
+    <ClInclude Include="..\cpp\AppPointer.h" />
     <ClInclude Include="..\cpp\AssetContainer.h" />
     <ClInclude Include="..\cpp\AtlasAnimator.h" />
     <ClInclude Include="..\cpp\AtlasRenderer.h" />
@@ -211,7 +212,6 @@
     <ClInclude Include="..\cpp\WindowsInput.h" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="..\cpp\packages.config" />
     <None Include="..\hlsl\ColorConversion.hlsli" />
     <None Include="..\hlsl\Lighting.hlsli" />
     <None Include="..\hlsl\ShaderStructs.hlsli" />

@@ -4,7 +4,7 @@
 #include "Application.h"
 
 void BlurPostProcess::Render(GraphicsAPI* graphics, const RenderTarget* input, RenderTarget* output) {
-	PixelShader* blurShader = &app.assets.blurPP;
+	PixelShader* blurShader = &app->assets.blurPP;
 	RenderTarget* midTarget = graphics->GetPostProcessHelper(0);
 
 	BlurPPConstants psInput = {};

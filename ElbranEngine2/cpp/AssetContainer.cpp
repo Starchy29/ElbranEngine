@@ -14,7 +14,7 @@ struct ByteColor {
 	uint8_t alpha;
 };
 
-void AssetContainer::Initialize(std::wstring filePath, GraphicsAPI* graphics, SoundMixer* audio) {
+void AssetContainer::Initialize(GraphicsAPI* graphics, SoundMixer* audio) {
 	defaultSampler = graphics->CreateDefaultSampler();
 	graphics->SetSampler(ShaderStage::Vertex, &defaultSampler, 0);
 	graphics->SetSampler(ShaderStage::Geometry, &defaultSampler, 0);
@@ -73,8 +73,8 @@ void AssetContainer::Initialize(std::wstring filePath, GraphicsAPI* graphics, So
 }
 
 void AssetContainer::Release() {
-	GraphicsAPI* graphics = app.graphics;
-	SoundMixer* audio = app.audio;
+	GraphicsAPI* graphics = app->graphics;
+	SoundMixer* audio = app->audio;
 
 	graphics->ReleaseSampler(&defaultSampler);
 	graphics->ReleaseMesh(&unitSquare);
@@ -107,7 +107,7 @@ void AssetContainer::Release() {
 }
 
 Texture2D AssetContainer::LoadBMP(std::wstring fileName) {
-	LoadedFile file = app.LoadFile(app.filePath + L"assets\\" + fileName);
+	LoadedFile file = app->LoadFile(L"assets\\" + fileName);
 	file.littleEndian = true;
 	ASSERT(file.ReadUInt16() == 0x4D42); // file type must be "BM"
 	file.readLocation = 10;
@@ -363,19 +363,19 @@ Texture2D AssetContainer::LoadBMP(std::wstring fileName) {
 	}
 
 	file.Release();
-	Texture2D result = app.graphics->CreateConstantTexture(width, height, (uint8_t*)loadedBits);
+	Texture2D result = app->graphics->CreateConstantTexture(width, height, (uint8_t*)loadedBits);
 	delete[] loadedBits;
 	return result;
 }
 
 Texture2D AssetContainer::LoadPNG(std::wstring fileName) {
-	LoadedFile file = app.LoadFile(app.filePath + L"assets\\" + fileName);
+	LoadedFile file = app->LoadFile(L"assets\\" + fileName);
 	std::vector<uint8_t> lodeFile(file.bytes, file.bytes + file.fileSize);
 	std::vector<uint8_t> loadedImage;
 	uint32_t width;
 	uint32_t height;
 	lodepng::decode(loadedImage, width, height, lodeFile); // thank you Lode Vandevenne
-	Texture2D result = app.graphics->CreateConstantTexture(width, height, loadedImage.begin()._Ptr);
+	Texture2D result = app->graphics->CreateConstantTexture(width, height, loadedImage.begin()._Ptr);
 	file.Release();
 	return result;
 }

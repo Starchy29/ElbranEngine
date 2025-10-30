@@ -12,7 +12,7 @@ void BloomPostProcess::Render(GraphicsAPI* graphics, const RenderTarget* input, 
     RenderTarget* brightPixels = graphics->GetPostProcessHelper(1); // blur shader uses slot 0
     graphics->SetRenderTarget(brightPixels, false);
     graphics->SetTexture(ShaderStage::Pixel, input, 0);
-    graphics->SetPixelShader(&app.assets.bloomFilterPP, &threshold, sizeof(float));
+    graphics->SetPixelShader(&app->assets.bloomFilterPP, &threshold, sizeof(float));
     graphics->DrawFullscreen();
 
     // blur bright pixels
@@ -23,7 +23,7 @@ void BloomPostProcess::Render(GraphicsAPI* graphics, const RenderTarget* input, 
     graphics->SetRenderTarget(output, false);
     graphics->SetTexture(ShaderStage::Pixel, input, 0);
     graphics->SetTexture(ShaderStage::Pixel, blurredBrightness, 1);
-    graphics->SetPixelShader(&app.assets.screenSumPP);
+    graphics->SetPixelShader(&app->assets.screenSumPP);
     graphics->DrawFullscreen();
 
     graphics->SetTexture(ShaderStage::Pixel, nullptr, 0);

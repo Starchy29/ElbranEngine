@@ -1,6 +1,6 @@
 #include "SliderUI.h"
-#include "Application.h"
 #include "InputManager.h"
+#include "Application.h"
 
 void SliderUI::Initialize(Scene* scene, float width, uint16_t segments, bool vertical) {
 	this->vertical = vertical;
@@ -74,7 +74,7 @@ void SliderUI::OnScrolled(float wheelDelta) {
 }
 
 void SliderUI::OnMouseDragged(Vector2 mouseDelta) {
-	Vector2 normalizedPos = selectArea->Inverse() * app.input->GetMousePosition(&scene->camera);
+	Vector2 normalizedPos = selectArea->Inverse() * app->input->GetMousePosition(&scene->camera);
 	if(vertical) {
 		SetValue(normalizedPos.y + 0.5f);
 	} else {

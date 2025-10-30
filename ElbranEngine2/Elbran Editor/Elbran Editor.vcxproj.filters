@@ -223,9 +223,9 @@
     <ClInclude Include="..\cpp\Application.h">
       <Filter>Engine</Filter>
     </ClInclude>
+    <ClInclude Include="..\cpp\AppPointer.h" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="..\cpp\packages.config" />
     <None Include="..\hlsl\ColorConversion.hlsli">
       <Filter>Engine\Shaders\HLSL</Filter>
     </None>

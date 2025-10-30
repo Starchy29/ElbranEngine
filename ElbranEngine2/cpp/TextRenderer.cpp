@@ -16,11 +16,11 @@ void TextRenderer::Initialize(std::string text, const Font* font, HorizontalAlig
 }
 
 void TextRenderer::Release() {
-	app.graphics->ReleaseMesh(&textMesh);
+	app->graphics->ReleaseMesh(&textMesh);
 }
 
 void TextRenderer::Draw() {
-	GraphicsAPI* graphics = app.graphics;
+	GraphicsAPI* graphics = app->graphics;
 
 	Vector2 worldCenter = *worldMatrix * Vector2::Zero;
 	Vector2 worldRight = *worldMatrix * Vector2(0.5f, 0.0f);
@@ -51,15 +51,15 @@ void TextRenderer::Draw() {
 	vsInput.worldTransform = (*worldMatrix * Matrix::Translation(alignment.x, alignment.y) * Matrix::Scale(unstretchFactor.x, unstretchFactor.y)).Transpose();
 	vsInput.uvOffset = Vector2::Zero;
 	vsInput.uvScale = Vector2(1.f, 1.f);
-	graphics->SetVertexShader(&app.assets.cameraVS, &vsInput, sizeof(CameraVSConstants));
+	graphics->SetVertexShader(&app->assets.cameraVS, &vsInput, sizeof(CameraVSConstants));
 
 	// set pixel shader
 	graphics->SetArray(ShaderStage::Pixel, &font->glyphCurves, 0);
 	graphics->SetArray(ShaderStage::Pixel, &font->firstCurveIndices, 1);
-	graphics->SetPixelShader(&app.assets.textRasterizePS, &color, sizeof(Color));
+	graphics->SetPixelShader(&app->assets.textRasterizePS, &color, sizeof(Color));
 
 	// draw mesh
-	app.graphics->DrawMesh(&textMesh);
+	app->graphics->DrawMesh(&textMesh);
 }
 
 void TextRenderer::SetText(std::string text) {
@@ -83,7 +83,7 @@ void TextRenderer::SetHorizontalAlignment(HorizontalAlignment horizontalAlignmen
 }
 
 void TextRenderer::GenerateMesh() {
-	app.graphics->ReleaseMesh(&textMesh);
+	app->graphics->ReleaseMesh(&textMesh);
 
 	// determine dimensions
 	size_t textLength = text.size();
@@ -93,7 +93,7 @@ void TextRenderer::GenerateMesh() {
 			rows++;
 		}
 	}
-	float* rowWidths = (float*)app.perFrameData.Reserve(sizeof(float) * rows, true);
+	float* rowWidths = (float*)app->perFrameData.Reserve(sizeof(float) * rows, true);
 
 	uint16_t currentRow = 0;
 	for(size_t i = 0; i < textLength; i++) {
@@ -111,8 +111,8 @@ void TextRenderer::GenerateMesh() {
 	float totalHeight = rows + (rows - 1) * lineSpacing;
 
 	// create mesh to fit in a 1x1 square
-	Vertex* vertices = (Vertex*)app.perFrameData.Reserve(sizeof(Vertex) * 4 * textLength);
-	uint32_t* indices = (uint32_t*)app.perFrameData.Reserve(sizeof(uint32_t) * 6 * textLength);
+	Vertex* vertices = (Vertex*)app->perFrameData.Reserve(sizeof(Vertex) * 4 * textLength);
+	uint32_t* indices = (uint32_t*)app->perFrameData.Reserve(sizeof(uint32_t) * 6 * textLength);
 	Vector2 cursor = Vector2(0.f, -1.f); // start at y=-1 so the top is at y=0
 	if(horizontalAlignment == HorizontalAlignment::Right) cursor.x = maxWidth - rowWidths[0];
 	else if(horizontalAlignment == HorizontalAlignment::Center) cursor.x = (maxWidth - rowWidths[0]) * 0.5f;
@@ -152,6 +152,6 @@ void TextRenderer::GenerateMesh() {
 		}
 	}
 
-	textMesh = app.graphics->CreateMesh(vertices, 4 * textLength, indices, 6 * textLength, false);
+	textMesh = app->graphics->CreateMesh(vertices, 4 * textLength, indices, 6 * textLength, false);
 	blockAspectRatio = maxWidth / totalHeight;
 }

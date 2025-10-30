@@ -1,5 +1,6 @@
 #if defined(DEBUG) | defined(_DEBUG)
 #pragma once
+#include "AppPointer.h"
 #include "Math.h"
 #include "ShapeRenderer.h"
 #include "FixedList.h"

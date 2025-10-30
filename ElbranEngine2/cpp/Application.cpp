@@ -3,21 +3,20 @@
 #include "SoundMixer.h"
 #include "InputManager.h"
 
-Application app;
+Application* app;
 
-void Application::Initialize(bool littleEndian, std::wstring filePath, LoadedFile (*fileLoadFunction)(std::wstring fileName), GraphicsAPI* graphics, SoundMixer* audio, InputManager* input) {
+void Application::Initialize(bool littleEndian, LoadedFile (*fileLoadFunction)(std::wstring fileName), GraphicsAPI* graphics, SoundMixer* audio, InputManager* input) {
 	perFrameData.Allocate(8192);
 	quitFunction = nullptr;
 	this->littleEndian = littleEndian;
 
 	this->LoadFile = fileLoadFunction;
-	this->filePath = filePath;
 	this->graphics = graphics;
 	this->audio = audio;
 	this->input = input;
 
 	rng.Initialize();
-	assets.Initialize(filePath, graphics, audio);
+	assets.Initialize(graphics, audio);
 	game.Initialize();
 }
 

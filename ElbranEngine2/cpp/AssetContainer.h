@@ -1,4 +1,5 @@
 #pragma once
+#include "AppPointer.h"
 #include "Buffers.h"
 #include "Shaders.h"
 #include "AudioData.h"
@@ -40,7 +41,7 @@ public:
 	Font arial;
 
 	AssetContainer() {}
-	void Initialize(std::wstring filePath, GraphicsAPI* graphics, SoundMixer* audio);
+	void Initialize(GraphicsAPI* graphics, SoundMixer* audio);
 	void Release();
 
 	Texture2D LoadBMP(std::wstring fileName);

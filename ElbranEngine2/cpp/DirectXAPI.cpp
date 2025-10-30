@@ -750,7 +750,7 @@ Buffer* DirectXAPI::CreateIndexedBuffer(uint32_t elements, uint32_t elementBytes
 }
 
 ID3DBlob* DirectXAPI::LoadShader(std::wstring fileName) {
-	std::wstring fileString = app.filePath + L"shaders\\" + fileName;
+	std::wstring fileString = L"shaders\\" + fileName;
 	LPCWSTR filePath = fileString.c_str();
 	ID3DBlob* shaderBlob;
 	HRESULT hr = D3DReadFileToBlob(filePath, &shaderBlob);

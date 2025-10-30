@@ -18,7 +18,7 @@ void UserInterface::Release() {
 }
 
 void UserInterface::Update(float deltaTime) {
-	InputManager* inputs = app.input;
+	InputManager* inputs = app->input;
 
 	if(gamepadEnabled) {
 		if(inputs->JustPressed(InputAction::Up)) {

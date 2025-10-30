@@ -1,5 +1,6 @@
 #pragma once
 #include "Scene.h"
+#include "AppPointer.h"
 
 class Game
 {

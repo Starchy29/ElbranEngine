@@ -191,8 +191,8 @@ Vector2 WindowsInput::GetMouseScreenPosition() {
     GetCursorPos(&mouseWindowPos);
     ScreenToClient(windowHandle, &mouseWindowPos);
 
-    UInt2 viewOffset = app.graphics->GetViewOffset();
-    UInt2 viewDims = app.graphics->GetViewDimensions();
+    UInt2 viewOffset = app->graphics->GetViewOffset();
+    UInt2 viewDims = app->graphics->GetViewDimensions();
     Vector2 mousePosition;
     mouseWindowPos.x -= viewOffset.x;
     mouseWindowPos.y -= viewOffset.y;

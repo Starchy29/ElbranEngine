@@ -1,4 +1,5 @@
 #pragma once
+#include "AppPointer.h"
 #include "Common.h"
 #include "Buffers.h"
 #include "Shaders.h"

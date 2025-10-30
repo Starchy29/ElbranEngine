@@ -2,6 +2,7 @@
 #include <Windows.h>
 #include <memory>
 #include "Application.h"
+#include "AppPointer.h"
 #include "DirectXAPI.h"
 #include "WindowsAudio.h"
 #include "WindowsInput.h"
@@ -16,6 +17,7 @@ double perfCountSecs;
 double minSecsPerFrame; // inverse of max fps
 DirectXAPI* directX;
 WindowsInput* input;
+std::wstring filePath;
 
 #if defined(DEBUG) | defined(_DEBUG)
 float timeSinceFPSUpdate = 0.f;
@@ -32,7 +34,7 @@ void UpdateApp() {
 			
 	float fDeltaTime = (float)deltaTime;
 
-	app.Update(fDeltaTime);
+	app->Update(fDeltaTime);
 
 	#if defined(DEBUG) | defined(_DEBUG)
 	if(SHOW_FPS) {
@@ -102,7 +104,7 @@ LRESULT CALLBACK WndProc(_In_ HWND hWnd, _In_ UINT message, _In_ WPARAM wParam, 
 		UpdateApp();
 		return 0;
 	default:
-		return DefWindowProc(hWnd, message, wParam, lParam);
+		return DefWindowProcW(hWnd, message, wParam, lParam);
 	}
 
 	return 0;
@@ -171,7 +173,7 @@ void QuitApp() {
 }
 
 LoadedFile LoadWindowsFile(std::wstring fileName) {
-	HANDLE fileHandle = CreateFileW(fileName.c_str(), GENERIC_READ, FILE_SHARE_READ, nullptr, OPEN_EXISTING, 0, nullptr);
+	HANDLE fileHandle = CreateFileW((filePath + fileName).c_str(), GENERIC_READ, FILE_SHARE_READ, nullptr, OPEN_EXISTING, 0, nullptr);
 	if(fileHandle == INVALID_HANDLE_VALUE) return {};
 	LoadedFile file = {};
 
@@ -224,19 +226,22 @@ int WINAPI WinMain(
 		// null terminate here to eliminate .exe name and leave the directory
 		*(lastSlash + 1) = 0;
 	}
+	filePath = directory;
 
 	InitWindow(hInstance);
 	RECT windowRect;
 	GetClientRect(windowHandle, &windowRect);
-	std::wstring shaderName = std::wstring(directory) + L"shaders\\CameraVS.cso";
+	std::wstring shaderName = L"shaders\\CameraVS.cso";
 	LoadedFile sampleShader = LoadWindowsFile(shaderName);
 	directX = new DirectXAPI(windowHandle, Int2(windowRect.right - windowRect.left, windowRect.bottom - windowRect.top), ASPECT_RATIO, &sampleShader);
 	sampleShader.Release();
 	input = new WindowsInput(windowHandle);
-	app.Initialize(std::endian::native == std::endian::little, directory, LoadWindowsFile, directX, new WindowsAudio(), input);
-	app.quitFunction = QuitApp;
+	app = (Application*)malloc(sizeof(Application));
+	app->Initialize(std::endian::native == std::endian::little, LoadWindowsFile, directX, new WindowsAudio(), input);
+	app->quitFunction = QuitApp;
 	RunApp();
-	app.Release();
+	app->Release();
+	free(app);
 	return 0;
 }
 #endif

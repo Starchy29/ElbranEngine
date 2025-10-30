@@ -1,7 +1,14 @@
 #pragma once
+#include "AppPointer.h"
 #include <string>
 #include "AudioData.h"
 #include "FixedList.h"
+
+struct FadeData {
+	float targetVolume;
+	float fadeRate;
+	bool pauseAtEnd;
+};
 
 class SoundMixer {
 public:
@@ -31,12 +38,6 @@ protected:
 	virtual void SetTotalVolume(AudioTrack* track, float volume) = 0;
 
 private:
-	struct FadeData {
-		float targetVolume;
-		float fadeRate;
-		bool pauseAtEnd;
-	};
-
 	FixedList<AudioTrack*,5> faders;
 	FixedList<FadeData,5> fadeData;
 
