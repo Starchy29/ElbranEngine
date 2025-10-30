@@ -215,47 +215,47 @@ void DirectXAPI::DrawMesh(const Mesh* mesh) {
 }
 
 VertexShader DirectXAPI::LoadVertexShader(std::wstring fileName) {
-	ID3DBlob* shaderBlob = LoadShader(fileName);
+	LoadedFile shaderBlob = app->LoadFile(L"shaders\\" + fileName);
 	VertexShader newShader = {};
-	HRESULT result = device->CreateVertexShader(shaderBlob->GetBufferPointer(), shaderBlob->GetBufferSize(), 0, &newShader.shader);
+	HRESULT result = device->CreateVertexShader(shaderBlob.bytes, shaderBlob.fileSize, 0, &newShader.shader);
 	ASSERT(result == S_OK);
-	newShader.constants = LoadConstantBuffer(shaderBlob);
-	shaderBlob->Release();
+	newShader.constants = LoadConstantBuffer(&shaderBlob);
+	shaderBlob.Release();
 	return newShader;
 }
 
 GeometryShader DirectXAPI::LoadGeometryShader(std::wstring fileName) {
-	ID3DBlob* shaderBlob = LoadShader(fileName);
+	LoadedFile shaderBlob = app->LoadFile(L"shaders\\" + fileName);
 	GeometryShader newShader{};
-	HRESULT result = device->CreateGeometryShader(shaderBlob->GetBufferPointer(), shaderBlob->GetBufferSize(), 0, &newShader.shader);
+	HRESULT result = device->CreateGeometryShader(shaderBlob.bytes, shaderBlob.fileSize, 0, &newShader.shader);
 	ASSERT(result == S_OK);
-	newShader.constants = LoadConstantBuffer(shaderBlob);
-	shaderBlob->Release();
+	newShader.constants = LoadConstantBuffer(&shaderBlob);
+	shaderBlob.Release();
 	return newShader;
 }
 
 PixelShader DirectXAPI::LoadPixelShader(std::wstring fileName) {
-	ID3DBlob* shaderBlob = LoadShader(fileName);
+	LoadedFile shaderBlob = app->LoadFile(L"shaders\\" + fileName);
 	PixelShader newShader{};
-	HRESULT result = device->CreatePixelShader(shaderBlob->GetBufferPointer(), shaderBlob->GetBufferSize(), 0, &newShader.shader);
+	HRESULT result = device->CreatePixelShader(shaderBlob.bytes, shaderBlob.fileSize, 0, &newShader.shader);
 	ASSERT(result == S_OK);
-	newShader.constants = LoadConstantBuffer(shaderBlob);
-	shaderBlob->Release();
+	newShader.constants = LoadConstantBuffer(&shaderBlob);
+	shaderBlob.Release();
 	return newShader;
 }
 
 ComputeShader DirectXAPI::LoadComputeShader(std::wstring fileName) {
-	ID3DBlob* shaderBlob = LoadShader(fileName);
+	LoadedFile shaderBlob = app->LoadFile(L"shaders\\" + fileName);
 	ComputeShader newShader{};
-	HRESULT result = device->CreateComputeShader(shaderBlob->GetBufferPointer(), shaderBlob->GetBufferSize(), 0, &newShader.shader);
+	HRESULT result = device->CreateComputeShader(shaderBlob.bytes, shaderBlob.fileSize, 0, &newShader.shader);
 	ASSERT(result == S_OK);
-	newShader.constants = LoadConstantBuffer(shaderBlob);
+	newShader.constants = LoadConstantBuffer(&shaderBlob);
 
 	Microsoft::WRL::ComPtr<ID3D11ShaderReflection> reflection;
-	D3DReflect(shaderBlob->GetBufferPointer(), shaderBlob->GetBufferSize(), IID_ID3D11ShaderReflection, (void**)reflection.GetAddressOf());
+	D3DReflect(shaderBlob.bytes, shaderBlob.fileSize, IID_ID3D11ShaderReflection, (void**)reflection.GetAddressOf());
 	reflection->GetThreadGroupSize(&newShader.xGroupSize, &newShader.yGroupSize, &newShader.zGroupSize);
 
-	shaderBlob->Release();
+	shaderBlob.Release();
 	return newShader;
 }
 
@@ -749,19 +749,10 @@ Buffer* DirectXAPI::CreateIndexedBuffer(uint32_t elements, uint32_t elementBytes
 	return result;
 }
 
-ID3DBlob* DirectXAPI::LoadShader(std::wstring fileName) {
-	std::wstring fileString = L"shaders\\" + fileName;
-	LPCWSTR filePath = fileString.c_str();
-	ID3DBlob* shaderBlob;
-	HRESULT hr = D3DReadFileToBlob(filePath, &shaderBlob);
-	ASSERT(hr == S_OK);
-	return shaderBlob;
-}
-
-ConstantBuffer DirectXAPI::LoadConstantBuffer(ID3DBlob* shaderBlob) {
+ConstantBuffer DirectXAPI::LoadConstantBuffer(const LoadedFile* shaderBlob) {
 	// determine the byte length of the buffer
 	Microsoft::WRL::ComPtr<ID3D11ShaderReflection> reflection;
-	D3DReflect(shaderBlob->GetBufferPointer(), shaderBlob->GetBufferSize(), IID_ID3D11ShaderReflection, (void**)reflection.GetAddressOf());
+	D3DReflect(shaderBlob->bytes, shaderBlob->fileSize, IID_ID3D11ShaderReflection, (void**)reflection.GetAddressOf());
 	D3D11_SHADER_DESC shaderDescr;
 	reflection->GetDesc(&shaderDescr);
 	

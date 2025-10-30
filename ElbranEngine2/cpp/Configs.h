@@ -4,7 +4,7 @@
 #define MAX_PLAYERS 1
 
 #if defined(DEBUG) | defined(_DEBUG)
-#define SHOW_FPS false
+#define SHOW_FPS true
 #endif
 
 #ifdef WINDOWS

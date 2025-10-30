@@ -95,8 +95,7 @@ private:
     TextureData* CreateTexture(uint32_t width, uint32_t height, bool renderTarget, bool computeWritable, void* initialData = nullptr);
     Buffer* CreateIndexedBuffer(uint32_t elements, uint32_t elementBytes, bool structured, bool cpuWrite, bool gpuWrite);
 
-    ID3DBlob* LoadShader(std::wstring fileName);
-    ConstantBuffer LoadConstantBuffer(ID3DBlob* shaderBlob);
+    ConstantBuffer LoadConstantBuffer(const LoadedFile* shaderBlob);
 
     DXGI_FORMAT FormatOf(ShaderDataType type);
     uint32_t ByteLengthOf(ShaderDataType type);

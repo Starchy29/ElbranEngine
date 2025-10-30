@@ -231,8 +231,7 @@ int WINAPI WinMain(
 	InitWindow(hInstance);
 	RECT windowRect;
 	GetClientRect(windowHandle, &windowRect);
-	std::wstring shaderName = L"shaders\\CameraVS.cso";
-	LoadedFile sampleShader = LoadWindowsFile(shaderName);
+	LoadedFile sampleShader = LoadWindowsFile(L"shaders\\CameraVS.cso");
 	directX = new DirectXAPI(windowHandle, Int2(windowRect.right - windowRect.left, windowRect.bottom - windowRect.top), ASPECT_RATIO, &sampleShader);
 	sampleShader.Release();
 	input = new WindowsInput(windowHandle);

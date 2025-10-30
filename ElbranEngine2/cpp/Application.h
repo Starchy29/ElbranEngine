@@ -27,12 +27,12 @@ public:
 	DebugHelper debugger;
 #endif
 
-	LoadedFile (*LoadFile)(std::wstring filePath);
+	LoadedFile (*LoadFile)(std::wstring fileName);
 	void (*quitFunction)();
 	bool littleEndian;
 
 	Application() {}
-	void Initialize(bool littleEndian, LoadedFile (*fileLoadFunction)(std::wstring filePath), GraphicsAPI* graphics, SoundMixer* audio, InputManager* input);
+	void Initialize(bool littleEndian, LoadedFile (*fileLoadFunction)(std::wstring fileName), GraphicsAPI* graphics, SoundMixer* audio, InputManager* input);
 	void Release();
 
 	void Update(float deltaTime);
