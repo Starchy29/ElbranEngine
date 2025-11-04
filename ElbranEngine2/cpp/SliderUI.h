@@ -1,5 +1,5 @@
 #pragma once
-#include "UserInterface.h"
+/*#include "UserInterface.h"
 #include "ShapeRenderer.h"
 #include "Scene.h"
 
@@ -15,7 +15,7 @@ public:
 
 	void (*onValueChanged)(SliderUI* slider, float newValue); // value is 0-1
 
-	SliderUI() {}
+	SliderUI() = default;
 	void Initialize(Scene* scene, float width, uint16_t segments, bool vertical = false);
 	void SetValue(float newValue);
 	float GetValue() const;
@@ -32,5 +32,5 @@ private:
 	bool vertical;
 	float sliderWidth;
 	float value; // 0-1
-};
+};*/
 

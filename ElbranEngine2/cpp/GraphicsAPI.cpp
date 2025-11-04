@@ -79,19 +79,19 @@ void GraphicsAPI::DrawFullscreen() {
 	DrawVertices(3); // fullscreen triangle
 }
 
-void GraphicsAPI::SetVertexShader(const VertexShader* shader, void* constantInput, uint32_t inputBytes) {
+void GraphicsAPI::SetVertexShader(const VertexShader* shader, const void* constantInput, uint32_t inputBytes) {
 	WriteBuffer(constantInput, inputBytes, shader->constants.data);
 	SetConstants(ShaderStage::Vertex, &shader->constants, OBJECT_CONSTANT_REGISTER);
 	SetVertexShader(shader);
 }
 
-void GraphicsAPI::SetGeometryShader(const GeometryShader* shader, void* constantInput, uint32_t inputBytes) {
+void GraphicsAPI::SetGeometryShader(const GeometryShader* shader, const void* constantInput, uint32_t inputBytes) {
 	WriteBuffer(constantInput, inputBytes, shader->constants.data);
 	SetConstants(ShaderStage::Geometry, &shader->constants, OBJECT_CONSTANT_REGISTER);
 	SetGeometryShader(shader);
 }
 
-void GraphicsAPI::SetPixelShader(const PixelShader* shader, void* constantInput, uint32_t inputBytes) {
+void GraphicsAPI::SetPixelShader(const PixelShader* shader, const void* constantInput, uint32_t inputBytes) {
 	WriteBuffer(constantInput, inputBytes, shader->constants.data);
 	SetConstants(ShaderStage::Pixel, &shader->constants, OBJECT_CONSTANT_REGISTER);
 	SetPixelShader(shader);

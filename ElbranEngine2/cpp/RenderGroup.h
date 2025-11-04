@@ -34,7 +34,7 @@ struct RenderGroup {
 	ConstantBuffer lightInfoBuffer;
 	ArrayBuffer lightsBuffer;
 
-	RenderGroup() {}
+	RenderGroup() = default;
 	void Initialize(Transform* transformBuffer, Matrix* worldMatrixBuffer, Renderer* rendererBuffer, uint32_t numTransforms, uint32_t numRenderers);
 	void Release();
 

@@ -51,7 +51,7 @@ private:
 	uint32_t size;
 
 public:
-	DynamicFixedList() {}
+	DynamicFixedList() = default;
 
 	void Allocate(uint32_t capacity) {
 		size = 0u;

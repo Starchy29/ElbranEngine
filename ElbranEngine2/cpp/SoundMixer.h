@@ -12,7 +12,7 @@ struct FadeData {
 
 class SoundMixer {
 public:
-	SoundMixer() {}
+	SoundMixer() = default;
 	virtual ~SoundMixer() {}
 
 	void Update(float deltaTime);

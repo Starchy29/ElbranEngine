@@ -23,7 +23,7 @@ public:
     bool faceMoveDirection;
     bool spawnCircular;
 
-    ParticleBehavior() {}
+    ParticleBehavior() = default;
     void Initialize(ParticleRenderer* renderer);
     void Release();
 

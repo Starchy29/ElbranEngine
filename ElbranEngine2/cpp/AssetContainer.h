@@ -40,7 +40,7 @@ public:
 	Texture2D testBMP;
 	Font arial;
 
-	AssetContainer() {}
+	AssetContainer() = default;
 	void Initialize(GraphicsAPI* graphics, SoundMixer* audio);
 	void Release();
 

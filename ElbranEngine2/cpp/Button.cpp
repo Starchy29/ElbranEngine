@@ -1,4 +1,4 @@
-#include "Button.h"
+/*#include "Button.h"
 #include "Scene.h"
 
 void Button::Initialize(Scene* scene, void (*clickEffect)(Button*)) {
@@ -28,4 +28,4 @@ void Button::OnEnabled() {
 
 void Button::OnSelected() {
 	clickEffect(this);
-}
+}*/

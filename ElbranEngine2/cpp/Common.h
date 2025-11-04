@@ -20,7 +20,7 @@ struct Int2 {
 	int32_t x;
 	int32_t y;
 
-	Int2();
+	Int2() = default;
 	Int2(int32_t x, int32_t y);
 
 	Int2 operator+(const Int2& other);
@@ -32,7 +32,7 @@ struct UInt2 {
 	uint32_t x;
 	uint32_t y;
 
-	UInt2();
+	UInt2() = default;
 	UInt2(uint32_t x, uint32_t y);
 
 	UInt2 operator+(const UInt2& other);
@@ -44,7 +44,7 @@ struct Color {
 	float blue;
 	float alpha;
 
-	Color();
+	Color() = default;
 	Color(float r, float g, float b, float a = 1.f);
 
 	static const Color Clear;

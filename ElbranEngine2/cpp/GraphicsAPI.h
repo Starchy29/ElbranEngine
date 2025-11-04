@@ -99,9 +99,9 @@ public:
 	virtual void SetVertexShader(const VertexShader* shader) = 0;
 	virtual void SetGeometryShader(const GeometryShader* shader) = 0;
 	virtual void SetPixelShader(const PixelShader* shader) = 0;
-	void SetVertexShader(const VertexShader* shader, void* constantInput, uint32_t inputBytes);
-	void SetGeometryShader(const GeometryShader* shader, void* constantInput, uint32_t inputBytes);
-	void SetPixelShader(const PixelShader* shader, void* constantInput, uint32_t inputBytes);
+	void SetVertexShader(const VertexShader* shader, const void* constantInput, uint32_t inputBytes);
+	void SetGeometryShader(const GeometryShader* shader, const void* constantInput, uint32_t inputBytes);
+	void SetPixelShader(const PixelShader* shader, const void* constantInput, uint32_t inputBytes);
 
 	virtual void SetBlendMode(BlendState mode) = 0;
 	virtual void SetPrimitive(RenderPrimitive primitive) = 0;

@@ -45,7 +45,7 @@ struct Vector2 {
 	float x;
 	float y;
 
-	Vector2();
+	Vector2() = default;
 	Vector2(float x, float y);
 	static Vector2 FromAngle(float radians);
 

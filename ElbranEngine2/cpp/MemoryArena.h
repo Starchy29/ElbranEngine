@@ -4,7 +4,7 @@
 class MemoryArena
 {
 public:
-	MemoryArena() {}
+	MemoryArena() = default;
 
 	void Allocate(size_t size);
 	void* Reserve(size_t bytes, bool zeroed = false);

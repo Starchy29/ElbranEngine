@@ -31,7 +31,7 @@ public:
 	void (*quitFunction)();
 	bool littleEndian;
 
-	Application() {}
+	Application() = default;
 	void Initialize(bool littleEndian, LoadedFile (*fileLoadFunction)(std::wstring fileName), GraphicsAPI* graphics, SoundMixer* audio, InputManager* input);
 	void Release();
 

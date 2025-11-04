@@ -1,6 +1,7 @@
 #pragma once
 #include "Transform.h"
 #include "Buffers.h"
+#include "Font.h"
 #include "Common.h"
 
 class GraphicsAPI;

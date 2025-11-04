@@ -8,7 +8,7 @@ public:
     bool looped;
     bool rebounds;
 
-    AtlasAnimator() {}
+    AtlasAnimator() = default;
     void Initialize(AtlasRenderer* renderer, float frameRate);
 
     void Update(float deltaTime);

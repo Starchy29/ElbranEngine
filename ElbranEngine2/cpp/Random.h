@@ -6,7 +6,7 @@
 
 class Random {
 public:
-	Random() {}
+	Random() = default;
 	void Initialize();
 	void Release();
 

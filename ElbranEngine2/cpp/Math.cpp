@@ -130,11 +130,6 @@ const Vector2 Vector2::Down = Vector2(0.f, -1.f);
 const Vector2 Vector2::Left = Vector2(-1.f, 0.f);
 const Vector2 Vector2::Right = Vector2(1.f, 0.f);
 
-Vector2::Vector2() :
-	x{0.f},
-	y{0.f}
-{ }
-
 Vector2::Vector2(float x, float y) :
 	x{x},
 	y{y}

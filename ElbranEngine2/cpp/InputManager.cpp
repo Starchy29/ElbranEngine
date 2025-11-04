@@ -1,6 +1,7 @@
 #include "InputManager.h"
-#include "Scene.h"
+#include "RenderGroup.h"
 #include "Math.h"
+#include "Common.h"
 
 InputManager::InputManager() {
 	memset(&lastState, 0, sizeof(InputState) * MAX_PLAYERS);

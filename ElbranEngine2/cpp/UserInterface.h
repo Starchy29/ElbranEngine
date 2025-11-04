@@ -24,7 +24,7 @@ public:
 	bool gamepadEnabled;
 	bool mouseEnabled;
 
-	UserInterface() {}
+	UserInterface() = default;
 	void Initialize(RenderGroup* scene, uint16_t maxElements);
 	void Release();
 

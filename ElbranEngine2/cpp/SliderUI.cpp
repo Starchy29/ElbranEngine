@@ -1,4 +1,4 @@
-#include "SliderUI.h"
+/*#include "SliderUI.h"
 #include "InputManager.h"
 #include "Application.h"
 
@@ -94,3 +94,4 @@ bool SliderUI::OnDirectionPressed(Direction direction) {
 	SetValue(value + 1.0f / segments * (direction == Direction::Right ? 1.f : -1.f));
 	return true;
 }
+*/

@@ -21,6 +21,9 @@ void RenderGroup::Initialize(Transform* transformBuffer, Matrix* worldMatrixBuff
 	transforms = transformBuffer;
 	worldMatrices = worldMatrixBuffer;
 	renderers = rendererBuffer;
+
+	camera.viewWidth = 1.f;
+	ReserveTransform(&camera.transform, &camera.worldMatrix);
 	
 	GraphicsAPI* graphics = app->graphics;
 
@@ -163,7 +166,7 @@ void RenderGroup::Draw() const {
 	// draw translucents back to front
 	graphics->SetBlendMode(BlendState::AlphaBlend);
 	for(int i = 0; i < numTranslucent; i++) {
-		translucents[i].renderer->Draw();
+		translucents[i].renderer->Draw(graphics, &app->assets);
 	}
 	graphics->SetBlendMode(BlendState::None);
 }

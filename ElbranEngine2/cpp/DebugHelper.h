@@ -13,7 +13,7 @@ class DebugHelper {
 /*public:
 	Scene* debugScene;
 
-	DebugHelper() {}
+	DebugHelper() = default;
 
 	void ClearAll();
 	void AddDot(Vector2 position, Color color = Color::Red, float size = 0.1f);

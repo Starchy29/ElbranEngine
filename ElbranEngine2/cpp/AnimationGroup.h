@@ -5,7 +5,7 @@
 class AnimationGroup
 {
 public:
-    AnimationGroup() {}
+    AnimationGroup() = default;
     void Initialize(AtlasRenderer* renderer, uint8_t numAnimations);
     void Release();
 
