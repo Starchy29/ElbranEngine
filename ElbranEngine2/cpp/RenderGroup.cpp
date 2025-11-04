@@ -27,6 +27,12 @@ void RenderGroup::Initialize(Transform* transformBuffer, Matrix* worldMatrixBuff
 	ReserveTransform(&camera.transform, &camera.worldMatrix);
 }
 
+void RenderGroup::ReleaseRenderers() {
+	for(uint32_t i = 0; i < rendererCount; i++) {
+		renderers[i].Release();
+	}
+}
+
 struct OrderedRenderer {
 	Renderer* renderer;
 	float globalZ;

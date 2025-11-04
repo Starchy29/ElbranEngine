@@ -66,14 +66,17 @@ struct Renderer {
 
 		struct {
 			Mesh textMesh;
+			VerticalAlignment verticalAlignment;
+			Color color;
+			float padding;
+
+			// changing these 4 requires calling UpdateTextMesh() to see the changes
 			const Font* font;
 			const char* text;
-			Color color;
 			float lineSpacing;
-			float padding;
-			float blockAspectRatio;
 			HorizontalAlignment horizontalAlignment;
-			VerticalAlignment verticalAlignment;
+
+			float blockAspectRatio; // this is determined during mesh generation
 		} textData;
 
 		struct {
@@ -103,12 +106,15 @@ struct Renderer {
 	
 	void Draw(GraphicsAPI* graphics, AssetContainer* assets);
 
-	void UpdateTextMesh(); // for text renderers
-	void ClearParticles(); // for particle renderers
+	void Release();
 
 	void InitShape(PrimitiveShape shape, Color color);
 	void InitSprite(const Texture2D* sprite);
 	void InitAtlas(const SpriteSheet* atlas);
 	void InitPattern(const Texture2D* sprite);
 	void InitLight(Color color, float radius);
+	void InitText(const char* text, const Font* font, HorizontalAlignment horizontalAlignment = HorizontalAlignment::Center, float lineSpacing = 0.0f);
+
+	void UpdateTextMesh(); // for text renderers
+	void ClearParticles(); // for particle renderers
 };

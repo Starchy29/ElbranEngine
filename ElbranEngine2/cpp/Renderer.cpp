@@ -1,4 +1,5 @@
 #include "Renderer.h"
+#include "Application.h"
 #include "GraphicsAPI.h"
 #include "AssetContainer.h"
 #include "ShaderConstants.h"
@@ -73,7 +74,44 @@ void Renderer::Draw(GraphicsAPI* graphics, AssetContainer* assets) {
 	} break;
 
 	case Type::Text: {
+		Vector2 worldCenter = *worldMatrix * Vector2::Zero;
+		Vector2 worldRight = *worldMatrix * Vector2(0.5f, 0.0f);
+		Vector2 worldTop = *worldMatrix * Vector2(0.0f, 0.5f);
+		Vector2 worldScale = Vector2(worldRight.x - worldCenter.x, worldTop.y - worldCenter.y);
 
+		// scale and position within the text box
+		AlignedRect fillArea = AlignedRect(transform->position, worldScale).Expand(-textData.padding);
+		float boundAspectRatio = worldScale.x / worldScale.y;
+		Vector2 paddingScaleDiffs = fillArea.Size() / worldScale;
+
+		Vector2 unstretchFactor;
+		Vector2 alignment = Vector2::Zero;
+		if(fillArea.Width() > fillArea.Height() * textData.blockAspectRatio) {
+			unstretchFactor = Vector2(textData.blockAspectRatio / boundAspectRatio, 1.0f) * paddingScaleDiffs.y;
+			float openSpace = worldScale.x - textData.blockAspectRatio * worldScale.y + textData.padding * textData.blockAspectRatio;
+			if(textData.horizontalAlignment == HorizontalAlignment::Left) alignment.x = -0.5f * openSpace / worldScale.x;
+			else if(textData.horizontalAlignment == HorizontalAlignment::Right) alignment.x = 0.5f * openSpace / worldScale.x;
+		} else {
+			unstretchFactor = Vector2(1.0f, boundAspectRatio / textData.blockAspectRatio) * paddingScaleDiffs.x;
+			float openSpace = worldScale.y - worldScale.x / textData.blockAspectRatio - 2.0f * textData.padding / textData.blockAspectRatio;
+			if(textData.verticalAlignment == VerticalAlignment::Bottom) alignment.y = -0.5f * openSpace / worldScale.y;
+			else if(textData.verticalAlignment == VerticalAlignment::Top) alignment.y = 0.5f * openSpace / worldScale.y;
+		}
+
+		// set vertex shader
+		CameraVSConstants vsInput;
+		vsInput.worldTransform = (*worldMatrix * Matrix::Translation(alignment.x, alignment.y) * Matrix::Scale(unstretchFactor.x, unstretchFactor.y)).Transpose();
+		vsInput.uvOffset = Vector2::Zero;
+		vsInput.uvScale = Vector2(1.f, 1.f);
+		graphics->SetVertexShader(&app->assets.cameraVS, &vsInput, sizeof(CameraVSConstants));
+
+		// set pixel shader
+		graphics->SetArray(ShaderStage::Pixel, &textData.font->glyphCurves, 0);
+		graphics->SetArray(ShaderStage::Pixel, &textData.font->firstCurveIndices, 1);
+		graphics->SetPixelShader(&app->assets.textRasterizePS, &textData.color, sizeof(Color));
+
+		// draw mesh
+		app->graphics->DrawMesh(&textData.textMesh);
 	} break;
 
 	case Type::Particles: {
@@ -82,26 +120,26 @@ void Renderer::Draw(GraphicsAPI* graphics, AssetContainer* assets) {
 	}
 }
 
-void Renderer::UpdateTextMesh() {
-	ASSERT(type == Type::Text);
-}
-
-void Renderer::ClearParticles() {
-	ASSERT(type == Type::Particles)
+void Renderer::Release() {
+	switch(type) {
+	case Type::Text:
+		app->graphics->ReleaseMesh(&textData.textMesh);
+		break;
+	}
 }
 
 void Renderer::InitShape(PrimitiveShape shape, Color color) {
+	type = Type::Shape;
 	hidden = false;
 	translucent = color.alpha < 1.0f;
-	type = Type::Shape;
 	shapeData.shape = shape;
 	shapeData.color = color;
 }
 
 void Renderer::InitSprite(const Texture2D* sprite) {
+	type = Type::Sprite;
 	hidden = false;
 	translucent = false;
-	type = Type::Sprite;
 	spriteData.sprite = sprite;
 	spriteData.tint = Color::White;
 	spriteData.flipX = false;
@@ -110,9 +148,9 @@ void Renderer::InitSprite(const Texture2D* sprite) {
 }
 
 void Renderer::InitAtlas(const SpriteSheet* atlas) {
+	type = Type::Atlas;
 	hidden = false;
 	translucent = false;
-	type = Type::Atlas;
 	atlasData.atlas = atlas;
 	atlasData.row = 0u;
 	atlasData.col = 0u;
@@ -123,9 +161,9 @@ void Renderer::InitAtlas(const SpriteSheet* atlas) {
 }
 
 void Renderer::InitPattern(const Texture2D* sprite) {
+	type = Type::Pattern;
 	hidden = false;
 	translucent = false;
-	type = Type::Pattern;
 	patternData.sprite = sprite;
 	patternData.origin = Vector2::Zero;
 	patternData.blockSize = Vector2(1.0f, 1.0f);
@@ -136,10 +174,109 @@ void Renderer::InitPattern(const Texture2D* sprite) {
 }
 
 void Renderer::InitLight(Color color, float radius) {
+	type = Type::Light;
 	hidden = false;
 	translucent = false;
 	lightData.color = color;
 	lightData.radius = radius;
 	lightData.brightness = 1.0f;
 	lightData.coneSize = PI * 2.0f;
+}
+
+void Renderer::InitText(const char* text, const Font* font, HorizontalAlignment horizontalAlignment, float lineSpacing) {
+	type = Type::Text;
+	hidden = false;
+	translucent = true;
+
+	textData.text = text;
+	textData.font = font;
+	textData.horizontalAlignment = horizontalAlignment;
+	textData.lineSpacing = lineSpacing;
+
+	textData.verticalAlignment = VerticalAlignment::Center;
+	textData.color = Color::White;
+
+	UpdateTextMesh();
+}
+
+void Renderer::UpdateTextMesh() {
+	ASSERT(type == Type::Text);
+
+	app->graphics->ReleaseMesh(&textData.textMesh);
+
+	// determine dimensions
+	uint16_t rows = 1;
+	uint32_t charIndex = 0;
+	while(textData.text[charIndex] != 0) {
+		if(textData.text[charIndex] == '\n') rows++;
+		charIndex++;
+	}
+	uint32_t textLength = charIndex; // excludes null terminator
+	float* rowWidths = (float*)app->perFrameData.Reserve(sizeof(float) * rows, true);
+
+	uint16_t currentRow = 0;
+	charIndex = 0;
+	while(textData.text[charIndex] != 0) {
+		if(textData.text[charIndex] == '\n') {
+			currentRow++;
+		} else {
+			rowWidths[currentRow] += textData.font->glyphDimensions[textData.font->charToGlyphIndex.Get(textData.text[charIndex])].x;
+		}
+		charIndex++;
+	}
+
+	float maxWidth = rowWidths[0];
+	for(uint16_t i = 1; i < rows; i++) {
+		maxWidth = max(maxWidth, rowWidths[i]);
+	}
+	float totalHeight = rows + (rows - 1) * textData.lineSpacing;
+
+	// create mesh to fit in a 1x1 square
+	Vertex* vertices = (Vertex*)app->perFrameData.Reserve(sizeof(Vertex) * 4 * textLength);
+	uint32_t* indices = (uint32_t*)app->perFrameData.Reserve(sizeof(uint32_t) * 6 * textLength);
+	Vector2 cursor = Vector2(0.f, -1.f); // start at y=-1 so the top is at y=0
+	if(textData.horizontalAlignment == HorizontalAlignment::Right) cursor.x = maxWidth - rowWidths[0];
+	else if(textData.horizontalAlignment == HorizontalAlignment::Center) cursor.x = (maxWidth - rowWidths[0]) * 0.5f;
+	currentRow = 0;
+	for(uint32_t i = 0; i < textLength; i++) {
+		if(textData.text[i] == '\n') {
+			cursor.y -= (1.0f + textData.lineSpacing);
+			currentRow++;
+			cursor.x = 0.f;
+			if(textData.horizontalAlignment == HorizontalAlignment::Right) cursor.x = maxWidth - rowWidths[currentRow];
+			else if(textData.horizontalAlignment == HorizontalAlignment::Center) cursor.x = (maxWidth - rowWidths[currentRow]) * 0.5f;
+		} else {
+			uint16_t glyphIndex = textData.font->charToGlyphIndex.Get(textData.text[i]);
+
+			Vector2 dimensions = textData.font->glyphDimensions[glyphIndex];
+			float baseLine = textData.font->glyphBaselines[glyphIndex] * dimensions.y;
+			AlignedRect glyphBox = AlignedRect(cursor.x, cursor.x + dimensions.x, cursor.y + dimensions.y - baseLine, cursor.y - baseLine);
+			glyphBox = glyphBox.Translate(Vector2(maxWidth * -0.5f, 0.5f * totalHeight));
+			glyphBox.left /= maxWidth;
+			glyphBox.right /= maxWidth;
+			glyphBox.top /= totalHeight;
+			glyphBox.bottom /= totalHeight;
+
+			vertices[4*i] = Vertex{Vector2(glyphBox.left, glyphBox.bottom), Vector2(glyphIndex + 0.0f, glyphIndex + 1.0f)};
+			vertices[4*i+1] = Vertex{Vector2(glyphBox.left, glyphBox.top), Vector2(glyphIndex + 0.0f, glyphIndex + 0.0f)};
+			vertices[4*i+2] = Vertex{Vector2(glyphBox.right, glyphBox.top), Vector2(glyphIndex + 1.0f, glyphIndex + 0.0f)};
+			vertices[4*i+3] = Vertex{Vector2(glyphBox.right, glyphBox.bottom), Vector2(glyphIndex + 1.0f, glyphIndex + 1.0f)};
+
+			indices[6*i] = 4*i;
+			indices[6*i+1] = 4*i+1;
+			indices[6*i+2] = 4*i+3;
+			indices[6*i+3] = 4*i+1;
+			indices[6*i+4] = 4*i+2;
+			indices[6*i+5] = 4*i+3;
+
+			cursor.x += dimensions.x;
+		}
+	}
+
+	textData.textMesh = app->graphics->CreateMesh(vertices, 4 * textLength, indices, 6 * textLength, false);
+	textData.blockAspectRatio = maxWidth / totalHeight;
+}
+
+void Renderer::ClearParticles() {
+	ASSERT(type == Type::Particles)
 }
