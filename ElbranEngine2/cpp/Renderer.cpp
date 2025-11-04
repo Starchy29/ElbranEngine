@@ -115,7 +115,42 @@ void Renderer::Draw(GraphicsAPI* graphics, AssetContainer* assets) {
 	} break;
 
 	case Type::Particles: {
+		// vertex shader
+		graphics->ClearMesh();
+		graphics->SetArray(ShaderStage::Vertex, &particleData.particleBuffer, 0);
+		graphics->SetVertexShader(&app->assets.particlePassPS);
 
+		// geometry shader
+		ParticleQuadGSConstants gsInput = {};
+		gsInput.z = worldMatrix->values[2][3];
+		gsInput.spriteAspectRatio = particleData.sprites->SpriteAspectRatio();
+		gsInput.animationFPS = particleData.animationFPS;
+		gsInput.animationFrames = particleData.sprites->spriteCount;
+		gsInput.atlasRows = particleData.sprites->rows;
+		gsInput.atlasCols = particleData.sprites->cols;
+		graphics->SetGeometryShader(&app->assets.particleQuadGS, &gsInput, sizeof(ParticleQuadGSConstants));
+
+		// pixel shader
+		TexturePSConstants psInput;
+		psInput.lit = particleData.applyLights;
+		psInput.tint = particleData.tint;
+		graphics->SetTexture(ShaderStage::Pixel, &particleData.sprites->texture, 0);
+		graphics->SetPixelShader(&app->assets.texturePS, &psInput, sizeof(psInput));
+
+		// draw
+		if(particleData.blendAdditive) {
+			graphics->SetBlendMode(BlendState::Additive);
+		}
+		graphics->SetPrimitive(RenderPrimitive::Point);
+		graphics->DrawVertices(particleData.maxParticles);
+
+		// clean up
+		if(particleData.blendAdditive) {
+			graphics->SetBlendMode(BlendState::AlphaBlend);
+		}
+		graphics->SetPrimitive(RenderPrimitive::Triangle);
+		graphics->SetGeometryShader(nullptr);
+		graphics->SetArray(ShaderStage::Vertex, nullptr, 0); // unbind particles
 	} break;
 	}
 }
@@ -124,6 +159,9 @@ void Renderer::Release() {
 	switch(type) {
 	case Type::Text:
 		app->graphics->ReleaseMesh(&textData.textMesh);
+		break;
+	case Type::Particles:
+		app->graphics->ReleaseEditBuffer(&particleData.particleBuffer);
 		break;
 	}
 }
@@ -197,6 +235,23 @@ void Renderer::InitText(const char* text, const Font* font, HorizontalAlignment 
 	textData.color = Color::White;
 
 	UpdateTextMesh();
+}
+
+#define PARTICLE_BYTES 32 // based on struct in ShaderStructs.hlsli
+void Renderer::InitParticles(uint16_t maxParticles, const SpriteSheet* animation, float animationFPS) {
+	type = Type::Particles;
+	hidden = false;
+	translucent = true;
+
+	particleData.sprites = animation;
+	particleData.animationFPS = animationFPS;
+	particleData.maxParticles = maxParticles;
+	particleData.tint = Color::White;
+	particleData.applyLights = false;
+	particleData.blendAdditive = false;
+	particleData.scaleWithParent = true;
+
+	particleData.particleBuffer = app->graphics->CreateEditBuffer(ShaderDataType::Structured, maxParticles, PARTICLE_BYTES);
 }
 
 void Renderer::UpdateTextMesh() {

@@ -103,7 +103,7 @@ void RenderGroup::Draw() const {
 			lightConstants.lightCount++;
 		} break;
 		default: {
-			OrderedRenderer addition = { &renderers[i], GetLastGlobalZ(renderers[i].transform)};
+			OrderedRenderer addition = { &renderers[i], renderers[i].worldMatrix->values[2][3]};
 			if(renderers[i].translucent) {
 				// sort translucents back to front
 				uint32_t insertIndex = numTranslucent;
@@ -186,10 +186,6 @@ Renderer* RenderGroup::ReserveRenderer() {
 	ReserveTransform(&reserved->transform, &reserved->worldMatrix);
 	rendererCount++;
 	return reserved;
-}
-
-float RenderGroup::GetLastGlobalZ(Transform* transform) const {
-	return worldMatrices[transform - transforms].values[2][3]; // row 3 column 4 contains z translation
 }
 
 float Camera::GetViewHeight() const {

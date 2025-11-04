@@ -19,12 +19,6 @@ void Game::Initialize() {
 	sampleScene.backgroundColor = Color(0.1f, 0.1f, 0.1f);
 	sampleScene.camera.viewWidth = 10.f;
 
-	//text.Initialize("text", &app->assets.arial);
-	//sampleScene.AddRenderer(&text, true);
-	//sprite.Initialize(&app->assets.testSprite);
-	//sampleScene.AddRenderer(&sprite, true);
-	//sprite.flipX = true;
-
 	spriteTest = sampleScene.ReserveRenderer();
 	spriteTest->InitSprite(&app->assets.testSprite);
 	spriteTest->spriteData.flipX = true;

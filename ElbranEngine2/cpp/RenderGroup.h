@@ -36,7 +36,5 @@ struct RenderGroup {
 
 	void ReserveTransform(Transform** outTransform, const Matrix** outMatrix);
 	Renderer* ReserveRenderer();
-
-	float GetLastGlobalZ(Transform* transform) const;
 };
 

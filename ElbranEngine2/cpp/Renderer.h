@@ -80,7 +80,14 @@ struct Renderer {
 		} textData;
 
 		struct {
-
+			EditBuffer particleBuffer;
+			const SpriteSheet* sprites;
+			Color tint;
+			uint16_t maxParticles;
+			float animationFPS;
+			bool scaleWithParent;
+			bool applyLights;
+			bool blendAdditive;
 		} particleData;
 
 		struct {
@@ -114,6 +121,7 @@ struct Renderer {
 	void InitPattern(const Texture2D* sprite);
 	void InitLight(Color color, float radius);
 	void InitText(const char* text, const Font* font, HorizontalAlignment horizontalAlignment = HorizontalAlignment::Center, float lineSpacing = 0.0f);
+	void InitParticles(uint16_t maxParticles, const SpriteSheet* animation, float animationFPS);
 
 	void UpdateTextMesh(); // for text renderers
 	void ClearParticles(); // for particle renderers
