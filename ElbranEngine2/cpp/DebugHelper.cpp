@@ -1,5 +1,5 @@
 #if defined(DEBUG) | defined(_DEBUG)
-#include "DebugHelper.h"
+/*#include "DebugHelper.h"
 #include "Scene.h"
 
 void DebugHelper::ClearAll() {
@@ -78,5 +78,5 @@ void DebugHelper::PlaceBox(uint8_t index, AlignedRect area, Color color) {
 	boxes[index].transform->position = area.Center();
 	boxes[index].color = color;
 	boxes[index].transform->scale = area.Size();
-}
+}*/
 #endif

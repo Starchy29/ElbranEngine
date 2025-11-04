@@ -1,27 +1,30 @@
 #include "Game.h"
-#include "Scene.h"
 #include "Application.h"
 
-#include "TextRenderer.h"
-TextRenderer text;
+#include "RenderGroup.h"
+RenderGroup sampleScene;
+Transform transforms[10];
+Matrix worldMatrices[10];
+Renderer renderers[10];
 
-#include "SpriteRenderer.h"
-SpriteRenderer sprite;
+Renderer* spriteTest;
 
 void Game::Initialize() {
-	sampleScene.Initialize(10, 10, 10, 5.0f);
+	sampleScene.Initialize(transforms, worldMatrices, renderers, 10, 10);
 	sampleScene.backgroundColor = Color(0.1f, 0.1f, 0.1f);
 
-	text.Initialize("text", &app->assets.arial);
+	//text.Initialize("text", &app->assets.arial);
 	//sampleScene.AddRenderer(&text, true);
-	sprite.Initialize(&app->assets.testSprite);
-	sampleScene.AddRenderer(&sprite, true);
-	sprite.flipX = true;
+	//sprite.Initialize(&app->assets.testSprite);
+	//sampleScene.AddRenderer(&sprite, true);
+	//sprite.flipX = true;
+
+	spriteTest = sampleScene.ReserveRenderer();
+	spriteTest->InitSprite(&app->assets.testSprite);
 }
 
 void Game::Release() {
 	sampleScene.Release();
-	text.Release();
 }
 
 void Game::Update(float deltaTime) {

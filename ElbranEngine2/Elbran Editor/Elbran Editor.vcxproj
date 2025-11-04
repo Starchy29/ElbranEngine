@@ -152,8 +152,10 @@
     <ClCompile Include="..\cpp\ParticleBehavior.cpp" />
     <ClCompile Include="..\cpp\ParticleRenderer.cpp" />
     <ClCompile Include="..\cpp\PatternRenderer.cpp" />
+    <ClCompile Include="..\cpp\PostProcess.cpp" />
     <ClCompile Include="..\cpp\Random.cpp" />
-    <ClCompile Include="..\cpp\Scene.cpp" />
+    <ClCompile Include="..\cpp\Renderer.cpp" />
+    <ClCompile Include="..\cpp\RenderGroup.cpp" />
     <ClCompile Include="..\cpp\ShapeRenderer.cpp" />
     <ClCompile Include="..\cpp\SliderUI.cpp" />
     <ClCompile Include="..\cpp\SoundMixer.cpp" />
@@ -188,7 +190,6 @@
     <ClInclude Include="..\cpp\HSVPostProcess.h" />
     <ClInclude Include="..\cpp\InputManager.h" />
     <ClInclude Include="..\cpp\IPostProcess.h" />
-    <ClInclude Include="..\cpp\IRenderer.h" />
     <ClInclude Include="..\cpp\Lights.h" />
     <ClInclude Include="..\cpp\LoadedFile.h" />
     <ClInclude Include="..\cpp\lodepng.h" />
@@ -197,8 +198,10 @@
     <ClInclude Include="..\cpp\ParticleBehavior.h" />
     <ClInclude Include="..\cpp\ParticleRenderer.h" />
     <ClInclude Include="..\cpp\PatternRenderer.h" />
+    <ClInclude Include="..\cpp\PostProcess.h" />
     <ClInclude Include="..\cpp\Random.h" />
-    <ClInclude Include="..\cpp\Scene.h" />
+    <ClInclude Include="..\cpp\Renderer.h" />
+    <ClInclude Include="..\cpp\RenderGroup.h" />
     <ClInclude Include="..\cpp\ShaderConstants.h" />
     <ClInclude Include="..\cpp\Shaders.h" />
     <ClInclude Include="..\cpp\ShapeRenderer.h" />

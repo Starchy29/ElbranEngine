@@ -2,7 +2,7 @@
 #include "Application.h"
 #include "InputManager.h"
 
-void UserInterface::Initialize(Scene* scene, uint16_t maxElements) {
+void UserInterface::Initialize(RenderGroup* scene, uint16_t maxElements) {
 	this->scene = scene;
 	mouseEnabled = true;
 	gamepadEnabled = true;

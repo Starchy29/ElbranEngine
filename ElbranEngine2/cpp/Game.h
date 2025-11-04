@@ -1,7 +1,4 @@
 #pragma once
-#include "Scene.h"
-#include "AppPointer.h"
-
 class Game
 {
 public:
@@ -11,8 +8,5 @@ public:
 
 	void Update(float deltaTime);
 	void Draw();
-
-private:
-	Scene sampleScene;
 };
 

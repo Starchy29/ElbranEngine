@@ -1,5 +1,5 @@
 #pragma once
-#include "Scene.h"
+#include "RenderGroup.h"
 #include "Math.h"
 #include "FixedList.h"
 #include "Common.h"
@@ -25,7 +25,7 @@ public:
 	bool mouseEnabled;
 
 	UserInterface() {}
-	void Initialize(Scene* scene, uint16_t maxElements);
+	void Initialize(RenderGroup* scene, uint16_t maxElements);
 	void Release();
 
 	void Update(float deltaTime);
@@ -34,7 +34,7 @@ public:
 	void SetEnabled(UIElement* element, bool enabled);
 
 private:
-	Scene* scene;
+	RenderGroup* scene;
 	DynamicFixedList<UIElement*> elements;
 	DynamicFixedList<UIElement*> disabled;
 	UIElement* focus;

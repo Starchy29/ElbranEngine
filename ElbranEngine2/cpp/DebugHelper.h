@@ -10,7 +10,7 @@ class Scene;
 #define SPECIAL_SHAPE_COUNT 5
 
 class DebugHelper {
-public:
+/*public:
 	Scene* debugScene;
 
 	DebugHelper() {}
@@ -28,6 +28,6 @@ private:
 	ShapeRenderer lines[SPECIAL_SHAPE_COUNT];
 	ShapeRenderer boxes[SPECIAL_SHAPE_COUNT];
 	ShapeRenderer shapes[BULK_SHAPE_COUNT];
-	uint8_t numBulk = 0;
+	uint8_t numBulk = 0;*/
 };
 #endif

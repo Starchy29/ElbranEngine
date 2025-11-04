@@ -55,7 +55,7 @@
     <ClCompile Include="..\cpp\PatternRenderer.cpp">
       <Filter>Engine\Rendering</Filter>
     </ClCompile>
-    <ClCompile Include="..\cpp\Scene.cpp">
+    <ClCompile Include="..\cpp\RenderGroup.cpp">
       <Filter>Engine\Rendering</Filter>
     </ClCompile>
     <ClCompile Include="..\cpp\AnimationGroup.cpp">
@@ -97,6 +97,8 @@
     <ClCompile Include="..\cpp\Application.cpp">
       <Filter>Engine</Filter>
     </ClCompile>
+    <ClCompile Include="..\cpp\Renderer.cpp" />
+    <ClCompile Include="..\cpp\PostProcess.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\cpp\AssetContainer.h" />
@@ -154,9 +156,6 @@
     <ClInclude Include="..\cpp\IPostProcess.h">
       <Filter>Engine\Rendering</Filter>
     </ClInclude>
-    <ClInclude Include="..\cpp\IRenderer.h">
-      <Filter>Engine\Rendering</Filter>
-    </ClInclude>
     <ClInclude Include="..\cpp\Lights.h">
       <Filter>Engine\Rendering</Filter>
     </ClInclude>
@@ -172,7 +171,7 @@
     <ClInclude Include="..\cpp\PatternRenderer.h">
       <Filter>Engine\Rendering</Filter>
     </ClInclude>
-    <ClInclude Include="..\cpp\Scene.h">
+    <ClInclude Include="..\cpp\RenderGroup.h">
       <Filter>Engine\Rendering</Filter>
     </ClInclude>
     <ClInclude Include="..\cpp\AnimationGroup.h">
@@ -224,6 +223,8 @@
       <Filter>Engine</Filter>
     </ClInclude>
     <ClInclude Include="..\cpp\AppPointer.h" />
+    <ClInclude Include="..\cpp\Renderer.h" />
+    <ClInclude Include="..\cpp\PostProcess.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\hlsl\ColorConversion.hlsli">
