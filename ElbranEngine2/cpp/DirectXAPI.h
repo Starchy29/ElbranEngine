@@ -11,7 +11,8 @@ class DirectXAPI :
     public GraphicsAPI
 {
 public:
-    DirectXAPI(HWND windowHandle, Int2 windowDims, float viewAspectRatio, const LoadedFile* sampleShader);
+    DirectXAPI() = default;
+    void Initialize(HWND windowHandle, Int2 windowDims, float viewAspectRatio, const LoadedFile* sampleShader);
     void Release() override;
 
     bool IsFullscreen() const override;

@@ -5,7 +5,7 @@
 
 #define SafeRelease(x) if(x) x->Release()
 
-DirectXAPI::DirectXAPI(HWND windowHandle, Int2 windowDims, float viewAspectRatio, const LoadedFile* sampleShader) {
+void DirectXAPI::Initialize(HWND windowHandle, Int2 windowDims, float viewAspectRatio, const LoadedFile* sampleShader) {
 	D3D_FEATURE_LEVEL levels[] = {
 		D3D_FEATURE_LEVEL_11_1,
 		D3D_FEATURE_LEVEL_11_0,
@@ -116,15 +116,12 @@ DirectXAPI::DirectXAPI(HWND windowHandle, Int2 windowDims, float viewAspectRatio
 
 	// set other defaults
 	context->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+
+	GraphicsAPI::Initialize();
 }
 
 void DirectXAPI::Release() {
 	ReleaseRenderTarget(&backBuffer);
-	ReleaseRenderTarget(&postProcessTargets[0]);
-	ReleaseRenderTarget(&postProcessTargets[1]);
-	for(int i = 0; i < MAX_POST_PROCESS_HELPER_TEXTURES; i++) {
-		ReleaseRenderTarget(&postProcessHelpers[i]);
-	}
 	GraphicsAPI::Release();
 }
 

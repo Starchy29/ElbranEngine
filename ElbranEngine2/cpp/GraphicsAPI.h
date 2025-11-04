@@ -10,6 +10,7 @@
 
 #define OBJECT_CONSTANT_REGISTER 0 // shaders with per-object constant buffers should use register 0
 #define MAX_POST_PROCESS_HELPER_TEXTURES 3
+#define MAX_LIGHTS_ONSCREEN 16
 
 class Game;
 
@@ -57,10 +58,14 @@ class GraphicsAPI
 {
 public:
 	FixedList<IPostProcess*, 3> postProcesses;
+	ConstantBuffer projectionBuffer;
+	ConstantBuffer lightInfoBuffer;
+	ArrayBuffer lightsBuffer;
 
-	GraphicsAPI();
+	GraphicsAPI() = default;
+	void Initialize();
 	virtual ~GraphicsAPI() {}
-	virtual void Release() {}
+	virtual void Release();
 
 	virtual bool IsFullscreen() const = 0;
 	virtual void SetFullscreen(bool fullscreen) {}

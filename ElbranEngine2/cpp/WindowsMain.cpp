@@ -232,10 +232,11 @@ int WINAPI WinMain(
 	RECT windowRect;
 	GetClientRect(windowHandle, &windowRect);
 	LoadedFile sampleShader = LoadWindowsFile(L"shaders\\CameraVS.cso");
-	directX = new DirectXAPI(windowHandle, Int2(windowRect.right - windowRect.left, windowRect.bottom - windowRect.top), ASPECT_RATIO, &sampleShader);
+	directX = new DirectXAPI();
+	directX->Initialize(windowHandle, Int2(windowRect.right - windowRect.left, windowRect.bottom - windowRect.top), ASPECT_RATIO, &sampleShader);
 	sampleShader.Release();
 	input = new WindowsInput(windowHandle);
-	app = (Application*)malloc(sizeof(Application));
+	app = (Application*)calloc(1, sizeof(Application));
 	app->Initialize(std::endian::native == std::endian::little, LoadWindowsFile, directX, new WindowsAudio(), input);
 	app->quitFunction = QuitApp;
 	RunApp();

@@ -1,17 +1,23 @@
 #include "GraphicsAPI.h"
 #include "Application.h"
+#include "Lights.h"
 
-GraphicsAPI::GraphicsAPI() :
-	postProcessed{false},
-	viewportDims{0,0},
-	viewportOffset{0,0},
-	viewAspectRatio{0.0f}
-{
-	postProcessTargets[0] = {};
-	postProcessTargets[1] = {};
+void GraphicsAPI::Initialize() {
+	projectionBuffer = CreateConstantBuffer(sizeof(Matrix));
+	lightInfoBuffer = CreateConstantBuffer(sizeof(LightConstants));
+	lightsBuffer = CreateArrayBuffer(ShaderDataType::Structured, MAX_LIGHTS_ONSCREEN, sizeof(LightData));
+}
+
+void GraphicsAPI::Release() {
+	ReleaseRenderTarget(&postProcessTargets[0]);
+	ReleaseRenderTarget(&postProcessTargets[1]);
 	for(int i = 0; i < MAX_POST_PROCESS_HELPER_TEXTURES; i++) {
-		postProcessHelpers[i] = {};
+		ReleaseRenderTarget(&postProcessHelpers[i]);
 	}
+
+	ReleaseConstantBuffer(&projectionBuffer);
+	ReleaseConstantBuffer(&lightInfoBuffer);
+	ReleaseArrayBuffer(&lightsBuffer);
 }
 
 void GraphicsAPI::Render(Game* game) {

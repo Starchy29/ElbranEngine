@@ -27,7 +27,7 @@ void Game::Initialize() {
 }
 
 void Game::Release() {
-	sampleScene.Release();
+
 }
 
 void Game::Update(float deltaTime) {

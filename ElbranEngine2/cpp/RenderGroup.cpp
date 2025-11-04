@@ -2,6 +2,7 @@
 #include "Application.h"
 #include "GraphicsAPI.h"
 #include "ShaderConstants.h"
+#include "Lights.h"
 
 // these match Lighting.hlsli
 #define LIGHTS_REGISTER 127
@@ -24,18 +25,6 @@ void RenderGroup::Initialize(Transform* transformBuffer, Matrix* worldMatrixBuff
 
 	camera.viewWidth = 1.f;
 	ReserveTransform(&camera.transform, &camera.worldMatrix);
-	
-	GraphicsAPI* graphics = app->graphics;
-
-	projectionBuffer = graphics->CreateConstantBuffer(sizeof(Matrix));
-	lightInfoBuffer = graphics->CreateConstantBuffer(sizeof(LightConstants));
-	lightsBuffer = graphics->CreateArrayBuffer(ShaderDataType::Structured, MAX_LIGHTS_ONSCREEN, sizeof(LightData));
-}
-
-void RenderGroup::Release() {
-	app->graphics->ReleaseConstantBuffer(&projectionBuffer);
-	app->graphics->ReleaseConstantBuffer(&lightInfoBuffer);
-	app->graphics->ReleaseArrayBuffer(&lightsBuffer);
 }
 
 struct OrderedRenderer {
@@ -133,17 +122,17 @@ void RenderGroup::Draw() const {
 	}
 
 	// send the light data to the gpu for pixel shaders
-	graphics->WriteBuffer(&lightData, sizeof(LightData) * MAX_LIGHTS_ONSCREEN, lightsBuffer.buffer);
-	graphics->SetArray(ShaderStage::Pixel, &lightsBuffer, LIGHTS_REGISTER);
+	graphics->WriteBuffer(&lightData, sizeof(LightData) * MAX_LIGHTS_ONSCREEN, graphics->lightsBuffer.buffer);
+	graphics->SetArray(ShaderStage::Pixel, &graphics->lightsBuffer, LIGHTS_REGISTER);
 
-	graphics->WriteBuffer(&lightConstants, sizeof(LightConstants), lightInfoBuffer.data);
-	graphics->SetConstants(ShaderStage::Pixel, &lightInfoBuffer, LIGHT_INFO_REGISTER);
+	graphics->WriteBuffer(&lightConstants, sizeof(LightConstants), graphics->lightInfoBuffer.data);
+	graphics->SetConstants(ShaderStage::Pixel, &graphics->lightInfoBuffer, LIGHT_INFO_REGISTER);
 
 	// send the projection matrix to the gpu for vertex shaders
 	viewProjection = viewProjection.Transpose();
-	graphics->WriteBuffer(&viewProjection, sizeof(Matrix), projectionBuffer.data);
-	graphics->SetConstants(ShaderStage::Vertex, &projectionBuffer, 1);
-	graphics->SetConstants(ShaderStage::Geometry, &projectionBuffer, 1);
+	graphics->WriteBuffer(&viewProjection, sizeof(Matrix), graphics->projectionBuffer.data);
+	graphics->SetConstants(ShaderStage::Vertex, &graphics->projectionBuffer, 1);
+	graphics->SetConstants(ShaderStage::Geometry, &graphics->projectionBuffer, 1);
 
 	// draw opaques front to back
 	for(uint32_t i = 0; i < numOpaque; i++) {

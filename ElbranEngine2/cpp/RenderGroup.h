@@ -1,10 +1,8 @@
 #pragma once
-#include "Lights.h"
 #include "Renderer.h"
 
 #define CAMERA_Z 0
 #define CAMERA_DEPTH 100
-#define MAX_LIGHTS_ONSCREEN 16
 
 struct Camera {
 	Transform* transform;
@@ -30,13 +28,8 @@ struct RenderGroup {
 	uint32_t rendererCapacity;
 	Renderer* renderers;
 
-	ConstantBuffer projectionBuffer;
-	ConstantBuffer lightInfoBuffer;
-	ArrayBuffer lightsBuffer;
-
 	RenderGroup() = default;
 	void Initialize(Transform* transformBuffer, Matrix* worldMatrixBuffer, Renderer* rendererBuffer, uint32_t numTransforms, uint32_t numRenderers);
-	void Release();
 
 	void Draw() const;
 
