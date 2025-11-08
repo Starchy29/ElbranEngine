@@ -35,7 +35,7 @@ public:
 	void Initialize(bool littleEndian, LoadedFile (*fileLoadFunction)(std::wstring fileName), GraphicsAPI* graphics, SoundMixer* audio, InputManager* input);
 	void Release();
 
-	void Update(float deltaTime);
+	void StepFrame(float deltaTime);
 };
 
 extern Application* app;

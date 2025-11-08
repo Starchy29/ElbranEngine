@@ -34,7 +34,7 @@ void UpdateApp() {
 			
 	float fDeltaTime = (float)deltaTime;
 
-	app->Update(fDeltaTime);
+	app->StepFrame(fDeltaTime);
 
 	#if defined(DEBUG) | defined(_DEBUG)
 	if(SHOW_FPS) {

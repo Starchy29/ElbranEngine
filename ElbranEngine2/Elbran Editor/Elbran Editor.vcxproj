@@ -134,8 +134,6 @@
     <ClCompile Include="..\cpp\AssetContainer.cpp" />
     <ClCompile Include="..\cpp\AtlasAnimator.cpp" />
     <ClCompile Include="..\cpp\AtlasRenderer.cpp" />
-    <ClCompile Include="..\cpp\BloomPostProcess.cpp" />
-    <ClCompile Include="..\cpp\BlurPostProcess.cpp" />
     <ClCompile Include="..\cpp\Button.cpp" />
     <ClCompile Include="..\cpp\Common.cpp" />
     <ClCompile Include="..\cpp\DebugHelper.cpp" />
@@ -143,7 +141,6 @@
     <ClCompile Include="..\cpp\Font.cpp" />
     <ClCompile Include="..\cpp\Game.cpp" />
     <ClCompile Include="..\cpp\GraphicsAPI.cpp" />
-    <ClCompile Include="..\cpp\HSVPostProcess.cpp" />
     <ClCompile Include="..\cpp\InputManager.cpp" />
     <ClCompile Include="..\cpp\LoadedFile.cpp" />
     <ClCompile Include="..\cpp\lodepng.cpp" />
@@ -174,9 +171,6 @@
     <ClInclude Include="..\cpp\AtlasAnimator.h" />
     <ClInclude Include="..\cpp\AtlasRenderer.h" />
     <ClInclude Include="..\cpp\AudioData.h" />
-    <ClInclude Include="..\cpp\BloomPostProcess.h" />
-    <ClInclude Include="..\cpp\BlurPostProcess.h" />
-    <ClInclude Include="..\cpp\Buffers.h" />
     <ClInclude Include="..\cpp\Button.h" />
     <ClInclude Include="..\cpp\Common.h" />
     <ClInclude Include="..\cpp\Configs.h" />
@@ -187,9 +181,7 @@
     <ClInclude Include="..\cpp\Font.h" />
     <ClInclude Include="..\cpp\Game.h" />
     <ClInclude Include="..\cpp\GraphicsAPI.h" />
-    <ClInclude Include="..\cpp\HSVPostProcess.h" />
     <ClInclude Include="..\cpp\InputManager.h" />
-    <ClInclude Include="..\cpp\IPostProcess.h" />
     <ClInclude Include="..\cpp\Lights.h" />
     <ClInclude Include="..\cpp\LoadedFile.h" />
     <ClInclude Include="..\cpp\lodepng.h" />

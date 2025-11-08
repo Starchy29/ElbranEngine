@@ -2,6 +2,7 @@
 #include "Common.h"
 
 class GraphicsAPI;
+class AssetContainer;
 struct RenderTarget;
 
 struct PostProcess {
@@ -18,7 +19,7 @@ struct PostProcess {
 		} blurData;
 
 		struct {
-			// all range [0,1]
+			// all range [-1,1]
 			float contrast;
 			float saturation;
 			float brightness;
@@ -26,10 +27,14 @@ struct PostProcess {
 
 		struct {
 			uint16_t blurRadius;
-			float threshold;
+			float brightnessThreshold;
 		} bloomData;
 	};
 
-	void Render(GraphicsAPI* graphics, const RenderTarget* input, RenderTarget* output);
-	bool IsActive() const; //?
+	void Render(const RenderTarget* input, RenderTarget* output, GraphicsAPI* graphics, AssetContainer* assets);
+	bool IsActive() const;
+
+	void Blur(uint16_t blurRadius);
+	void HSV(float contrast, float saturation, float brightness);
+	void Bloom(uint16_t blurRadius, float brightnessThreshold);
 };

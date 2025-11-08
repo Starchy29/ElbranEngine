@@ -31,10 +31,14 @@ void Application::Release() {
 	perFrameData.Release();
 }
 
-void Application::Update(float deltaTime) {
+void Application::StepFrame(float deltaTime) {
 	input->Update(deltaTime);
 	audio->Update(deltaTime);
 	game.Update(deltaTime);
-	graphics->Render(&game);
+
+	graphics->ResetRenderTargets();
+	game.Draw();
+	graphics->PresentFrame();
+
 	perFrameData.Clear();
 }

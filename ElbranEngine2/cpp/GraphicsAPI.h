@@ -3,10 +3,9 @@
 #include "Common.h"
 #include "Buffers.h"
 #include "Shaders.h"
-#include "IPostProcess.h"
 #include "Math.h"
-#include "FixedList.h"
 #include <string>
+#include "PostProcess.h"
 
 #define OBJECT_CONSTANT_REGISTER 0 // shaders with per-object constant buffers should use register 0
 #define MAX_POST_PROCESS_HELPER_TEXTURES 3
@@ -57,10 +56,12 @@ struct Vertex {
 class GraphicsAPI
 {
 public:
-	FixedList<IPostProcess*, 3> postProcesses;
 	ConstantBuffer projectionBuffer;
 	ConstantBuffer lightInfoBuffer;
 	ArrayBuffer lightsBuffer;
+	OutputBuffer totalBrightnessBuffer;
+	RenderTarget postProcessTargets[2];
+	RenderTarget postProcessHelpers[MAX_POST_PROCESS_HELPER_TEXTURES];
 
 	GraphicsAPI() = default;
 	void Initialize();
@@ -70,8 +71,7 @@ public:
 	virtual bool IsFullscreen() const = 0;
 	virtual void SetFullscreen(bool fullscreen) {}
 
-	void Render(Game* game);
-	void ApplyPostProcesses();
+	void ApplyPostProcesses(PostProcess* postProcessSequence, uint8_t ppCount);
 	RenderTarget* GetPostProcessHelper(uint8_t slot);
 
 	UInt2 GetViewDimensions() const;
@@ -111,7 +111,8 @@ public:
 	virtual void SetBlendMode(BlendState mode) = 0;
 	virtual void SetPrimitive(RenderPrimitive primitive) = 0;
 	virtual void SetRenderTarget(const RenderTarget* renderTarget, bool useDepthStencil) = 0;
-	virtual void ResetRenderTarget() = 0;
+	virtual void ResetRenderTargets() = 0;
+	virtual void PresentFrame() = 0;
 
 	virtual void DrawVertices(uint16_t numVertices) = 0;
 	virtual void DrawMesh(const Mesh* mesh) = 0;
@@ -143,15 +144,7 @@ protected:
 	UInt2 viewportDims;
 	UInt2 viewportOffset;
 	float viewAspectRatio;
-	RenderTarget postProcessTargets[2];
-	RenderTarget postProcessHelpers[MAX_POST_PROCESS_HELPER_TEXTURES];
 
-	virtual void ClearBackBuffer() = 0;
-	virtual void ClearDepthStencil() = 0;
-	virtual void PresentSwapChain() = 0;
-	virtual RenderTarget* GetBackBuffer() = 0;
-
-private:
-	bool postProcessed;
+	uint8_t renderTargetIndex;
 };
 

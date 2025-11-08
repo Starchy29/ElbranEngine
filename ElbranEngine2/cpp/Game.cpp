@@ -3,6 +3,8 @@
 
 #include "InputManager.h"
 #include "RenderGroup.h"
+#include "GraphicsAPI.h"
+#include "PostProcess.h"
 RenderGroup sampleScene;
 Transform transforms[10];
 Matrix worldMatrices[10];
@@ -11,6 +13,8 @@ Renderer renderers[10];
 Renderer* spriteTest;
 Renderer* cursor;
 Renderer* textTest;
+
+PostProcess ppTest[2];
 
 char label[] = "here is\ntext";
 
@@ -33,6 +37,9 @@ void Game::Initialize() {
 
 	textTest = sampleScene.ReserveRenderer();
 	textTest->InitText(label, &app->assets.arial);
+
+	ppTest[0].HSV(0.f, -1.0f, 0.f);
+	ppTest[1].Blur(10);
 }
 
 void Game::Release() {
@@ -41,8 +48,16 @@ void Game::Release() {
 
 void Game::Update(float deltaTime) {
 	cursor->transform->position = app->input->GetMousePosition(&sampleScene.camera);
+
+	if(app->input->IsPressed(InputAction::Up)) {
+		//ppTest.bloomData.brightnessThreshold += deltaTime;
+	}
+	else if(app->input->IsPressed(InputAction::Down)) {
+		//ppTest.bloomData.brightnessThreshold -= deltaTime;
+	}
 }
 
 void Game::Draw() {
 	sampleScene.Draw();
+	app->graphics->ApplyPostProcesses(ppTest, 2);
 }

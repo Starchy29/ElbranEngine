@@ -28,19 +28,10 @@
     <ClCompile Include="..\cpp\AtlasRenderer.cpp">
       <Filter>Engine\Rendering</Filter>
     </ClCompile>
-    <ClCompile Include="..\cpp\BloomPostProcess.cpp">
-      <Filter>Engine\Rendering</Filter>
-    </ClCompile>
-    <ClCompile Include="..\cpp\BlurPostProcess.cpp">
-      <Filter>Engine\Rendering</Filter>
-    </ClCompile>
     <ClCompile Include="..\cpp\Font.cpp">
       <Filter>Engine\Rendering</Filter>
     </ClCompile>
     <ClCompile Include="..\cpp\GraphicsAPI.cpp">
-      <Filter>Engine\Rendering</Filter>
-    </ClCompile>
-    <ClCompile Include="..\cpp\HSVPostProcess.cpp">
       <Filter>Engine\Rendering</Filter>
     </ClCompile>
     <ClCompile Include="..\cpp\lodepng.cpp">
@@ -64,9 +55,6 @@
     <ClCompile Include="..\cpp\AtlasAnimator.cpp">
       <Filter>Engine\Toolkit</Filter>
     </ClCompile>
-    <ClCompile Include="..\cpp\Button.cpp">
-      <Filter>Engine\Toolkit</Filter>
-    </ClCompile>
     <ClCompile Include="..\cpp\DebugHelper.cpp">
       <Filter>Engine\Toolkit</Filter>
     </ClCompile>
@@ -77,12 +65,6 @@
       <Filter>Engine\Toolkit</Filter>
     </ClCompile>
     <ClCompile Include="..\cpp\Random.cpp">
-      <Filter>Engine\Toolkit</Filter>
-    </ClCompile>
-    <ClCompile Include="..\cpp\SliderUI.cpp">
-      <Filter>Engine\Toolkit</Filter>
-    </ClCompile>
-    <ClCompile Include="..\cpp\UserInterface.cpp">
       <Filter>Engine\Toolkit</Filter>
     </ClCompile>
     <ClCompile Include="..\cpp\SoundMixer.cpp">
@@ -98,6 +80,15 @@
     </ClCompile>
     <ClCompile Include="..\cpp\LoadedFile.cpp">
       <Filter>Engine\Toolkit</Filter>
+    </ClCompile>
+    <ClCompile Include="..\cpp\Button.cpp">
+      <Filter>Engine\Toolkit\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\cpp\SliderUI.cpp">
+      <Filter>Engine\Toolkit\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\cpp\UserInterface.cpp">
+      <Filter>Engine\Toolkit\UI</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -135,25 +126,10 @@
     <ClInclude Include="..\cpp\AtlasRenderer.h">
       <Filter>Engine\Rendering</Filter>
     </ClInclude>
-    <ClInclude Include="..\cpp\BloomPostProcess.h">
-      <Filter>Engine\Rendering</Filter>
-    </ClInclude>
-    <ClInclude Include="..\cpp\BlurPostProcess.h">
-      <Filter>Engine\Rendering</Filter>
-    </ClInclude>
-    <ClInclude Include="..\cpp\Buffers.h">
-      <Filter>Engine\Rendering</Filter>
-    </ClInclude>
     <ClInclude Include="..\cpp\Font.h">
       <Filter>Engine\Rendering</Filter>
     </ClInclude>
     <ClInclude Include="..\cpp\GraphicsAPI.h">
-      <Filter>Engine\Rendering</Filter>
-    </ClInclude>
-    <ClInclude Include="..\cpp\HSVPostProcess.h">
-      <Filter>Engine\Rendering</Filter>
-    </ClInclude>
-    <ClInclude Include="..\cpp\IPostProcess.h">
       <Filter>Engine\Rendering</Filter>
     </ClInclude>
     <ClInclude Include="..\cpp\Lights.h">
@@ -180,9 +156,6 @@
     <ClInclude Include="..\cpp\AtlasAnimator.h">
       <Filter>Engine\Toolkit</Filter>
     </ClInclude>
-    <ClInclude Include="..\cpp\Button.h">
-      <Filter>Engine\Toolkit</Filter>
-    </ClInclude>
     <ClInclude Include="..\cpp\DebugHelper.h">
       <Filter>Engine\Toolkit</Filter>
     </ClInclude>
@@ -199,12 +172,6 @@
       <Filter>Engine\Toolkit</Filter>
     </ClInclude>
     <ClInclude Include="..\cpp\Random.h">
-      <Filter>Engine\Toolkit</Filter>
-    </ClInclude>
-    <ClInclude Include="..\cpp\SliderUI.h">
-      <Filter>Engine\Toolkit</Filter>
-    </ClInclude>
-    <ClInclude Include="..\cpp\UserInterface.h">
       <Filter>Engine\Toolkit</Filter>
     </ClInclude>
     <ClInclude Include="..\cpp\SoundMixer.h">
@@ -224,6 +191,15 @@
     </ClInclude>
     <ClInclude Include="..\cpp\LoadedFile.h">
       <Filter>Engine\Toolkit</Filter>
+    </ClInclude>
+    <ClInclude Include="..\cpp\Button.h">
+      <Filter>Engine\Toolkit\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\cpp\SliderUI.h">
+      <Filter>Engine\Toolkit\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\cpp\UserInterface.h">
+      <Filter>Engine\Toolkit\UI</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -258,6 +234,9 @@
     </Filter>
     <Filter Include="Engine\Toolkit">
       <UniqueIdentifier>{0c0a114d-b0a7-4c81-ba7a-9be7085c0230}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\Toolkit\UI">
+      <UniqueIdentifier>{d7dba0ab-f8d2-482f-9355-a6de54356edf}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

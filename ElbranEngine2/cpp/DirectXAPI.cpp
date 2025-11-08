@@ -574,6 +574,26 @@ void DirectXAPI::SetRenderTarget(const RenderTarget* renderTarget, bool useDepth
 	context->OMSetRenderTargets(1, &(renderTarget->outputView), useDepthStencil ? depthStencilView.Get() : nullptr);
 }
 
+void DirectXAPI::ResetRenderTargets() {
+	context->ClearDepthStencilView(depthStencilView.Get(), D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
+	
+	float black[4] { 0.f, 0.f, 0.f, 0.f };
+	context->ClearRenderTargetView(backBuffer.outputView, black);
+	context->ClearRenderTargetView(postProcessTargets[0].outputView, black);
+	context->ClearRenderTargetView(postProcessTargets[1].outputView, black);
+	for(uint8_t i = 0; i < MAX_POST_PROCESS_HELPER_TEXTURES; i++) {
+		context->ClearRenderTargetView(postProcessHelpers[i].outputView, black);
+	}
+
+	renderTargetIndex = 0;
+	SetRenderTarget(&postProcessTargets[renderTargetIndex], true);
+}
+
+void DirectXAPI::PresentFrame() {
+	CopyTexture(&postProcessTargets[renderTargetIndex], &backBuffer);
+	swapChain->Present(0, 0);
+}
+
 void DirectXAPI::ReleaseShader(VertexShader* shader) {
 	SafeRelease(shader->shader);
 	SafeRelease(shader->constants.data);
@@ -636,27 +656,6 @@ void DirectXAPI::ReleaseOuputBuffer(OutputBuffer* buffer) {
 	SafeRelease(buffer->cpuBuffer);
 	SafeRelease(buffer->gpuBuffer);
 	SafeRelease(buffer->view);
-}
-
-void DirectXAPI::ClearBackBuffer() {
-	float black[4] { 0.f, 0.f, 0.f, 0.f };
-	context->ClearRenderTargetView(backBuffer.outputView, black);
-}
-
-void DirectXAPI::ClearDepthStencil() {
-	context->ClearDepthStencilView(depthStencilView.Get(), D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
-}
-
-void DirectXAPI::PresentSwapChain() {
-	swapChain->Present(0, 0);
-}
-
-void DirectXAPI::ResetRenderTarget() {
-	context->OMSetRenderTargets(1, &backBuffer.outputView, depthStencilView.Get());
-}
-
-RenderTarget* DirectXAPI::GetBackBuffer() {
-	return &backBuffer;
 }
 
 Sampler DirectXAPI::CreateDefaultSampler() {

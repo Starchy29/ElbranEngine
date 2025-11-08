@@ -59,6 +59,8 @@ public:
     void SetPixelShader(const PixelShader* shader) override;
     void RunComputeShader(const ComputeShader* shader, uint16_t xThreads, uint16_t yThreads, uint16_t zThreads = 1) override;
     void SetRenderTarget(const RenderTarget* renderTarget, bool useDepthStencil) override;
+    void ResetRenderTargets() override;
+    void PresentFrame() override;
 
     void ReleaseShader(VertexShader* shader) override;
     void ReleaseShader(GeometryShader* shader) override;
@@ -73,13 +75,6 @@ public:
     void ReleaseArrayBuffer(ArrayBuffer* buffer) override;
     void ReleaseEditBuffer(EditBuffer* buffer) override;
     void ReleaseOuputBuffer(OutputBuffer* buffer) override;
-
-protected:
-    void ClearBackBuffer() override;
-    void ClearDepthStencil() override;
-    void PresentSwapChain() override;
-    void ResetRenderTarget() override;
-    RenderTarget* GetBackBuffer() override;
 
 private:
     Microsoft::WRL::ComPtr<ID3D11Device> device;

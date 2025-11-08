@@ -6,6 +6,7 @@ void GraphicsAPI::Initialize() {
 	projectionBuffer = CreateConstantBuffer(sizeof(Matrix));
 	lightInfoBuffer = CreateConstantBuffer(sizeof(LightConstants));
 	lightsBuffer = CreateArrayBuffer(ShaderDataType::Structured, MAX_LIGHTS_ONSCREEN, sizeof(LightData));
+	totalBrightnessBuffer = CreateOutputBuffer(ShaderDataType::UInt, 4); // should match BrightnessSumCS.hlsl
 }
 
 void GraphicsAPI::Release() {
@@ -18,49 +19,19 @@ void GraphicsAPI::Release() {
 	ReleaseConstantBuffer(&projectionBuffer);
 	ReleaseConstantBuffer(&lightInfoBuffer);
 	ReleaseArrayBuffer(&lightsBuffer);
+	ReleaseOuputBuffer(&totalBrightnessBuffer);
 }
 
-void GraphicsAPI::Render(Game* game) {
-	postProcessed = false;
-	ClearBackBuffer();
-	ClearDepthStencil();
-
-	uint32_t numPostProcesses = postProcesses.Size();
-	if(numPostProcesses > 0) {
-		SetRenderTarget(&postProcessTargets[0], true);
+void GraphicsAPI::ApplyPostProcesses(PostProcess* postProcessSequence, uint8_t ppCount) {
+	for(uint32_t i = 0; i < ppCount; i++) {
+		if(!postProcessSequence[i].IsActive()) continue;
+		RenderTarget* input = &postProcessTargets[renderTargetIndex];
+		renderTargetIndex = 1 - renderTargetIndex;
+		RenderTarget* output = &postProcessTargets[renderTargetIndex];
+		postProcessSequence[i].Render(input, output, this, &app->assets);
 	}
 
-	game->Draw();
-
-	if(!postProcessed && numPostProcesses > 0) {
-		ApplyPostProcesses();
-	}
-
-	PresentSwapChain();
-	ResetRenderTarget();
-}
-
-void GraphicsAPI::ApplyPostProcesses() {
-	ASSERT(!postProcessed); // can only post process once per frame
-	postProcessed = true;
-
-	uint32_t numPostProcesses = postProcesses.Size();
-	for(uint32_t i = 0; i < numPostProcesses; i++) {
-		RenderTarget* input = &postProcessTargets[i%2];
-		RenderTarget* output = &postProcessTargets[1 - (i%2)];
-		if(i == numPostProcesses - 1) {
-			output = GetBackBuffer();
-		}
-
-		if(postProcesses[i]->IsActive()) {
-			postProcesses[i]->Render(this, input, output);
-		} else {
-			// if the post process makes no changes, copying the pixels is fastest
-			CopyTexture(input, output);
-		}
-	}
-
-	ResetRenderTarget();
+	SetRenderTarget(&postProcessTargets[renderTargetIndex], true);
 }
 
 RenderTarget* GraphicsAPI::GetPostProcessHelper(uint8_t slot) {
