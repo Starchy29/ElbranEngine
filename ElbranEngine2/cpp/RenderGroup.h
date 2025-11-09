@@ -1,17 +1,9 @@
 #pragma once
 #include "Renderer.h"
+#include "Camera.h"
 
 #define CAMERA_Z 0
 #define CAMERA_DEPTH 100
-
-struct Camera {
-	Transform* transform;
-	const Matrix* worldMatrix;
-	float viewWidth;
-
-	float GetViewHeight() const;
-	Vector2 GetWorldDimensions() const;
-};
 
 struct RenderGroup {
 	Camera camera;
@@ -34,7 +26,7 @@ struct RenderGroup {
 
 	void Draw() const;
 
-	void ReserveTransform(Transform** outTransform, const Matrix** outMatrix);
+	Transform* ReserveTransform(const Matrix** outMatrix = nullptr);
 	Renderer* ReserveRenderer();
 };
 

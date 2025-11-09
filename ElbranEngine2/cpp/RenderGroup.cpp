@@ -24,7 +24,7 @@ void RenderGroup::Initialize(Transform* transformBuffer, Matrix* worldMatrixBuff
 	renderers = rendererBuffer;
 
 	camera.viewWidth = 1.f;
-	ReserveTransform(&camera.transform, &camera.worldMatrix);
+	camera.transform = ReserveTransform(&camera.worldMatrix);
 }
 
 void RenderGroup::ReleaseRenderers() {
@@ -166,32 +166,23 @@ void RenderGroup::Draw() const {
 	graphics->SetBlendMode(BlendState::None);
 }
 
-void RenderGroup::ReserveTransform(Transform** outTransform, const Matrix** outMatrix) {
+Transform* RenderGroup::ReserveTransform(const Matrix** outMatrix) {
 	ASSERT(transformCount < transformCapacity);
 
 	transforms[transformCount] = {};
 	transforms[transformCount].scale = Vector2(1.f, 1.f);
 	worldMatrices[transformCount] = Matrix::Identity;
 
-	if(outTransform) *outTransform = &transforms[transformCount];
-	if(outMatrix) *outMatrix = &worldMatrices[transformCount];
-
 	transformCount++;
+	if(outMatrix) *outMatrix = &worldMatrices[transformCount - 1];
+	return &transforms[transformCount - 1];
 }
 
 Renderer* RenderGroup::ReserveRenderer() {
 	ASSERT(rendererCount < rendererCapacity);
 	renderers[rendererCount] = {};
 	Renderer* reserved = &renderers[rendererCount];
-	ReserveTransform(&reserved->transform, &reserved->worldMatrix);
+	reserved->transform = ReserveTransform(&reserved->worldMatrix);
 	rendererCount++;
 	return reserved;
-}
-
-float Camera::GetViewHeight() const {
-	return viewWidth / app->graphics->GetViewAspectRatio();
-}
-
-Vector2 Camera::GetWorldDimensions() const {
-	return Vector2(viewWidth, viewWidth / app->graphics->GetViewAspectRatio());
 }

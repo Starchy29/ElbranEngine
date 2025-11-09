@@ -135,6 +135,7 @@
     <ClCompile Include="..\cpp\AtlasAnimator.cpp" />
     <ClCompile Include="..\cpp\AtlasRenderer.cpp" />
     <ClCompile Include="..\cpp\Button.cpp" />
+    <ClCompile Include="..\cpp\Camera.cpp" />
     <ClCompile Include="..\cpp\Common.cpp" />
     <ClCompile Include="..\cpp\DebugHelper.cpp" />
     <ClCompile Include="..\cpp\DirectXAPI.cpp" />
@@ -172,6 +173,7 @@
     <ClInclude Include="..\cpp\AtlasRenderer.h" />
     <ClInclude Include="..\cpp\AudioData.h" />
     <ClInclude Include="..\cpp\Button.h" />
+    <ClInclude Include="..\cpp\Camera.h" />
     <ClInclude Include="..\cpp\Common.h" />
     <ClInclude Include="..\cpp\Configs.h" />
     <ClInclude Include="..\cpp\DebugHelper.h" />

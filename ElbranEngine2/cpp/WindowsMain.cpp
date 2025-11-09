@@ -237,7 +237,8 @@ int WINAPI WinMain(
 	sampleShader.Release();
 	input = new WindowsInput(windowHandle);
 	app = (Application*)calloc(1, sizeof(Application));
-	app->Initialize(std::endian::native == std::endian::little, LoadWindowsFile, directX, new WindowsAudio(), input);
+	LoadedFile::platformLittleEndian = std::endian::native == std::endian::little;
+	app->Initialize(LoadWindowsFile, directX, new WindowsAudio(), input);
 	app->quitFunction = QuitApp;
 	RunApp();
 	app->Release();

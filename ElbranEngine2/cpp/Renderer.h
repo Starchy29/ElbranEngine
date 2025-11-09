@@ -38,7 +38,7 @@ struct Renderer {
 	} type;
 
 	Transform* transform;
-	const Matrix* worldMatrix; // delete this?
+	const Matrix* worldMatrix;
 
 	union {
 		struct {

@@ -2,6 +2,8 @@
 #include <stdint.h>
 
 struct LoadedFile {
+	static bool platformLittleEndian;
+
 	uint64_t fileSize;
 	uint64_t readLocation;
 	uint8_t* bytes;

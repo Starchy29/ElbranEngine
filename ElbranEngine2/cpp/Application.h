@@ -29,10 +29,9 @@ public:
 
 	LoadedFile (*LoadFile)(std::wstring fileName);
 	void (*quitFunction)();
-	bool littleEndian;
 
 	Application() = default;
-	void Initialize(bool littleEndian, LoadedFile (*fileLoadFunction)(std::wstring fileName), GraphicsAPI* graphics, SoundMixer* audio, InputManager* input);
+	void Initialize(LoadedFile (*fileLoadFunction)(std::wstring fileName), GraphicsAPI* graphics, SoundMixer* audio, InputManager* input);
 	void Release();
 
 	void StepFrame(float deltaTime);

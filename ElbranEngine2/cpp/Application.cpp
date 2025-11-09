@@ -5,10 +5,9 @@
 
 Application* app;
 
-void Application::Initialize(bool littleEndian, LoadedFile (*fileLoadFunction)(std::wstring fileName), GraphicsAPI* graphics, SoundMixer* audio, InputManager* input) {
+void Application::Initialize(LoadedFile (*fileLoadFunction)(std::wstring fileName), GraphicsAPI* graphics, SoundMixer* audio, InputManager* input) {
 	perFrameData.Allocate(8192);
 	quitFunction = nullptr;
-	this->littleEndian = littleEndian;
 
 	this->LoadFile = fileLoadFunction;
 	this->graphics = graphics;

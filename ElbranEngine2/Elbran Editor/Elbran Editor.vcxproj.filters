@@ -73,7 +73,6 @@
     <ClCompile Include="..\cpp\Application.cpp">
       <Filter>Engine</Filter>
     </ClCompile>
-    <ClCompile Include="..\cpp\Renderer.cpp" />
     <ClCompile Include="..\cpp\PostProcess.cpp" />
     <ClCompile Include="..\cpp\Common.cpp">
       <Filter>Engine\Toolkit</Filter>
@@ -89,6 +88,10 @@
     </ClCompile>
     <ClCompile Include="..\cpp\UserInterface.cpp">
       <Filter>Engine\Toolkit\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\cpp\Camera.cpp" />
+    <ClCompile Include="..\cpp\Renderer.cpp">
+      <Filter>Engine\Rendering</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -184,7 +187,6 @@
       <Filter>Engine</Filter>
     </ClInclude>
     <ClInclude Include="..\cpp\AppPointer.h" />
-    <ClInclude Include="..\cpp\Renderer.h" />
     <ClInclude Include="..\cpp\PostProcess.h" />
     <ClInclude Include="..\cpp\Common.h">
       <Filter>Engine\Toolkit</Filter>
@@ -200,6 +202,10 @@
     </ClInclude>
     <ClInclude Include="..\cpp\UserInterface.h">
       <Filter>Engine\Toolkit\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\cpp\Camera.h" />
+    <ClInclude Include="..\cpp\Renderer.h">
+      <Filter>Engine\Rendering</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
