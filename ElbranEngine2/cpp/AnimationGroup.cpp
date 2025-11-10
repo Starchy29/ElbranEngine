@@ -1,6 +1,6 @@
 #include "AnimationGroup.h"
 
-void AnimationGroup::Initialize(AtlasRenderer* renderer, uint8_t numAnimations) {
+/*void AnimationGroup::Initialize(AtlasRenderer* renderer, uint8_t numAnimations) {
 	this->renderer = renderer;
 	currentAnimationIndex = -1;
 
@@ -48,4 +48,4 @@ void AnimationGroup::StartAnimation(uint8_t index, bool reversed) {
 	currentAnimationIndex = index;
 	renderer->atlas = animationSprites[index];
 	animators[index].Restart(reversed);
-}
+}*/

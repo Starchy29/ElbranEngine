@@ -1,9 +1,9 @@
 #if defined(DEBUG) | defined(_DEBUG)
 #pragma once
-#include "AppPointer.h"
-#include "Math.h"
-#include "ShapeRenderer.h"
-#include "FixedList.h"
+//#include "AppPointer.h"
+//#include "Math.h"
+//#include "ShapeRenderer.h"
+//#include "FixedList.h"
 
 class Scene;
 #define BULK_SHAPE_COUNT 20

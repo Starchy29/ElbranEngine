@@ -1,6 +1,6 @@
 #include "AtlasAnimator.h"
 
-#define LAST_FRAME renderer->atlas->spriteCount - 1
+/*#define LAST_FRAME renderer->atlas->spriteCount - 1
 
 void AtlasAnimator::Initialize(AtlasRenderer* renderer, float frameRate) {
 	this->renderer = renderer;
@@ -75,4 +75,4 @@ bool AtlasAnimator::IsComplete() const {
 void AtlasAnimator::UpdateSprite() {
 	renderer->row = currentIndex / renderer->atlas->cols;
 	renderer->col = currentIndex % renderer->atlas->cols;
-}
+}*/

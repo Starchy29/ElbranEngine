@@ -1,5 +1,5 @@
 #pragma once
-#include "AtlasAnimator.h"
+/*#include "AtlasAnimator.h"
 #include "FixedList.h"
 
 class AnimationGroup
@@ -22,5 +22,4 @@ private:
     DynamicFixedList<SpriteSheet*> animationSprites;
     DynamicFixedList<uint8_t> nextAnimationIndices; // input index is the current animation, the int at that index is the index of the next animation
     int8_t currentAnimationIndex;
-};
-
+};*/

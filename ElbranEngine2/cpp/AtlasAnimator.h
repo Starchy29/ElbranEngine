@@ -1,5 +1,5 @@
 #pragma once
-#include "AtlasRenderer.h"
+/*#include "AtlasRenderer.h"
 
 class AtlasAnimator
 {
@@ -25,5 +25,4 @@ private:
     bool completed;
 
     inline void UpdateSprite();
-};
-
+};*/

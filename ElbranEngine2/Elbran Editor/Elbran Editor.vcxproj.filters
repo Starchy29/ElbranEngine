@@ -16,18 +16,6 @@
     <ClCompile Include="..\cpp\DirectXAPI.cpp">
       <Filter>Engine\Platforms\Windows</Filter>
     </ClCompile>
-    <ClCompile Include="..\cpp\TextRenderer.cpp">
-      <Filter>Engine\Rendering</Filter>
-    </ClCompile>
-    <ClCompile Include="..\cpp\SpriteRenderer.cpp">
-      <Filter>Engine\Rendering</Filter>
-    </ClCompile>
-    <ClCompile Include="..\cpp\ShapeRenderer.cpp">
-      <Filter>Engine\Rendering</Filter>
-    </ClCompile>
-    <ClCompile Include="..\cpp\AtlasRenderer.cpp">
-      <Filter>Engine\Rendering</Filter>
-    </ClCompile>
     <ClCompile Include="..\cpp\Font.cpp">
       <Filter>Engine\Rendering</Filter>
     </ClCompile>
@@ -35,15 +23,6 @@
       <Filter>Engine\Rendering</Filter>
     </ClCompile>
     <ClCompile Include="..\cpp\lodepng.cpp">
-      <Filter>Engine\Rendering</Filter>
-    </ClCompile>
-    <ClCompile Include="..\cpp\ParticleBehavior.cpp">
-      <Filter>Engine\Rendering</Filter>
-    </ClCompile>
-    <ClCompile Include="..\cpp\ParticleRenderer.cpp">
-      <Filter>Engine\Rendering</Filter>
-    </ClCompile>
-    <ClCompile Include="..\cpp\PatternRenderer.cpp">
       <Filter>Engine\Rendering</Filter>
     </ClCompile>
     <ClCompile Include="..\cpp\RenderGroup.cpp">
@@ -89,8 +68,13 @@
     <ClCompile Include="..\cpp\UserInterface.cpp">
       <Filter>Engine\Toolkit\UI</Filter>
     </ClCompile>
-    <ClCompile Include="..\cpp\Camera.cpp" />
     <ClCompile Include="..\cpp\Renderer.cpp">
+      <Filter>Engine\Rendering</Filter>
+    </ClCompile>
+    <ClCompile Include="..\cpp\ParticleBehavior.cpp">
+      <Filter>Engine\Toolkit</Filter>
+    </ClCompile>
+    <ClCompile Include="..\cpp\Camera.cpp">
       <Filter>Engine\Rendering</Filter>
     </ClCompile>
   </ItemGroup>
@@ -111,22 +95,10 @@
     <ClInclude Include="..\cpp\Transform.h">
       <Filter>Engine\Rendering</Filter>
     </ClInclude>
-    <ClInclude Include="..\cpp\TextRenderer.h">
-      <Filter>Engine\Rendering</Filter>
-    </ClInclude>
-    <ClInclude Include="..\cpp\SpriteRenderer.h">
-      <Filter>Engine\Rendering</Filter>
-    </ClInclude>
-    <ClInclude Include="..\cpp\ShapeRenderer.h">
-      <Filter>Engine\Rendering</Filter>
-    </ClInclude>
     <ClInclude Include="..\cpp\Shaders.h">
       <Filter>Engine\Rendering</Filter>
     </ClInclude>
     <ClInclude Include="..\cpp\ShaderConstants.h">
-      <Filter>Engine\Rendering</Filter>
-    </ClInclude>
-    <ClInclude Include="..\cpp\AtlasRenderer.h">
       <Filter>Engine\Rendering</Filter>
     </ClInclude>
     <ClInclude Include="..\cpp\Font.h">
@@ -139,15 +111,6 @@
       <Filter>Engine\Rendering</Filter>
     </ClInclude>
     <ClInclude Include="..\cpp\lodepng.h">
-      <Filter>Engine\Rendering</Filter>
-    </ClInclude>
-    <ClInclude Include="..\cpp\ParticleBehavior.h">
-      <Filter>Engine\Rendering</Filter>
-    </ClInclude>
-    <ClInclude Include="..\cpp\ParticleRenderer.h">
-      <Filter>Engine\Rendering</Filter>
-    </ClInclude>
-    <ClInclude Include="..\cpp\PatternRenderer.h">
       <Filter>Engine\Rendering</Filter>
     </ClInclude>
     <ClInclude Include="..\cpp\RenderGroup.h">
@@ -203,8 +166,13 @@
     <ClInclude Include="..\cpp\UserInterface.h">
       <Filter>Engine\Toolkit\UI</Filter>
     </ClInclude>
-    <ClInclude Include="..\cpp\Camera.h" />
     <ClInclude Include="..\cpp\Renderer.h">
+      <Filter>Engine\Rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="..\cpp\ParticleBehavior.h">
+      <Filter>Engine\Toolkit</Filter>
+    </ClInclude>
+    <ClInclude Include="..\cpp\Camera.h">
       <Filter>Engine\Rendering</Filter>
     </ClInclude>
   </ItemGroup>
