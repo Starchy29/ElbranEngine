@@ -70,6 +70,11 @@ void AssetContainer::Initialize(GraphicsAPI* graphics, SoundMixer* audio) {
 	testSprite = LoadPNG(L"elbran.png");
 	testBMP = LoadBMP(L"testbmp.bmp");
 	arial = Font::Load(L"arial.ttf");
+
+	testSheet.texture = testSprite;
+	testSheet.rows = 1;
+	testSheet.cols = 1;
+	testSheet.spriteCount = 1;
 }
 
 void AssetContainer::Release() {

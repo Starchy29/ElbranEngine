@@ -39,6 +39,7 @@ public:
 	Texture2D testSprite;
 	Texture2D testBMP;
 	Font arial;
+	SpriteSheet testSheet;
 
 	AssetContainer() = default;
 	void Initialize(GraphicsAPI* graphics, SoundMixer* audio);

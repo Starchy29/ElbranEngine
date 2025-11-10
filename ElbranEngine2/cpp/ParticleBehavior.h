@@ -1,5 +1,5 @@
 #pragma once
-#include "ParticleRenderer.h"
+#include "Renderer.h"
 
 class ParticleBehavior
 {
@@ -12,7 +12,7 @@ public:
         Random
     };
 
-    ParticleRenderer* renderer;
+    Renderer* particleRenderer;
 
     float speed;
     MoveStyle moveStyle;
@@ -23,13 +23,16 @@ public:
     bool faceMoveDirection;
     bool spawnCircular;
 
+    float lifespan;
+    float startWidth;
+
     ParticleBehavior() = default;
-    void Initialize(ParticleRenderer* renderer);
+    void Initialize(Renderer* particleRenderer);
     void Release();
 
     void Update(float deltaTime);
 
-    void Spawn(uint16_t amount, float duration = 0.f);
+    void Emit(uint16_t numParticles, float duration = 0.f);
     void SetSpawnRate(float perSec, uint16_t groupSize = 1);
 
 private:
@@ -39,6 +42,8 @@ private:
     float spawnInterval;
     uint16_t spawnsPerInterval;
     int16_t spawnsLeft;
+
+    uint16_t lastParticle;
 
     float CalcParentScaler();
 };
