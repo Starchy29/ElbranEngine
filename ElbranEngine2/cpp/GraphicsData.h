@@ -34,6 +34,14 @@ struct SpriteSheet {
 	uint8_t rows;
 	uint8_t cols;
 	uint8_t spriteCount;
+
+	inline SpriteSheet(Texture2D texture) : SpriteSheet(texture, 1, 1, 1) {}
+	inline SpriteSheet(Texture2D texture, uint8_t rows, uint8_t cols, uint8_t spriteCount) {
+		this->texture = texture;
+		this->rows = rows;
+		this->cols = cols;
+		this->spriteCount = spriteCount;
+	}
 	inline float SpriteAspectRatio() const { return texture.AspectRatio() * rows / cols; }
 };
 

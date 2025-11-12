@@ -1,6 +1,6 @@
 #pragma once
 #include "Transform.h"
-#include "Buffers.h"
+#include "GraphicsData.h"
 #include "Font.h"
 #include "Common.h"
 
@@ -111,7 +111,7 @@ struct Renderer {
 	bool hidden;
 	bool translucent;
 	
-	void Draw(GraphicsAPI* graphics, AssetContainer* assets);
+	void Draw(GraphicsAPI* graphics, const AssetContainer* assets);
 
 	void Release();
 

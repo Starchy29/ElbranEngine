@@ -175,6 +175,9 @@
     <ClInclude Include="..\cpp\Camera.h">
       <Filter>Engine\Rendering</Filter>
     </ClInclude>
+    <ClInclude Include="..\cpp\GraphicsData.h">
+      <Filter>Engine\Rendering</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\hlsl\ColorConversion.hlsli">

@@ -1,7 +1,7 @@
 #pragma once
 #include "AppPointer.h"
 #include "Common.h"
-#include "Buffers.h"
+#include "GraphicsData.h"
 #include "Shaders.h"
 #include "Math.h"
 #include <string>
@@ -10,8 +10,6 @@
 #define OBJECT_CONSTANT_REGISTER 0 // shaders with per-object constant buffers should use register 0
 #define MAX_POST_PROCESS_HELPER_TEXTURES 3
 #define MAX_LIGHTS_ONSCREEN 16
-
-class Game;
 
 enum class BlendState {
 	None,

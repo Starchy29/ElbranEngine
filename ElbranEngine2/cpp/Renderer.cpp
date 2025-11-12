@@ -4,7 +4,7 @@
 #include "AssetContainer.h"
 #include "ShaderConstants.h"
 
-void Renderer::Draw(GraphicsAPI* graphics, AssetContainer* assets) {
+void Renderer::Draw(GraphicsAPI* graphics, const AssetContainer* assets) {
 	switch(type) {
 	case Type::Shape: {
 		CameraVSConstants vsInput = {};
@@ -267,7 +267,7 @@ void Renderer::UpdateTextMesh() {
 		charIndex++;
 	}
 	uint32_t textLength = charIndex; // excludes null terminator
-	float* rowWidths = (float*)app->perFrameData.Reserve(sizeof(float) * rows, true);
+	float* rowWidths = (float*)app->frameBuffer.Reserve(sizeof(float) * rows, true);
 
 	uint16_t currentRow = 0;
 	charIndex = 0;
@@ -287,8 +287,8 @@ void Renderer::UpdateTextMesh() {
 	float totalHeight = rows + (rows - 1) * textData.lineSpacing;
 
 	// create mesh to fit in a 1x1 square
-	Vertex* vertices = (Vertex*)app->perFrameData.Reserve(sizeof(Vertex) * 4 * textLength);
-	uint32_t* indices = (uint32_t*)app->perFrameData.Reserve(sizeof(uint32_t) * 6 * textLength);
+	Vertex* vertices = (Vertex*)app->frameBuffer.Reserve(sizeof(Vertex) * 4 * textLength);
+	uint32_t* indices = (uint32_t*)app->frameBuffer.Reserve(sizeof(uint32_t) * 6 * textLength);
 	Vector2 cursor = Vector2(0.f, -1.f); // start at y=-1 so the top is at y=0
 	if(textData.horizontalAlignment == HorizontalAlignment::Right) cursor.x = maxWidth - rowWidths[0];
 	else if(textData.horizontalAlignment == HorizontalAlignment::Center) cursor.x = (maxWidth - rowWidths[0]) * 0.5f;

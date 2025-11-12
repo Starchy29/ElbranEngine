@@ -1,9 +1,9 @@
 #include "AtlasAnimator.h"
 
-/*#define LAST_FRAME renderer->atlas->spriteCount - 1
+#define LAST_FRAME atlasRenderer->atlasData.atlas->spriteCount - 1
 
-void AtlasAnimator::Initialize(AtlasRenderer* renderer, float frameRate) {
-	this->renderer = renderer;
+void AtlasAnimator::Initialize(Renderer* atlasRenderer, float frameRate) {
+	this->atlasRenderer = atlasRenderer;
 	this->frameRate = frameRate;
 	looped = false;
 	rebounds = false;
@@ -39,7 +39,7 @@ void AtlasAnimator::Update(float deltaTime) {
 		}
 	} else {
 		currentIndex++;
-		if(currentIndex >= renderer->atlas->spriteCount) {
+		if(currentIndex >= atlasRenderer->atlasData.atlas->spriteCount) {
 			// determine what to do when reaching the end
 			if(rebounds) {
 				// start going backwards
@@ -73,6 +73,6 @@ bool AtlasAnimator::IsComplete() const {
 }
 
 void AtlasAnimator::UpdateSprite() {
-	renderer->row = currentIndex / renderer->atlas->cols;
-	renderer->col = currentIndex % renderer->atlas->cols;
-}*/
+	atlasRenderer->atlasData.row = currentIndex / atlasRenderer->atlasData.atlas->cols;
+	atlasRenderer->atlasData.col = currentIndex % atlasRenderer->atlasData.atlas->cols;
+}

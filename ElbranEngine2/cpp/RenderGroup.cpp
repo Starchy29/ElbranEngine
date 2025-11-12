@@ -42,7 +42,7 @@ void RenderGroup::Draw() const {
 	GraphicsAPI* graphics = app->graphics;
 
 	// convert all transforms into local matrices
-	Matrix* localMatrices = (Matrix*)app->perFrameData.Reserve(sizeof(Matrix) * transformCount);
+	Matrix* localMatrices = (Matrix*)app->frameBuffer.Reserve(sizeof(Matrix) * transformCount);
 	for(uint32_t i = 0; i < transformCount; i++) {
 		localMatrices[i] =
 			Matrix::Translation(transforms[i].position.x, transforms[i].position.y, transforms[i].zOrder) *
@@ -76,8 +76,8 @@ void RenderGroup::Draw() const {
 
 	uint32_t numOpaque = 0;
 	uint32_t numTranslucent = 0;
-	OrderedRenderer* opaques = (OrderedRenderer*)app->perFrameData.Reserve(sizeof(OrderedRenderer) * rendererCount);
-	OrderedRenderer* translucents = (OrderedRenderer*)app->perFrameData.Reserve(sizeof(OrderedRenderer) * rendererCount);
+	OrderedRenderer* opaques = (OrderedRenderer*)app->frameBuffer.Reserve(sizeof(OrderedRenderer) * rendererCount);
+	OrderedRenderer* translucents = (OrderedRenderer*)app->frameBuffer.Reserve(sizeof(OrderedRenderer) * rendererCount);
 
 	for(uint32_t i = 0; i < rendererCount; i++) {
 		if(renderers[i].hidden) continue;

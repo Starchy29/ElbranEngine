@@ -1,5 +1,5 @@
 #pragma once
-#include "Buffers.h"
+#include "GraphicsData.h"
 
 #ifdef WINDOWS
 struct ID3D11VertexShader;

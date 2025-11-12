@@ -22,7 +22,7 @@ public:
 	AssetContainer assets;
 	Game game;
 	Random rng;
-	MemoryArena perFrameData;
+	MemoryArena frameBuffer;
 #if defined(DEBUG) | defined(_DEBUG)
 	DebugHelper debugger;
 #endif

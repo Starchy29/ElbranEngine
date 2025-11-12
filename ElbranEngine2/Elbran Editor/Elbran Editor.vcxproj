@@ -165,6 +165,7 @@
     <ClInclude Include="..\cpp\AssetContainer.h" />
     <ClInclude Include="..\cpp\AtlasAnimator.h" />
     <ClInclude Include="..\cpp\AudioData.h" />
+    <ClInclude Include="..\cpp\GraphicsData.h" />
     <ClInclude Include="..\cpp\Button.h" />
     <ClInclude Include="..\cpp\Camera.h" />
     <ClInclude Include="..\cpp\Common.h" />

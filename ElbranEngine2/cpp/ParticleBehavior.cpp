@@ -86,7 +86,7 @@ void ParticleBehavior::Emit(uint16_t numParticles, float duration) {
     GraphicsAPI* graphics = app->graphics;
     
     // set up initial states
-    ParticleSpawnState* spawnStates = (ParticleSpawnState*)app->perFrameData.Reserve(numParticles * sizeof(ParticleSpawnState), true);
+    ParticleSpawnState* spawnStates = (ParticleSpawnState*)app->frameBuffer.Reserve(numParticles * sizeof(ParticleSpawnState), true);
 
     float trueSpeed = speed;
     float parentScalar = CalcParentScaler();

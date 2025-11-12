@@ -6,7 +6,7 @@
 Application* app;
 
 void Application::Initialize(LoadedFile (*fileLoadFunction)(std::wstring fileName), GraphicsAPI* graphics, SoundMixer* audio, InputManager* input) {
-	perFrameData.Allocate(8192);
+	frameBuffer.Allocate(8192);
 	quitFunction = nullptr;
 
 	this->LoadFile = fileLoadFunction;
@@ -27,7 +27,7 @@ void Application::Release() {
 	delete audio;
 	graphics->Release();
 	delete graphics;
-	perFrameData.Release();
+	frameBuffer.Release();
 }
 
 void Application::StepFrame(float deltaTime) {
@@ -39,5 +39,5 @@ void Application::StepFrame(float deltaTime) {
 	game.Draw();
 	graphics->PresentFrame();
 
-	perFrameData.Clear();
+	frameBuffer.Clear();
 }

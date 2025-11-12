@@ -1,5 +1,5 @@
 #pragma once
-/*#include "AtlasRenderer.h"
+#include "Renderer.h"
 
 class AtlasAnimator
 {
@@ -9,7 +9,7 @@ public:
     bool rebounds;
 
     AtlasAnimator() = default;
-    void Initialize(AtlasRenderer* renderer, float frameRate);
+    void Initialize(Renderer* atlasRenderer, float frameRate);
 
     void Update(float deltaTime);
     
@@ -17,7 +17,7 @@ public:
     bool IsComplete() const;
 
 private:
-    AtlasRenderer* renderer;
+    Renderer* atlasRenderer;
 
     float timer;
     int16_t currentIndex;
@@ -25,4 +25,4 @@ private:
     bool completed;
 
     inline void UpdateSprite();
-};*/
+};
