@@ -1,20 +1,44 @@
 #pragma once
+struct AudioSample;
+
+// matches the structure of the fmt chunk in .wav files
+struct WaveFormat {
+	uint16_t formatTag;
+	uint16_t channels;
+	uint32_t samplesPerSec;
+	uint32_t avgBytesPerSec;
+	uint16_t blockAlign;
+	uint16_t bitsPerSample;
+	uint16_t extraBytes;
+
+	// optional extensible portion
+	union {
+		uint16_t validBitsPerSample;
+		uint16_t samplesPerBlock;
+	} samples;
+	uint32_t channelMask;
+	uint8_t guid[16];
+};
 
 #ifdef WINDOWS
 #include <xaudio2.h>
 #include <vector>
 
+struct AudioSample {
+	XAUDIO2_BUFFER soundBuffer;
+	WaveFormat format;
+};
+
 struct AudioTrack {
 	float baseVolume;
 	float mixVolume;
-	XAUDIO2_BUFFER soundBuffer;
+	AudioSample audio;
 	IXAudio2SourceVoice* voice;
 };
 
 struct SoundEffect {
 	float baseVolume;
-	XAUDIO2_BUFFER soundBuffer;
-	WAVEFORMATEXTENSIBLE format;
-	std::vector<IXAudio2SourceVoice*> voices;
+	AudioSample audio;
+	//std::vector<IXAudio2SourceVoice*> voices;
 };
 #endif

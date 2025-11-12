@@ -71,10 +71,8 @@ void AssetContainer::Initialize(GraphicsAPI* graphics, SoundMixer* audio) {
 	testBMP = LoadBMP(L"testbmp.bmp");
 	arial = Font::Load(L"arial.ttf");
 
-	testSheet.texture = testSprite;
-	testSheet.rows = 1;
-	testSheet.cols = 1;
-	testSheet.spriteCount = 1;
+	testSheet = SpriteSheet(testSprite);
+	testSound = audio->LoadEffect(L"", L"water plunk.wav");
 }
 
 void AssetContainer::Release() {
@@ -109,6 +107,8 @@ void AssetContainer::Release() {
 	graphics->ReleaseTexture(&testBMP);
 
 	arial.Release();
+
+	audio->ReleaseSoundEffect(&testSound);
 }
 
 Texture2D AssetContainer::LoadBMP(std::wstring fileName) {
@@ -383,4 +383,44 @@ Texture2D AssetContainer::LoadPNG(std::wstring fileName) {
 	Texture2D result = app->graphics->CreateConstantTexture(width, height, loadedImage.begin()._Ptr);
 	file.Release();
 	return result;
+}
+
+AudioSample AssetContainer::LoadWAV(std::wstring fileName) {
+	LoadedFile file = app->LoadFile(L"assets\\" + fileName);
+	file.littleEndian = true;
+	uint32_t chunkName = file.ReadUInt32();
+	ASSERT(chunkName == 'FFIR');
+
+	file.readLocation += 4;
+	chunkName = file.ReadUInt32();
+	ASSERT(chunkName == 'EVAW');
+
+	uint32_t bufferLength;
+	uint8_t* audioBuffer;
+	WaveFormat format;
+
+	while(file.readLocation < file.fileSize) {
+		chunkName = file.ReadUInt32();
+		uint32_t chunkSize = file.ReadUInt32();
+		switch(chunkName) {
+		default:
+			file.readLocation += chunkSize;
+			break;
+
+		case ' tmf':
+			file.ReadBytes(chunkSize, (uint8_t*)&format); // WaveFormat struct matches layout from the .wav file
+			break;
+
+		case 'atad':
+			audioBuffer = new uint8_t[chunkSize];
+			bufferLength = chunkSize;
+			file.ReadBytes(chunkSize, audioBuffer);
+			break;
+		}
+
+		if(chunkSize % 2 != 0) file.readLocation++; // padding byte
+	}
+
+	file.Release();
+	return app->audio->InitializeAudio(audioBuffer, bufferLength, format);
 }

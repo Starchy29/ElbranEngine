@@ -5,6 +5,7 @@
 #include "RenderGroup.h"
 #include "GraphicsAPI.h"
 #include "PostProcess.h"
+#include "SoundMixer.h"
 #include "ParticleBehavior.h"
 RenderGroup sampleScene;
 Transform transforms[10];
@@ -70,6 +71,10 @@ void Game::Update(float deltaTime) {
 	}
 	else if(app->input->IsPressed(InputAction::Down)) {
 		//ppTest.bloomData.brightnessThreshold -= deltaTime;
+	}
+
+	if(app->input->JustPressed(InputAction::LeftCLick)) {
+		//app->audio->PlayEffect(&app->assets.testSound);
 	}
 }
 

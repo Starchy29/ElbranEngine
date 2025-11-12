@@ -40,13 +40,13 @@ public:
 	Texture2D testBMP;
 	Font arial;
 	SpriteSheet testSheet;
+	SoundEffect testSound;
 
 	AssetContainer() = default;
 	void Initialize(GraphicsAPI* graphics, SoundMixer* audio);
 	void Release();
 
-	Texture2D LoadBMP(std::wstring fileName);
-	Texture2D LoadPNG(std::wstring fileName);
-	void LoadWAV(std::wstring fileName);
+	static Texture2D LoadBMP(std::wstring fileName);
+	static Texture2D LoadPNG(std::wstring fileName);
+	static AudioSample LoadWAV(std::wstring fileName);
 };
-

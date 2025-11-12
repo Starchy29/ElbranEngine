@@ -10,6 +10,8 @@ class WindowsAudio :
 public:
     WindowsAudio();
 
+    AudioSample InitializeAudio(uint8_t* audioBuffer, uint32_t bufferLength, WaveFormat format) const override;
+
     virtual void SetMasterVolume(float volume) override;
     virtual void SetMusicVolume(float volume) override;
     virtual void SetEffectsVolume(float volume) override;

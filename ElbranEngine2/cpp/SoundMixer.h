@@ -21,6 +21,8 @@ public:
 	virtual void SetMusicVolume(float volume) = 0;
 	virtual void SetEffectsVolume(float volume) = 0;
 
+	virtual AudioSample InitializeAudio(uint8_t* audioBuffer, uint32_t bufferLength, WaveFormat format) const = 0;
+
 	virtual AudioTrack LoadTrack(std::wstring directory, std::wstring fileName, bool looped) = 0;
 	void PlayTrack(AudioTrack* track, bool restart, float fadeInTime = 0.f);
 	void PauseTrack(AudioTrack* track, float fadeOutTime = 0.f);
