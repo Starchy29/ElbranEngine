@@ -72,7 +72,7 @@ void AssetContainer::Initialize(GraphicsAPI* graphics, SoundMixer* audio) {
 	arial = Font::Load(L"arial.ttf");
 
 	testSheet = SpriteSheet(testSprite);
-	testSound = audio->LoadEffect(L"", L"water plunk.wav");
+	testSound = audio->CreateEffect(LoadWAV(L"water plunk.wav"));
 }
 
 void AssetContainer::Release() {
@@ -395,9 +395,7 @@ AudioSample AssetContainer::LoadWAV(std::wstring fileName) {
 	chunkName = file.ReadUInt32();
 	ASSERT(chunkName == 'EVAW');
 
-	uint32_t bufferLength;
-	uint8_t* audioBuffer;
-	WaveFormat format;
+	AudioSample loadedSound = {};
 
 	while(file.readLocation < file.fileSize) {
 		chunkName = file.ReadUInt32();
@@ -408,13 +406,13 @@ AudioSample AssetContainer::LoadWAV(std::wstring fileName) {
 			break;
 
 		case ' tmf':
-			file.ReadBytes(chunkSize, (uint8_t*)&format); // WaveFormat struct matches layout from the .wav file
+			file.ReadBytes(chunkSize, (uint8_t*)&loadedSound.format); // WaveFormat struct matches layout from the .wav file
 			break;
 
 		case 'atad':
-			audioBuffer = new uint8_t[chunkSize];
-			bufferLength = chunkSize;
-			file.ReadBytes(chunkSize, audioBuffer);
+			loadedSound.audioBuffer = new uint8_t[chunkSize];
+			loadedSound.bufferLength = chunkSize;
+			file.ReadBytes(chunkSize, loadedSound.audioBuffer);
 			break;
 		}
 
@@ -422,5 +420,5 @@ AudioSample AssetContainer::LoadWAV(std::wstring fileName) {
 	}
 
 	file.Release();
-	return app->audio->InitializeAudio(audioBuffer, bufferLength, format);
+	return loadedSound;
 }

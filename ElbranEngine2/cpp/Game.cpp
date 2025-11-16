@@ -73,8 +73,8 @@ void Game::Update(float deltaTime) {
 		//ppTest.bloomData.brightnessThreshold -= deltaTime;
 	}
 
-	if(app->input->JustPressed(InputAction::LeftCLick)) {
-		//app->audio->PlayEffect(&app->assets.testSound);
+	if(app->input->JustPressed(InputAction::Up)) {
+		app->audio->PlayEffect(&app->assets.testSound);
 	}
 }
 

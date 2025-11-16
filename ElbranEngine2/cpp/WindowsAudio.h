@@ -10,16 +10,14 @@ class WindowsAudio :
 public:
     WindowsAudio();
 
-    AudioSample InitializeAudio(uint8_t* audioBuffer, uint32_t bufferLength, WaveFormat format) const override;
-
     virtual void SetMasterVolume(float volume) override;
     virtual void SetMusicVolume(float volume) override;
     virtual void SetEffectsVolume(float volume) override;
 
-    AudioTrack LoadTrack(std::wstring directory, std::wstring fileName, bool looped) override;
+    AudioTrack CreateTrack(AudioSample audio, bool looped) override;
     void ReleaseAudioTrack(AudioTrack* track) override;
 
-    SoundEffect LoadEffect(std::wstring directory, std::wstring fileName) override;
+    SoundEffect CreateEffect(AudioSample audio) override;
     void PlayEffect(SoundEffect* sfx, float volume = 1.f, float pitchShift = 0.f) override;
     void ReleaseSoundEffect(SoundEffect* effect) override;
 
@@ -35,8 +33,6 @@ private:
     IXAudio2SubmixVoice* musicChannel;
     IXAudio2SubmixVoice* sfxChannel;
 
-    static void LoadAudio(XAUDIO2_BUFFER* destination, WAVEFORMATEXTENSIBLE* outFormat, std::wstring fullFilePath);
-    static HRESULT FindChunk(HANDLE file, DWORD fourcc, DWORD& chunkSize, DWORD& chunkDataPosition);
-    static HRESULT ReadChunkData(HANDLE file, void* buffer, DWORD buffersize, DWORD bufferoffset);
+    XAUDIO2_BUFFER ConvertBuffer(AudioSample audio);
 };
 #endif

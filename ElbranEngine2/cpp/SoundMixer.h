@@ -21,15 +21,13 @@ public:
 	virtual void SetMusicVolume(float volume) = 0;
 	virtual void SetEffectsVolume(float volume) = 0;
 
-	virtual AudioSample InitializeAudio(uint8_t* audioBuffer, uint32_t bufferLength, WaveFormat format) const = 0;
-
-	virtual AudioTrack LoadTrack(std::wstring directory, std::wstring fileName, bool looped) = 0;
+	virtual AudioTrack CreateTrack(AudioSample audio, bool looped) = 0;
 	void PlayTrack(AudioTrack* track, bool restart, float fadeInTime = 0.f);
 	void PauseTrack(AudioTrack* track, float fadeOutTime = 0.f);
 	void SetTrackVolume(AudioTrack* track, float volume, float fadeDuration = 0.f);
 	virtual void ReleaseAudioTrack(AudioTrack* track) = 0;
 
-	virtual SoundEffect LoadEffect(std::wstring directory, std::wstring fileName) = 0;
+	virtual SoundEffect CreateEffect(AudioSample audio) = 0;
 	virtual void PlayEffect(SoundEffect* sfx, float volume = 1.f, float pitchShift = 0.f) = 0;
 	virtual void ReleaseSoundEffect(SoundEffect* effect) = 0;
 

@@ -3,6 +3,7 @@
 #include "GraphicsAPI.h"
 #include "AssetContainer.h"
 #include "ShaderConstants.h"
+#include "Math.h"
 
 void Renderer::Draw(GraphicsAPI* graphics, const AssetContainer* assets) {
 	switch(type) {
@@ -282,7 +283,7 @@ void Renderer::UpdateTextMesh() {
 
 	float maxWidth = rowWidths[0];
 	for(uint16_t i = 1; i < rows; i++) {
-		maxWidth = max(maxWidth, rowWidths[i]);
+		maxWidth = Math::Max(maxWidth, rowWidths[i]);
 	}
 	float totalHeight = rows + (rows - 1) * textData.lineSpacing;
 

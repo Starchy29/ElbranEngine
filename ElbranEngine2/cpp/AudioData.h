@@ -1,5 +1,12 @@
 #pragma once
-struct AudioSample;
+#include <stdint.h>
+
+#ifdef WINDOWS
+class IXAudio2SourceVoice;
+typedef IXAudio2SourceVoice AudioVoice;
+#endif
+
+#define MAX_SFX_VOICES 3
 
 // matches the structure of the fmt chunk in .wav files
 struct WaveFormat {
@@ -20,25 +27,23 @@ struct WaveFormat {
 	uint8_t guid[16];
 };
 
-#ifdef WINDOWS
-#include <xaudio2.h>
-#include <vector>
-
 struct AudioSample {
-	XAUDIO2_BUFFER soundBuffer;
+	uint8_t* audioBuffer;
+	uint32_t bufferLength;
 	WaveFormat format;
+
+	inline void Release() { delete[] audioBuffer; }
 };
 
 struct AudioTrack {
 	float baseVolume;
 	float mixVolume;
 	AudioSample audio;
-	IXAudio2SourceVoice* voice;
+	AudioVoice* voice;
 };
 
 struct SoundEffect {
 	float baseVolume;
 	AudioSample audio;
-	//std::vector<IXAudio2SourceVoice*> voices;
+	AudioVoice* voices[MAX_SFX_VOICES];
 };
-#endif
