@@ -4,7 +4,7 @@
 #include "AudioData.h"
 
 #define MAX_MUSIC_CHANNELS 3
-#define MAX_SFX 10
+#define MAX_SFX 20
 
 class SoundMixer {
 public:

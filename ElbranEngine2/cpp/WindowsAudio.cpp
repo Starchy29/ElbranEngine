@@ -54,8 +54,10 @@ void WindowsAudio::PlayEffect(AudioSample* sfx, float volume, float pitchShift) 
     } else {
         XAUDIO2_VOICE_STATE state;
         sfxVoices[nextSFX]->GetState(&state);
-        if(state.BuffersQueued <= 0) {
+        if(state.BuffersQueued > 0) {
+            sfxVoices[nextSFX]->Stop();
             sfxVoices[nextSFX]->FlushSourceBuffers();
+            sfxVoices[nextSFX]->Start();
         }
 
         sfxVoices[nextSFX]->SetSourceSampleRate(sfx->format.samplesPerSec);
@@ -65,6 +67,7 @@ void WindowsAudio::PlayEffect(AudioSample* sfx, float volume, float pitchShift) 
 	sfxVoices[nextSFX]->SetVolume(volume * sfx->baseVolume);
     sfxVoices[nextSFX]->SetFrequencyRatio(pitchShift >= 0 ? 1.0f + pitchShift : 1.0f / (1.0f - pitchShift));
     XAUDIO2_BUFFER soundBuffer = ConvertBuffer(sfx);
+    soundBuffer.Flags = XAUDIO2_END_OF_STREAM;
     sfxVoices[nextSFX]->SubmitSourceBuffer(&soundBuffer);
 
     nextSFX = (nextSFX + 1) % MAX_SFX;
