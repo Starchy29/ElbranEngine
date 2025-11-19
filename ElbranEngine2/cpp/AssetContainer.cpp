@@ -72,7 +72,7 @@ void AssetContainer::Initialize(GraphicsAPI* graphics, SoundMixer* audio) {
 	arial = Font::Load(L"arial.ttf");
 
 	testSheet = SpriteSheet(testSprite);
-	testSound = audio->CreateEffect(LoadWAV(L"water plunk.wav"));
+	testSound = LoadWAV(L"water plunk.wav");
 }
 
 void AssetContainer::Release() {
@@ -108,7 +108,7 @@ void AssetContainer::Release() {
 
 	arial.Release();
 
-	audio->ReleaseSoundEffect(&testSound);
+	testSound.Release();
 }
 
 Texture2D AssetContainer::LoadBMP(std::wstring fileName) {
@@ -396,6 +396,7 @@ AudioSample AssetContainer::LoadWAV(std::wstring fileName) {
 	ASSERT(chunkName == 'EVAW');
 
 	AudioSample loadedSound = {};
+	loadedSound.baseVolume = 1.0f;
 
 	while(file.readLocation < file.fileSize) {
 		chunkName = file.ReadUInt32();

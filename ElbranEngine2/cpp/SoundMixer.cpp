@@ -1,80 +1,127 @@
 #include "SoundMixer.h"
+#include "Math.h"
+
+SoundMixer::SoundMixer() {
+	for(uint8_t i = 0; i < MAX_MUSIC_CHANNELS; i++) {
+		trackChannels[i] = {};
+	}
+}
 
 void SoundMixer::Update(float deltaTime) {
-	for(uint16_t i = 0; i < faders.Size(); i++) {
-		faders[i]->mixVolume += fadeData[i].fadeRate * deltaTime;
-		if(fadeData[i].fadeRate > 0.f && faders[i]->mixVolume > fadeData[i].targetVolume ||
-			fadeData[i].fadeRate < 0.f && faders[i]->mixVolume < fadeData[i].targetVolume
-		) {
-			SetTotalVolume(faders[i], faders[i]->baseVolume * fadeData[i].targetVolume);
-			if(fadeData[i].pauseAtEnd) {
-				StopTrack(faders[i]);
+	for(uint8_t i = 0; i < MAX_MUSIC_CHANNELS; i++) {
+		if(trackChannels[i].track && trackChannels[i].fade.t < 1.0f) {
+			trackChannels[i].fade.t += deltaTime / trackChannels[i].fade.duration;
+			if(trackChannels[i].fade.t > 1.0f) {
+				trackChannels[i].fade.t = 1.0f;
+				if(trackChannels[i].pauseAtEnd) { 
+					PauseTrack(i);
+					trackChannels[i].nowPaused = true;
+				}
 			}
-			faders.RemoveAt(i);
-			fadeData.RemoveAt(i);
-			i--;
-		} else {
-			SetTotalVolume(faders[i], faders[i]->baseVolume * faders[i]->mixVolume);
+			SetTotalVolume(i, trackChannels[i].track->baseVolume * Tween::Lerp(trackChannels[i].fade.start, trackChannels[i].fade.end, trackChannels[i].fade.t));
 		}
 	}
 }
 
-void SoundMixer::PlayTrack(AudioTrack* track, bool restart, float fadeInTime) {
-	CancelFader(track);
-
-	if(restart) {
-		RestartTrack(track);
-	} else {
-		ResumeTrack(track);
+void SoundMixer::StartTrack(AudioSample* track, bool looped, float volume, float fadeInTime) {
+	// find the correct slot for this track
+	int8_t trackIndex = -1;
+	for(int8_t i = 0; i < MAX_MUSIC_CHANNELS; i++) {
+		if(trackChannels[i].track == track) {
+			// restart the track if it is currently playing
+			trackIndex = i;
+			break;
+		}
+		else if(trackChannels[i].track == nullptr || IsDonePlaying(i)) {
+			// prefer an empty slot over a paused slot
+			trackIndex = i;
+		}
+		else if(trackChannels[i].nowPaused && trackIndex < 0) {
+			// overwrite a paused track if all are reserved
+			trackIndex = i;
+		}
 	}
 
+	if(trackIndex < 0) return; // fails when adding a track and all available slots are playing
+
+	if(trackChannels[trackIndex].track != nullptr) {
+		EndTrack(trackIndex);
+	}
+
+	BeginTrack(track, trackIndex, looped);
+	trackChannels[trackIndex].track = track;
+	trackChannels[trackIndex].pauseAtEnd = false;
+	trackChannels[trackIndex].nowPaused = false;
+	trackChannels[trackIndex].mixVolume = volume;
 	if(fadeInTime > 0.f) {
-		AddFader(track, 1.0f, fadeInTime, false);
+		trackChannels[trackIndex].fade.t = 0.f;
+		trackChannels[trackIndex].fade.duration = fadeInTime;
+		trackChannels[trackIndex].fade.start = 0.f;
+		trackChannels[trackIndex].fade.end = volume;
+		SetTotalVolume(trackIndex, 0.f);
 	} else {
-		track->mixVolume = 1.0f;
-		SetTotalVolume(track, track->baseVolume);
+		trackChannels[trackIndex].fade.t = 1.f;
+		SetTotalVolume(trackIndex, trackChannels[trackIndex].track->baseVolume * volume);
 	}
 }
 
-void SoundMixer::PauseTrack(AudioTrack* track, float fadeOutTime) {
-	CancelFader(track);
-
-	if(fadeOutTime > 0.f) {
-		AddFader(track, 0.f, fadeOutTime, true);
-	} else {
-		track->mixVolume = 0.f;
-		StopTrack(track);
-	}
-}
-
-void SoundMixer::SetTrackVolume(AudioTrack* track, float volume, float fadeDuration) {
-	CancelFader(track);
-	if(volume == track->mixVolume) return;
-
-	if(fadeDuration > 0.f) {
-		AddFader(track, volume, fadeDuration, false);
-	} else {
-		track->mixVolume = volume;
-		SetTotalVolume(track, track->baseVolume * track->mixVolume);
-	}
-}
-
-void SoundMixer::CancelFader(AudioTrack* track) {
-	uint16_t numFaders = faders.Size();
-	for(uint16_t i = 0; i < numFaders; i++) {
-		if(faders[i] == track) {
-			faders.RemoveAt(i);
-			fadeData.RemoveAt(i);
+void SoundMixer::SetPaused(AudioSample* track, bool paused, float fadeDuration) {
+	int8_t trackIndex = -1;
+	for(int8_t i = 0; i < MAX_MUSIC_CHANNELS; i++) {
+		if(trackChannels[i].track == track) {
+			trackIndex = i;
 			break;
 		}
 	}
+	if(trackIndex < 0 || trackChannels[trackIndex].nowPaused == paused) return;
+
+	if(paused) {
+		if(fadeDuration > 0.f) {
+			trackChannels[trackIndex].fade.t = 0.0f;
+			trackChannels[trackIndex].fade.start = trackChannels[trackIndex].mixVolume;
+			trackChannels[trackIndex].fade.end = 0.f;
+			trackChannels[trackIndex].fade.pauseAtEnd = true;
+		} else {
+			trackChannels[trackIndex].fade.t = 1.0f;
+			trackChannels[trackIndex].nowPaused = true;
+			PauseTrack(trackIndex);
+		}
+	} else {
+		ResumeTrack(trackIndex);
+		trackChannels[trackIndex].nowPaused = false;
+		if(fadeDuration > 0.f) {
+			trackChannels[trackIndex].fade.t = 0.0f;
+			trackChannels[trackIndex].fade.start = 0.f;
+			trackChannels[trackIndex].fade.end = trackChannels[trackIndex].mixVolume;
+			trackChannels[trackIndex].fade.pauseAtEnd = false;
+			SetTotalVolume(trackIndex, 0.f);
+		} else {
+			trackChannels[trackIndex].fade.t = 1.0f;
+			SetTotalVolume(trackIndex, track->baseVolume * trackChannels[trackIndex].mixVolume);
+		}
+	}
 }
 
-void SoundMixer::AddFader(AudioTrack* track, float targetVolume, float duration, bool pauseAtEnd) {
-	faders.Add(track);
-	FadeData parameters;
-	parameters.targetVolume = targetVolume;
-	parameters.fadeRate = (targetVolume - track->mixVolume) / duration;
-	parameters.pauseAtEnd = pauseAtEnd;
-	fadeData.Add(parameters);
+void SoundMixer::ChangeTrackVolume(AudioSample* track, float volume, float fadeDuration) {
+	int8_t trackIndex = -1;
+	for(int8_t i = 0; i < MAX_MUSIC_CHANNELS; i++) {
+		if(trackChannels[i].track == track) {
+			trackIndex = i;
+			break;
+		}
+	}
+	if(trackIndex < 0) return;
+
+	if(fadeDuration > 0.f) {
+		trackChannels[trackIndex].fade.t = 0.f;
+		trackChannels[trackIndex].fade.duration = fadeDuration;
+		trackChannels[trackIndex].fade.start = trackChannels[trackIndex].mixVolume;
+		trackChannels[trackIndex].fade.end = volume;
+	} else {
+		trackChannels[trackIndex].fade.t = 1.f;
+		SetTotalVolume(trackIndex, track->baseVolume * trackChannels[trackIndex].mixVolume);
+	}
+
+	trackChannels[trackIndex].pauseAtEnd = false;
+	trackChannels[trackIndex].mixVolume = volume;
 }

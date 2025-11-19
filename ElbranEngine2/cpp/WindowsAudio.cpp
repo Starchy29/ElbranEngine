@@ -1,8 +1,7 @@
 #ifdef WINDOWS
 #include "WindowsAudio.h"
 #include "Common.h"
-
-#include "AssetContainer.h"
+#include <xaudio2.h>
 
 #define DEFAULT_SAMPLE_RATE 44100
 
@@ -11,8 +10,25 @@ WindowsAudio::WindowsAudio() {
     engine->CreateMasteringVoice(&masterChannel);
     engine->CreateSubmixVoice(&musicChannel, 1, DEFAULT_SAMPLE_RATE);
     engine->CreateSubmixVoice(&sfxChannel, 1, DEFAULT_SAMPLE_RATE);
+    nextSFX = 0;
 
-    WAVEFORMATEX tester;
+    for(uint8_t i = 0; i < MAX_MUSIC_CHANNELS; i++) {
+        musicVoices[i] = 0; // this language is dumb
+    }
+    for(uint8_t i = 0; i < MAX_SFX; i++) {
+        sfxVoices[i] = 0;
+    }
+}
+
+WindowsAudio::~WindowsAudio() {
+    for(uint8_t i = 0; i < MAX_MUSIC_CHANNELS; i++) {
+        if(!musicVoices[i]) break;
+        musicVoices[i]->Stop();
+    }
+    for(uint8_t i = 0; i < MAX_SFX; i++) {
+        if(!sfxVoices[i]) break;
+        sfxVoices[i]->Stop();
+    }
 }
 
 void WindowsAudio::SetMasterVolume(float volume) {
@@ -27,102 +43,74 @@ void WindowsAudio::SetEffectsVolume(float volume) {
     sfxChannel->SetVolume(volume);
 }
 
-AudioTrack WindowsAudio::CreateTrack(AudioSample audio, bool looped) {
-    AudioTrack track = {};
-    track.audio = audio;
-    track.baseVolume = 1.0f;
-    track.mixVolume = 0.0f;
+void WindowsAudio::PlayEffect(AudioSample* sfx, float volume, float pitchShift) {
+    if(!sfxVoices[nextSFX]) {
+        XAUDIO2_VOICE_SENDS outputData = {};
+        outputData.SendCount = 1;
+        XAUDIO2_SEND_DESCRIPTOR descriptor = { 0, sfxChannel };
+        outputData.pSends = &descriptor;
+        engine->CreateSourceVoice(&sfxVoices[nextSFX], (WAVEFORMATEX*)&sfx->format, 0, 2.0f, nullptr, &outputData);
+        sfxVoices[nextSFX]->Start();
+    } else {
+        XAUDIO2_VOICE_STATE state;
+        sfxVoices[nextSFX]->GetState(&state);
+        if(state.BuffersQueued <= 0) {
+            sfxVoices[nextSFX]->FlushSourceBuffers();
+        }
 
-    XAUDIO2_BUFFER soundBuffer = ConvertBuffer(audio);
-    soundBuffer.LoopCount = looped ? XAUDIO2_LOOP_INFINITE : XAUDIO2_NO_LOOP_REGION;
-
-    XAUDIO2_VOICE_SENDS outputData = {};
-    outputData.SendCount = 1;
-    XAUDIO2_SEND_DESCRIPTOR descriptor = { 0, musicChannel };
-    outputData.pSends = &descriptor;
-    engine->CreateSourceVoice(&track.voice, (WAVEFORMATEX*)&track.audio.format, 0, 2.0f, nullptr, &outputData);
-
-    track.voice->SubmitSourceBuffer(&soundBuffer);
-    track.voice->SetVolume(track.baseVolume);
-    return track;
-}
-
-void WindowsAudio::ReleaseAudioTrack(AudioTrack* track) {
-    track->voice->Stop();
-    track->audio.Release();
-}
-
-SoundEffect WindowsAudio::CreateEffect(AudioSample audio) {
-    SoundEffect effect = {};
-    effect.audio = audio;
-    effect.baseVolume = 1.0f;
-
-    XAUDIO2_VOICE_SENDS outputData = {};
-    outputData.SendCount = 1;
-    XAUDIO2_SEND_DESCRIPTOR descriptor = { 0, sfxChannel };
-    outputData.pSends = &descriptor;
-    for(uint8_t i = 0; i < MAX_SFX_VOICES; i++) {
-        engine->CreateSourceVoice(&effect.voices[i], (WAVEFORMATEX*)&audio.format, 0, 2.0f, nullptr, &outputData);
-        effect.voices[i]->Start();
-    }
-	return effect;
-}
-
-void WindowsAudio::PlayEffect(SoundEffect* sfx, float volume, float pitchShift) {
-    // find a voice that isn't playing
-    int8_t unusedIndex = -1;
-	for(uint8_t i = 0; i < MAX_SFX_VOICES; i++) {
-		XAUDIO2_VOICE_STATE state;
-        sfx->voices[i]->GetState(&state);
-		if(state.BuffersQueued <= 0) {
-            unusedIndex = i;
-			break;
-		}
-	}
-
-    if(unusedIndex < 0) {
-        sfx->voices[0]->FlushSourceBuffers();
-        unusedIndex = 0;
+        sfxVoices[nextSFX]->SetSourceSampleRate(sfx->format.samplesPerSec);
     }
 	
 	// start the sound
-	sfx->voices[unusedIndex]->SetVolume(volume * sfx->baseVolume);
-    sfx->voices[unusedIndex]->SetFrequencyRatio(pitchShift >= 0 ? 1.0f + pitchShift : 1.0f / (1.0f - pitchShift));
-    XAUDIO2_BUFFER soundBuffer = ConvertBuffer(sfx->audio);
-    sfx->voices[unusedIndex]->SubmitSourceBuffer(&soundBuffer);
+	sfxVoices[nextSFX]->SetVolume(volume * sfx->baseVolume);
+    sfxVoices[nextSFX]->SetFrequencyRatio(pitchShift >= 0 ? 1.0f + pitchShift : 1.0f / (1.0f - pitchShift));
+    XAUDIO2_BUFFER soundBuffer = ConvertBuffer(sfx);
+    sfxVoices[nextSFX]->SubmitSourceBuffer(&soundBuffer);
+
+    nextSFX = (nextSFX + 1) % MAX_SFX;
 }
 
-void WindowsAudio::ReleaseSoundEffect(SoundEffect* effect) {
-    for(uint8_t i = 0; i < MAX_SFX_VOICES; i++) {
-        effect->voices[i]->Stop();
+void WindowsAudio::BeginTrack(AudioSample* track, int8_t trackIndex, bool looped) {
+    if(musicVoices[trackIndex] == nullptr) {
+        XAUDIO2_VOICE_SENDS outputData = {};
+        outputData.SendCount = 1;
+        XAUDIO2_SEND_DESCRIPTOR descriptor = { 0, musicChannel };
+        outputData.pSends = &descriptor;
+        engine->CreateSourceVoice(&musicVoices[trackIndex], (WAVEFORMATEX*)&track->format, 0, 2.0f, nullptr, &outputData);
     }
-    effect->audio.Release();
+
+    XAUDIO2_BUFFER soundBuffer = ConvertBuffer(track);
+    musicVoices[trackIndex]->SubmitSourceBuffer(&soundBuffer);
+    musicVoices[trackIndex]->Start();
 }
 
-void WindowsAudio::RestartTrack(AudioTrack* track) {
-    track->voice->Stop();
-    track->voice->FlushSourceBuffers();
-    XAUDIO2_BUFFER soundBuffer = ConvertBuffer(track->audio);
-    track->voice->SubmitSourceBuffer(&soundBuffer);
-    track->voice->Start();
+void WindowsAudio::PauseTrack(int8_t trackIndex) {
+    musicVoices[trackIndex]->Stop();
 }
 
-void WindowsAudio::ResumeTrack(AudioTrack* track) {
-    track->voice->Start();
+void WindowsAudio::ResumeTrack(int8_t trackIndex) {
+    musicVoices[trackIndex]->Start();
 }
 
-void WindowsAudio::StopTrack(AudioTrack* track) {
-    track->voice->Stop();
+void WindowsAudio::EndTrack(int8_t trackIndex) {
+    musicVoices[trackIndex]->Stop();
+    musicVoices[trackIndex]->FlushSourceBuffers();
 }
 
-void WindowsAudio::SetTotalVolume(AudioTrack* track, float volume) {
-    track->voice->SetVolume(volume);
+void WindowsAudio::SetTotalVolume(int8_t trackIndex, float volume) {
+    musicVoices[trackIndex]->SetVolume(volume);
 }
 
-XAUDIO2_BUFFER WindowsAudio::ConvertBuffer(AudioSample audio) {
+bool WindowsAudio::IsDonePlaying(int8_t trackIndex) {
+    XAUDIO2_VOICE_STATE state;
+    musicVoices[trackIndex]->GetState(&state);
+    return state.BuffersQueued == 0;
+}
+
+XAUDIO2_BUFFER WindowsAudio::ConvertBuffer(const AudioSample* audio) {
     XAUDIO2_BUFFER result = {};
-    result.AudioBytes = audio.bufferLength;
-    result.pAudioData = audio.audioBuffer;
+    result.AudioBytes = audio->bufferLength;
+    result.pAudioData = audio->audioBuffer;
     result.Flags = XAUDIO2_END_OF_STREAM;
     return result;
 }

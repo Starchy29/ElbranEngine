@@ -193,9 +193,6 @@ LoadedFile LoadWindowsFile(std::wstring fileName) {
 		delete[] file.bytes;
 		return {};
 	}
-	
-	bool platformLittleEndian = std::endian::native == std::endian::little;
-	bool platformBigEndian = std::endian::native == std::endian::big;
 	return file;
 }
 
@@ -228,6 +225,8 @@ int WINAPI WinMain(
 	}
 	filePath = directory;
 
+	LoadedFile::platformLittleEndian = std::endian::native == std::endian::little;
+
 	InitWindow(hInstance);
 	RECT windowRect;
 	GetClientRect(windowHandle, &windowRect);
@@ -237,7 +236,6 @@ int WINAPI WinMain(
 	sampleShader.Release();
 	input = new WindowsInput(windowHandle);
 	app = (Application*)calloc(1, sizeof(Application));
-	LoadedFile::platformLittleEndian = std::endian::native == std::endian::little;
 	app->Initialize(LoadWindowsFile, directX, new WindowsAudio(), input);
 	app->quitFunction = QuitApp;
 	RunApp();
