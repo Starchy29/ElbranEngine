@@ -43,7 +43,7 @@ public:
 	AudioSample testSound;
 
 	AssetContainer() = default;
-	void Initialize(GraphicsAPI* graphics, SoundMixer* audio);
+	void Initialize(GraphicsAPI* graphics);
 	void Release();
 
 	static Texture2D LoadBMP(std::wstring fileName);

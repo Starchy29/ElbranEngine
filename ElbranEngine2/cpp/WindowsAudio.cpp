@@ -1,12 +1,11 @@
 #ifdef WINDOWS
 #include "WindowsAudio.h"
-#include "Common.h"
 #include <xaudio2.h>
 
 #define DEFAULT_SAMPLE_RATE 44100
 
 WindowsAudio::WindowsAudio() {
-    XAudio2Create(engine.GetAddressOf(), 0, XAUDIO2_DEFAULT_PROCESSOR);
+    XAudio2Create(&engine, 0, XAUDIO2_DEFAULT_PROCESSOR);
     engine->CreateMasteringVoice(&masterChannel);
     engine->CreateSubmixVoice(&musicChannel, 1, DEFAULT_SAMPLE_RATE);
     engine->CreateSubmixVoice(&sfxChannel, 1, DEFAULT_SAMPLE_RATE);
@@ -29,6 +28,7 @@ WindowsAudio::~WindowsAudio() {
         if(!sfxVoices[i]) break;
         sfxVoices[i]->Stop();
     }
+    engine->Release();
 }
 
 void WindowsAudio::SetMasterVolume(float volume) {
@@ -43,7 +43,7 @@ void WindowsAudio::SetEffectsVolume(float volume) {
     sfxChannel->SetVolume(volume);
 }
 
-void WindowsAudio::PlayEffect(AudioSample* sfx, float volume, float pitchShift) {
+void WindowsAudio::PlayEffect(const AudioSample* sfx, float volume, float pitchShift) {
     if(!sfxVoices[nextSFX]) {
         XAUDIO2_VOICE_SENDS outputData = {};
         outputData.SendCount = 1;
@@ -73,7 +73,7 @@ void WindowsAudio::PlayEffect(AudioSample* sfx, float volume, float pitchShift) 
     nextSFX = (nextSFX + 1) % MAX_SFX;
 }
 
-void WindowsAudio::BeginTrack(AudioSample* track, int8_t trackIndex, bool looped) {
+void WindowsAudio::BeginTrack(const AudioSample* track, int8_t trackIndex, bool looped) {
     if(musicVoices[trackIndex] == nullptr) {
         XAUDIO2_VOICE_SENDS outputData = {};
         outputData.SendCount = 1;

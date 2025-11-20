@@ -4,9 +4,9 @@
 #include "Random.h"
 #include "MemoryArena.h"
 #include "LoadedFile.h"
+#include "SoundMixer.h"
 
 class GraphicsAPI;
-class SoundMixer;
 class InputManager;
 #if defined(DEBUG) | defined(_DEBUG)
 #include "DebugHelper.h"
@@ -16,7 +16,7 @@ class Application
 {
 public:
 	GraphicsAPI* graphics;
-	SoundMixer* audio;
+	SoundMixer audio;
 	InputManager* input;
 
 	AssetContainer assets;
@@ -31,7 +31,7 @@ public:
 	void (*quitFunction)();
 
 	Application() = default;
-	void Initialize(LoadedFile (*fileLoadFunction)(std::wstring fileName), GraphicsAPI* graphics, SoundMixer* audio, InputManager* input);
+	void Initialize(LoadedFile (*fileLoadFunction)(std::wstring fileName), GraphicsAPI* graphics, PlatformAudio* platformAudio, InputManager* input);
 	void Release();
 
 	void StepFrame(float deltaTime);

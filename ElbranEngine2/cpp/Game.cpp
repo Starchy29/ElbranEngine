@@ -74,7 +74,7 @@ void Game::Update(float deltaTime) {
 	}
 
 	if(app->input->JustPressed(InputAction::Up) || app->input->JustPressed(InputAction::Down)) {
-		app->audio->PlayEffect(&app->assets.testSound);
+		app->audio.PlayEffect(&app->assets.testSound);
 	}
 }
 

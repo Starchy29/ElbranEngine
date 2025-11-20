@@ -5,17 +5,17 @@
 
 Application* app;
 
-void Application::Initialize(LoadedFile (*fileLoadFunction)(std::wstring fileName), GraphicsAPI* graphics, SoundMixer* audio, InputManager* input) {
+void Application::Initialize(LoadedFile (*fileLoadFunction)(std::wstring fileName), GraphicsAPI* graphics, PlatformAudio* platformAudio, InputManager* input) {
 	frameBuffer.Allocate(8192);
 	quitFunction = nullptr;
 
 	this->LoadFile = fileLoadFunction;
 	this->graphics = graphics;
-	this->audio = audio;
+	audio.Initialize(platformAudio);
 	this->input = input;
 
 	rng.Initialize();
-	assets.Initialize(graphics, audio);
+	assets.Initialize(graphics);
 	game.Initialize();
 }
 
@@ -24,7 +24,7 @@ void Application::Release() {
 	game.Release();
 	assets.Release();
 	delete input;
-	delete audio;
+	audio.Release();
 	graphics->Release();
 	delete graphics;
 	frameBuffer.Release();
@@ -32,7 +32,7 @@ void Application::Release() {
 
 void Application::StepFrame(float deltaTime) {
 	input->Update(deltaTime);
-	audio->Update(deltaTime);
+	audio.Update(deltaTime);
 	game.Update(deltaTime);
 
 	graphics->ResetRenderTargets();

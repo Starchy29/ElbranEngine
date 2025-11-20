@@ -1,10 +1,16 @@
 #include "SoundMixer.h"
 #include "Math.h"
 
-SoundMixer::SoundMixer() {
-	for(uint8_t i = 0; i < MAX_MUSIC_CHANNELS; i++) {
-		trackChannels[i] = {};
-	}
+#ifdef WINDOWS
+#include "WindowsAudio.h"
+#endif
+
+void SoundMixer::Initialize(PlatformAudio* platformAudio) {
+	this->platformAudio = platformAudio;
+}
+
+void SoundMixer::Release() {
+	delete platformAudio;
 }
 
 void SoundMixer::Update(float deltaTime) {
@@ -14,16 +20,32 @@ void SoundMixer::Update(float deltaTime) {
 			if(trackChannels[i].fade.t > 1.0f) {
 				trackChannels[i].fade.t = 1.0f;
 				if(trackChannels[i].pauseAtEnd) { 
-					PauseTrack(i);
+					platformAudio->PauseTrack(i);
 					trackChannels[i].nowPaused = true;
 				}
 			}
-			SetTotalVolume(i, trackChannels[i].track->baseVolume * Tween::Lerp(trackChannels[i].fade.start, trackChannels[i].fade.end, trackChannels[i].fade.t));
+			platformAudio->SetTotalVolume(i, trackChannels[i].track->baseVolume * Tween::Lerp(trackChannels[i].fade.start, trackChannels[i].fade.end, trackChannels[i].fade.t));
 		}
 	}
 }
 
-void SoundMixer::StartTrack(AudioSample* track, bool looped, float volume, float fadeInTime) {
+void SoundMixer::SetMasterVolume(float volume) {
+	platformAudio->SetMasterVolume(volume);
+}
+
+void SoundMixer::SetMusicVolume(float volume) {
+	platformAudio->SetMusicVolume(volume);
+}
+
+void SoundMixer::SetEffectsVolume(float volume) {
+	platformAudio->SetEffectsVolume(volume);
+}
+
+void SoundMixer::PlayEffect(const AudioSample* sfx, float volume, float pitchShift) {
+	platformAudio->PlayEffect(sfx, volume, pitchShift);
+}
+
+void SoundMixer::StartTrack(const AudioSample* track, bool looped, float volume, float fadeInTime) {
 	// find the correct slot for this track
 	int8_t trackIndex = -1;
 	for(int8_t i = 0; i < MAX_MUSIC_CHANNELS; i++) {
@@ -32,7 +54,7 @@ void SoundMixer::StartTrack(AudioSample* track, bool looped, float volume, float
 			trackIndex = i;
 			break;
 		}
-		else if(trackChannels[i].track == nullptr || IsDonePlaying(i)) {
+		else if(trackChannels[i].track == nullptr || platformAudio->IsDonePlaying(i)) {
 			// prefer an empty slot over a paused slot
 			trackIndex = i;
 		}
@@ -45,10 +67,10 @@ void SoundMixer::StartTrack(AudioSample* track, bool looped, float volume, float
 	if(trackIndex < 0) return; // fails when adding a track and all available slots are playing
 
 	if(trackChannels[trackIndex].track != nullptr) {
-		EndTrack(trackIndex);
+		platformAudio->EndTrack(trackIndex);
 	}
 
-	BeginTrack(track, trackIndex, looped);
+	platformAudio->BeginTrack(track, trackIndex, looped);
 	trackChannels[trackIndex].track = track;
 	trackChannels[trackIndex].pauseAtEnd = false;
 	trackChannels[trackIndex].nowPaused = false;
@@ -58,14 +80,14 @@ void SoundMixer::StartTrack(AudioSample* track, bool looped, float volume, float
 		trackChannels[trackIndex].fade.duration = fadeInTime;
 		trackChannels[trackIndex].fade.start = 0.f;
 		trackChannels[trackIndex].fade.end = volume;
-		SetTotalVolume(trackIndex, 0.f);
+		platformAudio->SetTotalVolume(trackIndex, 0.f);
 	} else {
 		trackChannels[trackIndex].fade.t = 1.f;
-		SetTotalVolume(trackIndex, trackChannels[trackIndex].track->baseVolume * volume);
+		platformAudio->SetTotalVolume(trackIndex, trackChannels[trackIndex].track->baseVolume * volume);
 	}
 }
 
-void SoundMixer::SetPaused(AudioSample* track, bool paused, float fadeDuration) {
+void SoundMixer::SetPaused(const AudioSample* track, bool paused, float fadeDuration) {
 	int8_t trackIndex = -1;
 	for(int8_t i = 0; i < MAX_MUSIC_CHANNELS; i++) {
 		if(trackChannels[i].track == track) {
@@ -84,25 +106,25 @@ void SoundMixer::SetPaused(AudioSample* track, bool paused, float fadeDuration) 
 		} else {
 			trackChannels[trackIndex].fade.t = 1.0f;
 			trackChannels[trackIndex].nowPaused = true;
-			PauseTrack(trackIndex);
+			platformAudio->PauseTrack(trackIndex);
 		}
 	} else {
-		ResumeTrack(trackIndex);
+		platformAudio->ResumeTrack(trackIndex);
 		trackChannels[trackIndex].nowPaused = false;
 		if(fadeDuration > 0.f) {
 			trackChannels[trackIndex].fade.t = 0.0f;
 			trackChannels[trackIndex].fade.start = 0.f;
 			trackChannels[trackIndex].fade.end = trackChannels[trackIndex].mixVolume;
 			trackChannels[trackIndex].fade.pauseAtEnd = false;
-			SetTotalVolume(trackIndex, 0.f);
+			platformAudio->SetTotalVolume(trackIndex, 0.f);
 		} else {
 			trackChannels[trackIndex].fade.t = 1.0f;
-			SetTotalVolume(trackIndex, track->baseVolume * trackChannels[trackIndex].mixVolume);
+			platformAudio->SetTotalVolume(trackIndex, track->baseVolume * trackChannels[trackIndex].mixVolume);
 		}
 	}
 }
 
-void SoundMixer::ChangeTrackVolume(AudioSample* track, float volume, float fadeDuration) {
+void SoundMixer::ChangeTrackVolume(const AudioSample* track, float volume, float fadeDuration) {
 	int8_t trackIndex = -1;
 	for(int8_t i = 0; i < MAX_MUSIC_CHANNELS; i++) {
 		if(trackChannels[i].track == track) {
@@ -119,7 +141,7 @@ void SoundMixer::ChangeTrackVolume(AudioSample* track, float volume, float fadeD
 		trackChannels[trackIndex].fade.end = volume;
 	} else {
 		trackChannels[trackIndex].fade.t = 1.f;
-		SetTotalVolume(trackIndex, track->baseVolume * trackChannels[trackIndex].mixVolume);
+		platformAudio->SetTotalVolume(trackIndex, track->baseVolume * trackChannels[trackIndex].mixVolume);
 	}
 
 	trackChannels[trackIndex].pauseAtEnd = false;

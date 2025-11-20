@@ -14,7 +14,7 @@ struct ByteColor {
 	uint8_t alpha;
 };
 
-void AssetContainer::Initialize(GraphicsAPI* graphics, SoundMixer* audio) {
+void AssetContainer::Initialize(GraphicsAPI* graphics) {
 	defaultSampler = graphics->CreateDefaultSampler();
 	graphics->SetSampler(ShaderStage::Vertex, &defaultSampler, 0);
 	graphics->SetSampler(ShaderStage::Geometry, &defaultSampler, 0);
@@ -77,7 +77,6 @@ void AssetContainer::Initialize(GraphicsAPI* graphics, SoundMixer* audio) {
 
 void AssetContainer::Release() {
 	GraphicsAPI* graphics = app->graphics;
-	SoundMixer* audio = app->audio;
 
 	graphics->ReleaseSampler(&defaultSampler);
 	graphics->ReleaseMesh(&unitSquare);
