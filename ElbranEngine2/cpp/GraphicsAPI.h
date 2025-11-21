@@ -3,13 +3,17 @@
 #include "Common.h"
 #include "GraphicsData.h"
 #include "Shaders.h"
-#include "Math.h"
 #include <string>
 #include "PostProcess.h"
 
 #define OBJECT_CONSTANT_REGISTER 0 // shaders with per-object constant buffers should use register 0
 #define MAX_POST_PROCESS_HELPER_TEXTURES 3
 #define MAX_LIGHTS_ONSCREEN 16
+
+#ifdef WINDOWS
+class DirectXAPI;
+typedef DirectXAPI PlatformGraphics;
+#endif
 
 enum class BlendState {
 	None,
@@ -32,18 +36,9 @@ enum class ShaderStage {
 
 enum class ShaderDataType {
 	Structured,
-	Float,
-	Int,
-	UInt,
-	Float2,
-	Int2,
-	UInt2,
-	Float3,
-	Int3,
-	UInt3,
-	Float4,
-	Int4,
-	UInt4
+	Int, Int2, Int3, Int4,
+	UInt, UInt2, UInt3, UInt4,
+	Float, Float2, Float3, Float4
 };
 
 struct Vertex {
@@ -69,8 +64,7 @@ public:
 	virtual bool IsFullscreen() const = 0;
 	virtual void SetFullscreen(bool fullscreen) {}
 
-	void ApplyPostProcesses(PostProcess* postProcessSequence, uint8_t ppCount);
-	RenderTarget* GetPostProcessHelper(uint8_t slot);
+	void ApplyPostProcesses(const PostProcess* postProcessSequence, uint8_t ppCount);
 
 	UInt2 GetViewDimensions() const;
 	UInt2 GetViewOffset() const;

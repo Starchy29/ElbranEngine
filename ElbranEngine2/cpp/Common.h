@@ -1,5 +1,4 @@
 #pragma once
-#include "Math.h"
 #include <stdint.h>
 
 #if defined(DEBUG) | defined(_DEBUG)

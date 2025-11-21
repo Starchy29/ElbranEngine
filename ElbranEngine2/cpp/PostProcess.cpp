@@ -3,13 +3,13 @@
 #include "AssetContainer.h"
 #include "ShaderConstants.h"
 
-void PostProcess::Render(const RenderTarget* input, RenderTarget* output, GraphicsAPI* graphics, AssetContainer* assets) {
+void PostProcess::Render(const RenderTarget* input, RenderTarget* output, GraphicsAPI* graphics, AssetContainer* assets) const {
 	PostProcess otherStep;
 
 	switch(type) {
 	case Type::Blur: {
 		PixelShader* blurShader = &assets->blurPP;
-		RenderTarget* midTarget = graphics->GetPostProcessHelper(0);
+		RenderTarget* midTarget = &graphics->postProcessHelpers[0];
 
 		BlurPPConstants psInput = {};
 		psInput.viewMin = graphics->GetViewOffset();
@@ -70,14 +70,14 @@ void PostProcess::Render(const RenderTarget* input, RenderTarget* output, Graphi
 
 	case Type::Bloom: {
 		// extract bright pixels
-		RenderTarget* brightPixels = graphics->GetPostProcessHelper(1); // blur shader uses slot 0
+		RenderTarget* brightPixels = &graphics->postProcessHelpers[1]; // blur shader uses slot 0
 		graphics->SetRenderTarget(brightPixels, false);
 		graphics->SetTexture(ShaderStage::Pixel, input, 0);
 		graphics->SetPixelShader(&assets->bloomFilterPP, &bloomData.brightnessThreshold, sizeof(float));
 		graphics->DrawFullscreen();
 
 		// blur bright pixels
-		RenderTarget* blurredBrightness = graphics->GetPostProcessHelper(2);
+		RenderTarget* blurredBrightness = &graphics->postProcessHelpers[2];
 		otherStep.Blur(bloomData.blurRadius);
 		otherStep.Render(brightPixels, blurredBrightness, graphics, assets);
 

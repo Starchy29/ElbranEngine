@@ -22,7 +22,7 @@ void GraphicsAPI::Release() {
 	ReleaseOuputBuffer(&totalBrightnessBuffer);
 }
 
-void GraphicsAPI::ApplyPostProcesses(PostProcess* postProcessSequence, uint8_t ppCount) {
+void GraphicsAPI::ApplyPostProcesses(const PostProcess* postProcessSequence, uint8_t ppCount) {
 	for(uint32_t i = 0; i < ppCount; i++) {
 		if(!postProcessSequence[i].IsActive()) continue;
 		RenderTarget* input = &postProcessTargets[renderTargetIndex];
@@ -32,11 +32,6 @@ void GraphicsAPI::ApplyPostProcesses(PostProcess* postProcessSequence, uint8_t p
 	}
 
 	SetRenderTarget(&postProcessTargets[renderTargetIndex], true);
-}
-
-RenderTarget* GraphicsAPI::GetPostProcessHelper(uint8_t slot) {
-	ASSERT(slot >= 0 && slot < MAX_POST_PROCESS_HELPER_TEXTURES);
-	return &postProcessHelpers[slot];
 }
 
 UInt2 GraphicsAPI::GetViewDimensions() const {
