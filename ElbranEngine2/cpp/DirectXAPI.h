@@ -20,26 +20,26 @@ public:
     void DrawVertices(uint16_t numVertices);
     void DrawMesh(const Mesh* mesh);
 
-    VertexShader CreateVertexShader(LoadedFile* shaderBlob);
-    GeometryShader CreateGeometryShader(LoadedFile* shaderBlob);
-    PixelShader CreatePixelShader(LoadedFile* shaderBlob);
-    ComputeShader CreateComputeShader(LoadedFile* shaderBlob);
+    VertexShader CreateVertexShader(LoadedFile* shaderBlob) const;
+    GeometryShader CreateGeometryShader(LoadedFile* shaderBlob) const;
+    PixelShader CreatePixelShader(LoadedFile* shaderBlob) const;
+    ComputeShader CreateComputeShader(LoadedFile* shaderBlob) const;
 
-    Texture2D CreateConstantTexture(uint32_t width, uint32_t height, uint8_t* textureData);
-    Sampler CreateDefaultSampler();
-    Mesh CreateMesh(const Vertex* vertices, uint16_t vertexCount, const uint32_t* indices, uint16_t indexCount, bool editable);
-    ConstantBuffer CreateConstantBuffer(uint32_t byteLength);
-    ArrayBuffer CreateArrayBuffer(ShaderDataType type, uint32_t elements, uint32_t structBytes = 0u);
-    EditBuffer CreateEditBuffer(ShaderDataType type, uint32_t elements, uint32_t structBytes = 0u);
-    OutputBuffer CreateOutputBuffer(ShaderDataType type, uint32_t elements, uint32_t structBytes = 0u);
-    RenderTarget CreateRenderTarget(uint32_t width, uint32_t height);
-    ComputeTexture CreateComputeTexture(uint32_t width, uint32_t height);
-    void CopyTexture(Texture2D* source, Texture2D* destination);
+    Texture2D CreateConstantTexture(uint32_t width, uint32_t height, const uint8_t* textureData) const;
+    Sampler CreateDefaultSampler() const;
+    Mesh CreateMesh(const Vertex* vertices, uint16_t vertexCount, const uint32_t* indices, uint16_t indexCount, bool editable) const;
+    ConstantBuffer CreateConstantBuffer(uint32_t byteLength) const;
+    ArrayBuffer CreateArrayBuffer(ShaderDataType type, uint32_t elements, uint32_t structBytes = 0u) const;
+    EditBuffer CreateEditBuffer(ShaderDataType type, uint32_t elements, uint32_t structBytes = 0u) const;
+    OutputBuffer CreateOutputBuffer(ShaderDataType type, uint32_t elements, uint32_t structBytes = 0u) const;
+    RenderTarget CreateRenderTarget(uint32_t width, uint32_t height) const;
+    ComputeTexture CreateComputeTexture(uint32_t width, uint32_t height) const;
+    void CopyTexture(const Texture2D* source, Texture2D* destination) const;
 
-    void SetEditBuffer(EditBuffer* buffer, uint8_t slot);
-    void WriteBuffer(const void* data, uint32_t byteLength, Buffer* buffer);
-    void SetOutputBuffer(OutputBuffer* buffer, uint8_t slot, const void* initialData);
-    void ReadBuffer(const OutputBuffer* buffer, void* destination);
+    void SetEditBuffer(const EditBuffer* buffer, uint8_t slot);
+    void WriteBuffer(const void* data, uint32_t byteLength, Buffer* buffer) const;
+    void SetOutputBuffer(const OutputBuffer* buffer, uint8_t slot, const void* initialData);
+    void ReadBuffer(const OutputBuffer* buffer, void* destination) const;
 
     void SetPrimitive(RenderPrimitive primitive);
     void SetBlendMode(BlendState mode);
@@ -47,7 +47,7 @@ public:
     void SetConstants(ShaderStage stage, const ConstantBuffer* buffer, uint8_t slot);
     void SetArray(ShaderStage stage, const ArrayBuffer* buffer, uint8_t slot);
     void SetTexture(ShaderStage stage, const Texture2D* texture, uint8_t slot);
-    void SetSampler(ShaderStage stage, Sampler* sampler, uint8_t slot);
+    void SetSampler(ShaderStage stage, const Sampler* sampler, uint8_t slot);
 
     void SetComputeTexture(const ComputeTexture* texture, uint8_t slot);
     void ClearMesh();
@@ -55,10 +55,9 @@ public:
     void SetVertexShader(const VertexShader* shader);
     void SetGeometryShader(const GeometryShader* shader);
     void SetPixelShader(const PixelShader* shader);
-    void RunComputeShader(const ComputeShader* shader, uint16_t xThreads, uint16_t yThreads, uint16_t zThreads = 1);
+    void RunComputeShader(const ComputeShader* shader, uint16_t xThreads, uint16_t yThreads, uint16_t zThreads = 1) const;
     void SetRenderTarget(const RenderTarget* renderTarget, bool useDepthStencil);
-    void ResetRenderTargets();
-    RenderTarget GetBackBuffer();
+    RenderTarget GetBackBuffer() const;
     void ClearDepthStencil();
     void ClearRenderTarget(RenderTarget* renderTarget);
     void PresentFrame();
@@ -86,12 +85,12 @@ private:
     Microsoft::WRL::ComPtr<ID3D11BlendState> alphaBlendState;
     Microsoft::WRL::ComPtr<ID3D11BlendState> additiveBlendState;
 
-    TextureData* CreateTexture(uint32_t width, uint32_t height, bool renderTarget, bool computeWritable, void* initialData = nullptr);
-    Buffer* CreateIndexedBuffer(uint32_t elements, uint32_t elementBytes, bool structured, bool cpuWrite, bool gpuWrite);
+    TextureData* CreateTexture(uint32_t width, uint32_t height, bool renderTarget, bool computeWritable, const void* initialData = nullptr) const;
+    Buffer* CreateIndexedBuffer(uint32_t elements, uint32_t elementBytes, bool structured, bool cpuWrite, bool gpuWrite) const;
 
-    ConstantBuffer LoadConstantBuffer(const LoadedFile* shaderBlob);
+    ConstantBuffer LoadConstantBuffer(const LoadedFile* shaderBlob) const;
 
-    DXGI_FORMAT FormatOf(ShaderDataType type);
-    uint32_t ByteLengthOf(ShaderDataType type);
+    static DXGI_FORMAT FormatOf(ShaderDataType type);
+    static uint32_t ByteLengthOf(ShaderDataType type);
 };
 #endif

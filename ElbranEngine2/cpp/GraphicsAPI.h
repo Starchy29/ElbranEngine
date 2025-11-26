@@ -34,27 +34,27 @@ public:
 	bool IsFullscreen() const;
 	void SetFullscreen(bool fullscreen);
 
-	VertexShader LoadVertexShader(std::wstring fileName);
-	GeometryShader LoadGeometryShader(std::wstring fileName);
-	PixelShader LoadPixelShader(std::wstring fileName);
-	ComputeShader LoadComputeShader(std::wstring fileName);
+	VertexShader LoadVertexShader(std::wstring fileName) const;
+	GeometryShader LoadGeometryShader(std::wstring fileName) const;
+	PixelShader LoadPixelShader(std::wstring fileName) const;
+	ComputeShader LoadComputeShader(std::wstring fileName) const;
 
-	Texture2D CreateConstantTexture(uint32_t width, uint32_t height, uint8_t* textureData);
-	Sampler CreateDefaultSampler();
-	Mesh CreateMesh(const Vertex* vertices, uint16_t vertexCount, const uint32_t* indices, uint16_t indexCount, bool editable);
-	ConstantBuffer CreateConstantBuffer(uint32_t byteLength);
-	ArrayBuffer CreateArrayBuffer(ShaderDataType type, uint32_t elements, uint32_t structBytes = 0u);
-	EditBuffer CreateEditBuffer(ShaderDataType type, uint32_t elements, uint32_t structBytes = 0u);
-	OutputBuffer CreateOutputBuffer(ShaderDataType type, uint32_t elements, uint32_t structBytes = 0u);
-	RenderTarget CreateRenderTarget(uint32_t width, uint32_t height);
-	ComputeTexture CreateComputeTexture(uint32_t width, uint32_t height);
+	Texture2D CreateConstantTexture(uint32_t width, uint32_t height, const uint8_t* textureData) const;
+	Sampler CreateDefaultSampler() const;
+	Mesh CreateMesh(const Vertex* vertices, uint16_t vertexCount, const uint32_t* indices, uint16_t indexCount, bool editable) const;
+	ConstantBuffer CreateConstantBuffer(uint32_t byteLength) const;
+	ArrayBuffer CreateArrayBuffer(ShaderDataType type, uint32_t elements, uint32_t structBytes = 0u) const;
+	EditBuffer CreateEditBuffer(ShaderDataType type, uint32_t elements, uint32_t structBytes = 0u) const;
+	OutputBuffer CreateOutputBuffer(ShaderDataType type, uint32_t elements, uint32_t structBytes = 0u) const;
+	RenderTarget CreateRenderTarget(uint32_t width, uint32_t height) const;
+	ComputeTexture CreateComputeTexture(uint32_t width, uint32_t height) const;
 	
-	void WriteBuffer(const void* data, uint32_t byteLength, Buffer* buffer); // fails if the buffer was not created with cpu write access
+	void WriteBuffer(const void* data, uint32_t byteLength, Buffer* buffer) const; // fails if the buffer was not created with cpu write access
+	void CopyTexture(const Texture2D* source, Texture2D* destination) const;
 	void SetConstants(ShaderStage stage, const ConstantBuffer* buffer, uint8_t slot);
 	void SetArray(ShaderStage stage, const ArrayBuffer* buffer, uint8_t slot);
 	void SetTexture(ShaderStage stage, const Texture2D* texture, uint8_t slot);
-	void SetSampler(ShaderStage stage, Sampler* sampler, uint8_t slot);
-	void CopyTexture(Texture2D* source, Texture2D* destination);
+	void SetSampler(ShaderStage stage, const Sampler* sampler, uint8_t slot);
 	void ClearMesh();
 
 	void SetVertexShader(const VertexShader* shader, const void* constantInput = nullptr, uint32_t inputBytes = 0);
@@ -65,16 +65,16 @@ public:
 	void SetPrimitive(RenderPrimitive primitive);
 	void SetRenderTarget(const RenderTarget* renderTarget, bool useDepthStencil);
 
-	void DrawVertices(uint16_t numVertices);
-	void DrawMesh(const Mesh* mesh);
+	void DrawVertices(uint16_t numVertices) const;
+	void DrawMesh(const Mesh* mesh) const;
 	void DrawFullscreen();
 
 	// compute shader functions
 	void SetComputeTexture(const ComputeTexture* texture, uint8_t slot);
-	void SetEditBuffer(EditBuffer* buffer, uint8_t slot);
-	void SetOutputBuffer(OutputBuffer* buffer, uint8_t slot, const void* initialData = nullptr);
-	void ReadBuffer(const OutputBuffer* buffer, void* destination);
-	void RunComputeShader(const ComputeShader* shader, uint16_t xThreads, uint16_t yThreads, uint16_t zThreads = 1);
+	void SetEditBuffer(const EditBuffer* buffer, uint8_t slot);
+	void SetOutputBuffer(const OutputBuffer* buffer, uint8_t slot, const void* initialData = nullptr);
+	void ReadBuffer(const OutputBuffer* buffer, void* destination) const;
+	void RunComputeShader(const ComputeShader* shader, uint16_t xThreads, uint16_t yThreads, uint16_t zThreads = 1) const;
 
 	// gpu memory release functions
 	void ReleaseShader(VertexShader* shader);

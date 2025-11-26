@@ -133,55 +133,55 @@ void GraphicsAPI::PresentFrame() {
 bool GraphicsAPI::IsFullscreen() const { return platformGraphics->IsFullscreen(); }
 void GraphicsAPI::SetFullscreen(bool fullscreen) { platformGraphics->SetFullscreen(fullscreen); }
 
-VertexShader GraphicsAPI::LoadVertexShader(std::wstring fileName) {
+VertexShader GraphicsAPI::LoadVertexShader(std::wstring fileName) const {
 	LoadedFile shaderBlob = app->LoadFile(L"shaders\\" + fileName);
 	VertexShader result = platformGraphics->CreateVertexShader(&shaderBlob);
 	shaderBlob.Release();
 	return result;
 }
 
-GeometryShader GraphicsAPI::LoadGeometryShader(std::wstring fileName) {
+GeometryShader GraphicsAPI::LoadGeometryShader(std::wstring fileName) const {
 	LoadedFile shaderBlob = app->LoadFile(L"shaders\\" + fileName);
 	GeometryShader result = platformGraphics->CreateGeometryShader(&shaderBlob);
 	shaderBlob.Release();
 	return result;
 }
 
-PixelShader GraphicsAPI::LoadPixelShader(std::wstring fileName) {
+PixelShader GraphicsAPI::LoadPixelShader(std::wstring fileName) const {
 	LoadedFile shaderBlob = app->LoadFile(L"shaders\\" + fileName);
 	PixelShader result = platformGraphics->CreatePixelShader(&shaderBlob);
 	shaderBlob.Release();
 	return result;
 }
 
-ComputeShader GraphicsAPI::LoadComputeShader(std::wstring fileName) {
+ComputeShader GraphicsAPI::LoadComputeShader(std::wstring fileName)  const {
 	LoadedFile shaderBlob = app->LoadFile(L"shaders\\" + fileName);
 	ComputeShader result = platformGraphics->CreateComputeShader(&shaderBlob);
 	shaderBlob.Release();
 	return result;
 }
 
-Texture2D GraphicsAPI::CreateConstantTexture(uint32_t width, uint32_t height, uint8_t* textureData) { return platformGraphics->CreateConstantTexture(width, height, textureData); }
-Sampler GraphicsAPI::CreateDefaultSampler() { return platformGraphics->CreateDefaultSampler(); }
-Mesh GraphicsAPI::CreateMesh(const Vertex* vertices, uint16_t vertexCount, const uint32_t* indices, uint16_t indexCount, bool editable) { return platformGraphics->CreateMesh(vertices, vertexCount, indices, indexCount, editable); }
-ConstantBuffer GraphicsAPI::CreateConstantBuffer(uint32_t byteLength) { return platformGraphics->CreateConstantBuffer(byteLength); }
-ArrayBuffer GraphicsAPI::CreateArrayBuffer(ShaderDataType type, uint32_t elements, uint32_t structBytes) { return platformGraphics->CreateArrayBuffer(type, elements, structBytes); }
-EditBuffer GraphicsAPI::CreateEditBuffer(ShaderDataType type, uint32_t elements, uint32_t structBytes) { return platformGraphics->CreateEditBuffer(type, elements, structBytes); }
-OutputBuffer GraphicsAPI::CreateOutputBuffer(ShaderDataType type, uint32_t elements, uint32_t structBytes) { return platformGraphics->CreateOutputBuffer(type, elements, structBytes); }
-RenderTarget GraphicsAPI::CreateRenderTarget(uint32_t width, uint32_t height) { return platformGraphics->CreateRenderTarget(width, height); }
-ComputeTexture GraphicsAPI::CreateComputeTexture(uint32_t width, uint32_t height) { return platformGraphics->CreateComputeTexture(width, height); }
+Texture2D GraphicsAPI::CreateConstantTexture(uint32_t width, uint32_t height, const uint8_t* textureData) const { return platformGraphics->CreateConstantTexture(width, height, textureData); }
+Sampler GraphicsAPI::CreateDefaultSampler() const { return platformGraphics->CreateDefaultSampler(); }
+Mesh GraphicsAPI::CreateMesh(const Vertex* vertices, uint16_t vertexCount, const uint32_t* indices, uint16_t indexCount, bool editable) const { return platformGraphics->CreateMesh(vertices, vertexCount, indices, indexCount, editable); }
+ConstantBuffer GraphicsAPI::CreateConstantBuffer(uint32_t byteLength) const { return platformGraphics->CreateConstantBuffer(byteLength); }
+ArrayBuffer GraphicsAPI::CreateArrayBuffer(ShaderDataType type, uint32_t elements, uint32_t structBytes) const{ return platformGraphics->CreateArrayBuffer(type, elements, structBytes); }
+EditBuffer GraphicsAPI::CreateEditBuffer(ShaderDataType type, uint32_t elements, uint32_t structBytes) const { return platformGraphics->CreateEditBuffer(type, elements, structBytes); }
+OutputBuffer GraphicsAPI::CreateOutputBuffer(ShaderDataType type, uint32_t elements, uint32_t structBytes) const { return platformGraphics->CreateOutputBuffer(type, elements, structBytes); }
+RenderTarget GraphicsAPI::CreateRenderTarget(uint32_t width, uint32_t height) const { return platformGraphics->CreateRenderTarget(width, height); }
+ComputeTexture GraphicsAPI::CreateComputeTexture(uint32_t width, uint32_t height) const { return platformGraphics->CreateComputeTexture(width, height); }
 
 void GraphicsAPI::SetBlendMode(BlendState mode) { platformGraphics->SetBlendMode(mode); }
 void GraphicsAPI::SetPrimitive(RenderPrimitive primitive) { platformGraphics->SetPrimitive(primitive); }
 void GraphicsAPI::SetRenderTarget(const RenderTarget* renderTarget, bool useDepthStencil) { platformGraphics->SetRenderTarget(renderTarget, useDepthStencil); }
-void GraphicsAPI::DrawVertices(uint16_t numVertices) { platformGraphics->DrawVertices(numVertices); }
-void GraphicsAPI::DrawMesh(const Mesh* mesh) { platformGraphics->DrawMesh(mesh); }
+void GraphicsAPI::DrawVertices(uint16_t numVertices) const { platformGraphics->DrawVertices(numVertices); }
+void GraphicsAPI::DrawMesh(const Mesh* mesh) const { platformGraphics->DrawMesh(mesh); }
 
 void GraphicsAPI::SetComputeTexture(const ComputeTexture* texture, uint8_t slot) { platformGraphics->SetComputeTexture(texture, slot); }
-void GraphicsAPI::SetEditBuffer(EditBuffer* buffer, uint8_t slot) { platformGraphics->SetEditBuffer(buffer, slot); }
-void GraphicsAPI::SetOutputBuffer(OutputBuffer* buffer, uint8_t slot, const void* initialData) { platformGraphics->SetOutputBuffer(buffer, slot, initialData); }
-void GraphicsAPI::ReadBuffer(const OutputBuffer* buffer, void* destination) { platformGraphics->ReadBuffer(buffer, destination); }
-void GraphicsAPI::RunComputeShader(const ComputeShader* shader, uint16_t xThreads, uint16_t yThreads, uint16_t zThreads) { platformGraphics->RunComputeShader(shader, xThreads, yThreads, zThreads); }
+void GraphicsAPI::SetEditBuffer(const EditBuffer* buffer, uint8_t slot) { platformGraphics->SetEditBuffer(buffer, slot); }
+void GraphicsAPI::SetOutputBuffer(const OutputBuffer* buffer, uint8_t slot, const void* initialData) { platformGraphics->SetOutputBuffer(buffer, slot, initialData); }
+void GraphicsAPI::ReadBuffer(const OutputBuffer* buffer, void* destination) const { platformGraphics->ReadBuffer(buffer, destination); }
+void GraphicsAPI::RunComputeShader(const ComputeShader* shader, uint16_t xThreads, uint16_t yThreads, uint16_t zThreads) const { platformGraphics->RunComputeShader(shader, xThreads, yThreads, zThreads); }
 
 void GraphicsAPI::ReleaseShader(VertexShader* shader) { platformGraphics->ReleaseShader(shader); }
 void GraphicsAPI::ReleaseShader(GeometryShader* shader) { platformGraphics->ReleaseShader(shader); }
@@ -196,10 +196,10 @@ void GraphicsAPI::ReleaseArrayBuffer(ArrayBuffer* buffer) { platformGraphics->Re
 void GraphicsAPI::ReleaseEditBuffer(EditBuffer* buffer) { platformGraphics->ReleaseEditBuffer(buffer); }
 void GraphicsAPI::ReleaseOuputBuffer(OutputBuffer* buffer) { platformGraphics->ReleaseOuputBuffer(buffer); }
 
-void GraphicsAPI::WriteBuffer(const void* data, uint32_t byteLength, Buffer* buffer) { platformGraphics->WriteBuffer(data, byteLength, buffer); }
+void GraphicsAPI::WriteBuffer(const void* data, uint32_t byteLength, Buffer* buffer) const { platformGraphics->WriteBuffer(data, byteLength, buffer); }
 void GraphicsAPI::SetConstants(ShaderStage stage, const ConstantBuffer* buffer, uint8_t slot) { platformGraphics->SetConstants(stage, buffer, slot); }
 void GraphicsAPI::SetArray(ShaderStage stage, const ArrayBuffer* buffer, uint8_t slot) { platformGraphics->SetArray(stage, buffer, slot); }
 void GraphicsAPI::SetTexture(ShaderStage stage, const Texture2D* texture, uint8_t slot) { platformGraphics->SetTexture(stage, texture, slot); }
-void GraphicsAPI::SetSampler(ShaderStage stage, Sampler* sampler, uint8_t slot) { platformGraphics->SetSampler(stage, sampler, slot); }
-void GraphicsAPI::CopyTexture(Texture2D* source, Texture2D* destination) { platformGraphics->CopyTexture(source, destination); }
+void GraphicsAPI::SetSampler(ShaderStage stage, const Sampler* sampler, uint8_t slot) { platformGraphics->SetSampler(stage, sampler, slot); }
+void GraphicsAPI::CopyTexture(const Texture2D* source, Texture2D* destination) const { platformGraphics->CopyTexture(source, destination); }
 void GraphicsAPI::ClearMesh() { platformGraphics->ClearMesh(); }
