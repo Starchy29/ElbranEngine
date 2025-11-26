@@ -1,6 +1,8 @@
 #pragma once
 #include <stdint.h>
 
+#define ASPECT_RATIO (16.f / 9.f)
+
 #if defined(DEBUG) | defined(_DEBUG)
 #define ASSERT(condition) if(!(condition)) *(int*)0 = 0;
 #else

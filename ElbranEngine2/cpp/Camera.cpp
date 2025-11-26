@@ -4,7 +4,7 @@
 #include "Common.h"
 
 float Camera::GetViewHeight() const {
-	return viewWidth / app->graphics->GetViewAspectRatio();
+	return viewWidth / ASPECT_RATIO;
 }
 
 Vector2 Camera::GetWorldDimensions() const {

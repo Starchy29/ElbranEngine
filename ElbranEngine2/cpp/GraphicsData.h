@@ -1,5 +1,9 @@
 #pragma once
-#include <stdint.h>
+#include "Math.h"
+
+#define OBJECT_CONSTANT_REGISTER 0 // shaders with per-object constant buffers should use register 0
+#define MAX_POST_PROCESS_HELPER_TEXTURES 3
+#define MAX_LIGHTS_ONSCREEN 16
 
 #ifdef WINDOWS
 struct ID3D11Buffer;
@@ -16,6 +20,37 @@ typedef ID3D11ShaderResourceView ShaderResourceView;
 typedef ID3D11RenderTargetView RenderTargetView;
 typedef ID3D11UnorderedAccessView UnorderedAccessView;
 #endif
+
+enum class BlendState {
+	None,
+	AlphaBlend,
+	Additive
+};
+
+enum class RenderPrimitive {
+	Point,
+	Line,
+	Triangle
+};
+
+enum class ShaderStage {
+	Vertex,
+	Geometry,
+	Pixel,
+	Compute
+};
+
+enum class ShaderDataType {
+	Structured,
+	Int, Int2, Int3, Int4,
+	UInt, UInt2, UInt3, UInt4,
+	Float, Float2, Float3, Float4
+};
+
+struct Vertex {
+	Vector2 position;
+	Vector2 uv;
+};
 
 struct Sampler {
 	SamplerState* state;

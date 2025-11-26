@@ -112,7 +112,7 @@ void Renderer::Draw(GraphicsAPI* graphics, const AssetContainer* assets) {
 		graphics->SetPixelShader(&app->assets.textRasterizePS, &textData.color, sizeof(Color));
 
 		// draw mesh
-		app->graphics->DrawMesh(&textData.textMesh);
+		graphics->DrawMesh(&textData.textMesh);
 	} break;
 
 	case Type::Particles: {
@@ -159,10 +159,10 @@ void Renderer::Draw(GraphicsAPI* graphics, const AssetContainer* assets) {
 void Renderer::Release() {
 	switch(type) {
 	case Type::Text:
-		app->graphics->ReleaseMesh(&textData.textMesh);
+		app->graphics.ReleaseMesh(&textData.textMesh);
 		break;
 	case Type::Particles:
-		app->graphics->ReleaseEditBuffer(&particleData.particleBuffer);
+		app->graphics.ReleaseEditBuffer(&particleData.particleBuffer);
 		break;
 	}
 }
@@ -252,13 +252,13 @@ void Renderer::InitParticles(uint16_t maxParticles, const SpriteSheet* animation
 	particleData.blendAdditive = false;
 	particleData.scaleWithParent = true;
 
-	particleData.particleBuffer = app->graphics->CreateEditBuffer(ShaderDataType::Structured, maxParticles, PARTICLE_BYTES);
+	particleData.particleBuffer = app->graphics.CreateEditBuffer(ShaderDataType::Structured, maxParticles, PARTICLE_BYTES);
 }
 
 void Renderer::UpdateTextMesh() {
 	ASSERT(type == Type::Text);
 
-	app->graphics->ReleaseMesh(&textData.textMesh);
+	app->graphics.ReleaseMesh(&textData.textMesh);
 
 	// determine dimensions
 	uint16_t rows = 1;
@@ -329,7 +329,7 @@ void Renderer::UpdateTextMesh() {
 		}
 	}
 
-	textData.textMesh = app->graphics->CreateMesh(vertices, 4 * textLength, indices, 6 * textLength, false);
+	textData.textMesh = app->graphics.CreateMesh(vertices, 4 * textLength, indices, 6 * textLength, false);
 	textData.blockAspectRatio = maxWidth / totalHeight;
 }
 

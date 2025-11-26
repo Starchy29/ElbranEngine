@@ -33,16 +33,16 @@ void ParticleBehavior::Initialize(Renderer* particleRenderer) {
     startWidth = 1.0f;
     lastParticle = 0;
 
-    spawnData = app->graphics->CreateArrayBuffer(ShaderDataType::Structured, particleRenderer->particleData.maxParticles, sizeof(ParticleSpawnState));
+    spawnData = app->graphics.CreateArrayBuffer(ShaderDataType::Structured, particleRenderer->particleData.maxParticles, sizeof(ParticleSpawnState));
 }
 
 void ParticleBehavior::Release() {
-    app->graphics->ReleaseArrayBuffer(&spawnData);
+    app->graphics.ReleaseArrayBuffer(&spawnData);
 }
 
 void ParticleBehavior::Update(float deltaTime) {
     // updated particles
-    GraphicsAPI* graphics = app->graphics;
+    GraphicsAPI* graphics = &app->graphics;
 
 	ParticleMoveCSConstants csInput = {};
 	csInput.deltaTime = deltaTime;
@@ -83,7 +83,7 @@ void ParticleBehavior::Emit(uint16_t numParticles, float duration) {
         return;
     }
 
-    GraphicsAPI* graphics = app->graphics;
+    GraphicsAPI* graphics = &app->graphics;
     
     // set up initial states
     ParticleSpawnState* spawnStates = (ParticleSpawnState*)app->frameBuffer.Reserve(numParticles * sizeof(ParticleSpawnState), true);

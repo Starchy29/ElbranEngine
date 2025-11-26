@@ -76,7 +76,7 @@ void AssetContainer::Initialize(GraphicsAPI* graphics) {
 }
 
 void AssetContainer::Release() {
-	GraphicsAPI* graphics = app->graphics;
+	GraphicsAPI* graphics = &app->graphics;
 
 	graphics->ReleaseSampler(&defaultSampler);
 	graphics->ReleaseMesh(&unitSquare);
@@ -367,7 +367,7 @@ Texture2D AssetContainer::LoadBMP(std::wstring fileName) {
 	}
 
 	file.Release();
-	Texture2D result = app->graphics->CreateConstantTexture(width, height, (uint8_t*)loadedBits);
+	Texture2D result = app->graphics.CreateConstantTexture(width, height, (uint8_t*)loadedBits);
 	delete[] loadedBits;
 	return result;
 }
@@ -379,7 +379,7 @@ Texture2D AssetContainer::LoadPNG(std::wstring fileName) {
 	uint32_t width;
 	uint32_t height;
 	lodepng::decode(loadedImage, width, height, lodeFile); // thank you Lode Vandevenne
-	Texture2D result = app->graphics->CreateConstantTexture(width, height, loadedImage.begin()._Ptr);
+	Texture2D result = app->graphics.CreateConstantTexture(width, height, loadedImage.begin()._Ptr);
 	file.Release();
 	return result;
 }

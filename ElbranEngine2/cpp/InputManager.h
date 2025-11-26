@@ -1,7 +1,8 @@
 #pragma once
 #include "AppPointer.h"
 #include "Math.h"
-#include "Configs.h"
+
+#define MAX_PLAYERS 1
 
 struct Camera;
 

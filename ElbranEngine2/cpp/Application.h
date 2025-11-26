@@ -5,8 +5,8 @@
 #include "MemoryArena.h"
 #include "LoadedFile.h"
 #include "SoundMixer.h"
+#include "GraphicsAPI.h"
 
-class GraphicsAPI;
 class InputManager;
 #if defined(DEBUG) | defined(_DEBUG)
 #include "DebugHelper.h"
@@ -15,7 +15,7 @@ class InputManager;
 class Application
 {
 public:
-	GraphicsAPI* graphics;
+	GraphicsAPI graphics;
 	SoundMixer audio;
 	InputManager* input;
 
@@ -31,7 +31,7 @@ public:
 	void (*quitFunction)();
 
 	Application() = default;
-	void Initialize(LoadedFile (*fileLoadFunction)(std::wstring fileName), GraphicsAPI* graphics, PlatformAudio* platformAudio, InputManager* input);
+	void Initialize(LoadedFile (*fileLoadFunction)(std::wstring fileName), UInt2 windowSize, PlatformGraphics* platformGraphics, PlatformAudio* platformAudio, InputManager* input);
 	void Release();
 
 	void StepFrame(float deltaTime);

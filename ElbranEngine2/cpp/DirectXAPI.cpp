@@ -5,7 +5,7 @@
 
 #define SafeRelease(x) if(x) x->Release()
 
-void DirectXAPI::Initialize(HWND windowHandle, Int2 windowDims, float viewAspectRatio, const LoadedFile* sampleShader) {
+DirectXAPI::DirectXAPI(HWND windowHandle, const LoadedFile* sampleShader) {
 	D3D_FEATURE_LEVEL levels[] = {
 		D3D_FEATURE_LEVEL_11_1,
 		D3D_FEATURE_LEVEL_11_0,
@@ -57,10 +57,7 @@ void DirectXAPI::Initialize(HWND windowHandle, Int2 windowDims, float viewAspect
 	adapter->GetParent(IID_PPV_ARGS(&factory));
 	factory->CreateSwapChain(device.Get(), &desc, &swapChain);
 
-	// create the viewport
-	backBuffer = {};
-	Resize(windowDims, viewAspectRatio);
-
+	// create the depth stencil state
 	D3D11_DEPTH_STENCIL_DESC stencilStateDesc = {};
 	stencilStateDesc.DepthEnable = true;
 	stencilStateDesc.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ALL;
@@ -104,7 +101,7 @@ void DirectXAPI::Initialize(HWND windowHandle, Int2 windowDims, float viewAspect
 
 	device->CreateBlendState(&blendDescription, additiveBlendState.GetAddressOf());
 
-	// set the input layout to match the Vertex struct in GraphicsAPI.h
+	// set the input layout to match the Vertex struct in GraphicsData.h
 	D3D11_INPUT_ELEMENT_DESC inputDescriptions[2];
 	inputDescriptions[0] = { "POSITION", 0, DXGI_FORMAT_R32G32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT };
 	inputDescriptions[1] = { "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT };
@@ -116,13 +113,10 @@ void DirectXAPI::Initialize(HWND windowHandle, Int2 windowDims, float viewAspect
 
 	// set other defaults
 	context->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-
-	GraphicsAPI::Initialize();
 }
 
-void DirectXAPI::Release() {
-	ReleaseRenderTarget(&backBuffer);
-	GraphicsAPI::Release();
+DirectXAPI::~DirectXAPI() {
+
 }
 
 bool DirectXAPI::IsFullscreen() const {
@@ -135,15 +129,9 @@ void DirectXAPI::SetFullscreen(bool fullscreen) {
 	swapChain->SetFullscreenState(fullscreen, nullptr);
 }
 
-void DirectXAPI::Resize(Int2 windowDims, float viewAspectRatio) {
-	this->viewAspectRatio = viewAspectRatio;
+void DirectXAPI::Resize(UInt2 windowDims, UInt2 viewportDims, UInt2 viewportOffset) {
 	depthStencilView.Reset();
-	ReleaseRenderTarget(&backBuffer);
 	swapChain->ResizeBuffers(2, windowDims.x, windowDims.y, DXGI_FORMAT_R8G8B8A8_UNORM, 0);
-
-	// recreate back buffer
-	swapChain->GetBuffer(0, __uuidof(ID3D11Texture2D), reinterpret_cast<void**>(&backBuffer.data));
-	device->CreateRenderTargetView(backBuffer.data, 0, &backBuffer.outputView);
 
 	// recreate depth stencil
 	D3D11_TEXTURE2D_DESC depthStencilDesc;
@@ -164,21 +152,7 @@ void DirectXAPI::Resize(Int2 windowDims, float viewAspectRatio) {
 	device->CreateDepthStencilView(depthBufferTexture, 0, depthStencilView.ReleaseAndGetAddressOf());
 	depthBufferTexture->Release();
 
-	// bind to the pipeline
-	context->OMSetRenderTargets(1, &backBuffer.outputView, depthStencilView.Get());
-
 	// set viewport
-	float windowAspectRatio = (float)windowDims.x / windowDims.y;
-	viewportOffset = UInt2(0, 0);
-	viewportDims = UInt2(windowDims.x, windowDims.y);
-	if(windowAspectRatio > viewAspectRatio) {
-		viewportDims.x = windowDims.y * viewAspectRatio;
-		viewportOffset.x = (windowDims.x - viewportDims.x) / 2;
-	} else {
-		viewportDims.y = windowDims.x / viewAspectRatio;
-		viewportOffset.y = (windowDims.y - viewportDims.y) / 2;
-	}
-
 	D3D11_VIEWPORT viewport = {};
 	viewport.TopLeftX = viewportOffset.x;
 	viewport.TopLeftY = viewportOffset.y;
@@ -187,16 +161,6 @@ void DirectXAPI::Resize(Int2 windowDims, float viewAspectRatio) {
 	viewport.MinDepth = 0.0f;
 	viewport.MaxDepth = 1.0f;
 	context->RSSetViewports(1, &viewport);
-
-	// resize post process textures
-	ReleaseRenderTarget(&postProcessTargets[0]);
-	ReleaseRenderTarget(&postProcessTargets[1]);
-	postProcessTargets[0] = CreateRenderTarget(windowDims.x, windowDims.y);
-	postProcessTargets[1] = CreateRenderTarget(windowDims.x, windowDims.y);
-	for(int i = 0; i < MAX_POST_PROCESS_HELPER_TEXTURES; i++) {
-		ReleaseRenderTarget(&postProcessHelpers[i]);
-		postProcessHelpers[i] = CreateRenderTarget(windowDims.x, windowDims.y);
-	}
 }
 
 void DirectXAPI::DrawVertices(uint16_t numVertices) {
@@ -211,48 +175,40 @@ void DirectXAPI::DrawMesh(const Mesh* mesh) {
 	context->DrawIndexed(mesh->indexCount, 0, 0);
 }
 
-VertexShader DirectXAPI::LoadVertexShader(std::wstring fileName) {
-	LoadedFile shaderBlob = app->LoadFile(L"shaders\\" + fileName);
+VertexShader DirectXAPI::CreateVertexShader(LoadedFile* shaderBlob) {
 	VertexShader newShader = {};
-	HRESULT result = device->CreateVertexShader(shaderBlob.bytes, shaderBlob.fileSize, 0, &newShader.shader);
+	HRESULT result = device->CreateVertexShader(shaderBlob->bytes, shaderBlob->fileSize, 0, &newShader.shader);
 	ASSERT(result == S_OK);
-	newShader.constants = LoadConstantBuffer(&shaderBlob);
-	shaderBlob.Release();
+	newShader.constants = LoadConstantBuffer(shaderBlob);
 	return newShader;
 }
 
-GeometryShader DirectXAPI::LoadGeometryShader(std::wstring fileName) {
-	LoadedFile shaderBlob = app->LoadFile(L"shaders\\" + fileName);
+GeometryShader DirectXAPI::CreateGeometryShader(LoadedFile* shaderBlob) {
 	GeometryShader newShader{};
-	HRESULT result = device->CreateGeometryShader(shaderBlob.bytes, shaderBlob.fileSize, 0, &newShader.shader);
+	HRESULT result = device->CreateGeometryShader(shaderBlob->bytes, shaderBlob->fileSize, 0, &newShader.shader);
 	ASSERT(result == S_OK);
-	newShader.constants = LoadConstantBuffer(&shaderBlob);
-	shaderBlob.Release();
+	newShader.constants = LoadConstantBuffer(shaderBlob);
 	return newShader;
 }
 
-PixelShader DirectXAPI::LoadPixelShader(std::wstring fileName) {
-	LoadedFile shaderBlob = app->LoadFile(L"shaders\\" + fileName);
+PixelShader DirectXAPI::CreatePixelShader(LoadedFile* shaderBlob) {
 	PixelShader newShader{};
-	HRESULT result = device->CreatePixelShader(shaderBlob.bytes, shaderBlob.fileSize, 0, &newShader.shader);
+	HRESULT result = device->CreatePixelShader(shaderBlob->bytes, shaderBlob->fileSize, 0, &newShader.shader);
 	ASSERT(result == S_OK);
-	newShader.constants = LoadConstantBuffer(&shaderBlob);
-	shaderBlob.Release();
+	newShader.constants = LoadConstantBuffer(shaderBlob);
 	return newShader;
 }
 
-ComputeShader DirectXAPI::LoadComputeShader(std::wstring fileName) {
-	LoadedFile shaderBlob = app->LoadFile(L"shaders\\" + fileName);
+ComputeShader DirectXAPI::CreateComputeShader(LoadedFile* shaderBlob) {
 	ComputeShader newShader{};
-	HRESULT result = device->CreateComputeShader(shaderBlob.bytes, shaderBlob.fileSize, 0, &newShader.shader);
+	HRESULT result = device->CreateComputeShader(shaderBlob->bytes, shaderBlob->fileSize, 0, &newShader.shader);
 	ASSERT(result == S_OK);
-	newShader.constants = LoadConstantBuffer(&shaderBlob);
+	newShader.constants = LoadConstantBuffer(shaderBlob);
 
 	Microsoft::WRL::ComPtr<ID3D11ShaderReflection> reflection;
-	D3DReflect(shaderBlob.bytes, shaderBlob.fileSize, IID_ID3D11ShaderReflection, (void**)reflection.GetAddressOf());
+	D3DReflect(shaderBlob->bytes, shaderBlob->fileSize, IID_ID3D11ShaderReflection, (void**)reflection.GetAddressOf());
 	reflection->GetThreadGroupSize(&newShader.xGroupSize, &newShader.yGroupSize, &newShader.zGroupSize);
 
-	shaderBlob.Release();
 	return newShader;
 }
 
@@ -574,23 +530,23 @@ void DirectXAPI::SetRenderTarget(const RenderTarget* renderTarget, bool useDepth
 	context->OMSetRenderTargets(1, &(renderTarget->outputView), useDepthStencil ? depthStencilView.Get() : nullptr);
 }
 
-void DirectXAPI::ResetRenderTargets() {
-	context->ClearDepthStencilView(depthStencilView.Get(), D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
-	
-	float black[4] { 0.f, 0.f, 0.f, 0.f };
-	context->ClearRenderTargetView(backBuffer.outputView, black);
-	context->ClearRenderTargetView(postProcessTargets[0].outputView, black);
-	context->ClearRenderTargetView(postProcessTargets[1].outputView, black);
-	for(uint8_t i = 0; i < MAX_POST_PROCESS_HELPER_TEXTURES; i++) {
-		context->ClearRenderTargetView(postProcessHelpers[i].outputView, black);
-	}
+RenderTarget DirectXAPI::GetBackBuffer() {
+	RenderTarget result = {};
+	swapChain->GetBuffer(0, __uuidof(ID3D11Texture2D), reinterpret_cast<void**>(&result.data));
+	device->CreateRenderTargetView(result.data, 0, &result.outputView);
+	return result;
+}
 
-	renderTargetIndex = 0;
-	SetRenderTarget(&postProcessTargets[renderTargetIndex], true);
+void DirectXAPI::ClearDepthStencil() {
+	context->ClearDepthStencilView(depthStencilView.Get(), D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
+}
+
+void DirectXAPI::ClearRenderTarget(RenderTarget* renderTarget) {
+	constexpr float black[4] { 0.f, 0.f, 0.f, 0.f };
+	context->ClearRenderTargetView(renderTarget->outputView, black);
 }
 
 void DirectXAPI::PresentFrame() {
-	CopyTexture(&postProcessTargets[renderTargetIndex], &backBuffer);
 	swapChain->Present(0, 0);
 }
 

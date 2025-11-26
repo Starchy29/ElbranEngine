@@ -169,7 +169,6 @@
     <ClInclude Include="..\cpp\Button.h" />
     <ClInclude Include="..\cpp\Camera.h" />
     <ClInclude Include="..\cpp\Common.h" />
-    <ClInclude Include="..\cpp\Configs.h" />
     <ClInclude Include="..\cpp\DebugHelper.h" />
     <ClInclude Include="..\cpp\DirectXAPI.h" />
     <ClInclude Include="..\cpp\FixedList.h" />

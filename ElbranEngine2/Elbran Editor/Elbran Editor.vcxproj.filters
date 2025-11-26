@@ -82,7 +82,6 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\cpp\AssetContainer.h" />
-    <ClInclude Include="..\cpp\Configs.h" />
     <ClInclude Include="..\cpp\Game.h" />
     <ClInclude Include="..\cpp\InputManager.h" />
     <ClInclude Include="..\cpp\WindowsAudio.h">

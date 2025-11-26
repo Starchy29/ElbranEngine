@@ -6,6 +6,7 @@
 //#include "FixedList.h"
 
 class Scene;
+#define SHOW_FPS true
 #define BULK_SHAPE_COUNT 20
 #define SPECIAL_SHAPE_COUNT 5
 

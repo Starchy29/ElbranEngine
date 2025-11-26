@@ -39,7 +39,7 @@ struct OrderedRenderer {
 };
 
 void RenderGroup::Draw() const {
-	GraphicsAPI* graphics = app->graphics;
+	GraphicsAPI* graphics = &app->graphics;
 
 	// convert all transforms into local matrices
 	Matrix* localMatrices = (Matrix*)app->frameBuffer.Reserve(sizeof(Matrix) * transformCount);
