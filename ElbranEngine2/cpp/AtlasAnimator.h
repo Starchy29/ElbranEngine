@@ -1,8 +1,7 @@
 #pragma once
 #include "Renderer.h"
 
-class AtlasAnimator
-{
+class AtlasAnimator {
 public:
     float frameRate;
     bool looped;

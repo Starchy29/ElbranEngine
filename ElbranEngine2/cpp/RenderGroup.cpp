@@ -8,7 +8,7 @@
 #define LIGHTS_REGISTER 127
 #define LIGHT_INFO_REGISTER 1
 
-void RenderGroup::Initialize(Transform* transformBuffer, Matrix* worldMatrixBuffer, Renderer* rendererBuffer, uint32_t numTransforms, uint32_t numRenderers) {
+void RenderGroup::Initialize(uint32_t numTransforms, uint32_t numRenderers) {
 	ASSERT(numRenderers >= numTransforms);
 	ambientLight = Color::White;
 	backgroundColor = Color::White;
@@ -19,18 +19,23 @@ void RenderGroup::Initialize(Transform* transformBuffer, Matrix* worldMatrixBuff
 	transformCapacity = numTransforms;
 	rendererCount = 0;
 	rendererCapacity = numRenderers;
-	transforms = transformBuffer;
-	worldMatrices = worldMatrixBuffer;
-	renderers = rendererBuffer;
+
+	uint8_t* dataBlock = new uint8_t[numTransforms * (sizeof(Transform) + sizeof(Matrix)) + numRenderers * sizeof(Renderer)] {};
+	transforms = (Transform*)dataBlock;
+	dataBlock += numTransforms * sizeof(Transform);
+	worldMatrices = (Matrix*)dataBlock;
+	dataBlock += numTransforms * sizeof(Matrix);
+	renderers = (Renderer*)dataBlock;
 
 	camera.viewWidth = 1.f;
 	camera.transform = ReserveTransform(&camera.worldMatrix);
 }
 
-void RenderGroup::ReleaseRenderers() {
+void RenderGroup::Release() {
 	for(uint32_t i = 0; i < rendererCount; i++) {
 		renderers[i].Release();
 	}
+	delete[] transforms; // all three arrays were allocated in one allocation
 }
 
 struct OrderedRenderer {

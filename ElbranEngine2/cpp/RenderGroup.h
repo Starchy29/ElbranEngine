@@ -21,8 +21,8 @@ struct RenderGroup {
 	Renderer* renderers;
 
 	RenderGroup() = default;
-	void Initialize(Transform* transformBuffer, Matrix* worldMatrixBuffer, Renderer* rendererBuffer, uint32_t numTransforms, uint32_t numRenderers);
-	void ReleaseRenderers();
+	void Initialize(uint32_t numTransforms, uint32_t numRenderers);
+	void Release();
 
 	void Draw() const;
 

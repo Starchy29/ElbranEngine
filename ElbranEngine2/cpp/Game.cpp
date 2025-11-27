@@ -8,9 +8,6 @@
 #include "SoundMixer.h"
 #include "ParticleBehavior.h"
 RenderGroup sampleScene;
-Transform transforms[10];
-Matrix worldMatrices[10];
-Renderer renderers[10];
 
 Renderer* spriteTest;
 Renderer* cursor;
@@ -23,7 +20,7 @@ PostProcess ppTest[2];
 char label[] = "here is\ntext";
 
 void Game::Initialize() {
-	sampleScene.Initialize(transforms, worldMatrices, renderers, 10, 10);
+	sampleScene.Initialize(10, 10);
 	sampleScene.backgroundColor = Color(0.1f, 0.1f, 0.1f);
 	sampleScene.camera.viewWidth = 10.f;
 
@@ -58,7 +55,7 @@ void Game::Initialize() {
 }
 
 void Game::Release() {
-	sampleScene.ReleaseRenderers();
+	sampleScene.Release();
 	partBeh.Release();
 }
 
