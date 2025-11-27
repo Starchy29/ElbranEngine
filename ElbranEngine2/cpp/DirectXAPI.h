@@ -1,12 +1,17 @@
 #ifdef WINDOWS
 #pragma once
-#include <d3d11.h>
-#include <dxgi1_3.h>
 #include <wrl/client.h>
 #include "Common.h"
 #include "LoadedFile.h"
 #include "GraphicsData.h"
-#include "Shaders.h"
+
+class ID3D11Device;
+class ID3D11DeviceContext;
+class IDXGISwapChain;
+class ID3D11DepthStencilView;
+class ID3D11DepthStencilState;
+class ID3D11BlendState;
+enum DXGI_FORMAT;
 
 class DirectXAPI {
 public:

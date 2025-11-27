@@ -188,7 +188,6 @@
     <ClInclude Include="..\cpp\Renderer.h" />
     <ClInclude Include="..\cpp\RenderGroup.h" />
     <ClInclude Include="..\cpp\ShaderConstants.h" />
-    <ClInclude Include="..\cpp\Shaders.h" />
     <ClInclude Include="..\cpp\SliderUI.h" />
     <ClInclude Include="..\cpp\SoundMixer.h" />
     <ClInclude Include="..\cpp\Transform.h" />

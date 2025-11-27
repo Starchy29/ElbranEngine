@@ -1,5 +1,7 @@
 #ifdef WINDOWS
 #include <d3dcompiler.h>
+#include <d3d11.h>
+#include <dxgi1_3.h>
 #include "DirectXAPI.h"
 #include "Application.h"
 

@@ -96,9 +96,6 @@
     <ClInclude Include="..\cpp\Transform.h">
       <Filter>Engine\Rendering</Filter>
     </ClInclude>
-    <ClInclude Include="..\cpp\Shaders.h">
-      <Filter>Engine\Rendering</Filter>
-    </ClInclude>
     <ClInclude Include="..\cpp\ShaderConstants.h">
       <Filter>Engine\Rendering</Filter>
     </ClInclude>
