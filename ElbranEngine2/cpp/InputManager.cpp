@@ -3,14 +3,15 @@
 #include "Math.h"
 #include "Common.h"
 
-InputManager::InputManager() {
-	memset(&lastState, 0, sizeof(InputState) * MAX_PLAYERS);
-	memset(&currentState, 0, sizeof(InputState) * MAX_PLAYERS);
-	memset(&rumbleDurations, 0, sizeof(float) * MAX_PLAYERS);
-	memset(&bindings, 0, sizeof(KeyBinds) * (int)InputAction::ACTION_COUNT * MAX_PLAYERS);
-	mouseWheelDelta = 0.f;
-	mouseScreenPos = Vector2::Zero;
-	lastMousePos = Vector2::Zero;
+#ifdef WINDOWS
+#include "WindowsInput.h"
+#endif
+
+void InputManager::Initialize(PlatformInput* platformInput) {
+	// assumed to be zero-initialized already
+	this->platformInput = platformInput;
+
+	// set up default bindings
 	for(int i = 0; i < MAX_PLAYERS; i++) {
 		bindings[i][(int)InputAction::Up].keys[0] = 'W';
 		bindings[i][(int)InputAction::Up].keys[1] = KEY_UP_ARROW;
@@ -45,28 +46,32 @@ InputManager::InputManager() {
 	}
 }
 
+void InputManager::Release() {
+	delete platformInput;
+}
+
 void InputManager::Update(float deltaTime) {
 	memcpy(&lastState, &currentState, sizeof(InputState) * MAX_PLAYERS);
 	lastMousePos = mouseScreenPos;
-	CheckInputs();
-	mouseScreenPos = GetMouseScreenPosition();
-	mouseWheelDelta = DetermineMouseSpin();
+	platformInput->CheckInputs();
+	mouseScreenPos = platformInput->GetMouseScreenPosition();
+	mouseWheelDelta = platformInput->DetermineMouseSpin();
 
 	for(uint8_t player = 0; player < MAX_PLAYERS; player++) {
 		if(rumbleDurations[player] > 0.f) {
 			rumbleDurations[player] -= deltaTime;
 			if(rumbleDurations[player] <= 0.f) {
-				SetRumble(player, 0.f);
+				platformInput->SetRumble(player, 0.f);
 			}
 		}
 
-		currentState[player].leftStick = GetGamepadStick(true, player);
-		currentState[player].rightStick = GetGamepadStick(false, player);
+		currentState[player].leftStick = platformInput->GetGamepadStick(true, player);
+		currentState[player].rightStick = platformInput->GetGamepadStick(false, player);
 
 		for(int action = 0; action < (int)InputAction::ACTION_COUNT; action++) {
 			currentState[player].buttons[action] = false;
 			for(char key : bindings[player][action].keys) {
-				if(IsKeyPressed(key, player)) {
+				if(platformInput->IsKeyPressed(key, player)) {
 					currentState[player].buttons[action] = true;
 					break;
 				}
@@ -75,7 +80,7 @@ void InputManager::Update(float deltaTime) {
 				continue;
 			}
 			for(GamepadButton button : bindings[player][action].buttons) {
-				if(IsButtonPressed(button, player)) {
+				if(platformInput->IsButtonPressed(button, player)) {
 					currentState[player].buttons[action] = true;
 					break;
 				}
@@ -83,7 +88,7 @@ void InputManager::Update(float deltaTime) {
 		}
 	}
 
-	ClearInputs();
+	platformInput->ClearInputs();
 }
 
 bool InputManager::IsPressed(InputAction action, uint8_t playerIndex) {
@@ -104,7 +109,7 @@ Vector2 InputManager::GetStick(bool left, uint8_t playerIndex) {
 
 void InputManager::Rumble(uint8_t playerIndex, float strength0to1, float duration) {
 	ASSERT(duration > 0.f);
-	SetRumble(playerIndex, strength0to1);
+	platformInput->SetRumble(playerIndex, strength0to1);
 	rumbleDurations[playerIndex] = duration;
 }
 

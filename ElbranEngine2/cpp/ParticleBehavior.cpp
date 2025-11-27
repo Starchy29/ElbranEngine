@@ -33,16 +33,16 @@ void ParticleBehavior::Initialize(Renderer* particleRenderer) {
     startWidth = 1.0f;
     lastParticle = 0;
 
-    spawnData = app->graphics.CreateArrayBuffer(ShaderDataType::Structured, particleRenderer->particleData.maxParticles, sizeof(ParticleSpawnState));
+    spawnData = app.graphics.CreateArrayBuffer(ShaderDataType::Structured, particleRenderer->particleData.maxParticles, sizeof(ParticleSpawnState));
 }
 
 void ParticleBehavior::Release() {
-    app->graphics.ReleaseArrayBuffer(&spawnData);
+    app.graphics.ReleaseArrayBuffer(&spawnData);
 }
 
 void ParticleBehavior::Update(float deltaTime) {
     // updated particles
-    GraphicsAPI* graphics = &app->graphics;
+    GraphicsAPI* graphics = &app.graphics;
 
 	ParticleMoveCSConstants csInput = {};
 	csInput.deltaTime = deltaTime;
@@ -54,7 +54,7 @@ void ParticleBehavior::Update(float deltaTime) {
 		csInput.growthRate *= CalcParentScaler();
     }
 
-    ComputeShader* moveShader = &app->assets.particleMoveCS;
+    ComputeShader* moveShader = &app.assets.particleMoveCS;
     graphics->WriteBuffer(&csInput, sizeof(ParticleMoveCSConstants), moveShader->constants.data);
     graphics->SetConstants(ShaderStage::Compute, &moveShader->constants, 0);
     graphics->SetEditBuffer(&particleRenderer->particleData.particleBuffer, 0);
@@ -83,10 +83,10 @@ void ParticleBehavior::Emit(uint16_t numParticles, float duration) {
         return;
     }
 
-    GraphicsAPI* graphics = &app->graphics;
+    GraphicsAPI* graphics = &app.graphics;
     
     // set up initial states
-    ParticleSpawnState* spawnStates = (ParticleSpawnState*)app->frameBuffer.Reserve(numParticles * sizeof(ParticleSpawnState), true);
+    ParticleSpawnState* spawnStates = (ParticleSpawnState*)app.frameBuffer.Reserve(numParticles * sizeof(ParticleSpawnState), true);
 
     float trueSpeed = speed;
     float parentScalar = CalcParentScaler();
@@ -95,7 +95,7 @@ void ParticleBehavior::Emit(uint16_t numParticles, float duration) {
     }
 
     for(uint16_t i = 0; i < numParticles; i++) {
-        spawnStates[i].position = *(particleRenderer->worldMatrix) * (spawnCircular ? app->rng.GenerateInCircle() * 0.5f : Vector2(app->rng.GenerateFloat(-0.5f, 0.5f), app->rng.GenerateFloat(-0.5f, 0.5f)));
+        spawnStates[i].position = *(particleRenderer->worldMatrix) * (spawnCircular ? app.rng.GenerateInCircle() * 0.5f : Vector2(app.rng.GenerateFloat(-0.5f, 0.5f), app.rng.GenerateFloat(-0.5f, 0.5f)));
     }
         
     float rotation;
@@ -129,7 +129,7 @@ void ParticleBehavior::Emit(uint16_t numParticles, float duration) {
         break;
     case MoveStyle::Random:
         for(uint16_t i = 0; i < numParticles; i++) {
-            spawnStates[i].rotation = app->rng.GenerateFloat(0.f, 2.f * PI);
+            spawnStates[i].rotation = app.rng.GenerateFloat(0.f, 2.f * PI);
             spawnStates[i].velocity = trueSpeed * Vector2::FromAngle(spawnStates[i].rotation);
             if(!faceMoveDirection) {
                 spawnStates[i].rotation = 0.f;
@@ -151,7 +151,7 @@ void ParticleBehavior::Emit(uint16_t numParticles, float duration) {
         csInput.width *= parentScalar;
     }
 
-    ComputeShader* spawnShader = &app->assets.particleSpawnCS;
+    ComputeShader* spawnShader = &app.assets.particleSpawnCS;
     graphics->SetArray(ShaderStage::Compute, &spawnData, 0);
     graphics->SetEditBuffer(&particleRenderer->particleData.particleBuffer, 0);
     graphics->WriteBuffer(&csInput, numParticles * sizeof(ParticleSpawnCSConstants), spawnShader->constants.data);

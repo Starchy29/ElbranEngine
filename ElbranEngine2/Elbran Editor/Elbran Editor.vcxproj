@@ -161,7 +161,6 @@
   <ItemGroup>
     <ClInclude Include="..\cpp\AnimationGroup.h" />
     <ClInclude Include="..\cpp\Application.h" />
-    <ClInclude Include="..\cpp\AppPointer.h" />
     <ClInclude Include="..\cpp\AssetContainer.h" />
     <ClInclude Include="..\cpp\AtlasAnimator.h" />
     <ClInclude Include="..\cpp\AudioData.h" />

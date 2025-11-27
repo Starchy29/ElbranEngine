@@ -6,8 +6,8 @@
 #include "LoadedFile.h"
 #include "SoundMixer.h"
 #include "GraphicsAPI.h"
+#include "InputManager.h"
 
-class InputManager;
 #if defined(DEBUG) | defined(_DEBUG)
 #include "DebugHelper.h"
 #endif
@@ -17,12 +17,12 @@ class Application
 public:
 	GraphicsAPI graphics;
 	SoundMixer audio;
-	InputManager* input;
-
+	InputManager input;
 	AssetContainer assets;
 	Game game;
-	Random rng;
 	MemoryArena frameBuffer;
+	Random rng;
+
 #if defined(DEBUG) | defined(_DEBUG)
 	DebugHelper debugger;
 #endif
@@ -31,10 +31,10 @@ public:
 	void (*quitFunction)();
 
 	Application() = default;
-	void Initialize(LoadedFile (*fileLoadFunction)(std::wstring fileName), UInt2 windowSize, PlatformGraphics* platformGraphics, PlatformAudio* platformAudio, InputManager* input);
+	void Initialize(LoadedFile (*fileLoadFunction)(std::wstring fileName), UInt2 windowSize, PlatformGraphics* platformGraphics, PlatformAudio* platformAudio, PlatformInput* platformInput);
 	void Release();
 
 	void StepFrame(float deltaTime);
 };
 
-extern Application* app;
+extern Application app;

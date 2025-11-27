@@ -1,5 +1,4 @@
 #pragma once
-#include "AppPointer.h"
 #include "Math.h"
 
 #define PERLIN_OCTAVES 6

@@ -68,7 +68,7 @@ void GraphicsAPI::ApplyPostProcesses(const PostProcess* postProcessSequence, uin
 		RenderTarget* input = &postProcessTargets[renderTargetIndex];
 		renderTargetIndex = 1 - renderTargetIndex;
 		RenderTarget* output = &postProcessTargets[renderTargetIndex];
-		postProcessSequence[i].Render(input, output, this, &app->assets);
+		postProcessSequence[i].Render(input, output, this, &app.assets);
 	}
 
 	SetRenderTarget(&postProcessTargets[renderTargetIndex], true);
@@ -83,7 +83,7 @@ UInt2 GraphicsAPI::GetViewOffset() const {
 }
 
 void GraphicsAPI::DrawFullscreen() {
-	SetVertexShader(&app->assets.fullscreenVS);
+	SetVertexShader(&app.assets.fullscreenVS);
 	DrawVertices(3); // fullscreen triangle
 }
 
@@ -134,28 +134,28 @@ bool GraphicsAPI::IsFullscreen() const { return platformGraphics->IsFullscreen()
 void GraphicsAPI::SetFullscreen(bool fullscreen) { platformGraphics->SetFullscreen(fullscreen); }
 
 VertexShader GraphicsAPI::LoadVertexShader(std::wstring fileName) const {
-	LoadedFile shaderBlob = app->LoadFile(L"shaders\\" + fileName);
+	LoadedFile shaderBlob = app.LoadFile(L"shaders\\" + fileName);
 	VertexShader result = platformGraphics->CreateVertexShader(&shaderBlob);
 	shaderBlob.Release();
 	return result;
 }
 
 GeometryShader GraphicsAPI::LoadGeometryShader(std::wstring fileName) const {
-	LoadedFile shaderBlob = app->LoadFile(L"shaders\\" + fileName);
+	LoadedFile shaderBlob = app.LoadFile(L"shaders\\" + fileName);
 	GeometryShader result = platformGraphics->CreateGeometryShader(&shaderBlob);
 	shaderBlob.Release();
 	return result;
 }
 
 PixelShader GraphicsAPI::LoadPixelShader(std::wstring fileName) const {
-	LoadedFile shaderBlob = app->LoadFile(L"shaders\\" + fileName);
+	LoadedFile shaderBlob = app.LoadFile(L"shaders\\" + fileName);
 	PixelShader result = platformGraphics->CreatePixelShader(&shaderBlob);
 	shaderBlob.Release();
 	return result;
 }
 
 ComputeShader GraphicsAPI::LoadComputeShader(std::wstring fileName)  const {
-	LoadedFile shaderBlob = app->LoadFile(L"shaders\\" + fileName);
+	LoadedFile shaderBlob = app.LoadFile(L"shaders\\" + fileName);
 	ComputeShader result = platformGraphics->CreateComputeShader(&shaderBlob);
 	shaderBlob.Release();
 	return result;

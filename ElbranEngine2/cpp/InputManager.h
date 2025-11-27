@@ -1,8 +1,12 @@
 #pragma once
-#include "AppPointer.h"
 #include "Math.h"
 
 #define MAX_PLAYERS 1
+
+#ifdef WINDOWS
+class WindowsInput;
+typedef WindowsInput PlatformInput;
+#endif
 
 struct Camera;
 
@@ -76,13 +80,12 @@ struct KeyBinds {
 	GamepadButton buttons[3];
 };
 
-class InputManager
-{
+class InputManager {
 public:
 	KeyBinds bindings[MAX_PLAYERS][(int)InputAction::ACTION_COUNT];
 
-	InputManager();
-	virtual ~InputManager() {}
+	void Initialize(PlatformInput* platformInput);
+	void Release();
 
 	void Update(float deltaTime);
 
@@ -96,17 +99,8 @@ public:
 	Vector2 GetMouseDelta(const Camera* camera);
 	float GetMouseWheelSpin();
 
-protected:
-	virtual void CheckInputs() = 0;
-	virtual void ClearInputs() = 0;
-	virtual bool IsKeyPressed(char key, uint8_t playerIndex) = 0;
-	virtual bool IsButtonPressed(GamepadButton button, uint8_t playerIndex) = 0;
-	virtual Vector2 GetGamepadStick(bool left, uint8_t playerIndex) = 0;
-	virtual Vector2 GetMouseScreenPosition() = 0;
-	virtual float DetermineMouseSpin() = 0;
-	virtual void SetRumble(uint8_t playerIndex, float strength) = 0;
-
 private:
+	PlatformInput* platformInput;
 	InputState lastState[MAX_PLAYERS];
 	InputState currentState[MAX_PLAYERS];
 	float rumbleDurations[MAX_PLAYERS];

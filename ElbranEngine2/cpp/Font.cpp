@@ -69,8 +69,8 @@ public:
 };
 
 void Font::Release() {
-    app->graphics.ReleaseArrayBuffer(&glyphCurves);
-    app->graphics.ReleaseArrayBuffer(&firstCurveIndices);
+    app.graphics.ReleaseArrayBuffer(&glyphCurves);
+    app.graphics.ReleaseArrayBuffer(&firstCurveIndices);
     delete[] glyphBaselines;
     delete[] glyphDimensions;
     charToGlyphIndex.Release();
@@ -96,7 +96,7 @@ Font FontLoader::LoadFile(std::wstring file) {
     Font loaded = {};
 
     // parse file
-    fontFile = app->LoadFile(L"assets\\" + file);
+    fontFile = app.LoadFile(L"assets\\" + file);
     fontFile.littleEndian = false;
     ASSERT(fontFile.bytes != nullptr);
 
@@ -262,10 +262,10 @@ Font FontLoader::LoadFile(std::wstring file) {
     int curveCount = curves.Size();
     int sizeCheck = sizeof(BezierCurve);
 
-    loaded.glyphCurves = app->graphics.CreateArrayBuffer(ShaderDataType::Structured, curves.Size(), sizeof(BezierCurve));
-    loaded.firstCurveIndices = app->graphics.CreateArrayBuffer(ShaderDataType::UInt, glyphStartIndices.Size());
-    app->graphics.WriteBuffer(&curves[0], curves.Size() * sizeof(BezierCurve), loaded.glyphCurves.buffer);
-    app->graphics.WriteBuffer(&glyphStartIndices[0], glyphStartIndices.Size() * sizeof(uint32_t), loaded.firstCurveIndices.buffer);
+    loaded.glyphCurves = app.graphics.CreateArrayBuffer(ShaderDataType::Structured, curves.Size(), sizeof(BezierCurve));
+    loaded.firstCurveIndices = app.graphics.CreateArrayBuffer(ShaderDataType::UInt, glyphStartIndices.Size());
+    app.graphics.WriteBuffer(&curves[0], curves.Size() * sizeof(BezierCurve), loaded.glyphCurves.buffer);
+    app.graphics.WriteBuffer(&glyphStartIndices[0], glyphStartIndices.Size() * sizeof(uint32_t), loaded.firstCurveIndices.buffer);
 
     // clean up
     curves.Release();

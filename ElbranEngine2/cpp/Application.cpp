@@ -3,16 +3,16 @@
 #include "SoundMixer.h"
 #include "InputManager.h"
 
-Application* app;
+Application app;
 
-void Application::Initialize(LoadedFile (*fileLoadFunction)(std::wstring fileName), UInt2 windowSize, PlatformGraphics* platformGraphics, PlatformAudio* platformAudio, InputManager* input) {
+void Application::Initialize(LoadedFile (*fileLoadFunction)(std::wstring fileName), UInt2 windowSize, PlatformGraphics* platformGraphics, PlatformAudio* platformAudio, PlatformInput* platformInput) {
 	frameBuffer.Allocate(8192);
 	quitFunction = nullptr;
 
 	this->LoadFile = fileLoadFunction;
 	graphics.Initialize(platformGraphics, windowSize);
 	audio.Initialize(platformAudio);
-	this->input = input;
+	input.Initialize(platformInput);
 
 	rng.Initialize();
 	assets.Initialize(&graphics);
@@ -23,14 +23,14 @@ void Application::Release() {
 	rng.Release();
 	game.Release();
 	assets.Release();
-	delete input;
+	input.Release();
 	audio.Release();
 	graphics.Release();
 	frameBuffer.Release();
 }
 
 void Application::StepFrame(float deltaTime) {
-	input->Update(deltaTime);
+	input.Update(deltaTime);
 	audio.Update(deltaTime);
 	game.Update(deltaTime);
 

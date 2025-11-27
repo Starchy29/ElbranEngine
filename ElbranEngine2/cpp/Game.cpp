@@ -25,7 +25,7 @@ void Game::Initialize() {
 	sampleScene.camera.viewWidth = 10.f;
 
 	spriteTest = sampleScene.ReserveRenderer();
-	spriteTest->InitSprite(&app->assets.testSprite);
+	spriteTest->InitSprite(&app.assets.testSprite);
 	spriteTest->spriteData.flipX = true;
 	spriteTest->spriteData.tint = Color::Red;
 
@@ -37,13 +37,13 @@ void Game::Initialize() {
 	spriteTest->transform->zOrder = 10.f;
 
 	textTest = sampleScene.ReserveRenderer();
-	textTest->InitText(label, &app->assets.arial);
+	textTest->InitText(label, &app.assets.arial);
 
 	ppTest[0].HSV(0.f, -1.0f, 0.f);
 	ppTest[1].Blur(10);
 
 	particleRend = sampleScene.ReserveRenderer();
-	particleRend->InitParticles(200, &app->assets.testSheet, 1.f);
+	particleRend->InitParticles(200, &app.assets.testSheet, 1.f);
 	partBeh.Initialize(particleRend);
 	partBeh.SetSpawnRate(10.f, 5.f);
 	partBeh.lifespan = 0.5f;
@@ -61,17 +61,17 @@ void Game::Release() {
 
 void Game::Update(float deltaTime) {
 	partBeh.Update(deltaTime);
-	cursor->transform->position = app->input->GetMousePosition(&sampleScene.camera);
+	cursor->transform->position = app.input.GetMousePosition(&sampleScene.camera);
 
-	if(app->input->IsPressed(InputAction::Up)) {
+	if(app.input.IsPressed(InputAction::Up)) {
 		//ppTest.bloomData.brightnessThreshold += deltaTime;
 	}
-	else if(app->input->IsPressed(InputAction::Down)) {
+	else if(app.input.IsPressed(InputAction::Down)) {
 		//ppTest.bloomData.brightnessThreshold -= deltaTime;
 	}
 
-	if(app->input->JustPressed(InputAction::Up) || app->input->JustPressed(InputAction::Down)) {
-		app->audio.PlayEffect(&app->assets.testSound);
+	if(app.input.JustPressed(InputAction::Up) || app.input.JustPressed(InputAction::Down)) {
+		app.audio.PlayEffect(&app.assets.testSound);
 	}
 }
 

@@ -1,5 +1,4 @@
 #pragma once
-#include "AppPointer.h"
 #include "GraphicsData.h"
 #include "AudioData.h"
 #include "Font.h"

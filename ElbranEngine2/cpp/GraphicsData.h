@@ -78,6 +78,7 @@ struct SpriteSheet {
 	uint8_t cols;
 	uint8_t spriteCount;
 
+	SpriteSheet() = default;
 	inline SpriteSheet(Texture2D texture) : SpriteSheet(texture, 1, 1, 1) {}
 	inline SpriteSheet(Texture2D texture, uint8_t rows, uint8_t cols, uint8_t spriteCount) {
 		this->texture = texture;

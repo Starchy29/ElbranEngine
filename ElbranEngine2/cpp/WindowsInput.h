@@ -6,23 +6,20 @@
 
 #define KEY_COUNT 256
 
-class WindowsInput :
-    public InputManager
-{
+class WindowsInput {
 public:
     float mouseWheelDelta;
 
     WindowsInput(HWND windowHandle);
 
-protected:
-    void CheckInputs() override;
-    void ClearInputs() override;
-    bool IsKeyPressed(char key, uint8_t playerIndex) override;
-    bool IsButtonPressed(GamepadButton button, uint8_t playerIndex) override;
-    Vector2 GetGamepadStick(bool left, uint8_t playerIndex) override;
-    Vector2 GetMouseScreenPosition() override;
-    float DetermineMouseSpin() override;
-    void SetRumble(uint8_t playerIndex, float strength) override;
+    void CheckInputs();
+    void ClearInputs();
+    bool IsKeyPressed(char key, uint8_t playerIndex);
+    bool IsButtonPressed(GamepadButton button, uint8_t playerIndex);
+    Vector2 GetGamepadStick(bool left, uint8_t playerIndex);
+    Vector2 GetMouseScreenPosition();
+    float DetermineMouseSpin();
+    void SetRumble(uint8_t playerIndex, float strength);
 
 private:
     struct GamepadData {

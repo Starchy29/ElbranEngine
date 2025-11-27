@@ -104,12 +104,12 @@ void Renderer::Draw(GraphicsAPI* graphics, const AssetContainer* assets) {
 		vsInput.worldTransform = (*worldMatrix * Matrix::Translation(alignment.x, alignment.y) * Matrix::Scale(unstretchFactor.x, unstretchFactor.y)).Transpose();
 		vsInput.uvOffset = Vector2::Zero;
 		vsInput.uvScale = Vector2(1.f, 1.f);
-		graphics->SetVertexShader(&app->assets.cameraVS, &vsInput, sizeof(CameraVSConstants));
+		graphics->SetVertexShader(&app.assets.cameraVS, &vsInput, sizeof(CameraVSConstants));
 
 		// set pixel shader
 		graphics->SetArray(ShaderStage::Pixel, &textData.font->glyphCurves, 0);
 		graphics->SetArray(ShaderStage::Pixel, &textData.font->firstCurveIndices, 1);
-		graphics->SetPixelShader(&app->assets.textRasterizePS, &textData.color, sizeof(Color));
+		graphics->SetPixelShader(&app.assets.textRasterizePS, &textData.color, sizeof(Color));
 
 		// draw mesh
 		graphics->DrawMesh(&textData.textMesh);
@@ -119,7 +119,7 @@ void Renderer::Draw(GraphicsAPI* graphics, const AssetContainer* assets) {
 		// vertex shader
 		graphics->ClearMesh();
 		graphics->SetArray(ShaderStage::Vertex, &particleData.particleBuffer, 0);
-		graphics->SetVertexShader(&app->assets.particlePassPS);
+		graphics->SetVertexShader(&app.assets.particlePassPS);
 
 		// geometry shader
 		ParticleQuadGSConstants gsInput = {};
@@ -129,14 +129,14 @@ void Renderer::Draw(GraphicsAPI* graphics, const AssetContainer* assets) {
 		gsInput.animationFrames = particleData.sprites->spriteCount;
 		gsInput.atlasRows = particleData.sprites->rows;
 		gsInput.atlasCols = particleData.sprites->cols;
-		graphics->SetGeometryShader(&app->assets.particleQuadGS, &gsInput, sizeof(ParticleQuadGSConstants));
+		graphics->SetGeometryShader(&app.assets.particleQuadGS, &gsInput, sizeof(ParticleQuadGSConstants));
 
 		// pixel shader
 		TexturePSConstants psInput;
 		psInput.lit = particleData.applyLights;
 		psInput.tint = particleData.tint;
 		graphics->SetTexture(ShaderStage::Pixel, &particleData.sprites->texture, 0);
-		graphics->SetPixelShader(&app->assets.texturePS, &psInput, sizeof(psInput));
+		graphics->SetPixelShader(&app.assets.texturePS, &psInput, sizeof(psInput));
 
 		// draw
 		if(particleData.blendAdditive) {
@@ -159,10 +159,10 @@ void Renderer::Draw(GraphicsAPI* graphics, const AssetContainer* assets) {
 void Renderer::Release() {
 	switch(type) {
 	case Type::Text:
-		app->graphics.ReleaseMesh(&textData.textMesh);
+		app.graphics.ReleaseMesh(&textData.textMesh);
 		break;
 	case Type::Particles:
-		app->graphics.ReleaseEditBuffer(&particleData.particleBuffer);
+		app.graphics.ReleaseEditBuffer(&particleData.particleBuffer);
 		break;
 	}
 }
@@ -252,13 +252,13 @@ void Renderer::InitParticles(uint16_t maxParticles, const SpriteSheet* animation
 	particleData.blendAdditive = false;
 	particleData.scaleWithParent = true;
 
-	particleData.particleBuffer = app->graphics.CreateEditBuffer(ShaderDataType::Structured, maxParticles, PARTICLE_BYTES);
+	particleData.particleBuffer = app.graphics.CreateEditBuffer(ShaderDataType::Structured, maxParticles, PARTICLE_BYTES);
 }
 
 void Renderer::UpdateTextMesh() {
 	ASSERT(type == Type::Text);
 
-	app->graphics.ReleaseMesh(&textData.textMesh);
+	app.graphics.ReleaseMesh(&textData.textMesh);
 
 	// determine dimensions
 	uint16_t rows = 1;
@@ -268,7 +268,7 @@ void Renderer::UpdateTextMesh() {
 		charIndex++;
 	}
 	uint32_t textLength = charIndex; // excludes null terminator
-	float* rowWidths = (float*)app->frameBuffer.Reserve(sizeof(float) * rows, true);
+	float* rowWidths = (float*)app.frameBuffer.Reserve(sizeof(float) * rows, true);
 
 	uint16_t currentRow = 0;
 	charIndex = 0;
@@ -288,8 +288,8 @@ void Renderer::UpdateTextMesh() {
 	float totalHeight = rows + (rows - 1) * textData.lineSpacing;
 
 	// create mesh to fit in a 1x1 square
-	Vertex* vertices = (Vertex*)app->frameBuffer.Reserve(sizeof(Vertex) * 4 * textLength);
-	uint32_t* indices = (uint32_t*)app->frameBuffer.Reserve(sizeof(uint32_t) * 6 * textLength);
+	Vertex* vertices = (Vertex*)app.frameBuffer.Reserve(sizeof(Vertex) * 4 * textLength);
+	uint32_t* indices = (uint32_t*)app.frameBuffer.Reserve(sizeof(uint32_t) * 6 * textLength);
 	Vector2 cursor = Vector2(0.f, -1.f); // start at y=-1 so the top is at y=0
 	if(textData.horizontalAlignment == HorizontalAlignment::Right) cursor.x = maxWidth - rowWidths[0];
 	else if(textData.horizontalAlignment == HorizontalAlignment::Center) cursor.x = (maxWidth - rowWidths[0]) * 0.5f;
@@ -329,7 +329,7 @@ void Renderer::UpdateTextMesh() {
 		}
 	}
 
-	textData.textMesh = app->graphics.CreateMesh(vertices, 4 * textLength, indices, 6 * textLength, false);
+	textData.textMesh = app.graphics.CreateMesh(vertices, 4 * textLength, indices, 6 * textLength, false);
 	textData.blockAspectRatio = maxWidth / totalHeight;
 }
 

@@ -147,7 +147,6 @@
     <ClInclude Include="..\cpp\Application.h">
       <Filter>Engine</Filter>
     </ClInclude>
-    <ClInclude Include="..\cpp\AppPointer.h" />
     <ClInclude Include="..\cpp\Common.h">
       <Filter>Engine\Toolkit</Filter>
     </ClInclude>

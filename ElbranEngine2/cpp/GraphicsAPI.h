@@ -1,5 +1,4 @@
 #pragma once
-#include "AppPointer.h"
 #include "Common.h"
 #include "GraphicsData.h"
 #include <string>

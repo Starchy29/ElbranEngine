@@ -2,7 +2,6 @@
 #include <Windows.h>
 #include <memory>
 #include "Application.h"
-#include "AppPointer.h"
 #include "DirectXAPI.h"
 #include "WindowsAudio.h"
 #include "WindowsInput.h"
@@ -19,6 +18,7 @@ double perfCountSecs;
 double minSecsPerFrame; // inverse of max fps
 WindowsInput* input;
 std::wstring filePath;
+bool initialized = false;
 
 #if defined(DEBUG) | defined(_DEBUG)
 float timeSinceFPSUpdate = 0.f;
@@ -35,7 +35,7 @@ void UpdateApp() {
 			
 	float fDeltaTime = (float)deltaTime;
 
-	app->StepFrame(fDeltaTime);
+	app.StepFrame(fDeltaTime);
 
 	#if defined(DEBUG) | defined(_DEBUG)
 	if(SHOW_FPS) {
@@ -86,8 +86,8 @@ LRESULT CALLBACK WndProc(_In_ HWND hWnd, _In_ UINT message, _In_ WPARAM wParam, 
 		}
 
 		// Save the new client area dimensions
-		if(app) {
-			app->graphics.ResizeScreen(UInt2(LOWORD(lParam), HIWORD(lParam)));
+		if(initialized) {
+			app.graphics.ResizeScreen(UInt2(LOWORD(lParam), HIWORD(lParam)));
 		}
 		return 0;
 	case WM_MOUSEWHEEL:
@@ -232,13 +232,12 @@ int WINAPI WinMain(
 	GetClientRect(windowHandle, &windowRect);
 	LoadedFile sampleShader = LoadWindowsFile(L"shaders\\CameraVS.cso");
 	input = new WindowsInput(windowHandle);
-	app = (Application*)calloc(1, sizeof(Application));
-	app->Initialize(LoadWindowsFile, UInt2(windowRect.right - windowRect.left, windowRect.bottom - windowRect.top), new DirectXAPI(windowHandle, &sampleShader), new WindowsAudio(), input);
+	app.Initialize(LoadWindowsFile, UInt2(windowRect.right - windowRect.left, windowRect.bottom - windowRect.top), new DirectXAPI(windowHandle, &sampleShader), new WindowsAudio(), input);
+	initialized = true;
 	sampleShader.Release();
-	app->quitFunction = QuitApp;
+	app.quitFunction = QuitApp;
 	RunApp();
-	app->Release();
-	free(app);
+	app.Release();
 	return 0;
 }
 #endif
