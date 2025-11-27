@@ -177,6 +177,9 @@
     <ClInclude Include="..\cpp\PostProcess.h">
       <Filter>Engine\Rendering</Filter>
     </ClInclude>
+    <ClInclude Include="..\cpp\InputData.h">
+      <Filter>Engine</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\hlsl\ColorConversion.hlsli">

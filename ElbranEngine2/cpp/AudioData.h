@@ -1,6 +1,9 @@
 #pragma once
 #include <stdint.h>
 
+#define MAX_MUSIC_CHANNELS 3
+#define MAX_SFX 20
+
 // matches the structure of the 'fmt ' chunk in .wav files
 struct WaveFormat {
 	uint16_t formatTag;

@@ -3,6 +3,8 @@
 #include "Application.h"
 #include "GraphicsAPI.h"
 #include "Math.h"
+#include <Windows.h>
+#include <Xinput.h>
 
 #define STICK_MAX 32767.0f
 #define GAMEPAD_DEAD_ZONE 0.2f
@@ -10,6 +12,11 @@
 
 WindowsInput::WindowsInput(HWND windowHandle) {
     this->windowHandle = windowHandle;
+    gamepadStates = new XINPUT_GAMEPAD[4];
+}
+
+WindowsInput::~WindowsInput() {
+    delete[] gamepadStates;
 }
 
 void WindowsInput::CheckInputs() {
@@ -28,11 +35,11 @@ void WindowsInput::CheckInputs() {
 		}
 
 		// save the gamepad state
-		gamepads[i].state = gamepadData.Gamepad;
+		gamepadStates[i] = gamepadData.Gamepad;
 
 		// determine stick positions
-		short x = gamepads[i].state.sThumbLX;
-		short y = gamepads[i].state.sThumbLY;
+		short x = gamepadStates[i].sThumbLX;
+		short y = gamepadStates[i].sThumbLY;
 		if(x < 0) {
 			x++; // range is -32768 to 32767
 		}
@@ -41,8 +48,8 @@ void WindowsInput::CheckInputs() {
 		}
 		gamepads[i].leftStick = Vector2(x / STICK_MAX, y / STICK_MAX);
 
-		x = gamepads[i].state.sThumbRX;
-		y = gamepads[i].state.sThumbRY;
+		x = gamepadStates[i].sThumbRX;
+		y = gamepadStates[i].sThumbRY;
 		if(x < 0) {
 			x++; // range is -32768 to 32767
 		}
@@ -126,13 +133,13 @@ bool WindowsInput::IsButtonPressed(GamepadButton button, uint8_t playerIndex) {
 
     switch(button) {
     case GamepadButton::A:
-        return gamepads[playerIndex].state.wButtons & XINPUT_GAMEPAD_A;
+        return gamepadStates[playerIndex].wButtons & XINPUT_GAMEPAD_A;
     case GamepadButton::B:
-        return gamepads[playerIndex].state.wButtons & XINPUT_GAMEPAD_B;
+        return gamepadStates[playerIndex].wButtons & XINPUT_GAMEPAD_B;
     case GamepadButton::X:
-        return gamepads[playerIndex].state.wButtons & XINPUT_GAMEPAD_X;
+        return gamepadStates[playerIndex].wButtons & XINPUT_GAMEPAD_X;
     case GamepadButton::Y:
-        return gamepads[playerIndex].state.wButtons & XINPUT_GAMEPAD_Y;
+        return gamepadStates[playerIndex].wButtons & XINPUT_GAMEPAD_Y;
     case GamepadButton::LStickUp:
         return gamepads[playerIndex].leftStick.y >= SQRT2_DIV2;
     case GamepadButton::LStickDown:
@@ -150,29 +157,29 @@ bool WindowsInput::IsButtonPressed(GamepadButton button, uint8_t playerIndex) {
     case GamepadButton::RStickRight:
         return gamepads[playerIndex].rightStick.x >= SQRT2_DIV2;
     case GamepadButton::DpadUp:
-        return gamepads[playerIndex].state.wButtons & XINPUT_GAMEPAD_DPAD_UP;
+        return gamepadStates[playerIndex].wButtons & XINPUT_GAMEPAD_DPAD_UP;
     case GamepadButton::DpadDown:
-        return gamepads[playerIndex].state.wButtons & XINPUT_GAMEPAD_DPAD_DOWN;
+        return gamepadStates[playerIndex].wButtons & XINPUT_GAMEPAD_DPAD_DOWN;
     case GamepadButton::DpadLeft:
-        return gamepads[playerIndex].state.wButtons & XINPUT_GAMEPAD_DPAD_LEFT;
+        return gamepadStates[playerIndex].wButtons & XINPUT_GAMEPAD_DPAD_LEFT;
     case GamepadButton::DpadRight:
-        return gamepads[playerIndex].state.wButtons & XINPUT_GAMEPAD_DPAD_RIGHT;
+        return gamepadStates[playerIndex].wButtons & XINPUT_GAMEPAD_DPAD_RIGHT;
     case GamepadButton::LeftTrigger:
-        return gamepads[playerIndex].state.bLeftTrigger > 200; // 255 is max
+        return gamepadStates[playerIndex].bLeftTrigger > 200; // 255 is max
     case GamepadButton::RightTrigger:
-        return gamepads[playerIndex].state.bRightTrigger > 200; // 255 is max
+        return gamepadStates[playerIndex].bRightTrigger > 200; // 255 is max
     case GamepadButton::LeftBumper:
-        return gamepads[playerIndex].state.wButtons & XINPUT_GAMEPAD_LEFT_SHOULDER;
+        return gamepadStates[playerIndex].wButtons & XINPUT_GAMEPAD_LEFT_SHOULDER;
     case GamepadButton::RightBumper:
-        return gamepads[playerIndex].state.wButtons & XINPUT_GAMEPAD_RIGHT_SHOULDER;
+        return gamepadStates[playerIndex].wButtons & XINPUT_GAMEPAD_RIGHT_SHOULDER;
     case GamepadButton::LStickPress:
-        return gamepads[playerIndex].state.wButtons & XINPUT_GAMEPAD_LEFT_THUMB;;
+        return gamepadStates[playerIndex].wButtons & XINPUT_GAMEPAD_LEFT_THUMB;;
     case GamepadButton::RStickPress:
-        return gamepads[playerIndex].state.wButtons & XINPUT_GAMEPAD_RIGHT_THUMB;
+        return gamepadStates[playerIndex].wButtons & XINPUT_GAMEPAD_RIGHT_THUMB;
     case GamepadButton::Start:
-        return gamepads[playerIndex].state.wButtons & XINPUT_GAMEPAD_START;
+        return gamepadStates[playerIndex].wButtons & XINPUT_GAMEPAD_START;
     case GamepadButton::Select:
-        return gamepads[playerIndex].state.wButtons & XINPUT_GAMEPAD_BACK;
+        return gamepadStates[playerIndex].wButtons & XINPUT_GAMEPAD_BACK;
     }
 
     return false;

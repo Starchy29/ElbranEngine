@@ -175,6 +175,7 @@
     <ClInclude Include="..\cpp\Font.h" />
     <ClInclude Include="..\cpp\Game.h" />
     <ClInclude Include="..\cpp\GraphicsAPI.h" />
+    <ClInclude Include="..\cpp\InputData.h" />
     <ClInclude Include="..\cpp\InputManager.h" />
     <ClInclude Include="..\cpp\Lights.h" />
     <ClInclude Include="..\cpp\LoadedFile.h" />

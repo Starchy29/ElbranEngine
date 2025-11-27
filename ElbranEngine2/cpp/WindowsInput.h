@@ -1,16 +1,19 @@
 #ifdef WINDOWS
 #pragma once
-#include "InputManager.h"
-#include <Windows.h>
-#include <Xinput.h>
+#include "InputData.h"
+#include "Math.h"
 
 #define KEY_COUNT 256
+
+struct HWND__;
+struct _XINPUT_GAMEPAD;
 
 class WindowsInput {
 public:
     float mouseWheelDelta;
 
-    WindowsInput(HWND windowHandle);
+    WindowsInput(HWND__* windowHandle);
+    ~WindowsInput();
 
     void CheckInputs();
     void ClearInputs();
@@ -23,15 +26,15 @@ public:
 
 private:
     struct GamepadData {
-        bool connected;
-        XINPUT_GAMEPAD state;
         Vector2 leftStick;
         Vector2 rightStick;
+        bool connected;
     };
 
-    HWND windowHandle;
+    HWND__* windowHandle;
 
     uint8_t keyboard[KEY_COUNT];
     GamepadData gamepads[4];
+    _XINPUT_GAMEPAD* gamepadStates;
 };
 #endif

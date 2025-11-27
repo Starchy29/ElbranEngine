@@ -6,9 +6,6 @@ class WindowsAudio;
 typedef WindowsAudio PlatformAudio;
 #endif
 
-#define MAX_MUSIC_CHANNELS 3
-#define MAX_SFX 20
-
 class SoundMixer {
 public:
 	void Initialize(PlatformAudio* platformAudio);
