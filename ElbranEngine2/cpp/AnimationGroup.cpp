@@ -1,51 +1,39 @@
 #include "AnimationGroup.h"
 
-/*void AnimationGroup::Initialize(AtlasRenderer* renderer, uint8_t numAnimations) {
-	this->renderer = renderer;
+void AnimationGroup::Initialize(Renderer* atlasRenderer, uint8_t numAnimations) {
+	this->atlasRenderer = atlasRenderer;
+	this->numAnimations = numAnimations;
 	currentAnimationIndex = -1;
 
-	animators.Allocate(numAnimations);
-	animationSprites.Allocate(numAnimations);
-	nextAnimationIndices.Allocate(numAnimations);
+	animators = (AtlasAnimator*)calloc(numAnimations, sizeof(AtlasAnimator) + sizeof(SpriteSheet*) + sizeof(uint8_t));
 }
 
 void AnimationGroup::Release() {
-	animators.Release();
-	animationSprites.Release();
-	nextAnimationIndices.Release();
+	free(animators);
 }
 
 void AnimationGroup::Update(float deltaTime) {
 	if(currentAnimationIndex < 0) return;
 	animators[currentAnimationIndex].Update(deltaTime);
-	if(nextAnimationIndices[currentAnimationIndex] >= 0 && animators[currentAnimationIndex].IsComplete()) {
-		StartAnimation(nextAnimationIndices[currentAnimationIndex]);
+	if(animationSequence[currentAnimationIndex] >= 0 && animators[currentAnimationIndex].IsComplete()) {
+		StartAnimation(animationSequence[currentAnimationIndex]);
 	}
 }
 
-AtlasAnimator* AnimationGroup::AddAnimation(SpriteSheet* frames, float frameRate, bool looped, bool rebounds, int8_t nextAnimationIndex) {
-	animationSprites.Add(frames);
-	nextAnimationIndices.Add(nextAnimationIndex);
+AtlasAnimator* AnimationGroup::AddAnimation(const SpriteSheet* frames, float frameRate, bool looped, bool rebounds, int8_t nextAnimationIndex) {
+	spriteSheets[numAnimations] = frames;
+	animationSequence[numAnimations] = nextAnimationIndex;
 
-	AtlasAnimator* added = animators.ReserveNext();
-	added->Initialize(renderer, frameRate);
-	added->looped = looped;
-	added->rebounds = rebounds;
-	return added;
-}
+	animators[numAnimations].Initialize(atlasRenderer, frameRate);
+	animators[numAnimations].looped = looped;
+	animators[numAnimations].rebounds = rebounds;
 
-AtlasAnimator* AnimationGroup::GetAnimation(uint8_t index) {
-	ASSERT(index < animators.Size());
-	return &animators[index];
-}
-
-AtlasAnimator* AnimationGroup::GetCurrentAnimation() {
-	if(currentAnimationIndex < 0) return nullptr;
-	return &animators[currentAnimationIndex];
+	numAnimations++;
+	return &animators[numAnimations];
 }
 
 void AnimationGroup::StartAnimation(uint8_t index, bool reversed) {
 	currentAnimationIndex = index;
-	renderer->atlas = animationSprites[index];
+	atlasRenderer->atlasData.atlas = spriteSheets[index];
 	animators[index].Restart(reversed);
-}*/
+}
