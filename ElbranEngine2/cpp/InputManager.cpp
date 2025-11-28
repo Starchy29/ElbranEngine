@@ -50,11 +50,11 @@ void InputManager::Release() {
 	delete platformInput;
 }
 
-void InputManager::Update(float deltaTime) {
+void InputManager::Update(float deltaTime, UInt2 viewDimensions, UInt2 viewOffset) {
 	memcpy(&lastState, &currentState, sizeof(InputState) * MAX_PLAYERS);
 	lastMousePos = mouseScreenPos;
 	platformInput->CheckInputs();
-	mouseScreenPos = platformInput->GetMouseScreenPosition();
+	mouseScreenPos = platformInput->GetMouseScreenPosition(viewDimensions, viewOffset);
 	mouseWheelDelta = platformInput->DetermineMouseSpin();
 
 	for(uint8_t player = 0; player < MAX_PLAYERS; player++) {

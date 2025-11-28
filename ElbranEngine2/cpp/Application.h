@@ -1,7 +1,6 @@
 #pragma once
 #include "Game.h"
 #include "AssetContainer.h"
-#include "Random.h"
 #include "MemoryArena.h"
 #include "LoadedFile.h"
 #include "SoundMixer.h"
@@ -21,7 +20,6 @@ public:
 	AssetContainer assets;
 	Game game;
 	MemoryArena frameBuffer;
-	Random rng;
 
 #if defined(DEBUG) | defined(_DEBUG)
 	DebugHelper debugger;

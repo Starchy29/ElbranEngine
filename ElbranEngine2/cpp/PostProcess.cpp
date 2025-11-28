@@ -12,8 +12,8 @@ void PostProcess::Render(const RenderTarget* input, RenderTarget* output, Graphi
 		RenderTarget* midTarget = &graphics->postProcessHelpers[0];
 
 		BlurPPConstants psInput = {};
-		psInput.viewMin = graphics->GetViewOffset();
-		psInput.viewMax = psInput.viewMin + graphics->GetViewDimensions();
+		psInput.viewMin = graphics->viewportOffset;
+		psInput.viewMax = psInput.viewMin + graphics->viewportDims;
 		psInput.blurRadius = blurData.blurRadius;
 		graphics->SetConstants(ShaderStage::Pixel, &blurShader->constants, 0);
 		graphics->SetPixelShader(blurShader);
@@ -46,7 +46,7 @@ void PostProcess::Render(const RenderTarget* input, RenderTarget* output, Graphi
 		if(hsvData.contrast != 0) {
 			// determine average brightness for contrast adjustment
 			ComputeShader* totalShader = &assets->brightnessSumCS;
-			UInt2 viewDims = graphics->GetViewDimensions();
+			UInt2 viewDims = graphics->viewportDims;
 			graphics->WriteBuffer(&viewDims, sizeof(UInt2), totalShader->constants.data);
 			graphics->SetConstants(ShaderStage::Compute, &totalShader->constants, 0);
 			graphics->SetTexture(ShaderStage::Compute, input, 0);

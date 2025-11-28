@@ -5,6 +5,7 @@
 #define PERLIN_PERSISTENCE 0.25f
 
 std::mt19937* generator;
+Random _rng;
 
 void Random::Initialize() {
 	std::random_device os_seed;

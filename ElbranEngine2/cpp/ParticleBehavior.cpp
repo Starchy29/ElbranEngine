@@ -95,7 +95,7 @@ void ParticleBehavior::Emit(uint16_t numParticles, float duration) {
     }
 
     for(uint16_t i = 0; i < numParticles; i++) {
-        spawnStates[i].position = *(particleRenderer->worldMatrix) * (spawnCircular ? app.rng.GenerateInCircle() * 0.5f : Vector2(app.rng.GenerateFloat(-0.5f, 0.5f), app.rng.GenerateFloat(-0.5f, 0.5f)));
+        spawnStates[i].position = *(particleRenderer->worldMatrix) * (spawnCircular ? _rng.GenerateInCircle() * 0.5f : Vector2(_rng.GenerateFloat(-0.5f, 0.5f), _rng.GenerateFloat(-0.5f, 0.5f)));
     }
         
     float rotation;
@@ -129,7 +129,7 @@ void ParticleBehavior::Emit(uint16_t numParticles, float duration) {
         break;
     case MoveStyle::Random:
         for(uint16_t i = 0; i < numParticles; i++) {
-            spawnStates[i].rotation = app.rng.GenerateFloat(0.f, 2.f * PI);
+            spawnStates[i].rotation = _rng.GenerateFloat(0.f, 2.f * PI);
             spawnStates[i].velocity = trueSpeed * Vector2::FromAngle(spawnStates[i].rotation);
             if(!faceMoveDirection) {
                 spawnStates[i].rotation = 0.f;

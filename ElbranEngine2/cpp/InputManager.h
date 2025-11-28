@@ -1,5 +1,6 @@
 #pragma once
 #include "Math.h"
+#include "Common.h"
 #include "InputData.h"
 
 #define MAX_PLAYERS 1
@@ -42,7 +43,7 @@ public:
 	void Initialize(PlatformInput* platformInput);
 	void Release();
 
-	void Update(float deltaTime);
+	void Update(float deltaTime, UInt2 viewDimensions, UInt2 viewOffset);
 
 	bool IsPressed(InputAction action, uint8_t playerIndex = 0);
 	bool JustPressed(InputAction action, uint8_t playerIndex = 0);

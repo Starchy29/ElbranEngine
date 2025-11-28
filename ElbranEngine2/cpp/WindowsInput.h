@@ -2,6 +2,7 @@
 #pragma once
 #include "InputData.h"
 #include "Math.h"
+#include "Common.h"
 
 #define KEY_COUNT 256
 
@@ -20,7 +21,7 @@ public:
     bool IsKeyPressed(char key, uint8_t playerIndex);
     bool IsButtonPressed(GamepadButton button, uint8_t playerIndex);
     Vector2 GetGamepadStick(bool left, uint8_t playerIndex);
-    Vector2 GetMouseScreenPosition();
+    Vector2 GetMouseScreenPosition(UInt2 viewDimensions, UInt2 viewOffset);
     float DetermineMouseSpin();
     void SetRumble(uint8_t playerIndex, float strength);
 

@@ -1,7 +1,5 @@
 #ifdef WINDOWS
 #include "WindowsInput.h"
-#include "Application.h"
-#include "GraphicsAPI.h"
 #include "Math.h"
 #include <Windows.h>
 #include <Xinput.h>
@@ -192,19 +190,17 @@ Vector2 WindowsInput::GetGamepadStick(bool left, uint8_t playerIndex) {
     return left ? gamepads[playerIndex].leftStick : gamepads[playerIndex].rightStick;
 }
 
-Vector2 WindowsInput::GetMouseScreenPosition() {
+Vector2 WindowsInput::GetMouseScreenPosition(UInt2 viewDimensions, UInt2 viewOffset) {
     // get mouse
     POINT mouseWindowPos;
     GetCursorPos(&mouseWindowPos);
     ScreenToClient(windowHandle, &mouseWindowPos);
 
-    UInt2 viewOffset = app.graphics.GetViewOffset();
-    UInt2 viewDims = app.graphics.GetViewDimensions();
     Vector2 mousePosition;
     mouseWindowPos.x -= viewOffset.x;
     mouseWindowPos.y -= viewOffset.y;
-    mousePosition.x = (float)mouseWindowPos.x / viewDims.x * 2.0f - 1.0f;
-    mousePosition.y = (float)mouseWindowPos.y / viewDims.y * 2.0f - 1.0f;
+    mousePosition.x = (float)mouseWindowPos.x / viewDimensions.x * 2.0f - 1.0f;
+    mousePosition.y = (float)mouseWindowPos.y / viewDimensions.y * 2.0f - 1.0f;
     mousePosition.y *= -1.0f;
     return mousePosition;
 }

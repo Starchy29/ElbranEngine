@@ -1,7 +1,5 @@
 #include "Application.h"
-#include "GraphicsAPI.h"
-#include "SoundMixer.h"
-#include "InputManager.h"
+#include "Random.h"
 
 Application app;
 
@@ -14,13 +12,13 @@ void Application::Initialize(LoadedFile (*fileLoadFunction)(std::wstring fileNam
 	audio.Initialize(platformAudio);
 	input.Initialize(platformInput);
 
-	rng.Initialize();
+	_rng.Initialize();
 	assets.Initialize(&graphics);
 	game.Initialize();
 }
 
 void Application::Release() {
-	rng.Release();
+	_rng.Release();
 	game.Release();
 	assets.Release();
 	input.Release();
@@ -30,7 +28,7 @@ void Application::Release() {
 }
 
 void Application::StepFrame(float deltaTime) {
-	input.Update(deltaTime);
+	input.Update(deltaTime, graphics.viewportDims, graphics.viewportOffset);
 	audio.Update(deltaTime);
 	game.Update(deltaTime);
 

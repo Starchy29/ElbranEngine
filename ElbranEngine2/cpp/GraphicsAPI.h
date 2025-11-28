@@ -18,6 +18,9 @@ public:
 	OutputBuffer totalBrightnessBuffer;
 	RenderTarget postProcessHelpers[MAX_POST_PROCESS_HELPER_TEXTURES];
 
+	UInt2 viewportDims;
+	UInt2 viewportOffset;
+
 	GraphicsAPI() = default;
 	void Initialize(PlatformGraphics* platformGraphics, UInt2 windowSize);
 	void Release();
@@ -27,8 +30,6 @@ public:
 	void PresentFrame();
 	void ApplyPostProcesses(const PostProcess* postProcessSequence, uint8_t ppCount);
 
-	UInt2 GetViewDimensions() const;
-	UInt2 GetViewOffset() const;
 	bool IsFullscreen() const;
 	void SetFullscreen(bool fullscreen);
 
@@ -93,8 +94,5 @@ private:
 	RenderTarget postProcessTargets[2];
 	RenderTarget backBuffer;
 	uint8_t renderTargetIndex;
-
-	UInt2 viewportDims;
-	UInt2 viewportOffset;
 };
 

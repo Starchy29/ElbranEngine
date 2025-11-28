@@ -104,12 +104,12 @@ void Renderer::Draw(GraphicsAPI* graphics, const AssetContainer* assets) {
 		vsInput.worldTransform = (*worldMatrix * Matrix::Translation(alignment.x, alignment.y) * Matrix::Scale(unstretchFactor.x, unstretchFactor.y)).Transpose();
 		vsInput.uvOffset = Vector2::Zero;
 		vsInput.uvScale = Vector2(1.f, 1.f);
-		graphics->SetVertexShader(&app.assets.cameraVS, &vsInput, sizeof(CameraVSConstants));
+		graphics->SetVertexShader(&assets->cameraVS, &vsInput, sizeof(CameraVSConstants));
 
 		// set pixel shader
 		graphics->SetArray(ShaderStage::Pixel, &textData.font->glyphCurves, 0);
 		graphics->SetArray(ShaderStage::Pixel, &textData.font->firstCurveIndices, 1);
-		graphics->SetPixelShader(&app.assets.textRasterizePS, &textData.color, sizeof(Color));
+		graphics->SetPixelShader(&assets->textRasterizePS, &textData.color, sizeof(Color));
 
 		// draw mesh
 		graphics->DrawMesh(&textData.textMesh);
@@ -119,7 +119,7 @@ void Renderer::Draw(GraphicsAPI* graphics, const AssetContainer* assets) {
 		// vertex shader
 		graphics->ClearMesh();
 		graphics->SetArray(ShaderStage::Vertex, &particleData.particleBuffer, 0);
-		graphics->SetVertexShader(&app.assets.particlePassPS);
+		graphics->SetVertexShader(&assets->particlePassPS);
 
 		// geometry shader
 		ParticleQuadGSConstants gsInput = {};
@@ -129,14 +129,14 @@ void Renderer::Draw(GraphicsAPI* graphics, const AssetContainer* assets) {
 		gsInput.animationFrames = particleData.sprites->spriteCount;
 		gsInput.atlasRows = particleData.sprites->rows;
 		gsInput.atlasCols = particleData.sprites->cols;
-		graphics->SetGeometryShader(&app.assets.particleQuadGS, &gsInput, sizeof(ParticleQuadGSConstants));
+		graphics->SetGeometryShader(&assets->particleQuadGS, &gsInput, sizeof(ParticleQuadGSConstants));
 
 		// pixel shader
 		TexturePSConstants psInput;
 		psInput.lit = particleData.applyLights;
 		psInput.tint = particleData.tint;
 		graphics->SetTexture(ShaderStage::Pixel, &particleData.sprites->texture, 0);
-		graphics->SetPixelShader(&app.assets.texturePS, &psInput, sizeof(psInput));
+		graphics->SetPixelShader(&assets->texturePS, &psInput, sizeof(psInput));
 
 		// draw
 		if(particleData.blendAdditive) {

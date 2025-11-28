@@ -25,3 +25,5 @@ private:
 	float GetSmoothNoise(int x, int y, int octave) const;
 	float GetInterpolatedNoise(float x, float y, int octave) const;
 };
+
+extern Random _rng;

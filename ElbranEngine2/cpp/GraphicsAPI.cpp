@@ -74,14 +74,6 @@ void GraphicsAPI::ApplyPostProcesses(const PostProcess* postProcessSequence, uin
 	SetRenderTarget(&postProcessTargets[renderTargetIndex], true);
 }
 
-UInt2 GraphicsAPI::GetViewDimensions() const {
-	return viewportDims;
-}
-
-UInt2 GraphicsAPI::GetViewOffset() const {
-	return viewportOffset;
-}
-
 void GraphicsAPI::DrawFullscreen() {
 	SetVertexShader(&app.assets.fullscreenVS);
 	DrawVertices(3); // fullscreen triangle
