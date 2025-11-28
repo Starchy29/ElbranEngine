@@ -35,8 +35,8 @@ public:
 
 private:
 	RenderGroup* scene;
-	DynamicFixedList<UIElement*> elements;
-	DynamicFixedList<UIElement*> disabled;
+	FixedList<UIElement*> elements;
+	FixedList<UIElement*> disabled;
 	UIElement* focus;
 
 	UIElement* FindFurthest(Vector2 direction);

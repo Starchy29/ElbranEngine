@@ -1,5 +1,6 @@
 #pragma once
 #include "Math.h"
+#include "FixedMap.h"
 
 #define OBJECT_CONSTANT_REGISTER 0 // shaders with per-object constant buffers should use register 0
 #define MAX_POST_PROCESS_HELPER_TEXTURES 3
@@ -146,4 +147,12 @@ struct ComputeShader {
 	uint32_t xGroupSize;
 	uint32_t yGroupSize;
 	uint32_t zGroupSize;
+};
+
+struct Font {
+	FixedMap<uint16_t, uint16_t> charToGlyphIndex;
+	ArrayBuffer glyphCurves;
+	ArrayBuffer firstCurveIndices;
+	Vector2* glyphDimensions;
+	float* glyphBaselines; // 0-1, where 0 is the bottom and 1 is the top
 };

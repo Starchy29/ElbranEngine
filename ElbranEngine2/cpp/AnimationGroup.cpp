@@ -4,11 +4,11 @@ void AnimationGroup::Initialize(Renderer* atlasRenderer, uint8_t numAnimations) 
 	this->atlasRenderer = atlasRenderer;
 	this->numAnimations = numAnimations;
 	currentIndex = -1;
-	animations = (Animation*)calloc(numAnimations, sizeof(Animation));
+	animations = new Animation[numAnimations] {};
 }
 
 void AnimationGroup::Release() {
-	free(animations);
+	delete[] animations;
 }
 
 void AnimationGroup::Update(float deltaTime) {

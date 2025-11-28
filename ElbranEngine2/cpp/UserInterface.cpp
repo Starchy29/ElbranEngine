@@ -8,8 +8,8 @@ void UserInterface::Initialize(RenderGroup* scene, uint16_t maxElements) {
 	gamepadEnabled = true;
 	focus = nullptr;
 
-	elements.Allocate(maxElements);
-	disabled.Allocate(maxElements);
+	elements.Initialize(maxElements);
+	disabled.Initialize(maxElements);
 }
 
 void UserInterface::Release() {
@@ -76,7 +76,7 @@ void UserInterface::Update(float deltaTime) {
 			Vector2 mousePos = inputs->GetMousePosition(&scene->camera);
 			UIElement* hovered = nullptr;
 			AlignedRect unitSquare = AlignedRect(Vector2::Zero, Vector2(1.f, 1.f));
-			for(int i = 0; i < elements.Size(); i++) {
+			for(int i = 0; i < elements.size; i++) {
 				Vector2 normalizedMouse = elements[i]->selectArea->Inverse() * mousePos;
 				if(unitSquare.Contains(normalizedMouse)) {
 					hovered = elements[i];
@@ -108,13 +108,13 @@ void UserInterface::SetEnabled(UIElement* element, bool enabled) {
 	if(enabled) {
 		int16_t index = disabled.IndexOf(element);
 		if(index < 0) return;
-		disabled.RemoveAt(index);
+		disabled.QuickRemove(index);
 		elements.Add(element);
 		element->OnEnabled();
 	} else {
 		int16_t index = elements.IndexOf(element);
 		if(index < 0) return;
-		elements.RemoveAt(index);
+		elements.QuickRemove(index);
 		disabled.Add(element);
 		if(focus == element) {
 			ChangeFocus(nullptr);
@@ -126,7 +126,7 @@ void UserInterface::SetEnabled(UIElement* element, bool enabled) {
 UIElement* UserInterface::FindFurthest(Vector2 direction) {
 	UIElement* furthest = nullptr;
 	float maxDistance;
-	uint32_t numElements = elements.Size();
+	uint32_t numElements = elements.size;
 	for(uint32_t i = 0; i < numElements; i++) {
 		Vector2 position = *elements[i]->selectArea * Vector2::Zero;
 		Vector2 weighted = position * direction;
@@ -146,7 +146,7 @@ UIElement* UserInterface::FindClosest(Vector2 direction) {
 	Vector2 start = *focus->selectArea * Vector2::Zero;
 	float minDistance;
 	UIElement* closest = nullptr;
-	uint32_t numElements = elements.Size();
+	uint32_t numElements = elements.size;
 	for(uint16_t i = 0; i < numElements; i++) {
 		Vector2 position = *elements[i]->selectArea * Vector2::Zero;
 		float dotProd = (position - start).Dot(direction);

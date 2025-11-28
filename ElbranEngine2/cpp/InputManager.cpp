@@ -2,6 +2,7 @@
 #include "RenderGroup.h"
 #include "Math.h"
 #include "Common.h"
+#include <cstring> // for memcpy
 
 #ifdef WINDOWS
 #include "WindowsInput.h"

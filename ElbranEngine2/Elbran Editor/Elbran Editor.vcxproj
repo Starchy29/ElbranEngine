@@ -138,7 +138,6 @@
     <ClCompile Include="..\cpp\Common.cpp" />
     <ClCompile Include="..\cpp\DebugHelper.cpp" />
     <ClCompile Include="..\cpp\DirectXAPI.cpp" />
-    <ClCompile Include="..\cpp\Font.cpp" />
     <ClCompile Include="..\cpp\Game.cpp" />
     <ClCompile Include="..\cpp\GraphicsAPI.cpp" />
     <ClCompile Include="..\cpp\InputManager.cpp" />
@@ -164,15 +163,14 @@
     <ClInclude Include="..\cpp\AssetContainer.h" />
     <ClInclude Include="..\cpp\AtlasAnimator.h" />
     <ClInclude Include="..\cpp\AudioData.h" />
+    <ClInclude Include="..\cpp\FixedList.h" />
     <ClInclude Include="..\cpp\GraphicsData.h" />
     <ClInclude Include="..\cpp\Button.h" />
     <ClInclude Include="..\cpp\Camera.h" />
     <ClInclude Include="..\cpp\Common.h" />
     <ClInclude Include="..\cpp\DebugHelper.h" />
     <ClInclude Include="..\cpp\DirectXAPI.h" />
-    <ClInclude Include="..\cpp\FixedList.h" />
     <ClInclude Include="..\cpp\FixedMap.h" />
-    <ClInclude Include="..\cpp\Font.h" />
     <ClInclude Include="..\cpp\Game.h" />
     <ClInclude Include="..\cpp\GraphicsAPI.h" />
     <ClInclude Include="..\cpp\InputData.h" />

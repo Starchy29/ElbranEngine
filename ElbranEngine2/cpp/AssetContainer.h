@@ -1,7 +1,6 @@
 #pragma once
 #include "GraphicsData.h"
 #include "AudioData.h"
-#include "Font.h"
 #include <string>
 
 class GraphicsAPI;
@@ -44,7 +43,10 @@ public:
 	void Initialize(GraphicsAPI* graphics);
 	void Release();
 
+	static void ReleaseFont(Font* font);
+
 	static Texture2D LoadBMP(std::wstring fileName);
 	static Texture2D LoadPNG(std::wstring fileName);
 	static AudioSample LoadWAV(std::wstring fileName);
+	static Font LoadTTF(std::wstring fileName);
 };

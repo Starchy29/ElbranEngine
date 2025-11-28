@@ -16,9 +16,6 @@
     <ClCompile Include="..\cpp\DirectXAPI.cpp">
       <Filter>Engine\Platforms\Windows</Filter>
     </ClCompile>
-    <ClCompile Include="..\cpp\Font.cpp">
-      <Filter>Engine\Rendering</Filter>
-    </ClCompile>
     <ClCompile Include="..\cpp\GraphicsAPI.cpp">
       <Filter>Engine\Rendering</Filter>
     </ClCompile>
@@ -99,9 +96,6 @@
     <ClInclude Include="..\cpp\ShaderConstants.h">
       <Filter>Engine\Rendering</Filter>
     </ClInclude>
-    <ClInclude Include="..\cpp\Font.h">
-      <Filter>Engine\Rendering</Filter>
-    </ClInclude>
     <ClInclude Include="..\cpp\GraphicsAPI.h">
       <Filter>Engine\Rendering</Filter>
     </ClInclude>
@@ -121,9 +115,6 @@
       <Filter>Engine\Toolkit</Filter>
     </ClInclude>
     <ClInclude Include="..\cpp\DebugHelper.h">
-      <Filter>Engine\Toolkit</Filter>
-    </ClInclude>
-    <ClInclude Include="..\cpp\FixedList.h">
       <Filter>Engine\Toolkit</Filter>
     </ClInclude>
     <ClInclude Include="..\cpp\FixedMap.h">
@@ -179,6 +170,9 @@
     </ClInclude>
     <ClInclude Include="..\cpp\InputData.h">
       <Filter>Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="..\cpp\FixedList.h">
+      <Filter>Engine\Toolkit</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
