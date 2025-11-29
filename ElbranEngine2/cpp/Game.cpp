@@ -1,11 +1,7 @@
 #include "Game.h"
 #include "Application.h"
 
-#include "InputManager.h"
 #include "RenderGroup.h"
-#include "GraphicsAPI.h"
-#include "PostProcess.h"
-#include "SoundMixer.h"
 #include "ParticleBehavior.h"
 RenderGroup sampleScene;
 
@@ -19,13 +15,13 @@ PostProcess ppTest[2];
 
 char label[] = "here is\ntext";
 
-void Game::Initialize() {
+void Game::Initialize(GraphicsAPI* graphics, const AssetContainer* assets, MemoryArena* frameBuffer) {
 	sampleScene.Initialize(10, 10);
 	sampleScene.backgroundColor = Color(0.1f, 0.1f, 0.1f);
 	sampleScene.camera.viewWidth = 10.f;
 
 	spriteTest = sampleScene.ReserveRenderer();
-	spriteTest->InitSprite(&app.assets.testSprite);
+	spriteTest->InitSprite(&assets->testSprite);
 	spriteTest->spriteData.flipX = true;
 	spriteTest->spriteData.tint = Color::Red;
 
@@ -37,14 +33,14 @@ void Game::Initialize() {
 	spriteTest->transform->zOrder = 10.f;
 
 	textTest = sampleScene.ReserveRenderer();
-	textTest->InitText(label, &app.assets.arial);
+	textTest->InitText(graphics, frameBuffer, label, &assets->arial);
 
 	ppTest[0].HSV(0.f, -1.0f, 0.f);
 	ppTest[1].Blur(10);
 
 	particleRend = sampleScene.ReserveRenderer();
-	particleRend->InitParticles(200, &app.assets.testSheet, 1.f);
-	partBeh.Initialize(particleRend);
+	particleRend->InitParticles(graphics, 200, &assets->testSheet, 1.f);
+	partBeh.Initialize(graphics, particleRend);
 	partBeh.SetSpawnRate(10.f, 5.f);
 	partBeh.lifespan = 0.5f;
 	partBeh.fadeOutDuration = 0.2f;
@@ -59,23 +55,23 @@ void Game::Release(GraphicsAPI* graphics) {
 	partBeh.Release(graphics);
 }
 
-void Game::Update(float deltaTime) {
-	partBeh.Update(deltaTime);
-	cursor->transform->position = app.input.GetMousePosition(&sampleScene.camera);
+void Game::Update(Application* app, float deltaTime) {
+	partBeh.Update(&app->graphics, &app->assets, &app->frameBuffer, deltaTime);
+	cursor->transform->position = app->input.GetMousePosition(&sampleScene.camera);
 
-	if(app.input.IsPressed(InputAction::Up)) {
+	if(app->input.IsPressed(InputAction::Up)) {
 		//ppTest.bloomData.brightnessThreshold += deltaTime;
 	}
-	else if(app.input.IsPressed(InputAction::Down)) {
+	else if(app->input.IsPressed(InputAction::Down)) {
 		//ppTest.bloomData.brightnessThreshold -= deltaTime;
 	}
 
-	if(app.input.JustPressed(InputAction::Up) || app.input.JustPressed(InputAction::Down)) {
-		app.audio.PlayEffect(&app.assets.testSound);
+	if(app->input.JustPressed(InputAction::Up) || app->input.JustPressed(InputAction::Down)) {
+		app->audio.PlayEffect(&app->assets.testSound);
 	}
 }
 
-void Game::Draw() {
-	sampleScene.Draw();
+void Game::Draw(GraphicsAPI* graphics, const AssetContainer* assets, MemoryArena* frameBuffer) {
+	sampleScene.Draw(graphics, assets, frameBuffer);
 	//app->graphics->ApplyPostProcesses(ppTest, 2);
 }

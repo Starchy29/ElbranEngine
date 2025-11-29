@@ -45,15 +45,15 @@ public:
 
 	void Update(float deltaTime, UInt2 viewDimensions, UInt2 viewOffset);
 
-	bool IsPressed(InputAction action, uint8_t playerIndex = 0);
-	bool JustPressed(InputAction action, uint8_t playerIndex = 0);
-	bool JustReleased(InputAction action, uint8_t playerIndex = 0);
-	Vector2 GetStick(bool left, uint8_t playerIndex = 0);
+	bool IsPressed(InputAction action, uint8_t playerIndex = 0) const;
+	bool JustPressed(InputAction action, uint8_t playerIndex = 0) const;
+	bool JustReleased(InputAction action, uint8_t playerIndex = 0) const;
+	Vector2 GetStick(bool left, uint8_t playerIndex = 0) const;
 
 	void Rumble(uint8_t playerIndex, float strength0to1, float duration);
-	Vector2 GetMousePosition(const Camera* camera);
-	Vector2 GetMouseDelta(const Camera* camera);
-	float GetMouseWheelSpin();
+	Vector2 GetMousePosition(const Camera* camera) const;
+	Vector2 GetMouseDelta(const Camera* camera) const;
+	float GetMouseWheelSpin() const;
 
 private:
 	PlatformInput* platformInput;

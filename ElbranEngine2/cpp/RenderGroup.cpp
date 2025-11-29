@@ -1,6 +1,7 @@
 #include "RenderGroup.h"
-#include "Application.h"
 #include "GraphicsAPI.h"
+#include "AssetContainer.h"
+#include "MemoryArena.h"
 #include "ShaderConstants.h"
 
 // these match Lighting.hlsli
@@ -42,11 +43,9 @@ struct OrderedRenderer {
 	float globalZ;
 };
 
-void RenderGroup::Draw() const {
-	GraphicsAPI* graphics = &app.graphics;
-
+void RenderGroup::Draw(GraphicsAPI* graphics, const AssetContainer* assets, MemoryArena* frameBuffer) const {
 	// convert all transforms into local matrices
-	Matrix* localMatrices = (Matrix*)app.frameBuffer.Reserve(sizeof(Matrix) * transformCount);
+	Matrix* localMatrices = (Matrix*)frameBuffer->Reserve(sizeof(Matrix) * transformCount);
 	for(uint32_t i = 0; i < transformCount; i++) {
 		localMatrices[i] =
 			Matrix::Translation(transforms[i].position.x, transforms[i].position.y, transforms[i].zOrder) *
@@ -80,8 +79,8 @@ void RenderGroup::Draw() const {
 
 	uint32_t numOpaque = 0;
 	uint32_t numTranslucent = 0;
-	OrderedRenderer* opaques = (OrderedRenderer*)app.frameBuffer.Reserve(sizeof(OrderedRenderer) * rendererCount);
-	OrderedRenderer* translucents = (OrderedRenderer*)app.frameBuffer.Reserve(sizeof(OrderedRenderer) * rendererCount);
+	OrderedRenderer* opaques = (OrderedRenderer*)frameBuffer->Reserve(sizeof(OrderedRenderer) * rendererCount);
+	OrderedRenderer* translucents = (OrderedRenderer*)frameBuffer->Reserve(sizeof(OrderedRenderer) * rendererCount);
 
 	for(uint32_t i = 0; i < rendererCount; i++) {
 		if(renderers[i].hidden) continue;
@@ -146,7 +145,7 @@ void RenderGroup::Draw() const {
 
 	// draw opaques front to back
 	for(uint32_t i = 0; i < numOpaque; i++) {
-		opaques[i].renderer->Draw(graphics, &app.assets);
+		opaques[i].renderer->Draw(graphics, assets);
 	}
 
 	// draw the background
@@ -156,16 +155,16 @@ void RenderGroup::Draw() const {
 		psInput.lit = false;
 
 		graphics->SetTexture(ShaderStage::Pixel, backgroundImage, 0);
-		graphics->SetPixelShader(&app.assets.texturePS, &psInput, sizeof(TexturePSConstants));
+		graphics->SetPixelShader(&assets->texturePS, &psInput, sizeof(TexturePSConstants));
 	} else {
-		graphics->SetPixelShader(&app.assets.solidColorPS, &backgroundColor, sizeof(Color));
+		graphics->SetPixelShader(&assets->solidColorPS, &backgroundColor, sizeof(Color));
 	}
-	graphics->DrawFullscreen();
+	graphics->DrawFullscreen(assets);
 
 	// draw translucents back to front
 	graphics->SetBlendMode(BlendState::AlphaBlend);
 	for(int i = 0; i < numTranslucent; i++) {
-		translucents[i].renderer->Draw(graphics, &app.assets);
+		translucents[i].renderer->Draw(graphics, assets);
 	}
 	graphics->SetBlendMode(BlendState::None);
 }

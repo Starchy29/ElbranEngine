@@ -2,6 +2,8 @@
 #include "Renderer.h"
 
 class GraphicsAPI;
+class AssetContainer;
+class MemoryArena;
 
 class ParticleBehavior
 {
@@ -29,12 +31,12 @@ public:
     float startWidth;
 
     ParticleBehavior() = default;
-    void Initialize(Renderer* particleRenderer);
+    void Initialize(GraphicsAPI*, Renderer* particleRenderer);
     void Release(GraphicsAPI*);
 
-    void Update(float deltaTime);
+    void Update(GraphicsAPI*, const AssetContainer*, MemoryArena*, float deltaTime);
 
-    void Emit(uint16_t numParticles, float duration = 0.f);
+    void Emit(GraphicsAPI*, const AssetContainer*, MemoryArena*, uint16_t numParticles, float duration = 0.f);
     void SetSpawnRate(float perSec, uint16_t groupSize = 1);
 
 private:

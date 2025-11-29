@@ -4,6 +4,7 @@
 
 class GraphicsAPI;
 class AssetContainer;
+class MemoryArena;
 
 enum class PrimitiveShape : uint8_t {
 	Square,
@@ -109,18 +110,18 @@ struct Renderer {
 	bool hidden;
 	bool translucent;
 	
-	void Draw(GraphicsAPI* graphics, const AssetContainer* assets);
+	void Draw(GraphicsAPI*, const AssetContainer*);
 
-	void Release(GraphicsAPI* graphics);
+	void Release(GraphicsAPI*);
 
 	void InitShape(PrimitiveShape shape, Color color);
 	void InitSprite(const Texture2D* sprite);
 	void InitAtlas(const SpriteSheet* atlas);
 	void InitPattern(const Texture2D* sprite);
 	void InitLight(Color color, float radius);
-	void InitText(const char* text, const Font* font, HorizontalAlignment horizontalAlignment = HorizontalAlignment::Center, float lineSpacing = 0.0f);
-	void InitParticles(uint16_t maxParticles, const SpriteSheet* animation, float animationFPS);
+	void InitText(GraphicsAPI*, MemoryArena*, const char* text, const Font* font, HorizontalAlignment horizontalAlignment = HorizontalAlignment::Center, float lineSpacing = 0.0f);
+	void InitParticles(GraphicsAPI*, uint16_t maxParticles, const SpriteSheet* animation, float animationFPS);
 
-	void UpdateTextMesh(); // for text renderers
-	void ClearParticles(); // for particle renderers
+	void UpdateTextMesh(GraphicsAPI*, MemoryArena*); // for text renderers
+	void ClearParticles(GraphicsAPI*); // for particle renderers
 };

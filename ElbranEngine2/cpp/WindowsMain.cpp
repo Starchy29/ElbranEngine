@@ -18,6 +18,7 @@ double perfCountSecs;
 double minSecsPerFrame; // inverse of max fps
 WindowsInput* input;
 std::wstring filePath;
+Application app;
 bool initialized = false;
 
 #if defined(DEBUG) | defined(_DEBUG)

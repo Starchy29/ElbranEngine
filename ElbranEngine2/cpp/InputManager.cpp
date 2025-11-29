@@ -92,19 +92,19 @@ void InputManager::Update(float deltaTime, UInt2 viewDimensions, UInt2 viewOffse
 	platformInput->ClearInputs();
 }
 
-bool InputManager::IsPressed(InputAction action, uint8_t playerIndex) {
+bool InputManager::IsPressed(InputAction action, uint8_t playerIndex) const {
 	return currentState[playerIndex].buttons[(int)action];
 }
 
-bool InputManager::JustPressed(InputAction action, uint8_t playerIndex) {
+bool InputManager::JustPressed(InputAction action, uint8_t playerIndex) const {
 	return currentState[playerIndex].buttons[(int)action] && !lastState[playerIndex].buttons[(int)action];
 }
 
-bool InputManager::JustReleased(InputAction action, uint8_t playerIndex) {
+bool InputManager::JustReleased(InputAction action, uint8_t playerIndex) const {
 	return !currentState[playerIndex].buttons[(int)action] && lastState[playerIndex].buttons[(int)action];
 }
 
-Vector2 InputManager::GetStick(bool left, uint8_t playerIndex) {
+Vector2 InputManager::GetStick(bool left, uint8_t playerIndex) const {
 	return left ? currentState[playerIndex].leftStick : currentState[playerIndex].rightStick;
 }
 
@@ -114,18 +114,18 @@ void InputManager::Rumble(uint8_t playerIndex, float strength0to1, float duratio
 	rumbleDurations[playerIndex] = duration;
 }
 
-Vector2 InputManager::GetMousePosition(const Camera* camera) {
+Vector2 InputManager::GetMousePosition(const Camera* camera) const {
 	Vector2 screenCenter = *camera->worldMatrix * Vector2::Zero;
 	Vector2 fromCenter = (mouseScreenPos * camera->GetWorldDimensions() * 0.5f).Rotate(camera->transform->rotation);
 	return screenCenter + fromCenter;
 }
 
-Vector2 InputManager::GetMouseDelta(const Camera* camera) {
+Vector2 InputManager::GetMouseDelta(const Camera* camera) const {
 	Vector2 newPos = (mouseScreenPos * camera->GetWorldDimensions() * 0.5f).Rotate(camera->transform->rotation);
 	Vector2 oldPos = (lastMousePos * camera->GetWorldDimensions() * 0.5f).Rotate(camera->transform->rotation);
 	return newPos - oldPos;
 }
 
-float InputManager::GetMouseWheelSpin() {
+float InputManager::GetMouseWheelSpin() const {
 	return mouseWheelDelta;
 }

@@ -3,12 +3,12 @@
 #include "AssetContainer.h"
 #include "ShaderConstants.h"
 
-void PostProcess::Render(const RenderTarget* input, RenderTarget* output, GraphicsAPI* graphics, AssetContainer* assets) const {
+void PostProcess::Render(const RenderTarget* input, RenderTarget* output, GraphicsAPI* graphics, const AssetContainer* assets) const {
 	PostProcess otherStep;
 
 	switch(type) {
 	case Type::Blur: {
-		PixelShader* blurShader = &assets->blurPP;
+		const PixelShader* blurShader = &assets->blurPP;
 		RenderTarget* midTarget = &graphics->postProcessHelpers[0];
 
 		BlurPPConstants psInput = {};
@@ -23,14 +23,14 @@ void PostProcess::Render(const RenderTarget* input, RenderTarget* output, Graphi
 		graphics->WriteBuffer(&psInput, sizeof(BlurPPConstants), blurShader->constants.data);
 		graphics->SetRenderTarget(midTarget, false);
 		graphics->SetTexture(ShaderStage::Pixel, input, 0);
-		graphics->DrawFullscreen();
+		graphics->DrawFullscreen(assets);
 
 		// blur vertical
 		psInput.horizontal = false;
 		graphics->WriteBuffer(&psInput, sizeof(BlurPPConstants), blurShader->constants.data);
 		graphics->SetRenderTarget(output, false);
 		graphics->SetTexture(ShaderStage::Pixel, midTarget, 0);
-		graphics->DrawFullscreen();
+		graphics->DrawFullscreen(assets);
 
 		graphics->SetTexture(ShaderStage::Pixel, nullptr, 0);
 	} break;
@@ -45,7 +45,7 @@ void PostProcess::Render(const RenderTarget* input, RenderTarget* output, Graphi
 
 		if(hsvData.contrast != 0) {
 			// determine average brightness for contrast adjustment
-			ComputeShader* totalShader = &assets->brightnessSumCS;
+			const ComputeShader* totalShader = &assets->brightnessSumCS;
 			UInt2 viewDims = graphics->viewportDims;
 			graphics->WriteBuffer(&viewDims, sizeof(UInt2), totalShader->constants.data);
 			graphics->SetConstants(ShaderStage::Compute, &totalShader->constants, 0);
@@ -64,7 +64,7 @@ void PostProcess::Render(const RenderTarget* input, RenderTarget* output, Graphi
 		graphics->SetTexture(ShaderStage::Pixel, input, 0);
 		graphics->SetPixelShader(&assets->conSatValPP, &psInput, sizeof(ConSatValPPConstants));
 
-		graphics->DrawFullscreen();
+		graphics->DrawFullscreen(assets);
 		graphics->SetTexture(ShaderStage::Pixel, nullptr, 0);
 	} break;
 
@@ -74,7 +74,7 @@ void PostProcess::Render(const RenderTarget* input, RenderTarget* output, Graphi
 		graphics->SetRenderTarget(brightPixels, false);
 		graphics->SetTexture(ShaderStage::Pixel, input, 0);
 		graphics->SetPixelShader(&assets->bloomFilterPP, &bloomData.brightnessThreshold, sizeof(float));
-		graphics->DrawFullscreen();
+		graphics->DrawFullscreen(assets);
 
 		// blur bright pixels
 		RenderTarget* blurredBrightness = &graphics->postProcessHelpers[2];
@@ -86,7 +86,7 @@ void PostProcess::Render(const RenderTarget* input, RenderTarget* output, Graphi
 		graphics->SetTexture(ShaderStage::Pixel, input, 0);
 		graphics->SetTexture(ShaderStage::Pixel, blurredBrightness, 1);
 		graphics->SetPixelShader(&assets->screenSumPP);
-		graphics->DrawFullscreen();
+		graphics->DrawFullscreen(assets);
 
 		graphics->SetTexture(ShaderStage::Pixel, nullptr, 0);
 		graphics->SetTexture(ShaderStage::Pixel, nullptr, 1);

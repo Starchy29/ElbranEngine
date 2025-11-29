@@ -1,5 +1,5 @@
 #include "GraphicsAPI.h"
-#include "Application.h"
+#include "AssetContainer.h"
 
 #ifdef WINDOWS
 #include "DirectXAPI.h"
@@ -61,20 +61,20 @@ void GraphicsAPI::ResizeScreen(UInt2 windowSize) {
 	SetRenderTarget(&postProcessTargets[renderTargetIndex], true);
 }
 
-void GraphicsAPI::ApplyPostProcesses(const PostProcess* postProcessSequence, uint8_t ppCount) {
+void GraphicsAPI::ApplyPostProcesses(const AssetContainer* assets, const PostProcess* postProcessSequence, uint8_t ppCount) {
 	for(uint32_t i = 0; i < ppCount; i++) {
 		if(!postProcessSequence[i].IsActive()) continue;
 		RenderTarget* input = &postProcessTargets[renderTargetIndex];
 		renderTargetIndex = 1 - renderTargetIndex;
 		RenderTarget* output = &postProcessTargets[renderTargetIndex];
-		postProcessSequence[i].Render(input, output, this, &app.assets);
+		postProcessSequence[i].Render(input, output, this, assets);
 	}
 
 	SetRenderTarget(&postProcessTargets[renderTargetIndex], true);
 }
 
-void GraphicsAPI::DrawFullscreen() {
-	SetVertexShader(&app.assets.fullscreenVS);
+void GraphicsAPI::DrawFullscreen(const AssetContainer* assets) {
+	SetVertexShader(&assets->fullscreenVS);
 	DrawVertices(3); // fullscreen triangle
 }
 
@@ -124,33 +124,10 @@ void GraphicsAPI::PresentFrame() {
 bool GraphicsAPI::IsFullscreen() const { return platformGraphics->IsFullscreen(); }
 void GraphicsAPI::SetFullscreen(bool fullscreen) { platformGraphics->SetFullscreen(fullscreen); }
 
-VertexShader GraphicsAPI::LoadVertexShader(std::wstring fileName) const {
-	LoadedFile shaderBlob = app.LoadFile(L"shaders\\" + fileName);
-	VertexShader result = platformGraphics->CreateVertexShader(&shaderBlob);
-	shaderBlob.Release();
-	return result;
-}
-
-GeometryShader GraphicsAPI::LoadGeometryShader(std::wstring fileName) const {
-	LoadedFile shaderBlob = app.LoadFile(L"shaders\\" + fileName);
-	GeometryShader result = platformGraphics->CreateGeometryShader(&shaderBlob);
-	shaderBlob.Release();
-	return result;
-}
-
-PixelShader GraphicsAPI::LoadPixelShader(std::wstring fileName) const {
-	LoadedFile shaderBlob = app.LoadFile(L"shaders\\" + fileName);
-	PixelShader result = platformGraphics->CreatePixelShader(&shaderBlob);
-	shaderBlob.Release();
-	return result;
-}
-
-ComputeShader GraphicsAPI::LoadComputeShader(std::wstring fileName)  const {
-	LoadedFile shaderBlob = app.LoadFile(L"shaders\\" + fileName);
-	ComputeShader result = platformGraphics->CreateComputeShader(&shaderBlob);
-	shaderBlob.Release();
-	return result;
-}
+VertexShader GraphicsAPI::CreateVertexShader(LoadedFile* shaderBlob) const { return platformGraphics->CreateVertexShader(shaderBlob); }
+GeometryShader GraphicsAPI::CreateGeometryShader(LoadedFile* shaderBlob) const { return platformGraphics->CreateGeometryShader(shaderBlob); }
+PixelShader GraphicsAPI::CreatePixelShader(LoadedFile* shaderBlob) const { return platformGraphics->CreatePixelShader(shaderBlob); }
+ComputeShader GraphicsAPI::CreateComputeShader(LoadedFile* shaderBlob) const { return platformGraphics->CreateComputeShader(shaderBlob); }
 
 Texture2D GraphicsAPI::CreateConstantTexture(uint32_t width, uint32_t height, const uint8_t* textureData) const { return platformGraphics->CreateConstantTexture(width, height, textureData); }
 Sampler GraphicsAPI::CreateDefaultSampler() const { return platformGraphics->CreateDefaultSampler(); }
@@ -174,18 +151,18 @@ void GraphicsAPI::SetOutputBuffer(const OutputBuffer* buffer, uint8_t slot, cons
 void GraphicsAPI::ReadBuffer(const OutputBuffer* buffer, void* destination) const { platformGraphics->ReadBuffer(buffer, destination); }
 void GraphicsAPI::RunComputeShader(const ComputeShader* shader, uint16_t xThreads, uint16_t yThreads, uint16_t zThreads) const { platformGraphics->RunComputeShader(shader, xThreads, yThreads, zThreads); }
 
-void GraphicsAPI::ReleaseShader(VertexShader* shader) { platformGraphics->ReleaseShader(shader); }
-void GraphicsAPI::ReleaseShader(GeometryShader* shader) { platformGraphics->ReleaseShader(shader); }
-void GraphicsAPI::ReleaseShader(PixelShader* shader) { platformGraphics->ReleaseShader(shader); }
-void GraphicsAPI::ReleaseShader(ComputeShader* shader) { platformGraphics->ReleaseShader(shader); }
-void GraphicsAPI::ReleaseSampler(Sampler* sampler) { platformGraphics->ReleaseSampler(sampler); }
-void GraphicsAPI::ReleaseTexture(Texture2D* texture) { platformGraphics->ReleaseTexture(texture); }
-void GraphicsAPI::ReleaseComputeTexture(ComputeTexture* texture) { platformGraphics->ReleaseComputeTexture(texture); }
-void GraphicsAPI::ReleaseMesh(Mesh* mesh) { platformGraphics->ReleaseMesh(mesh); }
-void GraphicsAPI::ReleaseConstantBuffer(ConstantBuffer* buffer) { platformGraphics->ReleaseConstantBuffer(buffer); }
-void GraphicsAPI::ReleaseArrayBuffer(ArrayBuffer* buffer) { platformGraphics->ReleaseArrayBuffer(buffer); }
-void GraphicsAPI::ReleaseEditBuffer(EditBuffer* buffer) { platformGraphics->ReleaseEditBuffer(buffer); }
-void GraphicsAPI::ReleaseOuputBuffer(OutputBuffer* buffer) { platformGraphics->ReleaseOuputBuffer(buffer); }
+void GraphicsAPI::ReleaseShader(VertexShader* shader) const { platformGraphics->ReleaseShader(shader); }
+void GraphicsAPI::ReleaseShader(GeometryShader* shader) const { platformGraphics->ReleaseShader(shader); }
+void GraphicsAPI::ReleaseShader(PixelShader* shader) const { platformGraphics->ReleaseShader(shader); }
+void GraphicsAPI::ReleaseShader(ComputeShader* shader) const { platformGraphics->ReleaseShader(shader); }
+void GraphicsAPI::ReleaseSampler(Sampler* sampler) const { platformGraphics->ReleaseSampler(sampler); }
+void GraphicsAPI::ReleaseTexture(Texture2D* texture) const { platformGraphics->ReleaseTexture(texture); }
+void GraphicsAPI::ReleaseComputeTexture(ComputeTexture* texture) const { platformGraphics->ReleaseComputeTexture(texture); }
+void GraphicsAPI::ReleaseMesh(Mesh* mesh) const { platformGraphics->ReleaseMesh(mesh); }
+void GraphicsAPI::ReleaseConstantBuffer(ConstantBuffer* buffer) const { platformGraphics->ReleaseConstantBuffer(buffer); }
+void GraphicsAPI::ReleaseArrayBuffer(ArrayBuffer* buffer) const { platformGraphics->ReleaseArrayBuffer(buffer); }
+void GraphicsAPI::ReleaseEditBuffer(EditBuffer* buffer) const { platformGraphics->ReleaseEditBuffer(buffer); }
+void GraphicsAPI::ReleaseOuputBuffer(OutputBuffer* buffer) const { platformGraphics->ReleaseOuputBuffer(buffer); }
 
 void GraphicsAPI::WriteBuffer(const void* data, uint32_t byteLength, Buffer* buffer) const { platformGraphics->WriteBuffer(data, byteLength, buffer); }
 void GraphicsAPI::SetConstants(ShaderStage stage, const ConstantBuffer* buffer, uint8_t slot) { platformGraphics->SetConstants(stage, buffer, slot); }

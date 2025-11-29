@@ -4,6 +4,9 @@
 #include "FixedList.h"
 #include "Common.h"
 
+class InputManager;
+struct RenderGroup;
+
 struct UIElement {
 	const Matrix* selectArea;
 	virtual ~UIElement(){}
@@ -18,8 +21,7 @@ struct UIElement {
 	virtual bool OnDirectionPressed(Direction direction) { return false; } // return true if the input is used, false otherwise
 };
 
-class UserInterface
-{
+class UserInterface {
 public:
 	bool gamepadEnabled;
 	bool mouseEnabled;
@@ -28,7 +30,7 @@ public:
 	void Initialize(RenderGroup* scene, uint16_t maxElements);
 	void Release();
 
-	void Update(float deltaTime);
+	void Update(const InputManager*, float deltaTime);
 
 	void Join(UIElement* element);
 	void SetEnabled(UIElement* element, bool enabled);

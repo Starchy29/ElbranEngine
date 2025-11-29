@@ -1,9 +1,8 @@
 #include "Renderer.h"
-#include "Application.h"
+#include "MemoryArena.h"
 #include "GraphicsAPI.h"
 #include "AssetContainer.h"
 #include "ShaderConstants.h"
-#include "Math.h"
 
 void Renderer::Draw(GraphicsAPI* graphics, const AssetContainer* assets) {
 	switch(type) {
@@ -222,7 +221,7 @@ void Renderer::InitLight(Color color, float radius) {
 	lightData.coneSize = PI * 2.0f;
 }
 
-void Renderer::InitText(const char* text, const Font* font, HorizontalAlignment horizontalAlignment, float lineSpacing) {
+void Renderer::InitText(GraphicsAPI* graphics, MemoryArena* arena, const char* text, const Font* font, HorizontalAlignment horizontalAlignment, float lineSpacing) {
 	type = Type::Text;
 	hidden = false;
 	translucent = true;
@@ -235,11 +234,11 @@ void Renderer::InitText(const char* text, const Font* font, HorizontalAlignment 
 	textData.verticalAlignment = VerticalAlignment::Center;
 	textData.color = Color::White;
 
-	UpdateTextMesh();
+	UpdateTextMesh(graphics, arena);
 }
 
 #define PARTICLE_BYTES 32 // based on struct in ShaderStructs.hlsli
-void Renderer::InitParticles(uint16_t maxParticles, const SpriteSheet* animation, float animationFPS) {
+void Renderer::InitParticles(GraphicsAPI* graphics, uint16_t maxParticles, const SpriteSheet* animation, float animationFPS) {
 	type = Type::Particles;
 	hidden = false;
 	translucent = true;
@@ -252,13 +251,13 @@ void Renderer::InitParticles(uint16_t maxParticles, const SpriteSheet* animation
 	particleData.blendAdditive = false;
 	particleData.scaleWithParent = true;
 
-	particleData.particleBuffer = app.graphics.CreateEditBuffer(ShaderDataType::Structured, maxParticles, PARTICLE_BYTES);
+	particleData.particleBuffer = graphics->CreateEditBuffer(ShaderDataType::Structured, maxParticles, PARTICLE_BYTES);
 }
 
-void Renderer::UpdateTextMesh() {
+void Renderer::UpdateTextMesh(GraphicsAPI* graphics, MemoryArena* arena) {
 	ASSERT(type == Type::Text);
 
-	app.graphics.ReleaseMesh(&textData.textMesh);
+	graphics->ReleaseMesh(&textData.textMesh);
 
 	// determine dimensions
 	uint16_t rows = 1;
@@ -268,7 +267,7 @@ void Renderer::UpdateTextMesh() {
 		charIndex++;
 	}
 	uint32_t textLength = charIndex; // excludes null terminator
-	float* rowWidths = (float*)app.frameBuffer.Reserve(sizeof(float) * rows, true);
+	float* rowWidths = (float*)arena->Reserve(sizeof(float) * rows);
 
 	uint16_t currentRow = 0;
 	charIndex = 0;
@@ -288,8 +287,8 @@ void Renderer::UpdateTextMesh() {
 	float totalHeight = rows + (rows - 1) * textData.lineSpacing;
 
 	// create mesh to fit in a 1x1 square
-	Vertex* vertices = (Vertex*)app.frameBuffer.Reserve(sizeof(Vertex) * 4 * textLength);
-	uint32_t* indices = (uint32_t*)app.frameBuffer.Reserve(sizeof(uint32_t) * 6 * textLength);
+	Vertex* vertices = (Vertex*)arena->Reserve(sizeof(Vertex) * 4 * textLength);
+	uint32_t* indices = (uint32_t*)arena->Reserve(sizeof(uint32_t) * 6 * textLength);
 	Vector2 cursor = Vector2(0.f, -1.f); // start at y=-1 so the top is at y=0
 	if(textData.horizontalAlignment == HorizontalAlignment::Right) cursor.x = maxWidth - rowWidths[0];
 	else if(textData.horizontalAlignment == HorizontalAlignment::Center) cursor.x = (maxWidth - rowWidths[0]) * 0.5f;
@@ -329,10 +328,10 @@ void Renderer::UpdateTextMesh() {
 		}
 	}
 
-	textData.textMesh = app.graphics.CreateMesh(vertices, 4 * textLength, indices, 6 * textLength, false);
+	textData.textMesh = graphics->CreateMesh(vertices, 4 * textLength, indices, 6 * textLength, false);
 	textData.blockAspectRatio = maxWidth / totalHeight;
 }
 
-void Renderer::ClearParticles() {
+void Renderer::ClearParticles(GraphicsAPI* graphics) {
 	ASSERT(type == Type::Particles)
 }

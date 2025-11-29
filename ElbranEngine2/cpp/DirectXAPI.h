@@ -67,19 +67,19 @@ public:
     void ClearRenderTarget(RenderTarget* renderTarget);
     void PresentFrame();
 
-    void ReleaseShader(VertexShader* shader);
-    void ReleaseShader(GeometryShader* shader);
-    void ReleaseShader(PixelShader* shader);
-    void ReleaseShader(ComputeShader* shader);
-    void ReleaseSampler(Sampler* sampler);
-    void ReleaseTexture(Texture2D* texture);
-    void ReleaseRenderTarget(RenderTarget* texture);
-    void ReleaseComputeTexture(ComputeTexture* texture);
-    void ReleaseMesh(Mesh* mesh);
-    void ReleaseConstantBuffer(ConstantBuffer* buffer);
-    void ReleaseArrayBuffer(ArrayBuffer* buffer);
-    void ReleaseEditBuffer(EditBuffer* buffer);
-    void ReleaseOuputBuffer(OutputBuffer* buffer);
+    void ReleaseShader(VertexShader* shader) const;
+    void ReleaseShader(GeometryShader* shader) const;
+    void ReleaseShader(PixelShader* shader) const;
+    void ReleaseShader(ComputeShader* shader) const;
+    void ReleaseSampler(Sampler* sampler) const;
+    void ReleaseTexture(Texture2D* texture) const;
+    void ReleaseRenderTarget(RenderTarget* texture) const;
+    void ReleaseComputeTexture(ComputeTexture* texture) const;
+    void ReleaseMesh(Mesh* mesh) const;
+    void ReleaseConstantBuffer(ConstantBuffer* buffer) const;
+    void ReleaseArrayBuffer(ArrayBuffer* buffer) const;
+    void ReleaseEditBuffer(EditBuffer* buffer) const;
+    void ReleaseOuputBuffer(OutputBuffer* buffer) const;
 
 private:
     Microsoft::WRL::ComPtr<ID3D11Device> device;

@@ -11,8 +11,7 @@
 #include "DebugHelper.h"
 #endif
 
-class Application
-{
+class Application {
 public:
 	GraphicsAPI graphics;
 	SoundMixer audio;
@@ -24,8 +23,6 @@ public:
 #if defined(DEBUG) | defined(_DEBUG)
 	DebugHelper debugger;
 #endif
-
-	LoadedFile (*LoadFile)(std::wstring fileName);
 	void (*quitFunction)();
 
 	Application() = default;
@@ -34,5 +31,3 @@ public:
 
 	void StepFrame(float deltaTime);
 };
-
-extern Application app;

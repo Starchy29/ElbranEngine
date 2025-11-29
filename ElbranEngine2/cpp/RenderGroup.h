@@ -2,6 +2,8 @@
 #include "Renderer.h"
 
 class GraphicsAPI;
+class AssetContainer;
+class MemoryArena;
 
 #define CAMERA_Z 0
 #define CAMERA_DEPTH 100
@@ -25,7 +27,7 @@ struct RenderGroup {
 	void Initialize(uint32_t numTransforms, uint32_t numRenderers);
 	void Release(GraphicsAPI*);
 
-	void Draw() const;
+	void Draw(GraphicsAPI*, const AssetContainer*, MemoryArena*) const;
 
 	Transform* ReserveTransform(const Matrix** outMatrix = nullptr);
 	Renderer* ReserveRenderer();

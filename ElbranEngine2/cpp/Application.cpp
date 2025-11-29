@@ -1,20 +1,18 @@
 #include "Application.h"
 #include "Random.h"
 
-Application app;
-
 void Application::Initialize(LoadedFile (*fileLoadFunction)(std::wstring fileName), UInt2 windowSize, PlatformGraphics* platformGraphics, PlatformAudio* platformAudio, PlatformInput* platformInput) {
 	frameBuffer.Allocate(8192);
+	_rng.Initialize();
 	quitFunction = nullptr;
 
-	this->LoadFile = fileLoadFunction;
 	graphics.Initialize(platformGraphics, windowSize);
 	audio.Initialize(platformAudio);
 	input.Initialize(platformInput);
 
-	_rng.Initialize();
-	assets.Initialize(&graphics);
-	game.Initialize();
+	assets.Initialize(fileLoadFunction, &graphics);
+	game.Initialize(&graphics, &assets, &frameBuffer);
+	frameBuffer.Clear();
 }
 
 void Application::Release() {
@@ -30,10 +28,10 @@ void Application::Release() {
 void Application::StepFrame(float deltaTime) {
 	input.Update(deltaTime, graphics.viewportDims, graphics.viewportOffset);
 	audio.Update(deltaTime);
-	game.Update(deltaTime);
+	game.Update(this, deltaTime);
 
 	graphics.ResetRenderTargets();
-	game.Draw();
+	game.Draw(&graphics, &assets, &frameBuffer);
 	graphics.PresentFrame();
 
 	frameBuffer.Clear();

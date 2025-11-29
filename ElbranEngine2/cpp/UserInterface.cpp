@@ -1,6 +1,6 @@
 #include "UserInterface.h"
-#include "Application.h"
 #include "InputManager.h"
+#include "RenderGroup.h"
 
 void UserInterface::Initialize(RenderGroup* scene, uint16_t maxElements) {
 	this->scene = scene;
@@ -17,9 +17,7 @@ void UserInterface::Release() {
 	disabled.Release();
 }
 
-void UserInterface::Update(float deltaTime) {
-	InputManager* inputs = &app.input;
-
+void UserInterface::Update(const InputManager* inputs, float deltaTime) {
 	if(gamepadEnabled) {
 		if(inputs->JustPressed(InputAction::Up)) {
 			if(focus) {
@@ -150,7 +148,7 @@ UIElement* UserInterface::FindClosest(Vector2 direction) {
 	for(uint16_t i = 0; i < numElements; i++) {
 		Vector2 position = *elements[i]->selectArea * Vector2::Zero;
 		float dotProd = (position - start).Dot(direction);
-		if(abs(dotProd) < 0.1f) {
+		if(Math::Abs(dotProd) < 0.1f) {
 			continue;
 		}
 

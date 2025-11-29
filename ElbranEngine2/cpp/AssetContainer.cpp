@@ -1,7 +1,5 @@
 #include "AssetContainer.h"
 #include "GraphicsAPI.h"
-#include "Application.h"
-#include "SoundMixer.h"
 #include <stdint.h>
 #include "lodepng.h"
 #include "FixedList.h"
@@ -15,7 +13,9 @@ struct ByteColor {
 	uint8_t alpha;
 };
 
-void AssetContainer::Initialize(GraphicsAPI* graphics) {
+void AssetContainer::Initialize(LoadedFile (*fileLoadFunction)(std::wstring fileName), GraphicsAPI* graphics) {
+	LoadFile = fileLoadFunction;
+
 	defaultSampler = graphics->CreateDefaultSampler();
 	graphics->SetSampler(ShaderStage::Vertex, &defaultSampler, 0);
 	graphics->SetSampler(ShaderStage::Geometry, &defaultSampler, 0);
@@ -48,29 +48,29 @@ void AssetContainer::Initialize(GraphicsAPI* graphics) {
 	unitTriangle = graphics->CreateMesh(triVerts, 3, triIndices, 3, false);
 
 	// load shaders
-	fullscreenVS = graphics->LoadVertexShader(L"FullscreenVS.cso");
-	cameraVS = graphics->LoadVertexShader(L"CameraVS.cso");
-	particlePassPS = graphics->LoadVertexShader(L"ParticlePassVS.cso");
+	fullscreenVS = LoadVertexShader(graphics, L"FullscreenVS.cso");
+	cameraVS = LoadVertexShader(graphics, L"CameraVS.cso");
+	particlePassPS = LoadVertexShader(graphics, L"ParticlePassVS.cso");
 
-	particleQuadGS = graphics->LoadGeometryShader(L"ParticleQuadGS.cso");
+	particleQuadGS = LoadGeometryShader(graphics, L"ParticleQuadGS.cso");
 
-	solidColorPS = graphics->LoadPixelShader(L"SolidColorPS.cso");
-	texturePS = graphics->LoadPixelShader(L"TexturePS.cso");
-	circleFillPS = graphics->LoadPixelShader(L"CircleFillPS.cso");
-	textRasterizePS = graphics->LoadPixelShader(L"TextRasterizePS.cso");
+	solidColorPS = LoadPixelShader(graphics, L"SolidColorPS.cso");
+	texturePS = LoadPixelShader(graphics, L"TexturePS.cso");
+	circleFillPS = LoadPixelShader(graphics, L"CircleFillPS.cso");
+	textRasterizePS = LoadPixelShader(graphics, L"TextRasterizePS.cso");
 
-	conSatValPP = graphics->LoadPixelShader(L"ConSatValPP.cso");
-	blurPP = graphics->LoadPixelShader(L"BlurPP.cso");
-	bloomFilterPP = graphics->LoadPixelShader(L"BloomFilterPP.cso");
-	screenSumPP = graphics->LoadPixelShader(L"ScreenSumPP.cso");
+	conSatValPP = LoadPixelShader(graphics, L"ConSatValPP.cso");
+	blurPP = LoadPixelShader(graphics, L"BlurPP.cso");
+	bloomFilterPP = LoadPixelShader(graphics, L"BloomFilterPP.cso");
+	screenSumPP = LoadPixelShader(graphics, L"ScreenSumPP.cso");
 
-	brightnessSumCS = graphics->LoadComputeShader(L"BrightnessSumCS.cso");
-	particleSpawnCS = graphics->LoadComputeShader(L"ParticleSpawnCS.cso");
-	particleMoveCS = graphics->LoadComputeShader(L"ParticleMoveCS.cso");
+	brightnessSumCS = LoadComputeShader(graphics, L"BrightnessSumCS.cso");
+	particleSpawnCS = LoadComputeShader(graphics, L"ParticleSpawnCS.cso");
+	particleMoveCS = LoadComputeShader(graphics, L"ParticleMoveCS.cso");
 
-	testSprite = LoadPNG(L"elbran.png");
-	testBMP = LoadBMP(L"testbmp.bmp");
-	arial = LoadTTF(L"arial.ttf");
+	testSprite = LoadPNG(graphics, L"elbran.png");
+	testBMP = LoadBMP(graphics, L"testbmp.bmp");
+	arial = LoadTTF(graphics, L"arial.ttf");
 
 	testSheet = SpriteSheet(testSprite);
 	testSound = LoadWAV(L"water plunk.wav");
@@ -104,12 +104,12 @@ void AssetContainer::Release(GraphicsAPI* graphics) {
 	graphics->ReleaseTexture(&testSprite);
 	graphics->ReleaseTexture(&testBMP);
 
-	ReleaseFont(&arial, graphics);
+	ReleaseFont(graphics, &arial);
 
 	testSound.Release();
 }
 
-void AssetContainer::ReleaseFont(Font* font, GraphicsAPI* graphics) {
+void AssetContainer::ReleaseFont(const GraphicsAPI* graphics, Font* font) {
 	graphics->ReleaseArrayBuffer(&font->glyphCurves);
 	graphics->ReleaseArrayBuffer(&font->firstCurveIndices);
 	delete[] font->glyphBaselines;
@@ -118,8 +118,36 @@ void AssetContainer::ReleaseFont(Font* font, GraphicsAPI* graphics) {
 }
 
 #pragma region File Loaders
-Texture2D AssetContainer::LoadBMP(std::wstring fileName) {
-	LoadedFile file = app.LoadFile(L"assets\\" + fileName);
+VertexShader AssetContainer::LoadVertexShader(const GraphicsAPI* graphics, std::wstring fileName) const {
+	LoadedFile shaderBlob = LoadFile(L"shaders\\" + fileName);
+	VertexShader result = graphics->CreateVertexShader(&shaderBlob);
+	shaderBlob.Release();
+	return result;
+}
+
+GeometryShader AssetContainer::LoadGeometryShader(const GraphicsAPI* graphics, std::wstring fileName) const {
+	LoadedFile shaderBlob = LoadFile(L"shaders\\" + fileName);
+	GeometryShader result = graphics->CreateGeometryShader(&shaderBlob);
+	shaderBlob.Release();
+	return result;
+}
+
+PixelShader AssetContainer::LoadPixelShader(const GraphicsAPI* graphics, std::wstring fileName) const {
+	LoadedFile shaderBlob = LoadFile(L"shaders\\" + fileName);
+	PixelShader result = graphics->CreatePixelShader(&shaderBlob);
+	shaderBlob.Release();
+	return result;
+}
+
+ComputeShader AssetContainer::LoadComputeShader(const GraphicsAPI* graphics, std::wstring fileName) const {
+	LoadedFile shaderBlob = LoadFile(L"shaders\\" + fileName);
+	ComputeShader result = graphics->CreateComputeShader(&shaderBlob);
+	shaderBlob.Release();
+	return result;
+}
+
+Texture2D AssetContainer::LoadBMP(const GraphicsAPI* graphics, std::wstring fileName) const {
+	LoadedFile file = LoadFile(L"assets\\" + fileName);
 	file.littleEndian = true;
 	ASSERT(file.ReadUInt16() == 0x4D42); // file type must be "BM"
 	file.readLocation = 10;
@@ -375,25 +403,25 @@ Texture2D AssetContainer::LoadBMP(std::wstring fileName) {
 	}
 
 	file.Release();
-	Texture2D result = app.graphics.CreateConstantTexture(width, height, (uint8_t*)loadedBits);
+	Texture2D result = graphics->CreateConstantTexture(width, height, (uint8_t*)loadedBits);
 	delete[] loadedBits;
 	return result;
 }
 
-Texture2D AssetContainer::LoadPNG(std::wstring fileName) {
-	LoadedFile file = app.LoadFile(L"assets\\" + fileName);
+Texture2D AssetContainer::LoadPNG(const GraphicsAPI* graphics, std::wstring fileName) const {
+	LoadedFile file = LoadFile(L"assets\\" + fileName);
 	std::vector<uint8_t> lodeFile(file.bytes, file.bytes + file.fileSize);
 	std::vector<uint8_t> loadedImage;
 	uint32_t width;
 	uint32_t height;
 	lodepng::decode(loadedImage, width, height, lodeFile); // thank you Lode Vandevenne
-	Texture2D result = app.graphics.CreateConstantTexture(width, height, loadedImage.begin()._Ptr);
+	Texture2D result = graphics->CreateConstantTexture(width, height, loadedImage.begin()._Ptr);
 	file.Release();
 	return result;
 }
 
-AudioSample AssetContainer::LoadWAV(std::wstring fileName) {
-	LoadedFile file = app.LoadFile(L"assets\\" + fileName);
+AudioSample AssetContainer::LoadWAV(std::wstring fileName) const {
+	LoadedFile file = LoadFile(L"assets\\" + fileName);
 	file.littleEndian = true;
 	uint32_t chunkName = file.ReadUInt32();
 	ASSERT(chunkName == 'FFIR');
@@ -682,12 +710,12 @@ struct FontLoader {
 	}
 };
 
-Font AssetContainer::LoadTTF(std::wstring fileName) {
+Font AssetContainer::LoadTTF(const GraphicsAPI* graphics, std::wstring fileName) const {
 	FontLoader loader = {};
 	Font loaded = {};
 
 	// parse file
-	loader.fontFile = app.LoadFile(L"assets\\" + fileName);
+	loader.fontFile = LoadFile(L"assets\\" + fileName);
 	loader.fontFile.littleEndian = false;
 	ASSERT(loader.fontFile.bytes != nullptr);
 
@@ -852,10 +880,10 @@ Font AssetContainer::LoadTTF(std::wstring fileName) {
 	int curveCount = loader.curves.size;
 	int sizeCheck = sizeof(BezierCurve);
 
-	loaded.glyphCurves = app.graphics.CreateArrayBuffer(ShaderDataType::Structured, loader.curves.size, sizeof(BezierCurve));
-	loaded.firstCurveIndices = app.graphics.CreateArrayBuffer(ShaderDataType::UInt, glyphStartIndices.size);
-	app.graphics.WriteBuffer(loader.curves.data, loader.curves.size * sizeof(BezierCurve), loaded.glyphCurves.buffer);
-	app.graphics.WriteBuffer(glyphStartIndices.data, glyphStartIndices.size * sizeof(uint32_t), loaded.firstCurveIndices.buffer);
+	loaded.glyphCurves = graphics->CreateArrayBuffer(ShaderDataType::Structured, loader.curves.size, sizeof(BezierCurve));
+	loaded.firstCurveIndices = graphics->CreateArrayBuffer(ShaderDataType::UInt, glyphStartIndices.size);
+	graphics->WriteBuffer(loader.curves.data, loader.curves.size * sizeof(BezierCurve), loaded.glyphCurves.buffer);
+	graphics->WriteBuffer(glyphStartIndices.data, glyphStartIndices.size * sizeof(uint32_t), loaded.firstCurveIndices.buffer);
 
 	// clean up
 	loader.curves.Release();

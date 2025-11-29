@@ -3,14 +3,16 @@
 #include "GraphicsData.h"
 #include <string>
 #include "PostProcess.h"
+#include "LoadedFile.h"
 
 #ifdef WINDOWS
 class DirectXAPI;
 typedef DirectXAPI PlatformGraphics;
 #endif
 
-class GraphicsAPI
-{
+class AssetContainer;
+
+class GraphicsAPI {
 public:
 	ConstantBuffer projectionBuffer;
 	ConstantBuffer lightInfoBuffer;
@@ -28,15 +30,15 @@ public:
 
 	void ResetRenderTargets();
 	void PresentFrame();
-	void ApplyPostProcesses(const PostProcess* postProcessSequence, uint8_t ppCount);
+	void ApplyPostProcesses(const AssetContainer*, const PostProcess* postProcessSequence, uint8_t ppCount);
 
 	bool IsFullscreen() const;
 	void SetFullscreen(bool fullscreen);
 
-	VertexShader LoadVertexShader(std::wstring fileName) const;
-	GeometryShader LoadGeometryShader(std::wstring fileName) const;
-	PixelShader LoadPixelShader(std::wstring fileName) const;
-	ComputeShader LoadComputeShader(std::wstring fileName) const;
+	VertexShader CreateVertexShader(LoadedFile* shaderBlob) const;
+	GeometryShader CreateGeometryShader(LoadedFile* shaderBlob) const;
+	PixelShader CreatePixelShader(LoadedFile* shaderBlob) const;
+	ComputeShader CreateComputeShader(LoadedFile* shaderBlob) const;
 
 	Texture2D CreateConstantTexture(uint32_t width, uint32_t height, const uint8_t* textureData) const;
 	Sampler CreateDefaultSampler() const;
@@ -66,7 +68,7 @@ public:
 
 	void DrawVertices(uint16_t numVertices) const;
 	void DrawMesh(const Mesh* mesh) const;
-	void DrawFullscreen();
+	void DrawFullscreen(const AssetContainer*);
 
 	// compute shader functions
 	void SetComputeTexture(const ComputeTexture* texture, uint8_t slot);
@@ -76,18 +78,18 @@ public:
 	void RunComputeShader(const ComputeShader* shader, uint16_t xThreads, uint16_t yThreads, uint16_t zThreads = 1) const;
 
 	// gpu memory release functions
-	void ReleaseShader(VertexShader* shader);
-	void ReleaseShader(GeometryShader* shader);
-	void ReleaseShader(PixelShader* shader);
-	void ReleaseShader(ComputeShader* shader);
-	void ReleaseSampler(Sampler* sampler);
-	void ReleaseTexture(Texture2D* texture);
-	void ReleaseComputeTexture(ComputeTexture* texture);
-	void ReleaseMesh(Mesh* mesh);
-	void ReleaseConstantBuffer(ConstantBuffer* buffer);
-	void ReleaseArrayBuffer(ArrayBuffer* buffer);
-	void ReleaseEditBuffer(EditBuffer* buffer);
-	void ReleaseOuputBuffer(OutputBuffer* buffer);
+	void ReleaseShader(VertexShader* shader) const;
+	void ReleaseShader(GeometryShader* shader) const;
+	void ReleaseShader(PixelShader* shader) const;
+	void ReleaseShader(ComputeShader* shader) const;
+	void ReleaseSampler(Sampler* sampler) const;
+	void ReleaseTexture(Texture2D* texture) const;
+	void ReleaseComputeTexture(ComputeTexture* texture) const;
+	void ReleaseMesh(Mesh* mesh) const;
+	void ReleaseConstantBuffer(ConstantBuffer* buffer) const;
+	void ReleaseArrayBuffer(ArrayBuffer* buffer) const;
+	void ReleaseEditBuffer(EditBuffer* buffer) const;
+	void ReleaseOuputBuffer(OutputBuffer* buffer) const;
 
 private:
 	PlatformGraphics* platformGraphics;

@@ -1,13 +1,15 @@
 #pragma once
 #include "GraphicsData.h"
 #include "AudioData.h"
+#include "LoadedFile.h"
 #include <string>
 
 class GraphicsAPI;
-class SoundMixer;
 
 class AssetContainer {
 public:
+	LoadedFile (*LoadFile)(std::wstring fileName);
+
 	Sampler defaultSampler;
 	Mesh unitSquare;
 	Mesh unitTriangle;
@@ -39,13 +41,18 @@ public:
 	AudioSample testSound;
 
 	AssetContainer() = default;
-	void Initialize(GraphicsAPI* graphics);
+	void Initialize(LoadedFile (*fileLoadFunction)(std::wstring fileName), GraphicsAPI*);
 	void Release(GraphicsAPI* graphics);
 
-	static void ReleaseFont(Font* font, GraphicsAPI* graphics);
+	static void ReleaseFont(const GraphicsAPI*, Font* font);
 
-	static Texture2D LoadBMP(std::wstring fileName);
-	static Texture2D LoadPNG(std::wstring fileName);
-	static AudioSample LoadWAV(std::wstring fileName);
-	static Font LoadTTF(std::wstring fileName);
+	VertexShader LoadVertexShader(const GraphicsAPI*, std::wstring fileName) const;
+	GeometryShader LoadGeometryShader(const GraphicsAPI*, std::wstring fileName) const;
+	PixelShader LoadPixelShader(const GraphicsAPI*, std::wstring fileName) const;
+	ComputeShader LoadComputeShader(const GraphicsAPI*, std::wstring fileName) const;
+
+	Texture2D LoadBMP(const GraphicsAPI*, std::wstring fileName) const;
+	Texture2D LoadPNG(const GraphicsAPI*, std::wstring fileName) const;
+	Font LoadTTF(const GraphicsAPI*, std::wstring fileName) const;
+	AudioSample LoadWAV(std::wstring fileName) const;
 };

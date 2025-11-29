@@ -552,65 +552,65 @@ void DirectXAPI::PresentFrame() {
 	swapChain->Present(0, 0);
 }
 
-void DirectXAPI::ReleaseShader(VertexShader* shader) {
+void DirectXAPI::ReleaseShader(VertexShader* shader) const {
 	SafeRelease(shader->shader);
 	SafeRelease(shader->constants.data);
 }
 
-void DirectXAPI::ReleaseShader(GeometryShader* shader) {
+void DirectXAPI::ReleaseShader(GeometryShader* shader) const {
 	SafeRelease(shader->shader);
 	SafeRelease(shader->constants.data);
 }
 
-void DirectXAPI::ReleaseShader(PixelShader* shader) {
+void DirectXAPI::ReleaseShader(PixelShader* shader) const {
 	SafeRelease(shader->shader);
 	SafeRelease(shader->constants.data);
 }
 
-void DirectXAPI::ReleaseShader(ComputeShader* shader) {
+void DirectXAPI::ReleaseShader(ComputeShader* shader) const {
 	SafeRelease(shader->shader);
 	SafeRelease(shader->constants.data);
 }
 
-void DirectXAPI::ReleaseSampler(Sampler* sampler) {
+void DirectXAPI::ReleaseSampler(Sampler* sampler) const {
 	SafeRelease(sampler->state);
 }
 
-void DirectXAPI::ReleaseTexture(Texture2D* texture) {
+void DirectXAPI::ReleaseTexture(Texture2D* texture) const {
 	SafeRelease(texture->data);
 	SafeRelease(texture->inputView);
 }
 
-void DirectXAPI::ReleaseRenderTarget(RenderTarget* texture) {
+void DirectXAPI::ReleaseRenderTarget(RenderTarget* texture) const {
 	ReleaseTexture(texture);
 	SafeRelease(texture->outputView);
 }
 
-void DirectXAPI::ReleaseComputeTexture(ComputeTexture* texture) {
+void DirectXAPI::ReleaseComputeTexture(ComputeTexture* texture) const {
 	ReleaseTexture(texture);
 	SafeRelease(texture->outputView);
 }
 
-void DirectXAPI::ReleaseMesh(Mesh* mesh) {
+void DirectXAPI::ReleaseMesh(Mesh* mesh) const {
 	SafeRelease(mesh->vertices);
 	SafeRelease(mesh->indices);
 }
 
-void DirectXAPI::ReleaseConstantBuffer(ConstantBuffer* buffer) {
+void DirectXAPI::ReleaseConstantBuffer(ConstantBuffer* buffer) const {
 	SafeRelease(buffer->data);
 }
 
-void DirectXAPI::ReleaseArrayBuffer(ArrayBuffer* buffer) {
+void DirectXAPI::ReleaseArrayBuffer(ArrayBuffer* buffer) const {
 	SafeRelease(buffer->buffer);
 	SafeRelease(buffer->view);
 }
 
-void DirectXAPI::ReleaseEditBuffer(EditBuffer* buffer) {
+void DirectXAPI::ReleaseEditBuffer(EditBuffer* buffer) const {
 	ReleaseArrayBuffer(buffer);
 	SafeRelease(buffer->computeView);
 }
 
-void DirectXAPI::ReleaseOuputBuffer(OutputBuffer* buffer) {
+void DirectXAPI::ReleaseOuputBuffer(OutputBuffer* buffer) const {
 	SafeRelease(buffer->cpuBuffer);
 	SafeRelease(buffer->gpuBuffer);
 	SafeRelease(buffer->view);

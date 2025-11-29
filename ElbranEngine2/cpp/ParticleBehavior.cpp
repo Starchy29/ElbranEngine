@@ -1,7 +1,7 @@
 #include "ParticleBehavior.h"
-#include "Application.h"
 #include "GraphicsAPI.h"
 #include "AssetContainer.h"
+#include "MemoryArena.h"
 #include "ShaderConstants.h"
 #include "Random.h"
 
@@ -13,7 +13,7 @@ struct ParticleSpawnState {
     float rotation;
 };
 
-void ParticleBehavior::Initialize(Renderer* particleRenderer) {
+void ParticleBehavior::Initialize(GraphicsAPI* graphics, Renderer* particleRenderer) {
     ASSERT(particleRenderer && particleRenderer->type == Renderer::Type::Particles);
     this->particleRenderer = particleRenderer;
     moveStyle = MoveStyle::None;
@@ -33,18 +33,16 @@ void ParticleBehavior::Initialize(Renderer* particleRenderer) {
     startWidth = 1.0f;
     lastParticle = 0;
 
-    spawnData = app.graphics.CreateArrayBuffer(ShaderDataType::Structured, particleRenderer->particleData.maxParticles, sizeof(ParticleSpawnState));
+    spawnData = graphics->CreateArrayBuffer(ShaderDataType::Structured, particleRenderer->particleData.maxParticles, sizeof(ParticleSpawnState));
 }
 
 void ParticleBehavior::Release(GraphicsAPI* graphics) {
     graphics->ReleaseArrayBuffer(&spawnData);
 }
 
-void ParticleBehavior::Update(float deltaTime) {
-    // updated particles
-    GraphicsAPI* graphics = &app.graphics;
-
-	ParticleMoveCSConstants csInput = {};
+void ParticleBehavior::Update(GraphicsAPI* graphics, const AssetContainer* assets, MemoryArena* frameBuffer, float deltaTime) {
+	// move particles
+    ParticleMoveCSConstants csInput = {};
 	csInput.deltaTime = deltaTime;
 	csInput.maxParticles = particleRenderer->particleData.maxParticles;
     csInput.fadeDuration = fadeOutDuration;
@@ -54,7 +52,7 @@ void ParticleBehavior::Update(float deltaTime) {
 		csInput.growthRate *= CalcParentScaler();
     }
 
-    ComputeShader* moveShader = &app.assets.particleMoveCS;
+    const ComputeShader* moveShader = &assets->particleMoveCS;
     graphics->WriteBuffer(&csInput, sizeof(ParticleMoveCSConstants), moveShader->constants.data);
     graphics->SetConstants(ShaderStage::Compute, &moveShader->constants, 0);
     graphics->SetEditBuffer(&particleRenderer->particleData.particleBuffer, 0);
@@ -69,12 +67,12 @@ void ParticleBehavior::Update(float deltaTime) {
             if(spawnsLeft != CONTINUOUS_SPAWN) {
                 spawnsLeft--;
             }
-            Emit(spawnsPerInterval);
+            Emit(graphics, assets, frameBuffer, spawnsPerInterval);
         }
     }
 }
 
-void ParticleBehavior::Emit(uint16_t numParticles, float duration) {
+void ParticleBehavior::Emit(GraphicsAPI* graphics, const AssetContainer* assets, MemoryArena* frameBuffer, uint16_t numParticles, float duration) {
     if(duration > 0.f) {
         spawnsLeft += numParticles;
         spawnInterval = duration / numParticles;
@@ -82,11 +80,9 @@ void ParticleBehavior::Emit(uint16_t numParticles, float duration) {
         spawnsPerInterval = 1;
         return;
     }
-
-    GraphicsAPI* graphics = &app.graphics;
     
     // set up initial states
-    ParticleSpawnState* spawnStates = (ParticleSpawnState*)app.frameBuffer.Reserve(numParticles * sizeof(ParticleSpawnState), true);
+    ParticleSpawnState* spawnStates = (ParticleSpawnState*)frameBuffer->Reserve(numParticles * sizeof(ParticleSpawnState));
 
     float trueSpeed = speed;
     float parentScalar = CalcParentScaler();
@@ -151,7 +147,7 @@ void ParticleBehavior::Emit(uint16_t numParticles, float duration) {
         csInput.width *= parentScalar;
     }
 
-    ComputeShader* spawnShader = &app.assets.particleSpawnCS;
+    const ComputeShader* spawnShader = &assets->particleSpawnCS;
     graphics->SetArray(ShaderStage::Compute, &spawnData, 0);
     graphics->SetEditBuffer(&particleRenderer->particleData.particleBuffer, 0);
     graphics->WriteBuffer(&csInput, numParticles * sizeof(ParticleSpawnCSConstants), spawnShader->constants.data);

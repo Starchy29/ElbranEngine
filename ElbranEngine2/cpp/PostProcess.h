@@ -31,7 +31,7 @@ struct PostProcess {
 		} bloomData;
 	};
 
-	void Render(const RenderTarget* input, RenderTarget* output, GraphicsAPI* graphics, AssetContainer* assets) const;
+	void Render(const RenderTarget* input, RenderTarget* output, GraphicsAPI* graphics, const AssetContainer* assets) const;
 	bool IsActive() const;
 
 	void Blur(uint16_t blurRadius);
