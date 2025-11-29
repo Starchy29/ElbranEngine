@@ -126,12 +126,6 @@ void InitWindow(HINSTANCE hInstance) {
 	wcex.lpszMenuName = NULL;
 	wcex.lpszClassName = szWindowClass;
 
-	// make an icon resource, then find its code in resource.h. 
-	//HICON icon;
-	// = LoadIcon(hInstance, MAKEINTRESOURCE(IDI_ICON1));
-	//wcex.hIcon = icon;
-	//wcex.hIconSm = icon;
-
 	if(!RegisterClassExW(&wcex)) {
 		MessageBoxW(NULL,
 			L"Call to RegisterClassEx failed!",

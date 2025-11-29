@@ -6,6 +6,54 @@
 #define MAX_POST_PROCESS_HELPER_TEXTURES 3
 #define MAX_LIGHTS_ONSCREEN 16
 
+struct Transform {
+	Vector2 position;
+	Vector2 scale;
+	float rotation;
+	float zOrder;
+	Transform* parent;
+};
+
+struct Camera {
+	Transform* transform;
+	const Matrix* worldMatrix;
+	float viewWidth;
+
+	inline float GetViewHeight() const { return viewWidth / ASPECT_RATIO; }
+	inline Vector2 GetWorldDimensions() const { return Vector2(viewWidth, GetViewHeight()); }
+	inline AlignedRect GetViewArea() const {
+		ASSERT(transform->rotation == 0.f);
+		return AlignedRect(transform->position, GetWorldDimensions());
+	}
+};
+
+// matches buffer in Lighting.hlsli
+struct LightConstants {
+	Color ambientLight;
+	int32_t lightCount;
+};
+
+// matches struct in Lighting.hlsli
+struct LightData {
+	Vector2 worldPosition;
+	Vector2 direction;
+
+	Color color;
+	float radius;
+	float brightness;
+	Vector2 coneEdge;
+};
+
+struct LightSource {
+	Transform* transform;
+	Matrix const* worldMatrix;
+
+	Color color;
+	float radius;
+	float brightness;
+	float coneSize;
+};
+
 #ifdef WINDOWS
 struct ID3D11Buffer;
 struct ID3D11Texture2D;

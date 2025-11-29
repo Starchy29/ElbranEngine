@@ -1,5 +1,4 @@
 #pragma once
-#include "Transform.h"
 #include "GraphicsData.h"
 #include "Common.h"
 
@@ -112,7 +111,7 @@ struct Renderer {
 	
 	void Draw(GraphicsAPI* graphics, const AssetContainer* assets);
 
-	void Release();
+	void Release(GraphicsAPI* graphics);
 
 	void InitShape(PrimitiveShape shape, Color color);
 	void InitSprite(const Texture2D* sprite);

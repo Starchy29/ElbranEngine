@@ -134,7 +134,6 @@
     <ClCompile Include="..\cpp\AssetContainer.cpp" />
     <ClCompile Include="..\cpp\AtlasAnimator.cpp" />
     <ClCompile Include="..\cpp\Button.cpp" />
-    <ClCompile Include="..\cpp\Camera.cpp" />
     <ClCompile Include="..\cpp\Common.cpp" />
     <ClCompile Include="..\cpp\DebugHelper.cpp" />
     <ClCompile Include="..\cpp\DirectXAPI.cpp" />
@@ -166,7 +165,6 @@
     <ClInclude Include="..\cpp\FixedList.h" />
     <ClInclude Include="..\cpp\GraphicsData.h" />
     <ClInclude Include="..\cpp\Button.h" />
-    <ClInclude Include="..\cpp\Camera.h" />
     <ClInclude Include="..\cpp\Common.h" />
     <ClInclude Include="..\cpp\DebugHelper.h" />
     <ClInclude Include="..\cpp\DirectXAPI.h" />
@@ -175,7 +173,6 @@
     <ClInclude Include="..\cpp\GraphicsAPI.h" />
     <ClInclude Include="..\cpp\InputData.h" />
     <ClInclude Include="..\cpp\InputManager.h" />
-    <ClInclude Include="..\cpp\Lights.h" />
     <ClInclude Include="..\cpp\LoadedFile.h" />
     <ClInclude Include="..\cpp\lodepng.h" />
     <ClInclude Include="..\cpp\Math.h" />
@@ -188,7 +185,6 @@
     <ClInclude Include="..\cpp\ShaderConstants.h" />
     <ClInclude Include="..\cpp\SliderUI.h" />
     <ClInclude Include="..\cpp\SoundMixer.h" />
-    <ClInclude Include="..\cpp\Transform.h" />
     <ClInclude Include="..\cpp\UserInterface.h" />
     <ClInclude Include="..\cpp\WindowsAudio.h" />
     <ClInclude Include="..\cpp\WindowsInput.h" />

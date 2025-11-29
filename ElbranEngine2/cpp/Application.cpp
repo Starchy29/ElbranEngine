@@ -19,8 +19,8 @@ void Application::Initialize(LoadedFile (*fileLoadFunction)(std::wstring fileNam
 
 void Application::Release() {
 	_rng.Release();
-	game.Release();
-	assets.Release();
+	game.Release(&graphics);
+	assets.Release(&graphics);
 	input.Release();
 	audio.Release();
 	graphics.Release();

@@ -1,6 +1,7 @@
 #pragma once
 #include "Renderer.h"
-#include "Camera.h"
+
+class GraphicsAPI;
 
 #define CAMERA_Z 0
 #define CAMERA_DEPTH 100
@@ -22,7 +23,7 @@ struct RenderGroup {
 
 	RenderGroup() = default;
 	void Initialize(uint32_t numTransforms, uint32_t numRenderers);
-	void Release();
+	void Release(GraphicsAPI*);
 
 	void Draw() const;
 

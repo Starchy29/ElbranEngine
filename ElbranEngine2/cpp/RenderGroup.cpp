@@ -2,7 +2,6 @@
 #include "Application.h"
 #include "GraphicsAPI.h"
 #include "ShaderConstants.h"
-#include "Lights.h"
 
 // these match Lighting.hlsli
 #define LIGHTS_REGISTER 127
@@ -31,9 +30,9 @@ void RenderGroup::Initialize(uint32_t numTransforms, uint32_t numRenderers) {
 	camera.transform = ReserveTransform(&camera.worldMatrix);
 }
 
-void RenderGroup::Release() {
+void RenderGroup::Release(GraphicsAPI* graphics) {
 	for(uint32_t i = 0; i < rendererCount; i++) {
-		renderers[i].Release();
+		renderers[i].Release(graphics);
 	}
 	delete[] transforms; // all three arrays were allocated in one allocation
 }

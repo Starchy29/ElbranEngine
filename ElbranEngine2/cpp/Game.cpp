@@ -54,9 +54,9 @@ void Game::Initialize() {
 	partBeh.speed = 2.0f;
 }
 
-void Game::Release() {
-	sampleScene.Release();
-	partBeh.Release();
+void Game::Release(GraphicsAPI* graphics) {
+	sampleScene.Release(graphics);
+	partBeh.Release(graphics);
 }
 
 void Game::Update(float deltaTime) {

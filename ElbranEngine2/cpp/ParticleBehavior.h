@@ -1,6 +1,8 @@
 #pragma once
 #include "Renderer.h"
 
+class GraphicsAPI;
+
 class ParticleBehavior
 {
 public:
@@ -28,7 +30,7 @@ public:
 
     ParticleBehavior() = default;
     void Initialize(Renderer* particleRenderer);
-    void Release();
+    void Release(GraphicsAPI*);
 
     void Update(float deltaTime);
 

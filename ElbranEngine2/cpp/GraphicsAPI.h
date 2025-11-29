@@ -95,4 +95,3 @@ private:
 	RenderTarget backBuffer;
 	uint8_t renderTargetIndex;
 };
-

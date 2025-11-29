@@ -70,9 +70,6 @@
     <ClCompile Include="..\cpp\ParticleBehavior.cpp">
       <Filter>Engine\Toolkit</Filter>
     </ClCompile>
-    <ClCompile Include="..\cpp\Camera.cpp">
-      <Filter>Engine\Rendering</Filter>
-    </ClCompile>
     <ClCompile Include="..\cpp\PostProcess.cpp">
       <Filter>Engine\Rendering</Filter>
     </ClCompile>
@@ -90,16 +87,10 @@
     <ClInclude Include="..\cpp\DirectXAPI.h">
       <Filter>Engine\Platforms\Windows</Filter>
     </ClInclude>
-    <ClInclude Include="..\cpp\Transform.h">
-      <Filter>Engine\Rendering</Filter>
-    </ClInclude>
     <ClInclude Include="..\cpp\ShaderConstants.h">
       <Filter>Engine\Rendering</Filter>
     </ClInclude>
     <ClInclude Include="..\cpp\GraphicsAPI.h">
-      <Filter>Engine\Rendering</Filter>
-    </ClInclude>
-    <ClInclude Include="..\cpp\Lights.h">
       <Filter>Engine\Rendering</Filter>
     </ClInclude>
     <ClInclude Include="..\cpp\lodepng.h">
@@ -158,9 +149,6 @@
     </ClInclude>
     <ClInclude Include="..\cpp\ParticleBehavior.h">
       <Filter>Engine\Toolkit</Filter>
-    </ClInclude>
-    <ClInclude Include="..\cpp\Camera.h">
-      <Filter>Engine\Rendering</Filter>
     </ClInclude>
     <ClInclude Include="..\cpp\GraphicsData.h">
       <Filter>Engine\Rendering</Filter>

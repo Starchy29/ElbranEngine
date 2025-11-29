@@ -6,8 +6,7 @@
 class GraphicsAPI;
 class SoundMixer;
 
-class AssetContainer
-{
+class AssetContainer {
 public:
 	Sampler defaultSampler;
 	Mesh unitSquare;
@@ -41,9 +40,9 @@ public:
 
 	AssetContainer() = default;
 	void Initialize(GraphicsAPI* graphics);
-	void Release();
+	void Release(GraphicsAPI* graphics);
 
-	static void ReleaseFont(Font* font);
+	static void ReleaseFont(Font* font, GraphicsAPI* graphics);
 
 	static Texture2D LoadBMP(std::wstring fileName);
 	static Texture2D LoadPNG(std::wstring fileName);

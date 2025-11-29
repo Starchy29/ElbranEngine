@@ -156,13 +156,13 @@ void Renderer::Draw(GraphicsAPI* graphics, const AssetContainer* assets) {
 	}
 }
 
-void Renderer::Release() {
+void Renderer::Release(GraphicsAPI* graphics) {
 	switch(type) {
 	case Type::Text:
-		app.graphics.ReleaseMesh(&textData.textMesh);
+		graphics->ReleaseMesh(&textData.textMesh);
 		break;
 	case Type::Particles:
-		app.graphics.ReleaseEditBuffer(&particleData.particleBuffer);
+		graphics->ReleaseEditBuffer(&particleData.particleBuffer);
 		break;
 	}
 }

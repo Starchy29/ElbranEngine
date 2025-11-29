@@ -36,8 +36,8 @@ void ParticleBehavior::Initialize(Renderer* particleRenderer) {
     spawnData = app.graphics.CreateArrayBuffer(ShaderDataType::Structured, particleRenderer->particleData.maxParticles, sizeof(ParticleSpawnState));
 }
 
-void ParticleBehavior::Release() {
-    app.graphics.ReleaseArrayBuffer(&spawnData);
+void ParticleBehavior::Release(GraphicsAPI* graphics) {
+    graphics->ReleaseArrayBuffer(&spawnData);
 }
 
 void ParticleBehavior::Update(float deltaTime) {

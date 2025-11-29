@@ -1,6 +1,5 @@
 #include "GraphicsAPI.h"
 #include "Application.h"
-#include "Lights.h"
 
 #ifdef WINDOWS
 #include "DirectXAPI.h"

@@ -76,9 +76,7 @@ void AssetContainer::Initialize(GraphicsAPI* graphics) {
 	testSound = LoadWAV(L"water plunk.wav");
 }
 
-void AssetContainer::Release() {
-	GraphicsAPI* graphics = &app.graphics;
-
+void AssetContainer::Release(GraphicsAPI* graphics) {
 	graphics->ReleaseSampler(&defaultSampler);
 	graphics->ReleaseMesh(&unitSquare);
 	graphics->ReleaseMesh(&unitTriangle);
@@ -106,14 +104,14 @@ void AssetContainer::Release() {
 	graphics->ReleaseTexture(&testSprite);
 	graphics->ReleaseTexture(&testBMP);
 
-	ReleaseFont(&arial);
+	ReleaseFont(&arial, graphics);
 
 	testSound.Release();
 }
 
-void AssetContainer::ReleaseFont(Font* font) {
-	app.graphics.ReleaseArrayBuffer(&font->glyphCurves);
-	app.graphics.ReleaseArrayBuffer(&font->firstCurveIndices);
+void AssetContainer::ReleaseFont(Font* font, GraphicsAPI* graphics) {
+	graphics->ReleaseArrayBuffer(&font->glyphCurves);
+	graphics->ReleaseArrayBuffer(&font->firstCurveIndices);
 	delete[] font->glyphBaselines;
 	delete[] font->glyphDimensions;
 	font->charToGlyphIndex.Release();
