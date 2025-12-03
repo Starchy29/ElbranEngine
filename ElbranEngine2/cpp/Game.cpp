@@ -59,6 +59,11 @@ void Game::Update(Application* app, float deltaTime) {
 	partBeh.Update(&app->graphics, &app->assets, &app->frameBuffer, deltaTime);
 	cursor->transform->position = app->input.GetMousePosition(&sampleScene.camera);
 
+	if(app->input.JustPressed(InputAction::LeftCLick)) {
+		app->debugger.debugScene = &sampleScene;
+		app->debugger.AddDot(app->input.GetMousePosition(&sampleScene.camera));
+	}
+
 	if(app->input.IsPressed(InputAction::Up)) {
 		//ppTest.bloomData.brightnessThreshold += deltaTime;
 	}
