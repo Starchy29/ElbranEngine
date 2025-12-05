@@ -1,15 +1,12 @@
 #pragma once
 #include "GraphicsData.h"
 #include "AudioData.h"
-#include "LoadedFile.h"
 #include <string>
 
 class GraphicsAPI;
 
 class AssetContainer {
 public:
-	LoadedFile (*LoadFile)(std::wstring fileName);
-
 	Sampler defaultSampler;
 	Mesh unitSquare;
 	Mesh unitTriangle;
@@ -41,7 +38,7 @@ public:
 	AudioSample testSound;
 
 	AssetContainer() = default;
-	void Initialize(LoadedFile (*fileLoadFunction)(std::wstring fileName), GraphicsAPI*);
+	void Initialize(GraphicsAPI*);
 	void Release(GraphicsAPI* graphics);
 
 	static void ReleaseFont(const GraphicsAPI*, Font* font);

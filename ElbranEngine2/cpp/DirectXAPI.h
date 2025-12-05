@@ -2,9 +2,9 @@
 #pragma once
 #include <wrl/client.h>
 #include "Common.h"
-#include "LoadedFile.h"
 #include "GraphicsData.h"
 
+struct LoadedFile;
 class ID3D11Device;
 class ID3D11DeviceContext;
 class IDXGISwapChain;

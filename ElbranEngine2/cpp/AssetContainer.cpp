@@ -3,6 +3,7 @@
 #include <stdint.h>
 #include "lodepng.h"
 #include "FixedList.h"
+#include "FileIO.h"
 
 #define LoadSpriteSheetPNG(fileName, rows, cols, numSprites) SpriteSheet{ LoadPNG(fileName), rows, cols, numSprites }
 
@@ -13,9 +14,7 @@ struct ByteColor {
 	uint8_t alpha;
 };
 
-void AssetContainer::Initialize(LoadedFile (*fileLoadFunction)(std::wstring fileName), GraphicsAPI* graphics) {
-	LoadFile = fileLoadFunction;
-
+void AssetContainer::Initialize(GraphicsAPI* graphics) {
 	defaultSampler = graphics->CreateDefaultSampler();
 	graphics->SetSampler(ShaderStage::Vertex, &defaultSampler, 0);
 	graphics->SetSampler(ShaderStage::Geometry, &defaultSampler, 0);
@@ -119,35 +118,35 @@ void AssetContainer::ReleaseFont(const GraphicsAPI* graphics, Font* font) {
 
 #pragma region File Loaders
 VertexShader AssetContainer::LoadVertexShader(const GraphicsAPI* graphics, std::wstring fileName) const {
-	LoadedFile shaderBlob = LoadFile(L"shaders\\" + fileName);
+	LoadedFile shaderBlob = FileIO::LoadFile(L"shaders\\" + fileName);
 	VertexShader result = graphics->CreateVertexShader(&shaderBlob);
 	shaderBlob.Release();
 	return result;
 }
 
 GeometryShader AssetContainer::LoadGeometryShader(const GraphicsAPI* graphics, std::wstring fileName) const {
-	LoadedFile shaderBlob = LoadFile(L"shaders\\" + fileName);
+	LoadedFile shaderBlob = FileIO::LoadFile(L"shaders\\" + fileName);
 	GeometryShader result = graphics->CreateGeometryShader(&shaderBlob);
 	shaderBlob.Release();
 	return result;
 }
 
 PixelShader AssetContainer::LoadPixelShader(const GraphicsAPI* graphics, std::wstring fileName) const {
-	LoadedFile shaderBlob = LoadFile(L"shaders\\" + fileName);
+	LoadedFile shaderBlob = FileIO::LoadFile(L"shaders\\" + fileName);
 	PixelShader result = graphics->CreatePixelShader(&shaderBlob);
 	shaderBlob.Release();
 	return result;
 }
 
 ComputeShader AssetContainer::LoadComputeShader(const GraphicsAPI* graphics, std::wstring fileName) const {
-	LoadedFile shaderBlob = LoadFile(L"shaders\\" + fileName);
+	LoadedFile shaderBlob = FileIO::LoadFile(L"shaders\\" + fileName);
 	ComputeShader result = graphics->CreateComputeShader(&shaderBlob);
 	shaderBlob.Release();
 	return result;
 }
 
 Texture2D AssetContainer::LoadBMP(const GraphicsAPI* graphics, std::wstring fileName) const {
-	LoadedFile file = LoadFile(L"assets\\" + fileName);
+	LoadedFile file = FileIO::LoadFile(L"assets\\" + fileName);
 	file.littleEndian = true;
 	ASSERT(file.ReadUInt16() == 0x4D42); // file type must be "BM"
 	file.readLocation = 10;
@@ -409,7 +408,7 @@ Texture2D AssetContainer::LoadBMP(const GraphicsAPI* graphics, std::wstring file
 }
 
 Texture2D AssetContainer::LoadPNG(const GraphicsAPI* graphics, std::wstring fileName) const {
-	LoadedFile file = LoadFile(L"assets\\" + fileName);
+	LoadedFile file = FileIO::LoadFile(L"assets\\" + fileName);
 	std::vector<uint8_t> lodeFile(file.bytes, file.bytes + file.fileSize);
 	std::vector<uint8_t> loadedImage;
 	uint32_t width;
@@ -421,7 +420,7 @@ Texture2D AssetContainer::LoadPNG(const GraphicsAPI* graphics, std::wstring file
 }
 
 AudioSample AssetContainer::LoadWAV(std::wstring fileName) const {
-	LoadedFile file = LoadFile(L"assets\\" + fileName);
+	LoadedFile file = FileIO::LoadFile(L"assets\\" + fileName);
 	file.littleEndian = true;
 	uint32_t chunkName = file.ReadUInt32();
 	ASSERT(chunkName == 'FFIR');
@@ -715,7 +714,7 @@ Font AssetContainer::LoadTTF(const GraphicsAPI* graphics, std::wstring fileName)
 	Font loaded = {};
 
 	// parse file
-	loader.fontFile = LoadFile(L"assets\\" + fileName);
+	loader.fontFile = FileIO::LoadFile(L"assets\\" + fileName);
 	loader.fontFile.littleEndian = false;
 	ASSERT(loader.fontFile.bytes != nullptr);
 

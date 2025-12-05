@@ -1,9 +1,8 @@
 #pragma once
 #include <stdint.h>
+#include <string>
 
 struct LoadedFile {
-	static bool platformLittleEndian;
-
 	uint64_t fileSize;
 	uint64_t readLocation;
 	uint8_t* bytes;
@@ -20,5 +19,15 @@ struct LoadedFile {
 	uint32_t ReadUInt32();
 	int32_t ReadInt32();
 	float ReadF2Dot14();
+
+	int32_t ParseInt();
+	float ParseFloat();
+};
+
+namespace FileIO {
+	// these must be assigned by the platform layer
+	extern bool platformLittleEndian;
+	extern LoadedFile (*LoadFile)(std::wstring fileName);
+	extern bool (*SaveFile)(std::wstring fileName, void* bytes, uint64_t fileSize); // returns false if failed
 };
 

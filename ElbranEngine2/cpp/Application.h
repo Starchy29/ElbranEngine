@@ -2,7 +2,6 @@
 #include "Game.h"
 #include "AssetContainer.h"
 #include "MemoryArena.h"
-#include "LoadedFile.h"
 #include "SoundMixer.h"
 #include "GraphicsAPI.h"
 #include "InputManager.h"
@@ -26,7 +25,7 @@ public:
 	void (*quitFunction)();
 
 	Application() = default;
-	void Initialize(LoadedFile (*fileLoadFunction)(std::wstring fileName), UInt2 windowSize, PlatformGraphics* platformGraphics, PlatformAudio* platformAudio, PlatformInput* platformInput);
+	void Initialize(UInt2 windowSize, PlatformGraphics* platformGraphics, PlatformAudio* platformAudio, PlatformInput* platformInput);
 	void Release();
 
 	void StepFrame(float deltaTime);

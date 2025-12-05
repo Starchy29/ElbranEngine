@@ -140,7 +140,7 @@
     <ClCompile Include="..\cpp\Game.cpp" />
     <ClCompile Include="..\cpp\GraphicsAPI.cpp" />
     <ClCompile Include="..\cpp\InputManager.cpp" />
-    <ClCompile Include="..\cpp\LoadedFile.cpp" />
+    <ClCompile Include="..\cpp\FileIO.cpp" />
     <ClCompile Include="..\cpp\lodepng.cpp" />
     <ClCompile Include="..\cpp\Math.cpp" />
     <ClCompile Include="..\cpp\MemoryArena.cpp" />
@@ -173,7 +173,7 @@
     <ClInclude Include="..\cpp\GraphicsAPI.h" />
     <ClInclude Include="..\cpp\InputData.h" />
     <ClInclude Include="..\cpp\InputManager.h" />
-    <ClInclude Include="..\cpp\LoadedFile.h" />
+    <ClInclude Include="..\cpp\FileIO.h" />
     <ClInclude Include="..\cpp\lodepng.h" />
     <ClInclude Include="..\cpp\Math.h" />
     <ClInclude Include="..\cpp\MemoryArena.h" />

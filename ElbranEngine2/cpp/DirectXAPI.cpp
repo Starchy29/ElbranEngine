@@ -4,6 +4,7 @@
 #include <dxgi1_3.h>
 #include "DirectXAPI.h"
 #include "Application.h"
+#include "FileIO.h"
 
 #define SafeRelease(x) if(x) x->Release()
 

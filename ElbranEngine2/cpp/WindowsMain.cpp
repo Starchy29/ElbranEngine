@@ -5,7 +5,7 @@
 #include "DirectXAPI.h"
 #include "WindowsAudio.h"
 #include "WindowsInput.h"
-#include "LoadedFile.h"
+#include "FileIO.h"
 #include <bit>
 #include <string>
 
@@ -191,6 +191,15 @@ LoadedFile LoadWindowsFile(std::wstring fileName) {
 	return file;
 }
 
+bool SaveWindowsFile(std::wstring fileName, void* bytes, uint64_t fileSize) {
+	HANDLE fileHandle = CreateFileW((filePath + fileName).c_str(), GENERIC_WRITE, 0, nullptr, CREATE_ALWAYS, 0, nullptr);
+	if(fileHandle == INVALID_HANDLE_VALUE) return false;
+	DWORD writtenBytes;
+	bool success = WriteFile(fileHandle, bytes, fileSize, &writtenBytes, 0);
+	CloseHandle(fileHandle);
+	return success;
+}
+
 // entry point for desktop app
 int WINAPI WinMain(
 	_In_ HINSTANCE hInstance,
@@ -220,14 +229,16 @@ int WINAPI WinMain(
 	}
 	filePath = directory;
 
-	LoadedFile::platformLittleEndian = std::endian::native == std::endian::little;
+	FileIO::platformLittleEndian = std::endian::native == std::endian::little;
+	FileIO::LoadFile = LoadWindowsFile;
+	FileIO::SaveFile = SaveWindowsFile;
 
 	InitWindow(hInstance);
 	RECT windowRect;
 	GetClientRect(windowHandle, &windowRect);
-	LoadedFile sampleShader = LoadWindowsFile(L"shaders\\CameraVS.cso");
+	LoadedFile sampleShader = FileIO::LoadFile(L"shaders\\CameraVS.cso");
 	input = new WindowsInput(windowHandle);
-	app.Initialize(LoadWindowsFile, UInt2(windowRect.right - windowRect.left, windowRect.bottom - windowRect.top), new DirectXAPI(windowHandle, &sampleShader), new WindowsAudio(), input);
+	app.Initialize(UInt2(windowRect.right - windowRect.left, windowRect.bottom - windowRect.top), new DirectXAPI(windowHandle, &sampleShader), new WindowsAudio(), input);
 	initialized = true;
 	sampleShader.Release();
 	app.quitFunction = QuitApp;

@@ -3,13 +3,13 @@
 #include "GraphicsData.h"
 #include <string>
 #include "PostProcess.h"
-#include "LoadedFile.h"
 
 #ifdef WINDOWS
 class DirectXAPI;
 typedef DirectXAPI PlatformGraphics;
 #endif
 
+struct LoadedFile;
 class AssetContainer;
 
 class GraphicsAPI {

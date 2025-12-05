@@ -1,7 +1,7 @@
 #include "Application.h"
 #include "Random.h"
 
-void Application::Initialize(LoadedFile (*fileLoadFunction)(std::wstring fileName), UInt2 windowSize, PlatformGraphics* platformGraphics, PlatformAudio* platformAudio, PlatformInput* platformInput) {
+void Application::Initialize(UInt2 windowSize, PlatformGraphics* platformGraphics, PlatformAudio* platformAudio, PlatformInput* platformInput) {
 	frameBuffer.Allocate(8192);
 	_rng.Initialize();
 	quitFunction = nullptr;
@@ -10,7 +10,7 @@ void Application::Initialize(LoadedFile (*fileLoadFunction)(std::wstring fileNam
 	audio.Initialize(platformAudio);
 	input.Initialize(platformInput);
 
-	assets.Initialize(fileLoadFunction, &graphics);
+	assets.Initialize(&graphics);
 	game.Initialize(&graphics, &assets, &frameBuffer);
 	frameBuffer.Clear();
 }

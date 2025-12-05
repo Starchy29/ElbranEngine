@@ -25,6 +25,7 @@ namespace Math {
 	int32_t Clamp(int32_t value, int32_t minimum, int32_t maximum);
 	float FractionOf(float number);
 	float InvSqrt(float number);
+	uint32_t Pow(uint32_t base, uint32_t exponent);
 }
 
 namespace Tween {
