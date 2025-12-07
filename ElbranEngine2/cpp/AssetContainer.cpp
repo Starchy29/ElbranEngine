@@ -867,7 +867,7 @@ Font AssetContainer::LoadTTF(const GraphicsAPI* graphics, MemoryArena* arena, st
 	loader.flags = (uint8_t*)arena->Reserve(maxPoints * sizeof(uint8_t));
 	loader.points = (Vector2*)arena->Reserve(maxPoints * sizeof(Vector2));
 
-	loader.curves = (BezierCurve*)arena->Reserve(0); // this arena may not store anything other curves after this line
+	loader.curves = (BezierCurve*)arena->Reserve(0); // this arena may not store anything other curves after this line until the end of this function
 	loader.curveArena = arena;
 
 	loaded.glyphDimensions = new Vector2[numGlyphs];

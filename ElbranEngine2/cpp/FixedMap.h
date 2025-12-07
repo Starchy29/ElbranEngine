@@ -12,24 +12,18 @@ public:
 		size = 0;
 		this->capacity = capacity;
 		hasher = hashFunction;
-		keys = new KeyType[capacity] {};
-		values = new ValueType[capacity] {};
-		fullSlots = new bool[capacity] {};
+		pairs = new KeyVal[capacity] {};
 	}
 
 	void Initialize(MemoryArena* arena, uint16_t capacity, uint32_t (*hashFunction)(KeyType) = nullptr) {
 		size = 0;
 		this->capacity = capacity;
 		hasher = hashFunction;
-		keys = (KeyType*)arena->Reserve(capacity * sizeof(KeyType));
-		values = (ValueType*)arena->Reserve(capacity * sizeof(ValueType));
-		fullSlots = (bool*)arena->Reserve(capacity * sizeof(bool));
+		pairs = (KeyVal*)arena->Reserve(capacity * sizeof(KeyVal));
 	}
 
 	void Release() {
-		delete[] keys;
-		delete[] values;
-		delete[] fullSlots;
+		delete[] pairs;
 	}
 
 	void Set(const KeyType& key, ValueType value) {
@@ -38,12 +32,12 @@ public:
 		uint32_t index = hashIndex;
 		for(uint32_t i = 0; i < capacity; i++) {
 			index = (hashIndex + i) % capacity;
-			if(!fullSlots[index]) {
+			if(!pairs[index].occupied) {
 				break;
 			}
-			if(keys[index] == key) {
+			if(pairs[index].key == key) {
 				// key exists, update value
-				values[index] = value;
+				pairs[index].value = value;
 				return;
 			}
 		}
@@ -56,33 +50,30 @@ public:
 		size++;
 
 		// shift items up a slot to make an open space at the hash index
-		fullSlots[index] = true;
+		pairs[index].occupied = true;
 		if(index < hashIndex) {
 			for(; index > 0; index--) {
-				keys[index] = keys[index - 1];
-				values[index] = values[index - 1];
+				pairs[index] = pairs[index - 1];
 			}
 
 			// loop around to the end
 			index = capacity - 1;
-			keys[0] = keys[index];
-			values[0] = values[index];
+			pairs[0] = pairs[index];
 		}
 
 		for(; index > hashIndex; index--) {
-			keys[index] = keys[index - 1];
-			values[index] = values[index - 1];
+			pairs[index] = pairs[index - 1];
 		}
 
-		keys[hashIndex] = key;
-		values[hashIndex] = value;
+		pairs[hashIndex].key = key;
+		pairs[hashIndex].value = value;
 	}
 
 	ValueType Get(const KeyType& key) const {
 		uint32_t startIndex = Hash(key);
 		for(uint32_t i = 0; i < capacity; i++) {
 			uint32_t checkIndex = (startIndex + i) % capacity;
-			if(key == keys[checkIndex]) return values[checkIndex];
+			if(key == pairs[checkIndex].key) return pairs[checkIndex].value;
 		}
 
 		ASSERT(false); // Attempted to get a value from a FixedMap from a key not yet added
@@ -90,12 +81,16 @@ public:
 	}
 
 private:
+	struct KeyVal {
+		KeyType key;
+		ValueType value;
+		bool occupied;
+	};
+
 	uint32_t capacity;
 	uint32_t size;
 	uint32_t (*hasher)(KeyType);
-	KeyType* keys;
-	ValueType* values;
-	bool* fullSlots;
+	KeyVal* pairs;
 
 	uint32_t Hash(const KeyType& key) const {
 		if(hasher) { return hasher(key) % capacity; }

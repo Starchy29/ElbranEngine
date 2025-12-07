@@ -5,7 +5,7 @@ class MemoryArena {
 public:
 	MemoryArena() = default;
 
-	void Allocate(uint64_t size);
+	void Initialize(uint64_t size);
 	void* Reserve(uint64_t bytes);
 	MemoryArena ReserveSubArena(uint64_t bytes);
 	void Clear();

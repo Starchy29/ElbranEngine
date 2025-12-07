@@ -2,7 +2,7 @@
 #include <string>
 #include "Common.h"
 
-void MemoryArena::Allocate(uint64_t size) {
+void MemoryArena::Initialize(uint64_t size) {
 	data = new uint8_t[size] {};
 	next = data;
 	this->size = size;
