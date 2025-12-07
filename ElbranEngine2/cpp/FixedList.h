@@ -1,6 +1,6 @@
 #pragma once
-#include <stdint.h>
 #include "Common.h"
+#include "MemoryArena.h"
 
 // a heap-allocated list with capacity known at initialization
 template<class Type>
@@ -16,6 +16,14 @@ struct FixedList {
 	void Initialize(uint32_t capacity) {
 		size = 0u;
 		data = new Type[capacity] {};
+#if defined(DEBUG) | defined(_DEBUG)
+		this->capacity = capacity;
+#endif
+	}
+
+	void Initialize(uint32_t capacity, MemoryArena* arena) {
+		size = 0u;
+		data = (Type*)arena->Reserve(capacity * sizeof(Type));
 #if defined(DEBUG) | defined(_DEBUG)
 		this->capacity = capacity;
 #endif

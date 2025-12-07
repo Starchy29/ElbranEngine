@@ -2,20 +2,20 @@
 #include <string>
 #include "Common.h"
 
-void MemoryArena::Allocate(size_t size) {
+void MemoryArena::Allocate(uint64_t size) {
 	data = new uint8_t[size] {};
 	next = data;
 	this->size = size;
 }
 
-void* MemoryArena::Reserve(size_t bytes) {
+void* MemoryArena::Reserve(uint64_t bytes) {
+	ASSERT(size - (next - data) >= bytes);
 	uint8_t* address = next;
 	next += bytes;
-	ASSERT(next - data < size);
 	return address;
 }
 
-MemoryArena MemoryArena::ReserveSubArena(size_t bytes) {
+MemoryArena MemoryArena::ReserveSubArena(uint64_t bytes) {
 	MemoryArena result;
 	result.data = next;
 	result.next = next;

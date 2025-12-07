@@ -1,5 +1,6 @@
 #include "AssetContainer.h"
 #include "GraphicsAPI.h"
+#include "MemoryArena.h"
 #include <stdint.h>
 #include "lodepng.h"
 #include "FixedList.h"
@@ -14,7 +15,7 @@ struct ByteColor {
 	uint8_t alpha;
 };
 
-void AssetContainer::Initialize(GraphicsAPI* graphics) {
+void AssetContainer::Initialize(GraphicsAPI* graphics, MemoryArena* arena) {
 	defaultSampler = graphics->CreateDefaultSampler();
 	graphics->SetSampler(ShaderStage::Vertex, &defaultSampler, 0);
 	graphics->SetSampler(ShaderStage::Geometry, &defaultSampler, 0);
@@ -69,7 +70,7 @@ void AssetContainer::Initialize(GraphicsAPI* graphics) {
 
 	testSprite = LoadPNG(graphics, L"elbran.png");
 	testBMP = LoadBMP(graphics, L"testbmp.bmp");
-	arial = LoadTTF(graphics, L"arial.ttf");
+	arial = LoadTTF(graphics, arena, L"arial.ttf");
 
 	testSheet = SpriteSheet(testSprite);
 	testSound = LoadWAV(L"water plunk.wav");
@@ -480,7 +481,6 @@ Matrix2D operator*(const Matrix2D& left, const Matrix2D& right) {
 
 struct FontLoader {
     LoadedFile fontFile;
-    FixedList<BezierCurve> curves;
     FixedMap<uint32_t, uint32_t> tableStarts;
     uint32_t locaStart;
     int16_t locFormat;
@@ -489,6 +489,16 @@ struct FontLoader {
     Vector2* points;
     int16_t* leftSideBearings;
     uint16_t* advanceWidths;
+
+	MemoryArena* curveArena;
+	BezierCurve* curves;
+	uint64_t numCurves;
+
+	void AddCurve(BezierCurve curve) {
+		BezierCurve* nextSlot = (BezierCurve*)curveArena->Reserve(sizeof(BezierCurve));
+		*nextSlot = curve;
+		numCurves++;
+	}
 
     void ReadGlyph(uint16_t glyphIndex, AlignedRect* outArea, const Matrix2D* transform, Int2 offset, const AlignedRect* baseArea = nullptr) {
 		fontFile.readLocation = locaStart + glyphIndex * (locFormat == 0 ? 2 : 4);
@@ -599,31 +609,31 @@ struct FontLoader {
 				if(flags[currentPoint] & ON_CURVE_BIT) {
 					if(flags[nextPoint1] & ON_CURVE_BIT) {
 						// on, on (straight line)
-						curves.Add(BezierCurve{ 
+						AddCurve(BezierCurve{ 
 							points[currentPoint],
 							(points[currentPoint] + points[nextPoint1]) / 2.f,
 							points[nextPoint1]
-							});
+						});
 
 						currentPoint += 1;
 					}
 					else if(flags[nextPoint2] & ON_CURVE_BIT) {
 						// on, off, on
-						curves.Add(BezierCurve{ 
+						AddCurve(BezierCurve{ 
 							points[currentPoint],
 							points[nextPoint1],
 							points[nextPoint2]
-							});
+						});
 
 						currentPoint += 2;
 					}
 					else {
 						// on, off, off
-						curves.Add(BezierCurve{ 
+						AddCurve(BezierCurve{ 
 							points[currentPoint],
 							points[nextPoint1],
 							(points[nextPoint1] + points[nextPoint2]) / 2.0f
-							});
+						});
 
 						currentPoint += 1;
 					}
@@ -634,21 +644,21 @@ struct FontLoader {
 					}
 					else if(flags[nextPoint2] & ON_CURVE_BIT) {
 						// off, off, on
-						curves.Add(BezierCurve{ 
+						AddCurve(BezierCurve{ 
 							(points[currentPoint] + points[nextPoint1]) / 2.0f,
 							points[nextPoint1],
 							points[nextPoint2]
-							});
+						});
 
 						currentPoint += 2;
 					}
 					else {
 						// off, off, off
-						curves.Add(BezierCurve{ 
+						AddCurve(BezierCurve{ 
 							(points[currentPoint] + points[nextPoint1]) / 2.0f,
 							points[nextPoint1],
 							(points[nextPoint1] + points[nextPoint2]) / 2.0f
-							});
+						});
 
 						currentPoint += 1;
 					}
@@ -709,7 +719,7 @@ struct FontLoader {
 	}
 };
 
-Font AssetContainer::LoadTTF(const GraphicsAPI* graphics, std::wstring fileName) const {
+Font AssetContainer::LoadTTF(const GraphicsAPI* graphics, MemoryArena* arena, std::wstring fileName) const {
 	FontLoader loader = {};
 	Font loaded = {};
 
@@ -724,7 +734,7 @@ Font AssetContainer::LoadTTF(const GraphicsAPI* graphics, std::wstring fileName)
 	loader.fontFile.readLocation += 6;
 
 	// store the byte offsets of all data tables to support file navigation
-	loader.tableStarts.Initialize(tableCount);
+	loader.tableStarts.Initialize(arena, tableCount);
 	for(uint16_t i = 0; i < tableCount; i++) {
 		uint32_t tag = loader.fontFile.ReadUInt32();
 		loader.fontFile.readLocation += 4;
@@ -770,24 +780,24 @@ Font AssetContainer::LoadTTF(const GraphicsAPI* graphics, std::wstring fileName)
 		uint16_t numSegments = loader.fontFile.ReadUInt16() / 2;
 		loader.fontFile.readLocation += 6;
 
-		uint16_t* endCodes = new uint16_t[numSegments];
+		uint16_t* endCodes = (uint16_t*)arena->Reserve(numSegments * sizeof(uint16_t));
 		for(uint16_t i = 0; i < numSegments; i++) {
 			endCodes[i] = loader.fontFile.ReadUInt16();
 		}
 
 		loader.fontFile.readLocation += 2;
-		uint16_t* startCodes = new uint16_t[numSegments];
+		uint16_t* startCodes = (uint16_t*)arena->Reserve(numSegments * sizeof(uint16_t));
 		for(uint16_t i = 0; i < numSegments; i++) {
 			startCodes[i] = loader.fontFile.ReadUInt16();
 		}
 
-		int16_t* idDeltas = new int16_t[numSegments];
+		int16_t* idDeltas = (int16_t*)arena->Reserve(numSegments * sizeof(int16_t));
 		for(uint16_t i = 0; i < numSegments; i++) {
 			idDeltas[i] = loader.fontFile.ReadInt16();
 		}
 
 		uint16_t idRangeOffsetStart = loader.fontFile.readLocation;
-		uint16_t* idRangeOffsets = new uint16_t[numSegments];
+		uint16_t* idRangeOffsets = (uint16_t*)arena->Reserve(numSegments * sizeof(uint16_t));
 		for(uint16_t i = 0; i < numSegments; i++) {
 			idRangeOffsets[i] = loader.fontFile.ReadUInt16();
 		}
@@ -809,11 +819,6 @@ Font AssetContainer::LoadTTF(const GraphicsAPI* graphics, std::wstring fileName)
 				loaded.charToGlyphIndex.Set(currCode, glyphIndex);
 			}
 		}
-
-		delete[] endCodes;
-		delete[] startCodes;
-		delete[] idDeltas;
-		delete[] idRangeOffsets;
 	}
 	else if(format == 12) {
 		loader.fontFile.readLocation += 10;
@@ -835,8 +840,8 @@ Font AssetContainer::LoadTTF(const GraphicsAPI* graphics, std::wstring fileName)
 	loader.fontFile.readLocation = loader.tableStarts.Get('hhea') + 34;
 	uint16_t numHMetrics = loader.fontFile.ReadUInt16();
 	loader.fontFile.readLocation = loader.tableStarts.Get('hmtx');
-	loader.leftSideBearings = new int16_t[numGlyphs];
-	loader.advanceWidths = new uint16_t[numGlyphs];
+	loader.leftSideBearings = (int16_t*)arena->Reserve(numGlyphs * sizeof(int16_t));
+	loader.advanceWidths = (uint16_t*)arena->Reserve(numGlyphs * sizeof(uint16_t));
 
 	for(uint16_t glyphIndex = 0; glyphIndex < numHMetrics; glyphIndex++) {
 		loader.advanceWidths[glyphIndex] = loader.fontFile.ReadUInt16();
@@ -855,46 +860,37 @@ Font AssetContainer::LoadTTF(const GraphicsAPI* graphics, std::wstring fileName)
 	loader.locFormat = loader.fontFile.ReadInt16();
 	ASSERT(loader.locFormat == 0 || loader.locFormat == 1);
 
-	loader.curves.Initialize(numGlyphs * maxPoints);
 	FixedList<uint32_t> glyphStartIndices;
-	glyphStartIndices.Initialize(numGlyphs + 1); // maps glyph index to index of first curve for that glyph
+	glyphStartIndices.Initialize(numGlyphs + 1, arena); // maps glyph index to index of first curve for that glyph
 
-	loader.contourEndIndices = new uint16_t[maxContours];
-	loader.flags = new uint8_t[maxPoints];
-	loader.points = new Vector2[maxPoints];
+	loader.contourEndIndices = (uint16_t*)arena->Reserve(maxContours * sizeof(uint16_t));
+	loader.flags = (uint8_t*)arena->Reserve(maxPoints * sizeof(uint8_t));
+	loader.points = (Vector2*)arena->Reserve(maxPoints * sizeof(Vector2));
+
+	loader.curves = (BezierCurve*)arena->Reserve(0); // this arena may not store anything other curves after this line
+	loader.curveArena = arena;
 
 	loaded.glyphDimensions = new Vector2[numGlyphs];
 	loaded.glyphBaselines = new float[numGlyphs];
 	Matrix2D identity = {{ 1, 0 }, { 0, 1 }};
 	for(uint16_t glyphIndex = 0; glyphIndex < numGlyphs; glyphIndex++) {
-		glyphStartIndices.Add(loader.curves.size);
+		glyphStartIndices.Add(loader.numCurves);
 		AlignedRect glyphArea;
 		loader.ReadGlyph(glyphIndex, &glyphArea, &identity, Int2{0, 0});
 		loaded.glyphDimensions[glyphIndex] = glyphArea.Size() / unitsPerEm;
 		loaded.glyphBaselines[glyphIndex] = -glyphArea.bottom / glyphArea.Height(); // assumes baseline at Y=0
 	}
-	glyphStartIndices.Add(loader.curves.size);
+	glyphStartIndices.Add(loader.numCurves);
 
 	// send curve data to the GPU
-	int curveCount = loader.curves.size;
-	int sizeCheck = sizeof(BezierCurve);
-
-	loaded.glyphCurves = graphics->CreateArrayBuffer(ShaderDataType::Structured, loader.curves.size, sizeof(BezierCurve));
+	loaded.glyphCurves = graphics->CreateArrayBuffer(ShaderDataType::Structured, loader.numCurves, sizeof(BezierCurve));
 	loaded.firstCurveIndices = graphics->CreateArrayBuffer(ShaderDataType::UInt, glyphStartIndices.size);
-	graphics->WriteBuffer(loader.curves.data, loader.curves.size * sizeof(BezierCurve), loaded.glyphCurves.buffer);
+	graphics->WriteBuffer(loader.curves, loader.numCurves * sizeof(BezierCurve), loaded.glyphCurves.buffer);
 	graphics->WriteBuffer(glyphStartIndices.data, glyphStartIndices.size * sizeof(uint32_t), loaded.firstCurveIndices.buffer);
 
 	// clean up
-	loader.curves.Release();
-	glyphStartIndices.Release();
+	arena->Clear();
 	loader.fontFile.Release();
-	loader.tableStarts.Release();
-	delete[] loader.contourEndIndices;
-	delete[] loader.flags;
-	delete[] loader.points;
-	delete[] loader.advanceWidths;
-	delete[] loader.leftSideBearings;
-
 	return loaded;
 }
 #pragma endregion

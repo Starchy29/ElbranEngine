@@ -4,6 +4,7 @@
 #include <string>
 
 class GraphicsAPI;
+class MemoryArena;
 
 class AssetContainer {
 public:
@@ -38,10 +39,10 @@ public:
 	AudioSample testSound;
 
 	AssetContainer() = default;
-	void Initialize(GraphicsAPI*);
-	void Release(GraphicsAPI* graphics);
+	void Initialize(GraphicsAPI*, MemoryArena*);
+	void Release(GraphicsAPI*);
 
-	static void ReleaseFont(const GraphicsAPI*, Font* font);
+	static void ReleaseFont(const GraphicsAPI*, Font*);
 
 	VertexShader LoadVertexShader(const GraphicsAPI*, std::wstring fileName) const;
 	GeometryShader LoadGeometryShader(const GraphicsAPI*, std::wstring fileName) const;
@@ -50,6 +51,6 @@ public:
 
 	Texture2D LoadBMP(const GraphicsAPI*, std::wstring fileName) const;
 	Texture2D LoadPNG(const GraphicsAPI*, std::wstring fileName) const;
-	Font LoadTTF(const GraphicsAPI*, std::wstring fileName) const;
+	Font LoadTTF(const GraphicsAPI*, MemoryArena* arena, std::wstring fileName) const;
 	AudioSample LoadWAV(std::wstring fileName) const;
 };

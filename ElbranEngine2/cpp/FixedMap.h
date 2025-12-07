@@ -1,6 +1,6 @@
 #pragma once
-#include <stdint.h>
 #include "Common.h"
+#include "MemoryArena.h"
 
 // a hashmap with a set capacity known at initialization
 template<class KeyType, class ValueType>
@@ -15,6 +15,15 @@ public:
 		keys = new KeyType[capacity] {};
 		values = new ValueType[capacity] {};
 		fullSlots = new bool[capacity] {};
+	}
+
+	void Initialize(MemoryArena* arena, uint16_t capacity, uint32_t (*hashFunction)(KeyType) = nullptr) {
+		size = 0;
+		this->capacity = capacity;
+		hasher = hashFunction;
+		keys = (KeyType*)arena->Reserve(capacity * sizeof(KeyType));
+		values = (ValueType*)arena->Reserve(capacity * sizeof(ValueType));
+		fullSlots = (bool*)arena->Reserve(capacity * sizeof(bool));
 	}
 
 	void Release() {

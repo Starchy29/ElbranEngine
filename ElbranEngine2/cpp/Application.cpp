@@ -2,7 +2,7 @@
 #include "Random.h"
 
 void Application::Initialize(UInt2 windowSize, PlatformGraphics* platformGraphics, PlatformAudio* platformAudio, PlatformInput* platformInput) {
-	frameBuffer.Allocate(8192);
+	frameBuffer.Allocate(4194304);
 	_rng.Initialize();
 	quitFunction = nullptr;
 
@@ -10,7 +10,7 @@ void Application::Initialize(UInt2 windowSize, PlatformGraphics* platformGraphic
 	audio.Initialize(platformAudio);
 	input.Initialize(platformInput);
 
-	assets.Initialize(&graphics);
+	assets.Initialize(&graphics, &frameBuffer);
 	game.Initialize(&graphics, &assets, &frameBuffer);
 	frameBuffer.Clear();
 }

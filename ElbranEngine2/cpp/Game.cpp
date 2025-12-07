@@ -49,13 +49,6 @@ void Game::Initialize(GraphicsAPI* graphics, const AssetContainer* assets, Memor
 	partBeh.spinRate = 2.0f;
 	partBeh.startWidth = 0.3f;
 	partBeh.speed = 2.0f;
-
-	LoadedFile testFile = FileIO::LoadFile(L"testFile.txt");
-	float intTest = testFile.ParseFloat();
-	testFile.readLocation += 2;
-	float floatTest = testFile.ParseFloat();
-	testFile.readLocation = testFile.readLocation;
-	testFile.Release();
 }
 
 void Game::Release(GraphicsAPI* graphics) {
