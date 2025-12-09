@@ -9,6 +9,9 @@
 #define ASSERT(condition)
 #endif
 
+uint32_t GetStringLength(const char* string);
+void AddStrings(const char* left, const char* right, char* outBuffer);
+
 enum class Direction {
 	None,
 	Up,

@@ -1,6 +1,5 @@
 #pragma once
 #include <stdint.h>
-#include <string>
 
 struct LoadedFile {
 	uint64_t fileSize;
@@ -27,7 +26,7 @@ struct LoadedFile {
 namespace FileIO {
 	// these must be assigned by the platform layer
 	extern bool platformLittleEndian;
-	extern LoadedFile (*LoadFile)(std::wstring fileName);
-	extern bool (*SaveFile)(std::wstring fileName, void* bytes, uint64_t fileSize); // returns false if failed
+	extern LoadedFile (*LoadFile)(const char* fileName);
+	extern bool (*SaveFile)(const char* fileName, void* bytes, uint64_t fileSize); // returns false if failed
 };
 

@@ -15,7 +15,7 @@ enum DXGI_FORMAT;
 
 class DirectXAPI {
 public:
-    DirectXAPI(HWND windowHandle, const LoadedFile* sampleShader);
+    DirectXAPI(HWND windowHandle);
     ~DirectXAPI();
 
     bool IsFullscreen() const;

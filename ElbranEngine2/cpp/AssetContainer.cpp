@@ -48,32 +48,32 @@ void AssetContainer::Initialize(GraphicsAPI* graphics, MemoryArena* arena) {
 	unitTriangle = graphics->CreateMesh(triVerts, 3, triIndices, 3, false);
 
 	// load shaders
-	fullscreenVS = LoadVertexShader(graphics, L"FullscreenVS.cso");
-	cameraVS = LoadVertexShader(graphics, L"CameraVS.cso");
-	particlePassPS = LoadVertexShader(graphics, L"ParticlePassVS.cso");
+	fullscreenVS = LoadVertexShader(graphics, "FullscreenVS.cso");
+	cameraVS = LoadVertexShader(graphics, "CameraVS.cso");
+	particlePassPS = LoadVertexShader(graphics, "ParticlePassVS.cso");
 
-	particleQuadGS = LoadGeometryShader(graphics, L"ParticleQuadGS.cso");
+	particleQuadGS = LoadGeometryShader(graphics, "ParticleQuadGS.cso");
 
-	solidColorPS = LoadPixelShader(graphics, L"SolidColorPS.cso");
-	texturePS = LoadPixelShader(graphics, L"TexturePS.cso");
-	circleFillPS = LoadPixelShader(graphics, L"CircleFillPS.cso");
-	textRasterizePS = LoadPixelShader(graphics, L"TextRasterizePS.cso");
+	solidColorPS = LoadPixelShader(graphics, "SolidColorPS.cso");
+	texturePS = LoadPixelShader(graphics, "TexturePS.cso");
+	circleFillPS = LoadPixelShader(graphics, "CircleFillPS.cso");
+	textRasterizePS = LoadPixelShader(graphics, "TextRasterizePS.cso");
 
-	conSatValPP = LoadPixelShader(graphics, L"ConSatValPP.cso");
-	blurPP = LoadPixelShader(graphics, L"BlurPP.cso");
-	bloomFilterPP = LoadPixelShader(graphics, L"BloomFilterPP.cso");
-	screenSumPP = LoadPixelShader(graphics, L"ScreenSumPP.cso");
+	conSatValPP = LoadPixelShader(graphics, "ConSatValPP.cso");
+	blurPP = LoadPixelShader(graphics, "BlurPP.cso");
+	bloomFilterPP = LoadPixelShader(graphics, "BloomFilterPP.cso");
+	screenSumPP = LoadPixelShader(graphics, "ScreenSumPP.cso");
 
-	brightnessSumCS = LoadComputeShader(graphics, L"BrightnessSumCS.cso");
-	particleSpawnCS = LoadComputeShader(graphics, L"ParticleSpawnCS.cso");
-	particleMoveCS = LoadComputeShader(graphics, L"ParticleMoveCS.cso");
+	brightnessSumCS = LoadComputeShader(graphics, "BrightnessSumCS.cso");
+	particleSpawnCS = LoadComputeShader(graphics, "ParticleSpawnCS.cso");
+	particleMoveCS = LoadComputeShader(graphics, "ParticleMoveCS.cso");
 
-	testSprite = LoadPNG(graphics, L"elbran.png");
-	testBMP = LoadBMP(graphics, L"testbmp.bmp");
-	arial = LoadTTF(graphics, arena, L"arial.ttf");
+	testSprite = LoadPNG(graphics, "elbran.png");
+	testBMP = LoadBMP(graphics, "testbmp.bmp");
+	arial = LoadTTF(graphics, arena, "arial.ttf");
 
 	testSheet = SpriteSheet(testSprite);
-	testSound = LoadWAV(L"water plunk.wav");
+	testSound = LoadWAV("water plunk.wav");
 }
 
 void AssetContainer::Release(GraphicsAPI* graphics) {
@@ -118,36 +118,46 @@ void AssetContainer::ReleaseFont(const GraphicsAPI* graphics, Font* font) {
 }
 
 #pragma region File Loaders
-VertexShader AssetContainer::LoadVertexShader(const GraphicsAPI* graphics, std::wstring fileName) const {
-	LoadedFile shaderBlob = FileIO::LoadFile(L"shaders\\" + fileName);
+VertexShader AssetContainer::LoadVertexShader(const GraphicsAPI* graphics, const char* fileName) const {
+	char path[128] = "shaders\\";
+	AddStrings(path, fileName, path);
+	LoadedFile shaderBlob = FileIO::LoadFile(path);
 	VertexShader result = graphics->CreateVertexShader(&shaderBlob);
 	shaderBlob.Release();
 	return result;
 }
 
-GeometryShader AssetContainer::LoadGeometryShader(const GraphicsAPI* graphics, std::wstring fileName) const {
-	LoadedFile shaderBlob = FileIO::LoadFile(L"shaders\\" + fileName);
+GeometryShader AssetContainer::LoadGeometryShader(const GraphicsAPI* graphics, const char* fileName) const {
+	char path[128] = "shaders\\";
+	AddStrings(path, fileName, path);
+	LoadedFile shaderBlob = FileIO::LoadFile(path);
 	GeometryShader result = graphics->CreateGeometryShader(&shaderBlob);
 	shaderBlob.Release();
 	return result;
 }
 
-PixelShader AssetContainer::LoadPixelShader(const GraphicsAPI* graphics, std::wstring fileName) const {
-	LoadedFile shaderBlob = FileIO::LoadFile(L"shaders\\" + fileName);
+PixelShader AssetContainer::LoadPixelShader(const GraphicsAPI* graphics, const char* fileName) const {
+	char path[128] = "shaders\\";
+	AddStrings(path, fileName, path);
+	LoadedFile shaderBlob = FileIO::LoadFile(path);
 	PixelShader result = graphics->CreatePixelShader(&shaderBlob);
 	shaderBlob.Release();
 	return result;
 }
 
-ComputeShader AssetContainer::LoadComputeShader(const GraphicsAPI* graphics, std::wstring fileName) const {
-	LoadedFile shaderBlob = FileIO::LoadFile(L"shaders\\" + fileName);
+ComputeShader AssetContainer::LoadComputeShader(const GraphicsAPI* graphics, const char* fileName) const {
+	char path[128] = "shaders\\";
+	AddStrings(path, fileName, path);
+	LoadedFile shaderBlob = FileIO::LoadFile(path);
 	ComputeShader result = graphics->CreateComputeShader(&shaderBlob);
 	shaderBlob.Release();
 	return result;
 }
 
-Texture2D AssetContainer::LoadBMP(const GraphicsAPI* graphics, std::wstring fileName) const {
-	LoadedFile file = FileIO::LoadFile(L"assets\\" + fileName);
+Texture2D AssetContainer::LoadBMP(const GraphicsAPI* graphics, const char* fileName) const {
+	char path[128] = "assets\\";
+	AddStrings(path, fileName, path);
+	LoadedFile file = FileIO::LoadFile(path);
 	file.littleEndian = true;
 	ASSERT(file.ReadUInt16() == 0x4D42); // file type must be "BM"
 	file.readLocation = 10;
@@ -408,8 +418,10 @@ Texture2D AssetContainer::LoadBMP(const GraphicsAPI* graphics, std::wstring file
 	return result;
 }
 
-Texture2D AssetContainer::LoadPNG(const GraphicsAPI* graphics, std::wstring fileName) const {
-	LoadedFile file = FileIO::LoadFile(L"assets\\" + fileName);
+Texture2D AssetContainer::LoadPNG(const GraphicsAPI* graphics, const char* fileName) const {
+	char path[128] = "assets\\";
+	AddStrings(path, fileName, path);
+	LoadedFile file = FileIO::LoadFile(path);
 	std::vector<uint8_t> lodeFile(file.bytes, file.bytes + file.fileSize);
 	std::vector<uint8_t> loadedImage;
 	uint32_t width;
@@ -420,8 +432,10 @@ Texture2D AssetContainer::LoadPNG(const GraphicsAPI* graphics, std::wstring file
 	return result;
 }
 
-AudioSample AssetContainer::LoadWAV(std::wstring fileName) const {
-	LoadedFile file = FileIO::LoadFile(L"assets\\" + fileName);
+AudioSample AssetContainer::LoadWAV(const char* fileName) const {
+	char path[128] = "assets\\";
+	AddStrings(path, fileName, path);
+	LoadedFile file = FileIO::LoadFile(path);
 	file.littleEndian = true;
 	uint32_t chunkName = file.ReadUInt32();
 	ASSERT(chunkName == 'FFIR');
@@ -719,12 +733,14 @@ struct FontLoader {
 	}
 };
 
-Font AssetContainer::LoadTTF(const GraphicsAPI* graphics, MemoryArena* arena, std::wstring fileName) const {
+Font AssetContainer::LoadTTF(const GraphicsAPI* graphics, MemoryArena* arena, const char* fileName) const {
 	FontLoader loader = {};
 	Font loaded = {};
 
 	// parse file
-	loader.fontFile = FileIO::LoadFile(L"assets\\" + fileName);
+	char path[128] = "assets\\";
+	AddStrings(path, fileName, path);
+	loader.fontFile = FileIO::LoadFile(path);
 	loader.fontFile.littleEndian = false;
 	ASSERT(loader.fontFile.bytes != nullptr);
 

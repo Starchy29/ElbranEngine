@@ -17,7 +17,7 @@ __int64 lastPerfCount;
 double perfCountSecs;
 double minSecsPerFrame; // inverse of max fps
 WindowsInput* input;
-std::wstring filePath;
+char filePath[1024];
 Application app;
 bool initialized = false;
 
@@ -167,8 +167,10 @@ void QuitApp() {
 	PostQuitMessage(0);
 }
 
-LoadedFile LoadWindowsFile(std::wstring fileName) {
-	HANDLE fileHandle = CreateFileW((filePath + fileName).c_str(), GENERIC_READ, FILE_SHARE_READ, nullptr, OPEN_EXISTING, 0, nullptr);
+LoadedFile LoadWindowsFile(const char* fileName) {
+	char fullPath[1024] {};
+	AddStrings(filePath, fileName, fullPath);
+	HANDLE fileHandle = CreateFileA(fullPath, GENERIC_READ, FILE_SHARE_READ, nullptr, OPEN_EXISTING, 0, nullptr);
 	if(fileHandle == INVALID_HANDLE_VALUE) return {};
 	LoadedFile file = {};
 
@@ -191,8 +193,10 @@ LoadedFile LoadWindowsFile(std::wstring fileName) {
 	return file;
 }
 
-bool SaveWindowsFile(std::wstring fileName, void* bytes, uint64_t fileSize) {
-	HANDLE fileHandle = CreateFileW((filePath + fileName).c_str(), GENERIC_WRITE, 0, nullptr, CREATE_ALWAYS, 0, nullptr);
+bool SaveWindowsFile(const char* fileName, void* bytes, uint64_t fileSize) {
+	char fullPath[1024] {};
+	AddStrings(filePath, fileName, fullPath);
+	HANDLE fileHandle = CreateFileA(fullPath, GENERIC_WRITE, 0, nullptr, CREATE_ALWAYS, 0, nullptr);
 	if(fileHandle == INVALID_HANDLE_VALUE) return false;
 	DWORD writtenBytes;
 	bool success = WriteFile(fileHandle, bytes, fileSize, &writtenBytes, 0);
@@ -220,14 +224,10 @@ int WINAPI WinMain(
 	QueryPerformanceCounter((LARGE_INTEGER*)&lastPerfCount);
 
 	// determine file path
-	wchar_t directory[1024] = {};
-	GetModuleFileNameW(0, directory, 1024);
-	wchar_t* lastSlash = wcsrchr(directory, '\\');
-	if(lastSlash) {
-		// null terminate here to eliminate .exe name and leave the directory
-		*(lastSlash + 1) = 0;
-	}
-	filePath = directory;
+	GetModuleFileNameA(0, filePath, 1024);
+	char* lastSlash = strrchr(filePath, '\\');
+	ASSERT(lastSlash);
+	*(lastSlash + 1) = 0; // null terminate here to eliminate .exe name and leave the directory
 
 	FileIO::platformLittleEndian = std::endian::native == std::endian::little;
 	FileIO::LoadFile = LoadWindowsFile;
@@ -236,11 +236,9 @@ int WINAPI WinMain(
 	InitWindow(hInstance);
 	RECT windowRect;
 	GetClientRect(windowHandle, &windowRect);
-	LoadedFile sampleShader = FileIO::LoadFile(L"shaders\\CameraVS.cso");
 	input = new WindowsInput(windowHandle);
-	app.Initialize(UInt2(windowRect.right - windowRect.left, windowRect.bottom - windowRect.top), new DirectXAPI(windowHandle, &sampleShader), new WindowsAudio(), input);
+	app.Initialize(UInt2(windowRect.right - windowRect.left, windowRect.bottom - windowRect.top), new DirectXAPI(windowHandle), new WindowsAudio(), input);
 	initialized = true;
-	sampleShader.Release();
 	app.quitFunction = QuitApp;
 	RunApp();
 	app.Release();

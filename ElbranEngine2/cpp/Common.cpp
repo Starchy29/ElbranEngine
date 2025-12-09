@@ -1,5 +1,26 @@
 #include "Common.h"
 
+uint32_t GetStringLength(const char* string) {
+	uint32_t length = 0;
+	while(string[length]) length++;
+	return length;
+}
+
+void AddStrings(const char* left, const char* right, char* outBuffer) {
+	uint64_t outIndex = 0;
+	while(left[outIndex]) {
+		outBuffer[outIndex] = left[outIndex];
+		outIndex++;
+	}
+	uint64_t rightIndex = 0;
+	while(right[rightIndex]) {
+		outBuffer[outIndex] = right[rightIndex];
+		outIndex++;
+		rightIndex++;
+	}
+	outBuffer[outIndex+1] = 0;
+}
+
 Int2::Int2(int32_t x, int32_t y) :
 	x{x},
 	y{y}

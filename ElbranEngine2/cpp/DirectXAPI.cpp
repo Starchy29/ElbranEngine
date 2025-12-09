@@ -8,7 +8,7 @@
 
 #define SafeRelease(x) if(x) x->Release()
 
-DirectXAPI::DirectXAPI(HWND windowHandle, const LoadedFile* sampleShader) {
+DirectXAPI::DirectXAPI(HWND windowHandle) {
 	D3D_FEATURE_LEVEL levels[] = {
 		D3D_FEATURE_LEVEL_11_1,
 		D3D_FEATURE_LEVEL_11_0,
@@ -110,9 +110,11 @@ DirectXAPI::DirectXAPI(HWND windowHandle, const LoadedFile* sampleShader) {
 	inputDescriptions[1] = { "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT };
 
 	ID3D11InputLayout* defaultLayout;
-	device->CreateInputLayout(inputDescriptions, 2, sampleShader->bytes, sampleShader->fileSize, &defaultLayout);
+	LoadedFile sampleShader = FileIO::LoadFile("shaders\\CameraVS.cso");
+	device->CreateInputLayout(inputDescriptions, 2, sampleShader.bytes, sampleShader.fileSize, &defaultLayout);
 	context->IASetInputLayout(defaultLayout);
 	defaultLayout->Release();
+	sampleShader.Release();
 
 	// set other defaults
 	context->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);

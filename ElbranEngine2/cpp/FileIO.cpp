@@ -3,8 +3,8 @@
 #include "Math.h"
 
 bool FileIO::platformLittleEndian = true;
-LoadedFile (*FileIO::LoadFile)(std::wstring fileName) = 0;
-bool (*FileIO::SaveFile)(std::wstring fileName, void* bytes, uint64_t fileSize) = 0;
+LoadedFile (*FileIO::LoadFile)(const char* fileName) = 0;
+bool (*FileIO::SaveFile)(const char* fileName, void* bytes, uint64_t fileSize) = 0;
 
 void LoadedFile::Release() {
 	delete[] bytes;
