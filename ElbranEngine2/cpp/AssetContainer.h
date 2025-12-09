@@ -30,6 +30,7 @@ public:
 	ComputeShader brightnessSumCS;
 	ComputeShader particleSpawnCS;
 	ComputeShader particleMoveCS;
+	ComputeShader particleClearCS;
 
 	Texture2D testSprite;
 	Texture2D testBMP;

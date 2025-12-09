@@ -67,6 +67,7 @@ void AssetContainer::Initialize(GraphicsAPI* graphics, MemoryArena* arena) {
 	brightnessSumCS = LoadComputeShader(graphics, "BrightnessSumCS.cso");
 	particleSpawnCS = LoadComputeShader(graphics, "ParticleSpawnCS.cso");
 	particleMoveCS = LoadComputeShader(graphics, "ParticleMoveCS.cso");
+	particleClearCS = LoadComputeShader(graphics, "ParticleClearCS.cso");
 
 	testSprite = LoadPNG(graphics, "elbran.png");
 	testBMP = LoadBMP(graphics, "testbmp.bmp");
@@ -100,6 +101,7 @@ void AssetContainer::Release(GraphicsAPI* graphics) {
 	graphics->ReleaseShader(&brightnessSumCS);
 	graphics->ReleaseShader(&particleSpawnCS);
 	graphics->ReleaseShader(&particleMoveCS);
+	graphics->ReleaseShader(&particleClearCS);
 
 	graphics->ReleaseTexture(&testSprite);
 	graphics->ReleaseTexture(&testBMP);

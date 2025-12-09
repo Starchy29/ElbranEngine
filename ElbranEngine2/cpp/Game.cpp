@@ -63,6 +63,7 @@ void Game::Update(Application* app, float deltaTime) {
 	if(app->input.JustPressed(InputAction::LeftCLick)) {
 		app->debugger.debugScene = &sampleScene;
 		app->debugger.AddDot(app->input.GetMousePosition(&sampleScene.camera));
+		particleRend->ClearParticles(&app->graphics, &app->assets);
 	}
 
 	if(app->input.IsPressed(InputAction::Up)) {

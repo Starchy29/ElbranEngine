@@ -255,7 +255,7 @@ void Renderer::InitParticles(GraphicsAPI* graphics, uint16_t maxParticles, const
 }
 
 void Renderer::UpdateTextMesh(GraphicsAPI* graphics, MemoryArena* arena) {
-	ASSERT(type == Type::Text);
+	ASSERT(type == Type::Text)
 
 	graphics->ReleaseMesh(&textData.textMesh);
 
@@ -332,6 +332,12 @@ void Renderer::UpdateTextMesh(GraphicsAPI* graphics, MemoryArena* arena) {
 	textData.blockAspectRatio = maxWidth / totalHeight;
 }
 
-void Renderer::ClearParticles(GraphicsAPI* graphics) {
+void Renderer::ClearParticles(GraphicsAPI* graphics, const AssetContainer* assets) {
 	ASSERT(type == Type::Particles)
+
+	graphics->WriteBuffer(&particleData.maxParticles, sizeof(uint16_t), assets->particleClearCS.constants.data);
+	graphics->SetConstants(ShaderStage::Compute, &assets->particleClearCS.constants, 0);
+	graphics->SetEditBuffer(&particleData.particleBuffer, 0);
+	graphics->RunComputeShader(&assets->particleClearCS, particleData.maxParticles, 1);
+	graphics->SetEditBuffer(nullptr, 0); // unbind particles
 }

@@ -123,5 +123,5 @@ struct Renderer {
 	void InitParticles(GraphicsAPI*, uint16_t maxParticles, const SpriteSheet* animation, float animationFPS);
 
 	void UpdateTextMesh(GraphicsAPI*, MemoryArena*); // for text renderers
-	void ClearParticles(GraphicsAPI*); // for particle renderers
+	void ClearParticles(GraphicsAPI*, const AssetContainer*); // for particle renderers
 };
