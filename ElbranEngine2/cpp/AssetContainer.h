@@ -42,15 +42,15 @@ public:
 	void Initialize(GraphicsAPI*, MemoryArena*);
 	void Release(GraphicsAPI*);
 
+	static VertexShader LoadVertexShader(const GraphicsAPI*, const char* fileName);
+	static GeometryShader LoadGeometryShader(const GraphicsAPI*, const char* fileName);
+	static PixelShader LoadPixelShader(const GraphicsAPI*, const char* fileName) ;
+	static ComputeShader LoadComputeShader(const GraphicsAPI*, const char* fileName);
+
+	static Texture2D LoadBMP(const GraphicsAPI*, const char* fileName);
+	static Texture2D LoadPNG(const GraphicsAPI*, const char* fileName);
+	static Font LoadTTF(const GraphicsAPI*, MemoryArena* arena, const char* fileName);
+	static AudioSample LoadWAV(const char* fileName);
+
 	static void ReleaseFont(const GraphicsAPI*, Font*);
-
-	VertexShader LoadVertexShader(const GraphicsAPI*, const char* fileName) const;
-	GeometryShader LoadGeometryShader(const GraphicsAPI*, const char* fileName) const;
-	PixelShader LoadPixelShader(const GraphicsAPI*, const char* fileName) const;
-	ComputeShader LoadComputeShader(const GraphicsAPI*, const char* fileName) const;
-
-	Texture2D LoadBMP(const GraphicsAPI*, const char* fileName) const;
-	Texture2D LoadPNG(const GraphicsAPI*, const char* fileName) const;
-	Font LoadTTF(const GraphicsAPI*, MemoryArena* arena, const char* fileName) const;
-	AudioSample LoadWAV(const char* fileName) const;
 };

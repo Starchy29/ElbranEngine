@@ -1,10 +1,10 @@
 #include "Application.h"
 #include "Random.h"
 
-void Application::Initialize(UInt2 windowSize, PlatformGraphics* platformGraphics, PlatformAudio* platformAudio, PlatformInput* platformInput) {
+void Application::Initialize(void (*quitFunction)(), UInt2 windowSize, PlatformGraphics* platformGraphics, PlatformAudio* platformAudio, PlatformInput* platformInput) {
 	frameBuffer.Initialize(4194304);
 	_rng.Initialize();
-	quitFunction = nullptr;
+	this->quitFunction = quitFunction;
 
 	graphics.Initialize(platformGraphics, windowSize);
 	audio.Initialize(platformAudio);

@@ -31,6 +31,8 @@ struct Int2 {
 	Int2 operator-(const Int2& other);
 	Int2 operator-();
 };
+bool operator==(const Int2& left, const Int2& right);
+bool operator!=(const Int2& left, const Int2& right);
 
 struct UInt2 {
 	uint32_t x;
@@ -41,6 +43,8 @@ struct UInt2 {
 
 	UInt2 operator+(const UInt2& other);
 };
+bool operator==(const UInt2& left, const UInt2& right);
+bool operator!=(const UInt2& left, const UInt2& right);
 
 struct Color {
 	float red;
@@ -50,6 +54,14 @@ struct Color {
 
 	Color() = default;
 	Color(float r, float g, float b, float a = 1.f);
+
+	static Color FromHSV(float hue, float saturation, float brightness, float alpha = 1.0f);
+	float GetBrightness() const;
+	float GetSaturation() const;
+	float GetHue() const;
+	Color SetBrightness(float brightness) const;
+	Color SetSaturation(float saturation) const;
+	Color SetHue(float hue) const;
 
 	static const Color Clear;
 	static const Color Black;

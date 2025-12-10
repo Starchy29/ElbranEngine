@@ -120,7 +120,7 @@ void AssetContainer::ReleaseFont(const GraphicsAPI* graphics, Font* font) {
 }
 
 #pragma region File Loaders
-VertexShader AssetContainer::LoadVertexShader(const GraphicsAPI* graphics, const char* fileName) const {
+VertexShader AssetContainer::LoadVertexShader(const GraphicsAPI* graphics, const char* fileName) {
 	char path[128] = "shaders\\";
 	AddStrings(path, fileName, path);
 	LoadedFile shaderBlob = FileIO::LoadFile(path);
@@ -129,7 +129,7 @@ VertexShader AssetContainer::LoadVertexShader(const GraphicsAPI* graphics, const
 	return result;
 }
 
-GeometryShader AssetContainer::LoadGeometryShader(const GraphicsAPI* graphics, const char* fileName) const {
+GeometryShader AssetContainer::LoadGeometryShader(const GraphicsAPI* graphics, const char* fileName) {
 	char path[128] = "shaders\\";
 	AddStrings(path, fileName, path);
 	LoadedFile shaderBlob = FileIO::LoadFile(path);
@@ -138,7 +138,7 @@ GeometryShader AssetContainer::LoadGeometryShader(const GraphicsAPI* graphics, c
 	return result;
 }
 
-PixelShader AssetContainer::LoadPixelShader(const GraphicsAPI* graphics, const char* fileName) const {
+PixelShader AssetContainer::LoadPixelShader(const GraphicsAPI* graphics, const char* fileName) {
 	char path[128] = "shaders\\";
 	AddStrings(path, fileName, path);
 	LoadedFile shaderBlob = FileIO::LoadFile(path);
@@ -147,7 +147,7 @@ PixelShader AssetContainer::LoadPixelShader(const GraphicsAPI* graphics, const c
 	return result;
 }
 
-ComputeShader AssetContainer::LoadComputeShader(const GraphicsAPI* graphics, const char* fileName) const {
+ComputeShader AssetContainer::LoadComputeShader(const GraphicsAPI* graphics, const char* fileName) {
 	char path[128] = "shaders\\";
 	AddStrings(path, fileName, path);
 	LoadedFile shaderBlob = FileIO::LoadFile(path);
@@ -156,7 +156,7 @@ ComputeShader AssetContainer::LoadComputeShader(const GraphicsAPI* graphics, con
 	return result;
 }
 
-Texture2D AssetContainer::LoadBMP(const GraphicsAPI* graphics, const char* fileName) const {
+Texture2D AssetContainer::LoadBMP(const GraphicsAPI* graphics, const char* fileName) {
 	char path[128] = "assets\\";
 	AddStrings(path, fileName, path);
 	LoadedFile file = FileIO::LoadFile(path);
@@ -421,7 +421,7 @@ Texture2D AssetContainer::LoadBMP(const GraphicsAPI* graphics, const char* fileN
 	return result;
 }
 
-Texture2D AssetContainer::LoadPNG(const GraphicsAPI* graphics, const char* fileName) const {
+Texture2D AssetContainer::LoadPNG(const GraphicsAPI* graphics, const char* fileName) {
 	char path[128] = "assets\\";
 	AddStrings(path, fileName, path);
 	LoadedFile file = FileIO::LoadFile(path);
@@ -435,7 +435,7 @@ Texture2D AssetContainer::LoadPNG(const GraphicsAPI* graphics, const char* fileN
 	return result;
 }
 
-AudioSample AssetContainer::LoadWAV(const char* fileName) const {
+AudioSample AssetContainer::LoadWAV(const char* fileName) {
 	char path[128] = "assets\\";
 	AddStrings(path, fileName, path);
 	LoadedFile file = FileIO::LoadFile(path);
@@ -736,7 +736,7 @@ struct FontLoader {
 	}
 };
 
-Font AssetContainer::LoadTTF(const GraphicsAPI* graphics, MemoryArena* arena, const char* fileName) const {
+Font AssetContainer::LoadTTF(const GraphicsAPI* graphics, MemoryArena* arena, const char* fileName) {
 	FontLoader loader = {};
 	Font loaded = {};
 

@@ -237,9 +237,8 @@ int WINAPI WinMain(
 	RECT windowRect;
 	GetClientRect(windowHandle, &windowRect);
 	input = new WindowsInput(windowHandle);
-	app.Initialize(UInt2(windowRect.right - windowRect.left, windowRect.bottom - windowRect.top), new DirectXAPI(windowHandle), new WindowsAudio(), input);
+	app.Initialize(QuitApp, UInt2(windowRect.right - windowRect.left, windowRect.bottom - windowRect.top), new DirectXAPI(windowHandle), new WindowsAudio(), input);
 	initialized = true;
-	app.quitFunction = QuitApp;
 	RunApp();
 	app.Release();
 	return 0;

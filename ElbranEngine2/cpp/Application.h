@@ -25,7 +25,7 @@ public:
 	void (*quitFunction)();
 
 	Application() = default;
-	void Initialize(UInt2 windowSize, PlatformGraphics* platformGraphics, PlatformAudio* platformAudio, PlatformInput* platformInput);
+	void Initialize(void (*quitFunction)(), UInt2 windowSize, PlatformGraphics* platformGraphics, PlatformAudio* platformAudio, PlatformInput* platformInput);
 	void Release();
 
 	void StepFrame(float deltaTime);

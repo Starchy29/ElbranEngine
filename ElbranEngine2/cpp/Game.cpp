@@ -18,7 +18,7 @@ char label[] = "here is\ntext";
 
 void Game::Initialize(GraphicsAPI* graphics, const AssetContainer* assets, MemoryArena* frameBuffer) {
 	sampleScene.Initialize(10, 10);
-	sampleScene.backgroundColor = Color(0.1f, 0.1f, 0.1f);
+	sampleScene.backgroundColor = Color::Black; //Color(0.1f, 0.1f, 0.1f);
 	sampleScene.camera.viewWidth = 10.f;
 
 	spriteTest = sampleScene.ReserveRenderer();
@@ -30,7 +30,7 @@ void Game::Initialize(GraphicsAPI* graphics, const AssetContainer* assets, Memor
 	//spriteTest->transform->scale *= 5.0f;
 
 	cursor = sampleScene.ReserveRenderer();
-	cursor->InitShape(PrimitiveShape::Circle, Color(0.1f, 0.8f, 0.3f, 0.5f));
+	cursor->InitShape(PrimitiveShape::Circle, Color(0.1f, 0.8f, 0.3f));
 	spriteTest->transform->zOrder = 10.f;
 
 	textTest = sampleScene.ReserveRenderer();
@@ -49,6 +49,19 @@ void Game::Initialize(GraphicsAPI* graphics, const AssetContainer* assets, Memor
 	partBeh.spinRate = 2.0f;
 	partBeh.startWidth = 0.3f;
 	partBeh.speed = 2.0f;
+
+	Color tester = Color(1, 0, 0);
+	float testVal = tester.GetHue();
+	testVal = tester.GetSaturation();
+	testVal = tester.GetBrightness();
+
+	tester = Color(0, 0.5, 0.5);
+	testVal = tester.GetHue();
+	testVal = tester.GetSaturation();
+	testVal = tester.GetBrightness();
+
+	tester = Color::FromHSV(0.f, 0.5f, 0.5f);
+	tester = Color::FromHSV(tester.GetHue(), tester.GetSaturation(), tester.GetBrightness());
 }
 
 void Game::Release(GraphicsAPI* graphics) {
@@ -68,9 +81,12 @@ void Game::Update(Application* app, float deltaTime) {
 
 	if(app->input.IsPressed(InputAction::Up)) {
 		//ppTest.bloomData.brightnessThreshold += deltaTime;
+		cursor->shapeData.color = cursor->shapeData.color.SetHue(cursor->shapeData.color.GetHue() + deltaTime);
 	}
 	else if(app->input.IsPressed(InputAction::Down)) {
 		//ppTest.bloomData.brightnessThreshold -= deltaTime;
+		Color& cursorColor = cursor->shapeData.color;
+		cursorColor = Color::FromHSV(cursorColor.GetHue(), cursorColor.GetSaturation(), cursorColor.GetBrightness() - deltaTime);
 	}
 
 	if(app->input.JustPressed(InputAction::Up) || app->input.JustPressed(InputAction::Down)) {
