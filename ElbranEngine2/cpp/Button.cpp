@@ -8,7 +8,6 @@ void Button::Initialize(RenderGroup* scene, void (*clickEffect)(Button*)) {
 
 	box = scene->ReserveRenderer();
 	box->InitShape(PrimitiveShape::Square, normalColor);
-	box->translucent = true;
 	selectArea = box->worldMatrix;
 }
 

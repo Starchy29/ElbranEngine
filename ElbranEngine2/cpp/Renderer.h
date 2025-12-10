@@ -108,10 +108,9 @@ struct Renderer {
 	};
 
 	bool hidden;
-	bool translucent;
 	
 	void Draw(GraphicsAPI*, const AssetContainer*);
-
+	bool IsTranslucent() const;
 	void Release(GraphicsAPI*);
 
 	void InitShape(PrimitiveShape shape, Color color);

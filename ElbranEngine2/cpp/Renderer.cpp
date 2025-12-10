@@ -155,6 +155,18 @@ void Renderer::Draw(GraphicsAPI* graphics, const AssetContainer* assets) {
 	}
 }
 
+bool Renderer::IsTranslucent() const {
+	switch(type) {
+	case Type::Shape: return shapeData.color.alpha > 0.f && shapeData.color.alpha < 1.f;
+	case Type::Sprite: return spriteData.sprite->translucent || spriteData.tint.alpha > 0.f && spriteData.tint.alpha < 1.f;
+	case Type::Atlas: return atlasData.atlas->texture.translucent || atlasData.tint.alpha > 0.f && atlasData.tint.alpha < 1.f;
+	case Type::Pattern: return patternData.sprite->translucent || patternData.tint.alpha > 0.f && patternData.tint.alpha < 1.f;
+	case Type::Text: return true; // anti-aliasing uses alpha
+	case Type::Particles: return particleData.blendAdditive || particleData.sprites->texture.translucent;
+	}
+	return false;
+}
+
 void Renderer::Release(GraphicsAPI* graphics) {
 	switch(type) {
 	case Type::Text:
@@ -169,7 +181,6 @@ void Renderer::Release(GraphicsAPI* graphics) {
 void Renderer::InitShape(PrimitiveShape shape, Color color) {
 	type = Type::Shape;
 	hidden = false;
-	translucent = color.alpha < 1.0f;
 	shapeData.shape = shape;
 	shapeData.color = color;
 }
@@ -177,7 +188,6 @@ void Renderer::InitShape(PrimitiveShape shape, Color color) {
 void Renderer::InitSprite(const Texture2D* sprite) {
 	type = Type::Sprite;
 	hidden = false;
-	translucent = false;
 	spriteData.sprite = sprite;
 	spriteData.tint = Color::White;
 	spriteData.flipX = false;
@@ -188,7 +198,6 @@ void Renderer::InitSprite(const Texture2D* sprite) {
 void Renderer::InitAtlas(const SpriteSheet* atlas) {
 	type = Type::Atlas;
 	hidden = false;
-	translucent = false;
 	atlasData.atlas = atlas;
 	atlasData.row = 0u;
 	atlasData.col = 0u;
@@ -201,7 +210,6 @@ void Renderer::InitAtlas(const SpriteSheet* atlas) {
 void Renderer::InitPattern(const Texture2D* sprite) {
 	type = Type::Pattern;
 	hidden = false;
-	translucent = false;
 	patternData.sprite = sprite;
 	patternData.origin = Vector2::Zero;
 	patternData.blockSize = Vector2(1.0f, 1.0f);
@@ -214,7 +222,6 @@ void Renderer::InitPattern(const Texture2D* sprite) {
 void Renderer::InitLight(Color color, float radius) {
 	type = Type::Light;
 	hidden = false;
-	translucent = false;
 	lightData.color = color;
 	lightData.radius = radius;
 	lightData.brightness = 1.0f;
@@ -224,7 +231,6 @@ void Renderer::InitLight(Color color, float radius) {
 void Renderer::InitText(GraphicsAPI* graphics, MemoryArena* arena, const char* text, const Font* font, HorizontalAlignment horizontalAlignment, float lineSpacing) {
 	type = Type::Text;
 	hidden = false;
-	translucent = true;
 
 	textData.text = text;
 	textData.font = font;
@@ -241,7 +247,6 @@ void Renderer::InitText(GraphicsAPI* graphics, MemoryArena* arena, const char* t
 void Renderer::InitParticles(GraphicsAPI* graphics, uint16_t maxParticles, const SpriteSheet* animation, float animationFPS) {
 	type = Type::Particles;
 	hidden = false;
-	translucent = true;
 
 	particleData.sprites = animation;
 	particleData.animationFPS = animationFPS;
@@ -334,7 +339,6 @@ void Renderer::UpdateTextMesh(GraphicsAPI* graphics, MemoryArena* arena) {
 
 void Renderer::ClearParticles(GraphicsAPI* graphics, const AssetContainer* assets) {
 	ASSERT(type == Type::Particles)
-
 	graphics->WriteBuffer(&particleData.maxParticles, sizeof(uint16_t), assets->particleClearCS.constants.data);
 	graphics->SetConstants(ShaderStage::Compute, &assets->particleClearCS.constants, 0);
 	graphics->SetEditBuffer(&particleData.particleBuffer, 0);

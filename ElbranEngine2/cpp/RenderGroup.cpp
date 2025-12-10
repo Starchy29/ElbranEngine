@@ -107,7 +107,7 @@ void RenderGroup::Draw(GraphicsAPI* graphics, const AssetContainer* assets, Memo
 		} break;
 		default: {
 			OrderedRenderer addition = { &renderers[i], renderers[i].worldMatrix->values[2][3]};
-			if(renderers[i].translucent) {
+			if(renderers[i].IsTranslucent()) {
 				// sort translucents back to front
 				uint32_t insertIndex = numTranslucent;
 				while(insertIndex > 0 && addition.globalZ > translucents[insertIndex - 1].globalZ) {

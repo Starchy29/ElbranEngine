@@ -416,6 +416,7 @@ Texture2D AssetContainer::LoadBMP(const GraphicsAPI* graphics, const char* fileN
 
 	file.Release();
 	Texture2D result = graphics->CreateConstantTexture(width, height, (uint8_t*)loadedBits);
+	result.translucent = false;
 	delete[] loadedBits;
 	return result;
 }

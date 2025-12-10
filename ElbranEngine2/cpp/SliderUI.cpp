@@ -13,8 +13,6 @@ void SliderUI::Initialize(RenderGroup* scene, float width, uint16_t segments, bo
 	mover = scene->ReserveRenderer();
 	track->InitShape(PrimitiveShape::Square, Color::White);
 	mover->InitShape(PrimitiveShape::Square, Color::White);
-	mover->translucent = true;
-	track->translucent = true;
 
 	root = scene->ReserveTransform();
 	Transform* selectTransform = scene->ReserveTransform(&selectArea);

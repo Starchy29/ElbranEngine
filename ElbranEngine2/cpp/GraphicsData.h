@@ -119,6 +119,7 @@ struct Texture2D {
 	ShaderResourceView* inputView;
 	uint32_t width;
 	uint32_t height;
+	bool translucent;
 	inline float AspectRatio() const { return (float)width / height; }
 };
 
