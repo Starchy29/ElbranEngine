@@ -171,7 +171,6 @@
     <ClInclude Include="..\cpp\FixedMap.h" />
     <ClInclude Include="..\cpp\Game.h" />
     <ClInclude Include="..\cpp\GraphicsAPI.h" />
-    <ClInclude Include="..\cpp\InputData.h" />
     <ClInclude Include="..\cpp\InputManager.h" />
     <ClInclude Include="..\cpp\FileIO.h" />
     <ClInclude Include="..\cpp\lodepng.h" />

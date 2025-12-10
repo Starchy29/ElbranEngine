@@ -1,8 +1,6 @@
 #ifdef WINDOWS
 #pragma once
-#include "InputData.h"
-#include "Math.h"
-#include "Common.h"
+#include "InputManager.h"
 
 #define KEY_COUNT 256
 

@@ -2,7 +2,7 @@
 #include "Math.h"
 #include "Common.h"
 
-#define GPU_BOOL int32_t // bools are 4 bytes on the gpu
+#define GPU_BOOL uint32_t // bools are 4 bytes on the gpu
 
 struct CameraVSConstants {
 	Matrix worldTransform;
