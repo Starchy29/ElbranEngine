@@ -21,6 +21,7 @@ void Game::Initialize(Application* app) {
 	sampleScene.backgroundImage = &app->assets.apple;
 	//sampleScene.backgroundColor = Color::Black; //Color(0.1f, 0.1f, 0.1f);
 	sampleScene.camera.viewWidth = 10.f;
+	sampleScene.ambientLight = Color::Black;
 
 	spriteTest = sampleScene.ReserveRenderer();
 	spriteTest->InitSprite(&app->assets.testSprite);
@@ -29,10 +30,17 @@ void Game::Initialize(Application* app) {
 
 	//spriteTest->InitPattern(&app->assets.testSprite);
 	//spriteTest->transform->scale *= 5.0f;
+	Renderer* back = sampleScene.ReserveRenderer();
+	back->InitSprite(&app->assets.apple);
+	back->transform->scale = sampleScene.camera.GetWorldDimensions();
+	back->transform->zOrder = 99.f;
+	back->spriteData.lit = true;
 
 	cursor = sampleScene.ReserveRenderer();
 	cursor->InitShape(PrimitiveShape::Circle, Color(0.1f, 0.8f, 0.3f));
 	spriteTest->transform->zOrder = 10.f;
+	cursor->InitLight(Color::Red, 2.0f);
+	cursor->lightData.coneSize = 0.4f;
 
 	textTest = sampleScene.ReserveRenderer();
 	textTest->InitText(&app->graphics, &app->frameBuffer, label, &app->assets.arial);
@@ -50,7 +58,7 @@ void Game::Initialize(Application* app) {
 	partBeh.startWidth = 0.3f;
 	partBeh.speed = 2.0f;
 
-	app->audio.StartTrack(&app->assets.testSong, true, 1.0f, 3.0f);
+	//app->audio.StartTrack(&app->assets.testSong, true, 1.0f, 3.0f);
 }
 
 void Game::Release(GraphicsAPI* graphics) {
@@ -63,10 +71,8 @@ void Game::Update(Application* app, float deltaTime) {
 	cursor->transform->position = app->input.GetMousePosition(&sampleScene.camera);
 
 	if(app->input.JustPressed(InputAction::LeftCLick)) {
-		app->debugger.debugScene = &sampleScene;
-		app->debugger.AddDot(app->input.GetMousePosition(&sampleScene.camera));
 		particleRend->ClearParticles(&app->graphics, &app->assets);
-		app->audio.SetPaused(&app->assets.testSong, true, 2.0f);
+		//app->audio.SetPaused(&app->assets.testSong, true, 2.0f);
 	}
 
 	if(app->input.IsPressed(InputAction::Up)) {
@@ -86,5 +92,5 @@ void Game::Update(Application* app, float deltaTime) {
 
 void Game::Draw(GraphicsAPI* graphics, const AssetContainer* assets, MemoryArena* frameBuffer) {
 	sampleScene.Draw(graphics, assets, frameBuffer);
-	graphics->ApplyPostProcesses(assets, ppTest, 1);
+	//graphics->ApplyPostProcesses(assets, ppTest, 1);
 }

@@ -99,9 +99,10 @@ void RenderGroup::Draw(GraphicsAPI* graphics, const AssetContainer* assets, Memo
 			lightData[lightConstants.lightCount].radius = renderers[i].lightData.radius;
 			lightData[lightConstants.lightCount].brightness = renderers[i].lightData.brightness;
 
-			lightData[lightConstants.lightCount].worldPosition = *(renderers[i].worldMatrix) * Vector2::Zero;
-			lightData[lightConstants.lightCount].direction = (*renderers[i].worldMatrix * Vector2::Right - lightData[lightConstants.lightCount].worldPosition).Normalize();
-			lightData[lightConstants.lightCount].coneEdge = *(renderers[i].worldMatrix) * Vector2::FromAngle(renderers[i].lightData.coneSize * 0.5f);
+			Vector2 lightPosition = *(renderers[i].worldMatrix) * Vector2::Zero;
+			lightData[lightConstants.lightCount].worldPosition = lightPosition;
+			lightData[lightConstants.lightCount].direction = (*renderers[i].worldMatrix * Vector2::Right - lightPosition).Normalize();
+			lightData[lightConstants.lightCount].coneEdge = (*renderers[i].worldMatrix * Vector2::FromAngle(renderers[i].lightData.coneSize * 0.5f) - lightPosition).Normalize();
 
 			lightConstants.lightCount++;
 		} break;
