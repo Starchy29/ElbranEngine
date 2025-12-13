@@ -9,11 +9,10 @@ class SoundMixer;
 class MemoryArena;
 class Application;
 
-class Game
-{
+class Game {
 public:
 	Game() = default;
-	void Initialize(GraphicsAPI*, const AssetContainer*, MemoryArena*);
+	void Initialize(Application*);
 	void Release(GraphicsAPI*);
 
 	void Update(Application*, float deltaTime);

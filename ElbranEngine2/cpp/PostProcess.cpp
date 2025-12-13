@@ -73,7 +73,7 @@ void PostProcess::Render(const RenderTarget* input, RenderTarget* output, Graphi
 		RenderTarget* brightPixels = &graphics->postProcessHelpers[1]; // blur shader uses slot 0
 		graphics->SetRenderTarget(brightPixels, false);
 		graphics->SetTexture(ShaderStage::Pixel, input, 0);
-		graphics->SetPixelShader(&assets->bloomFilterPP, &bloomData.brightnessThreshold, sizeof(float));
+		graphics->SetPixelShader(&assets->bloomFilterPP, &bloomData.brightnessThreshold, 2 * sizeof(float));
 		graphics->DrawFullscreen(assets);
 
 		// blur bright pixels
@@ -116,8 +116,9 @@ void PostProcess::HSV(float contrast, float saturation, float brightness) {
 	hsvData.brightness = brightness;
 }
 
-void PostProcess::Bloom(uint16_t blurRadius, float brightnessThreshold) {
+void PostProcess::Bloom(uint16_t blurRadius, float brightnessThreshold, float sensitivity) {
 	type = Type::Bloom;
 	bloomData.blurRadius = blurRadius;
 	bloomData.brightnessThreshold = brightnessThreshold;
+	bloomData.thresholdSensitivity = sensitivity;
 }

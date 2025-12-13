@@ -23,7 +23,7 @@ struct Camera {
 	inline float GetViewHeight() const { return viewWidth / ASPECT_RATIO; }
 	inline Vector2 GetWorldDimensions() const { return Vector2(viewWidth, GetViewHeight()); }
 	inline AlignedRect GetViewArea() const {
-		ASSERT(transform->rotation == 0.f);
+		ASSERT(transform->rotation == 0.f)
 		return AlignedRect(transform->position, GetWorldDimensions());
 	}
 };

@@ -28,6 +28,7 @@ struct PostProcess {
 		struct {
 			uint16_t blurRadius;
 			float brightnessThreshold;
+			float thresholdSensitivity;
 		} bloomData;
 	};
 
@@ -36,5 +37,5 @@ struct PostProcess {
 
 	void Blur(uint16_t blurRadius);
 	void HSV(float contrast, float saturation, float brightness);
-	void Bloom(uint16_t blurRadius, float brightnessThreshold);
+	void Bloom(uint16_t blurRadius, float brightnessThreshold, float sensitivity = 0.f);
 };

@@ -47,7 +47,6 @@ void AssetContainer::Initialize(GraphicsAPI* graphics, MemoryArena* arena) {
 	uint32_t triIndices[] = { 0, 1, 2 };
 	unitTriangle = graphics->CreateMesh(triVerts, 3, triIndices, 3, false);
 
-	// load shaders
 	fullscreenVS = LoadVertexShader(graphics, "FullscreenVS.cso");
 	cameraVS = LoadVertexShader(graphics, "CameraVS.cso");
 	particlePassPS = LoadVertexShader(graphics, "ParticlePassVS.cso");
@@ -71,10 +70,12 @@ void AssetContainer::Initialize(GraphicsAPI* graphics, MemoryArena* arena) {
 
 	testSprite = LoadPNG(graphics, "elbran.png");
 	testBMP = LoadBMP(graphics, "testbmp.bmp");
+	apple = LoadPNG(graphics, "apple.png");
 	arial = LoadTTF(graphics, arena, "arial.ttf");
 
 	testSheet = SpriteSheet(testSprite);
 	testSound = LoadWAV("water plunk.wav");
+	testSong = LoadWAV("Menu song.wav");
 }
 
 void AssetContainer::Release(GraphicsAPI* graphics) {
@@ -105,10 +106,12 @@ void AssetContainer::Release(GraphicsAPI* graphics) {
 
 	graphics->ReleaseTexture(&testSprite);
 	graphics->ReleaseTexture(&testBMP);
+	graphics->ReleaseTexture(&apple);
 
 	ReleaseFont(graphics, &arial);
 
 	testSound.Release();
+	testSong.Release();
 }
 
 void AssetContainer::ReleaseFont(const GraphicsAPI* graphics, Font* font) {

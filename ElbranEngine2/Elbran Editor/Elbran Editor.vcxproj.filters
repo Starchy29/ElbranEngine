@@ -34,12 +34,6 @@
     <ClCompile Include="..\cpp\DebugHelper.cpp">
       <Filter>Engine\Toolkit</Filter>
     </ClCompile>
-    <ClCompile Include="..\cpp\Math.cpp">
-      <Filter>Engine\Toolkit</Filter>
-    </ClCompile>
-    <ClCompile Include="..\cpp\MemoryArena.cpp">
-      <Filter>Engine\Toolkit</Filter>
-    </ClCompile>
     <ClCompile Include="..\cpp\Random.cpp">
       <Filter>Engine\Toolkit</Filter>
     </ClCompile>
@@ -48,12 +42,6 @@
     </ClCompile>
     <ClCompile Include="..\cpp\Application.cpp">
       <Filter>Engine</Filter>
-    </ClCompile>
-    <ClCompile Include="..\cpp\Common.cpp">
-      <Filter>Engine\Toolkit</Filter>
-    </ClCompile>
-    <ClCompile Include="..\cpp\LoadedFile.cpp">
-      <Filter>Engine\Toolkit</Filter>
     </ClCompile>
     <ClCompile Include="..\cpp\Button.cpp">
       <Filter>Engine\Toolkit\UI</Filter>
@@ -72,6 +60,18 @@
     </ClCompile>
     <ClCompile Include="..\cpp\PostProcess.cpp">
       <Filter>Engine\Rendering</Filter>
+    </ClCompile>
+    <ClCompile Include="..\cpp\Common.cpp">
+      <Filter>Engine</Filter>
+    </ClCompile>
+    <ClCompile Include="..\cpp\Math.cpp">
+      <Filter>Engine</Filter>
+    </ClCompile>
+    <ClCompile Include="..\cpp\MemoryArena.cpp">
+      <Filter>Engine</Filter>
+    </ClCompile>
+    <ClCompile Include="..\cpp\FileIO.cpp">
+      <Filter>Engine</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -108,15 +108,6 @@
     <ClInclude Include="..\cpp\DebugHelper.h">
       <Filter>Engine\Toolkit</Filter>
     </ClInclude>
-    <ClInclude Include="..\cpp\FixedMap.h">
-      <Filter>Engine\Toolkit</Filter>
-    </ClInclude>
-    <ClInclude Include="..\cpp\Math.h">
-      <Filter>Engine\Toolkit</Filter>
-    </ClInclude>
-    <ClInclude Include="..\cpp\MemoryArena.h">
-      <Filter>Engine\Toolkit</Filter>
-    </ClInclude>
     <ClInclude Include="..\cpp\Random.h">
       <Filter>Engine\Toolkit</Filter>
     </ClInclude>
@@ -128,12 +119,6 @@
     </ClInclude>
     <ClInclude Include="..\cpp\Application.h">
       <Filter>Engine</Filter>
-    </ClInclude>
-    <ClInclude Include="..\cpp\Common.h">
-      <Filter>Engine\Toolkit</Filter>
-    </ClInclude>
-    <ClInclude Include="..\cpp\LoadedFile.h">
-      <Filter>Engine\Toolkit</Filter>
     </ClInclude>
     <ClInclude Include="..\cpp\Button.h">
       <Filter>Engine\Toolkit\UI</Filter>
@@ -156,11 +141,23 @@
     <ClInclude Include="..\cpp\PostProcess.h">
       <Filter>Engine\Rendering</Filter>
     </ClInclude>
-    <ClInclude Include="..\cpp\InputData.h">
+    <ClInclude Include="..\cpp\Common.h">
       <Filter>Engine</Filter>
     </ClInclude>
     <ClInclude Include="..\cpp\FixedList.h">
-      <Filter>Engine\Toolkit</Filter>
+      <Filter>Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="..\cpp\FixedMap.h">
+      <Filter>Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="..\cpp\Math.h">
+      <Filter>Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="..\cpp\MemoryArena.h">
+      <Filter>Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="..\cpp\FileIO.h">
+      <Filter>Engine</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -244,6 +241,9 @@
       <Filter>Engine\Shaders\HLSL</Filter>
     </FxCompile>
     <FxCompile Include="..\hlsl\TexturePS.hlsl">
+      <Filter>Engine\Shaders\HLSL</Filter>
+    </FxCompile>
+    <FxCompile Include="..\hlsl\ParticleClearCS.hlsl">
       <Filter>Engine\Shaders\HLSL</Filter>
     </FxCompile>
   </ItemGroup>

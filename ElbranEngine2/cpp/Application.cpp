@@ -11,7 +11,7 @@ void Application::Initialize(void (*quitFunction)(), UInt2 windowSize, PlatformG
 	input.Initialize(platformInput);
 
 	assets.Initialize(&graphics, &frameBuffer);
-	game.Initialize(&graphics, &assets, &frameBuffer);
+	game.Initialize(this);
 	frameBuffer.Clear();
 }
 

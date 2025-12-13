@@ -16,13 +16,14 @@ PostProcess ppTest[2];
 
 char label[] = "here is\ntext";
 
-void Game::Initialize(GraphicsAPI* graphics, const AssetContainer* assets, MemoryArena* frameBuffer) {
+void Game::Initialize(Application* app) {
 	sampleScene.Initialize(10, 10);
-	sampleScene.backgroundColor = Color::Black; //Color(0.1f, 0.1f, 0.1f);
+	sampleScene.backgroundImage = &app->assets.apple;
+	//sampleScene.backgroundColor = Color::Black; //Color(0.1f, 0.1f, 0.1f);
 	sampleScene.camera.viewWidth = 10.f;
 
 	spriteTest = sampleScene.ReserveRenderer();
-	spriteTest->InitSprite(&assets->testSprite);
+	spriteTest->InitSprite(&app->assets.testSprite);
 	spriteTest->spriteData.flipX = true;
 	spriteTest->spriteData.tint = Color::Red;
 
@@ -34,14 +35,13 @@ void Game::Initialize(GraphicsAPI* graphics, const AssetContainer* assets, Memor
 	spriteTest->transform->zOrder = 10.f;
 
 	textTest = sampleScene.ReserveRenderer();
-	textTest->InitText(graphics, frameBuffer, label, &assets->arial);
+	textTest->InitText(&app->graphics, &app->frameBuffer, label, &app->assets.arial);
 
-	ppTest[0].HSV(0.f, -1.0f, 0.f);
-	ppTest[1].Blur(10);
+	ppTest[0].Bloom(15, 0.5f);
 
 	particleRend = sampleScene.ReserveRenderer();
-	particleRend->InitParticles(graphics, 200, &assets->testSheet, 1.f);
-	partBeh.Initialize(graphics, particleRend);
+	particleRend->InitParticles(&app->graphics, 200, &app->assets.testSheet, 1.f);
+	partBeh.Initialize(&app->graphics, particleRend);
 	partBeh.SetSpawnRate(10.f, 5.f);
 	partBeh.lifespan = 0.5f;
 	partBeh.fadeOutDuration = 0.2f;
@@ -50,23 +50,7 @@ void Game::Initialize(GraphicsAPI* graphics, const AssetContainer* assets, Memor
 	partBeh.startWidth = 0.3f;
 	partBeh.speed = 2.0f;
 
-	char stringTest[40];
-	IntToString(-8438, stringTest);
-	IntToString(126, stringTest);
-	FloatToString(-543, 1, stringTest);
-	FloatToString(195.5345, 4, stringTest);
-	FloatToString(0.05454534, 2, stringTest);
-	char test2[] = "-123.456end";
-	const char* endPoint;
-	int32_t result1 = ParseInt(test2, &endPoint);
-	float result2 = ParseFloat(test2, &endPoint);
-	int result3 = 1;
-
-	LoadedFile testFile = FileIO::LoadFile("test data.txt");
-	result2 = testFile.ReadTextFloat();
-	testFile.readLocation++;
-	result1 = testFile.ReadTextInt();
-	testFile.Release();
+	app->audio.StartTrack(&app->assets.testSong, true, 1.0f, 3.0f);
 }
 
 void Game::Release(GraphicsAPI* graphics) {
@@ -82,24 +66,25 @@ void Game::Update(Application* app, float deltaTime) {
 		app->debugger.debugScene = &sampleScene;
 		app->debugger.AddDot(app->input.GetMousePosition(&sampleScene.camera));
 		particleRend->ClearParticles(&app->graphics, &app->assets);
+		app->audio.SetPaused(&app->assets.testSong, true, 2.0f);
 	}
 
 	if(app->input.IsPressed(InputAction::Up)) {
-		//ppTest.bloomData.brightnessThreshold += deltaTime;
-		cursor->shapeData.color = cursor->shapeData.color.SetHue(cursor->shapeData.color.GetHue() + deltaTime);
+		ppTest[0].bloomData.thresholdSensitivity += deltaTime;
+		//cursor->shapeData.color = cursor->shapeData.color.SetHue(cursor->shapeData.color.GetHue() + deltaTime);
 	}
 	else if(app->input.IsPressed(InputAction::Down)) {
-		//ppTest.bloomData.brightnessThreshold -= deltaTime;
-		Color& cursorColor = cursor->shapeData.color;
-		cursorColor = Color::FromHSV(cursorColor.GetHue(), cursorColor.GetSaturation(), cursorColor.GetBrightness() - deltaTime);
+		ppTest[0].bloomData.thresholdSensitivity -= deltaTime;
+		//Color& cursorColor = cursor->shapeData.color;
+		//cursorColor = Color::FromHSV(cursorColor.GetHue(), cursorColor.GetSaturation(), cursorColor.GetBrightness() - deltaTime);
 	}
 
 	if(app->input.JustPressed(InputAction::Up) || app->input.JustPressed(InputAction::Down)) {
-		app->audio.PlayEffect(&app->assets.testSound);
+		//app->audio.PlayEffect(&app->assets.testSound);
 	}
 }
 
 void Game::Draw(GraphicsAPI* graphics, const AssetContainer* assets, MemoryArena* frameBuffer) {
 	sampleScene.Draw(graphics, assets, frameBuffer);
-	//app->graphics->ApplyPostProcesses(ppTest, 2);
+	graphics->ApplyPostProcesses(assets, ppTest, 1);
 }
