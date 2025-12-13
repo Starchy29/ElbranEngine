@@ -97,59 +97,16 @@ float LoadedFile::ReadF2Dot14() {
 	return ReadInt16() / (float)(1 << 14);
 }
 
-int32_t LoadedFile::ParseInt() {
-	int32_t total = 0;
-	bool isDigit = true;
-	while(isDigit && readLocation < fileSize) {
-		total *= 10;
-		char let = ReadByte();
-		switch(let) {
-		case '0':
-			break;
-		case '1':
-			total += 1;
-			break;
-		case '2':
-			total += 2;
-			break;
-		case '3':
-			total += 3;
-			break;
-		case '4':
-			total += 4;
-			break;
-		case '5':
-			total += 5;
-			break;
-		case '6':
-			total += 6;
-			break;
-		case '7':
-			total += 7;
-			break;
-		case '8':
-			total += 8;
-			break;
-		case '9':
-			total += 9;
-			break;
-		default:
-			total /= 10;
-			isDigit = false;
-			readLocation--;
-			break;
-		}
-	}
-
-	return total;
+int32_t LoadedFile::ReadTextInt() {
+	const char* parseEnd;
+	int32_t read = ParseInt((char*)bytes + readLocation, &parseEnd);
+	readLocation += (const uint8_t*)parseEnd - (bytes + readLocation);
+	return read;
 }
 
-float LoadedFile::ParseFloat() {
-	int32_t leftSide = ParseInt();
-	if(readLocation >= fileSize || bytes[readLocation] != '.') return leftSide;
-	uint64_t decimalIndex = readLocation;
-	readLocation++; // skip past decimal point
-	int32_t rightSide = ParseInt();
-	uint32_t decimalShift = Math::Pow(10,  readLocation - decimalIndex - 1);
-	return (float)(leftSide * decimalShift + rightSide) / decimalShift;
+float LoadedFile::ReadTextFloat() {
+	const char* parseEnd;
+	float read = ParseFloat((char*)bytes + readLocation, &parseEnd);
+	readLocation += (const uint8_t*)parseEnd - (bytes + readLocation);
+	return read;
 }

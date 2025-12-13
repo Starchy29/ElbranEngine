@@ -19,8 +19,8 @@ struct LoadedFile {
 	int32_t ReadInt32();
 	float ReadF2Dot14();
 
-	int32_t ParseInt();
-	float ParseFloat();
+	int32_t ReadTextInt();
+	float ReadTextFloat();
 };
 
 namespace FileIO {

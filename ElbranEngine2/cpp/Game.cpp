@@ -50,18 +50,23 @@ void Game::Initialize(GraphicsAPI* graphics, const AssetContainer* assets, Memor
 	partBeh.startWidth = 0.3f;
 	partBeh.speed = 2.0f;
 
-	Color tester = Color(1, 0, 0);
-	float testVal = tester.GetHue();
-	testVal = tester.GetSaturation();
-	testVal = tester.GetBrightness();
+	char stringTest[40];
+	IntToString(-8438, stringTest);
+	IntToString(126, stringTest);
+	FloatToString(-543, 1, stringTest);
+	FloatToString(195.5345, 4, stringTest);
+	FloatToString(0.05454534, 2, stringTest);
+	char test2[] = "-123.456end";
+	const char* endPoint;
+	int32_t result1 = ParseInt(test2, &endPoint);
+	float result2 = ParseFloat(test2, &endPoint);
+	int result3 = 1;
 
-	tester = Color(0, 0.5, 0.5);
-	testVal = tester.GetHue();
-	testVal = tester.GetSaturation();
-	testVal = tester.GetBrightness();
-
-	tester = Color::FromHSV(0.f, 0.5f, 0.5f);
-	tester = Color::FromHSV(tester.GetHue(), tester.GetSaturation(), tester.GetBrightness());
+	LoadedFile testFile = FileIO::LoadFile("test data.txt");
+	result2 = testFile.ReadTextFloat();
+	testFile.readLocation++;
+	result1 = testFile.ReadTextInt();
+	testFile.Release();
 }
 
 void Game::Release(GraphicsAPI* graphics) {

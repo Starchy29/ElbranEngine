@@ -22,6 +22,134 @@ void AddStrings(const char* left, const char* right, char* outBuffer) {
 	outBuffer[outIndex+1] = 0;
 }
 
+char DigitToChar(uint8_t digit) {
+	switch(digit) {
+	case 0: return '0';
+	case 1: return '1';
+	case 2: return '2';
+	case 3: return '3';
+	case 4: return '4';
+	case 5: return '5';
+	case 6: return '6';
+	case 7: return '7';
+	case 8: return '8';
+	case 9: return '9';
+	}
+	return 0;
+}
+
+void IntToString(int32_t number, char* outString) {
+	if(number < 0) {
+		*outString = '-';
+		outString++;
+		number *= -1;
+	}
+
+	int32_t digitTracker = number;
+	int32_t numDigits = 0;
+	while(digitTracker > 0) {
+		digitTracker /= 10;
+		numDigits++;
+	}
+
+	if(numDigits == 0) {
+		*outString = '0';
+		outString[1] = 0;
+		return;
+	}
+
+	digitTracker = number;
+	for(int32_t i = numDigits - 1; i >= 0; i--) {
+		outString[i] = DigitToChar(digitTracker % 10);
+		digitTracker /= 10;
+	}
+	outString[numDigits] = 0;
+	return;
+}
+
+void FloatToString(float number, uint8_t decimalPlaces, char* outString) {
+	IntToString((int32_t)number, outString);
+	if(decimalPlaces == 0) return;
+	while(*outString) outString++; // find the new end of the string
+
+	*outString = '.';
+	outString++;
+	for(uint8_t i = 0; i < decimalPlaces; i++) {
+		number *= 10;
+		*outString = DigitToChar(((int32_t)number) % 10);
+		outString++;
+	}
+	*outString = 0;
+}
+
+int32_t ParseInt(const char* string, const char** textNumberEnd) {
+	bool negative = string[0] == '-';
+	if(negative) string++;
+	int32_t total = 0;
+	bool isDigit = true;
+	while(isDigit) {
+		switch(*string) {
+		case '0':
+			total *= 10;
+			break;
+		case '1':
+			total = 10 * total + 1;
+			break;
+		case '2':
+			total = 10 * total + 2;
+			break;
+		case '3':
+			total = 10 * total + 3;
+			break;
+		case '4':
+			total = 10 * total + 4;
+			break;
+		case '5':
+			total = 10 * total + 5;
+			break;
+		case '6':
+			total = 10 * total + 6;
+			break;
+		case '7':
+			total = 10 * total + 7;;
+			break;
+		case '8':
+			total = 10 * total + 8;
+			break;
+		case '9':
+			total = 10 * total + 9;
+			break;
+		default:
+			isDigit = false;
+			break;
+		}
+		string++;
+	}
+	if(textNumberEnd) *textNumberEnd = string - 1;
+	return (negative ? -1 : 1) * total;
+}
+
+float ParseFloat(const char* string, const char** textNumberEnd) {
+	const char* readLoc;
+	int32_t leftSide = ParseInt(string, &readLoc);
+	if(*readLoc != '.') {
+		if(textNumberEnd) *textNumberEnd = readLoc;
+		return (float)leftSide;
+	}
+	const char* decimalLoc = readLoc;
+	readLoc++; // skip decimal point
+	int32_t rightSide = ParseInt(readLoc, &readLoc);
+	if(rightSide < 0) {
+		if(textNumberEnd) *textNumberEnd = decimalLoc;
+		return (float)leftSide;
+	}
+
+	uint32_t decimalShift = Math::Pow(10,  readLoc - decimalLoc - 1);
+	if(textNumberEnd) *textNumberEnd = readLoc;
+	int32_t intResult = leftSide * decimalShift + Math::Sign(leftSide) * rightSide;
+	return (float)intResult / decimalShift;
+}
+
 bool operator==(const Int2& left, const Int2& right) {
 	return left.x == right.x && left.y == right.y;
 }
