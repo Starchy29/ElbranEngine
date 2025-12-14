@@ -19,7 +19,7 @@ void SoundMixer::Update(float deltaTime) {
 			trackChannels[i].fade.t += deltaTime / trackChannels[i].fade.duration;
 			if(trackChannels[i].fade.t > 1.0f) {
 				trackChannels[i].fade.t = 1.0f;
-				if(trackChannels[i].pauseAtEnd) { 
+				if(trackChannels[i].fade.pauseAtEnd) { 
 					platformAudio->PauseTrack(i);
 					trackChannels[i].nowPaused = true;
 				}
@@ -72,7 +72,7 @@ void SoundMixer::StartTrack(const AudioSample* track, bool looped, float volume,
 
 	platformAudio->BeginTrack(track, trackIndex, looped);
 	trackChannels[trackIndex].track = track;
-	trackChannels[trackIndex].pauseAtEnd = false;
+	trackChannels[trackIndex].fade.pauseAtEnd = false;
 	trackChannels[trackIndex].nowPaused = false;
 	trackChannels[trackIndex].mixVolume = volume;
 	if(fadeInTime > 0.f) {
@@ -97,6 +97,7 @@ void SoundMixer::SetPaused(const AudioSample* track, bool paused, float fadeDura
 	}
 	if(trackIndex < 0 || trackChannels[trackIndex].nowPaused == paused) return;
 
+	trackChannels[trackIndex].fade.duration = fadeDuration;
 	if(paused) {
 		if(fadeDuration > 0.f) {
 			trackChannels[trackIndex].fade.t = 0.0f;
@@ -144,6 +145,6 @@ void SoundMixer::ChangeTrackVolume(const AudioSample* track, float volume, float
 		platformAudio->SetTotalVolume(trackIndex, track->baseVolume * trackChannels[trackIndex].mixVolume);
 	}
 
-	trackChannels[trackIndex].pauseAtEnd = false;
+	trackChannels[trackIndex].fade.pauseAtEnd = false;
 	trackChannels[trackIndex].mixVolume = volume;
 }

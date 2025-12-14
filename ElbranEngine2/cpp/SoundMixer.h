@@ -33,7 +33,6 @@ private:
 			float t;
 			bool pauseAtEnd;
 		} fade;
-		bool pauseAtEnd;
 		bool nowPaused;
 	} trackChannels[MAX_MUSIC_CHANNELS];
 

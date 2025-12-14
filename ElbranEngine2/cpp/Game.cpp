@@ -58,7 +58,7 @@ void Game::Initialize(Application* app) {
 	partBeh.startWidth = 0.3f;
 	partBeh.speed = 2.0f;
 
-	app->audio.StartTrack(&app->assets.testSong, true, 1.0f, 3.0f);
+	app->audio.StartTrack(&app->assets.testSong, true, 0.5f, 3.0f);
 }
 
 void Game::Release(GraphicsAPI* graphics) {
