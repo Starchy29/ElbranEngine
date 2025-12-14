@@ -1,6 +1,5 @@
 #pragma once
 #include "Math.h"
-#include "FileIO.h"
 #include "FixedMap.h"
 
 #define OBJECT_CONSTANT_REGISTER 0 // shaders with per-object constant buffers should use register 0

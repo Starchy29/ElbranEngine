@@ -4,6 +4,7 @@
 #include "RenderGroup.h"
 #include "ParticleBehavior.h"
 #include "FileIO.h"
+#include "PostProcess.h"
 RenderGroup sampleScene;
 
 Renderer* spriteTest;

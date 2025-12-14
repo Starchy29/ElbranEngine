@@ -1,8 +1,5 @@
 #include "InputManager.h"
 #include "RenderGroup.h"
-#include "Math.h"
-#include "Common.h"
-#include <cstring> // for memcpy
 
 #ifdef WINDOWS
 #include "WindowsInput.h"
@@ -52,13 +49,14 @@ void InputManager::Release() {
 }
 
 void InputManager::Update(float deltaTime, UInt2 viewDimensions, UInt2 viewOffset) {
-	memcpy(&lastState, &currentState, sizeof(InputState) * MAX_PLAYERS);
 	lastMousePos = mouseScreenPos;
 	platformInput->CheckInputs();
 	mouseScreenPos = platformInput->GetMouseScreenPosition(viewDimensions, viewOffset);
 	mouseWheelDelta = platformInput->DetermineMouseSpin();
 
 	for(uint8_t player = 0; player < MAX_PLAYERS; player++) {
+		lastState[player] = currentState[player];
+
 		if(rumbleDurations[player] > 0.f) {
 			rumbleDurations[player] -= deltaTime;
 			if(rumbleDurations[player] <= 0.f) {

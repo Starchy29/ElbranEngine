@@ -1,7 +1,7 @@
 #pragma once
 #include "UserInterface.h"
-#include "Renderer.h"
 
+struct Renderer;
 struct RenderGroup;
 
 class Button : public UIElement {

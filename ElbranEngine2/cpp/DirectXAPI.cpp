@@ -3,8 +3,8 @@
 #include <d3d11.h>
 #include <dxgi1_3.h>
 #include "DirectXAPI.h"
-#include "Application.h"
 #include "FileIO.h"
+#include "Math.h"
 
 #define SafeRelease(x) if(x) x->Release()
 
@@ -528,7 +528,7 @@ void DirectXAPI::SetPixelShader(const PixelShader* shader) {
 
 void DirectXAPI::RunComputeShader(const ComputeShader* shader, uint16_t xThreads, uint16_t yThreads, uint16_t zThreads) const {
 	context->CSSetShader(shader->shader, 0, 0);
-	context->Dispatch(ceil((double)xThreads / shader->xGroupSize), ceil((double)yThreads / shader->yGroupSize), ceil((double)zThreads / shader->zGroupSize));
+	context->Dispatch(Math::Ceil((float)xThreads / shader->xGroupSize), Math::Ceil((float)yThreads / shader->yGroupSize), Math::Ceil((float)zThreads / shader->zGroupSize));
 }
 
 void DirectXAPI::SetRenderTarget(const RenderTarget* renderTarget, bool useDepthStencil) {

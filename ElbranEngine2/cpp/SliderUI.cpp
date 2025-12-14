@@ -33,7 +33,7 @@ void SliderUI::Initialize(RenderGroup* scene, float width, uint16_t segments, bo
 
 void SliderUI::SetValue(float newValue) {
 	newValue = Math::Clamp(newValue, 0.f, 1.f);
-	newValue = roundf(newValue * segments) / segments;
+	newValue = Math::Round(newValue * segments) / segments;
 	if(vertical) {
 		mover->transform->position.y = Tween::Lerp(-sliderWidth, sliderWidth, newValue) / 2.0f;
 	} else {

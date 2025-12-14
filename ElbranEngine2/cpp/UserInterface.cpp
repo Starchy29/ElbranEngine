@@ -1,6 +1,6 @@
 #include "UserInterface.h"
 #include "InputManager.h"
-#include "Renderer.h"
+#include "GraphicsData.h"
 
 bool UserInterface::mouseEnabled = true;
 bool UserInterface::gamepadEnabled = true;

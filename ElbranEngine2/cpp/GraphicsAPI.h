@@ -1,8 +1,6 @@
 #pragma once
 #include "Common.h"
 #include "GraphicsData.h"
-#include <string>
-#include "PostProcess.h"
 
 #ifdef WINDOWS
 class DirectXAPI;
@@ -11,6 +9,7 @@ typedef DirectXAPI PlatformGraphics;
 
 struct LoadedFile;
 class AssetContainer;
+struct PostProcess;
 
 class GraphicsAPI {
 public:

@@ -1,7 +1,6 @@
 #include "AssetContainer.h"
 #include "GraphicsAPI.h"
 #include "MemoryArena.h"
-#include <stdint.h>
 #include "lodepng.h"
 #include "FixedList.h"
 #include "FileIO.h"
