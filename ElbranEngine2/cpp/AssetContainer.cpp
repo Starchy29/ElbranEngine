@@ -68,13 +68,7 @@ void AssetContainer::Initialize(GraphicsAPI* graphics, MemoryArena* arena) {
 	particleClearCS = LoadComputeShader(graphics, "ParticleClearCS.cso");
 
 	testSprite = LoadPNG(graphics, "elbran.png");
-	testBMP = LoadBMP(graphics, "testbmp.bmp");
-	apple = LoadPNG(graphics, "apple.png");
 	arial = LoadTTF(graphics, arena, "arial.ttf");
-
-	testSheet = SpriteSheet(testSprite);
-	testSound = LoadWAV("water plunk.wav");
-	testSong = LoadWAV("Menu song.wav");
 }
 
 void AssetContainer::Release(GraphicsAPI* graphics) {
@@ -104,13 +98,8 @@ void AssetContainer::Release(GraphicsAPI* graphics) {
 	graphics->ReleaseShader(&particleClearCS);
 
 	graphics->ReleaseTexture(&testSprite);
-	graphics->ReleaseTexture(&testBMP);
-	graphics->ReleaseTexture(&apple);
 
 	ReleaseFont(graphics, &arial);
-
-	testSound.Release();
-	testSong.Release();
 }
 
 void AssetContainer::ReleaseFont(const GraphicsAPI* graphics, Font* font) {

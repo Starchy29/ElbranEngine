@@ -33,12 +33,7 @@ public:
 	ComputeShader particleClearCS;
 
 	Texture2D testSprite;
-	Texture2D testBMP;
-	Texture2D apple;
 	Font arial;
-	SpriteSheet testSheet;
-	AudioSample testSound;
-	AudioSample testSong;
 
 	AssetContainer() = default;
 	void Initialize(GraphicsAPI*, MemoryArena*);
