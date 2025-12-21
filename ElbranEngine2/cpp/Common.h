@@ -32,9 +32,9 @@ struct Int2 {
 	Int2() = default;
 	Int2(int32_t x, int32_t y);
 
-	Int2 operator+(const Int2& other);
-	Int2 operator-(const Int2& other);
-	Int2 operator-();
+	Int2 operator+(const Int2& other) const;
+	Int2 operator-(const Int2& other) const;
+	Int2 operator-() const;
 };
 bool operator==(const Int2& left, const Int2& right);
 bool operator!=(const Int2& left, const Int2& right);
@@ -46,7 +46,7 @@ struct UInt2 {
 	UInt2() = default;
 	UInt2(uint32_t x, uint32_t y);
 
-	UInt2 operator+(const UInt2& other);
+	UInt2 operator+(const UInt2& other) const;
 };
 bool operator==(const UInt2& left, const UInt2& right);
 bool operator!=(const UInt2& left, const UInt2& right);

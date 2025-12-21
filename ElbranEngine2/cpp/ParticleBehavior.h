@@ -32,7 +32,7 @@ public:
 
     ParticleBehavior() = default;
     void Initialize(GraphicsAPI*, Renderer* particleRenderer);
-    void Release(GraphicsAPI*);
+    void Release(const GraphicsAPI*);
 
     void Update(GraphicsAPI*, const AssetContainer*, MemoryArena*, float deltaTime);
 

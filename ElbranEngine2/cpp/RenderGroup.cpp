@@ -31,7 +31,7 @@ void RenderGroup::Initialize(uint32_t numTransforms, uint32_t numRenderers) {
 	camera.transform = ReserveTransform(&camera.worldMatrix);
 }
 
-void RenderGroup::Release(GraphicsAPI* graphics) {
+void RenderGroup::Release(const GraphicsAPI* graphics) {
 	for(uint32_t i = 0; i < rendererCount; i++) {
 		renderers[i].Release(graphics);
 	}

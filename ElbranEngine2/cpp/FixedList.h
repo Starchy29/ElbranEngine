@@ -7,26 +7,22 @@ template<class Type>
 struct FixedList {
 	Type* data;
 	uint32_t size;
-#if defined(DEBUG) | defined(_DEBUG)
-	uint32_t capacity;
-#endif
 
 	FixedList() = default;
+
+	void Initialize(Type* buffer) {
+		data = buffer;
+		size = 0u;
+	}
 
 	void Initialize(uint32_t capacity) {
 		size = 0u;
 		data = new Type[capacity] {};
-#if defined(DEBUG) | defined(_DEBUG)
-		this->capacity = capacity;
-#endif
 	}
 
 	void Initialize(uint32_t capacity, MemoryArena* arena) {
 		size = 0u;
 		data = (Type*)arena->Reserve(capacity * sizeof(Type));
-#if defined(DEBUG) | defined(_DEBUG)
-		this->capacity = capacity;
-#endif
 	}
 
 	void Release() { delete[] data; }
@@ -34,13 +30,11 @@ struct FixedList {
 	void Clear() { size = 0; }
 
 	void Add(Type element) {
-		ASSERT(size < capacity);
 		data[size] = element;
 		size++;
 	}
 
 	Type* ReserveNext() {
-		ASSERT(size < capacity);
 		size++;
 		return &data[size-1];
 	}

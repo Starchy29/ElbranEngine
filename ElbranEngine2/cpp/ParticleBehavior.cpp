@@ -36,7 +36,7 @@ void ParticleBehavior::Initialize(GraphicsAPI* graphics, Renderer* particleRende
     spawnData = graphics->CreateArrayBuffer(ShaderDataType::Structured, particleRenderer->particleData.maxParticles, sizeof(ParticleSpawnState));
 }
 
-void ParticleBehavior::Release(GraphicsAPI* graphics) {
+void ParticleBehavior::Release(const GraphicsAPI* graphics) {
     graphics->ReleaseArrayBuffer(&spawnData);
 }
 

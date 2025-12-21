@@ -171,16 +171,16 @@ Int2::Int2(int32_t x, int32_t y) :
 	y{y}
 { }
 
-Int2 Int2::operator+(const Int2& other) { return Int2(x + other.x, y + other.y); }
-Int2 Int2::operator-(const Int2& other) { return Int2(x - other.x, y - other.y); }
-Int2 Int2::operator-() { return Int2(-x, -y); }
+Int2 Int2::operator+(const Int2& other) const { return Int2(x + other.x, y + other.y); }
+Int2 Int2::operator-(const Int2& other) const { return Int2(x - other.x, y - other.y); }
+Int2 Int2::operator-() const { return Int2(-x, -y); }
 
 UInt2::UInt2(uint32_t x, uint32_t y) :
 	x{x},
 	y{y}
 { }
 
-UInt2 UInt2::operator+(const UInt2& other) { return UInt2(x + other.x, y + other.y); }
+UInt2 UInt2::operator+(const UInt2& other) const { return UInt2(x + other.x, y + other.y); }
 
 Color::Color(float r, float g, float b, float a) :
 	red{r},

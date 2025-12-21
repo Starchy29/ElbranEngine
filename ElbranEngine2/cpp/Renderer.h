@@ -111,16 +111,16 @@ struct Renderer {
 	
 	void Draw(GraphicsAPI*, const AssetContainer*);
 	bool IsTranslucent() const;
-	void Release(GraphicsAPI*);
+	void Release(const GraphicsAPI*);
 
 	void InitShape(PrimitiveShape shape, Color color);
 	void InitSprite(const Texture2D* sprite);
 	void InitAtlas(const SpriteSheet* atlas);
 	void InitPattern(const Texture2D* sprite);
 	void InitLight(Color color, float radius);
-	void InitText(GraphicsAPI*, MemoryArena*, const char* text, const Font* font, HorizontalAlignment horizontalAlignment = HorizontalAlignment::Center, float lineSpacing = 0.0f);
-	void InitParticles(GraphicsAPI*, uint16_t maxParticles, const SpriteSheet* animation, float animationFPS);
+	void InitText(const GraphicsAPI*, MemoryArena*, const char* text, const Font* font, HorizontalAlignment horizontalAlignment = HorizontalAlignment::Center, float lineSpacing = 0.0f);
+	void InitParticles(const GraphicsAPI*, uint16_t maxParticles, const SpriteSheet* animation, float animationFPS);
 
-	void UpdateTextMesh(GraphicsAPI*, MemoryArena*); // for text renderers
+	void UpdateTextMesh(const GraphicsAPI*, MemoryArena*); // for text renderers
 	void ClearParticles(GraphicsAPI*, const AssetContainer*); // for particle renderers
 };

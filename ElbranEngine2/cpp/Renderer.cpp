@@ -167,7 +167,7 @@ bool Renderer::IsTranslucent() const {
 	return false;
 }
 
-void Renderer::Release(GraphicsAPI* graphics) {
+void Renderer::Release(const GraphicsAPI* graphics) {
 	switch(type) {
 	case Type::Text:
 		graphics->ReleaseMesh(&textData.textMesh);
@@ -228,7 +228,7 @@ void Renderer::InitLight(Color color, float radius) {
 	lightData.coneSize = PI * 2.0f;
 }
 
-void Renderer::InitText(GraphicsAPI* graphics, MemoryArena* arena, const char* text, const Font* font, HorizontalAlignment horizontalAlignment, float lineSpacing) {
+void Renderer::InitText(const GraphicsAPI* graphics, MemoryArena* arena, const char* text, const Font* font, HorizontalAlignment horizontalAlignment, float lineSpacing) {
 	type = Type::Text;
 	hidden = false;
 
@@ -244,7 +244,7 @@ void Renderer::InitText(GraphicsAPI* graphics, MemoryArena* arena, const char* t
 }
 
 #define PARTICLE_BYTES 32 // based on struct in ShaderStructs.hlsli
-void Renderer::InitParticles(GraphicsAPI* graphics, uint16_t maxParticles, const SpriteSheet* animation, float animationFPS) {
+void Renderer::InitParticles(const GraphicsAPI* graphics, uint16_t maxParticles, const SpriteSheet* animation, float animationFPS) {
 	type = Type::Particles;
 	hidden = false;
 
@@ -259,7 +259,7 @@ void Renderer::InitParticles(GraphicsAPI* graphics, uint16_t maxParticles, const
 	particleData.particleBuffer = graphics->CreateEditBuffer(ShaderDataType::Structured, maxParticles, PARTICLE_BYTES);
 }
 
-void Renderer::UpdateTextMesh(GraphicsAPI* graphics, MemoryArena* arena) {
+void Renderer::UpdateTextMesh(const GraphicsAPI* graphics, MemoryArena* arena) {
 	ASSERT(type == Type::Text)
 
 	graphics->ReleaseMesh(&textData.textMesh);
