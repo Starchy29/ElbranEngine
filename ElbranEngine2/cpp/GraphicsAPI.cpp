@@ -159,6 +159,7 @@ void GraphicsAPI::ReleaseShader(PixelShader* shader) const { platformGraphics->R
 void GraphicsAPI::ReleaseShader(ComputeShader* shader) const { platformGraphics->ReleaseShader(shader); }
 void GraphicsAPI::ReleaseSampler(Sampler* sampler) const { platformGraphics->ReleaseSampler(sampler); }
 void GraphicsAPI::ReleaseTexture(Texture2D* texture) const { platformGraphics->ReleaseTexture(texture); }
+void GraphicsAPI::ReleaseTextureArray(Texture2DArray* textures) const { platformGraphics->ReleaseTextureArray(textures); }
 void GraphicsAPI::ReleaseComputeTexture(ComputeTexture* texture) const { platformGraphics->ReleaseComputeTexture(texture); }
 void GraphicsAPI::ReleaseMesh(Mesh* mesh) const { platformGraphics->ReleaseMesh(mesh); }
 void GraphicsAPI::ReleaseBuffer(GraphicsBuffer* buffer) const { platformGraphics->ReleaseBuffer(buffer); }

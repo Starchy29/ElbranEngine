@@ -85,6 +85,7 @@ public:
 	void ReleaseShader(ComputeShader* shader) const;
 	void ReleaseSampler(Sampler* sampler) const;
 	void ReleaseTexture(Texture2D* texture) const;
+	void ReleaseTextureArray(Texture2DArray* textures) const;
 	void ReleaseComputeTexture(ComputeTexture* texture) const;
 	void ReleaseMesh(Mesh* mesh) const;
 	void ReleaseBuffer(GraphicsBuffer* buffer) const;

@@ -615,6 +615,11 @@ void DirectXAPI::ReleaseTexture(Texture2D* texture) const {
 	SafeRelease(texture->inputView);
 }
 
+void DirectXAPI::ReleaseTextureArray(Texture2DArray* textures) const {
+	SafeRelease(textures->pixels);
+	SafeRelease(textures->view);
+}
+
 void DirectXAPI::ReleaseRenderTarget(RenderTarget* texture) const {
 	ReleaseTexture(&texture->texture);
 	SafeRelease(texture->outputView);
