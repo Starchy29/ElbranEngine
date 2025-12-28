@@ -18,5 +18,6 @@ VertexToPixel main(Vertex input) {
 	output.screenPosition = mul(viewProjection, fullPosition);
 	output.color = float4(1, 1, 1, 1);
 	output.uv = input.uv * uvScale + uvOffset;
+	output.textureIndex = 0;
 	return output;
 }

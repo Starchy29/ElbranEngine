@@ -668,7 +668,7 @@ void DirectXAPI::CreateTexture(Texture2D* outTexture, uint32_t width, uint32_t h
 	D3D11_TEXTURE2D_DESC textureDesc;
 	textureDesc.Width = width;
 	textureDesc.Height = height;
-	textureDesc.MipLevels = 0;
+	textureDesc.MipLevels = 1;
 	textureDesc.ArraySize = 1;
 	textureDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
 	textureDesc.SampleDesc.Count = 1;

@@ -31,6 +31,15 @@ const char* String::FindChar(const char* string, char seeked) {
 	return nullptr;
 }
 
+bool String::AreStringsEqual(const char* left, const char* right) {
+	while(*left && *right) {
+		if(*left != *right) return false;
+		left += 1;
+		right += 1;
+	}
+	return true;
+}
+
 char* String::FindChar(char* string, char seeked) {
 	uint32_t i = 0;
 	while(string[i] != 0) {

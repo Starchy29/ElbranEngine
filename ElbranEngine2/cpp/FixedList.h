@@ -27,6 +27,7 @@ struct FixedList {
 
 	void Release() { delete[] data; }
 	Type& operator[](uint32_t index) { return data[index]; }
+	const Type& operator[](uint32_t index) const { return data[index]; }
 	void Clear() { size = 0; }
 
 	void Add(Type element) {

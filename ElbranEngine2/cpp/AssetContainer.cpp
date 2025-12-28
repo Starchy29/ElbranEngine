@@ -146,16 +146,15 @@ ComputeShader AssetContainer::LoadComputeShader(const GraphicsAPI* graphics, Mem
 
 Sprite AssetContainer::LoadSprite(const GraphicsAPI* graphics, MemoryArena* arena, const char* fileName) {
 	ASSERT(arena)
-	const char* period = String::FindChar(fileName, '.');
-	if(!period) return {};
-	uint32_t extension = *period;
+	const char* extension = String::FindChar(fileName, '.');
+	if(!extension) return {};
 
 	UInt2 dimensions = {};
 	ByteColor* colorData = nullptr;
-	if(extension == '.png' || extension == '.PNG') {
+	if(String::AreStringsEqual(extension, ".png") || String::AreStringsEqual(extension, ".PNG")) {
 		LoadPNG(fileName, arena, &colorData, &dimensions);
 	}
-	else if(extension == '.bmp' || extension == '.BMP') {
+	else if(String::AreStringsEqual(extension, ".bmp") || String::AreStringsEqual(extension, ".BMP")) {
 		LoadBMP(fileName, arena, &colorData, &dimensions);
 	}
 	else return {};
@@ -176,16 +175,15 @@ Sprite AssetContainer::LoadSprite(const GraphicsAPI* graphics, MemoryArena* aren
 
 SpriteSheet AssetContainer::LoadSpriteSheet(const GraphicsAPI* graphics, MemoryArena* arena, const char* fileName, uint8_t rows, uint8_t cols) {
 	ASSERT(arena)
-	const char* period = String::FindChar(fileName, '.');
-	if(!period) return {};
-	uint32_t extension = *period;
+	const char* extension = String::FindChar(fileName, '.');
+	if(!extension) return {};
 
 	UInt2 dimensions = {};
 	ByteColor* colorData = nullptr;
-	if(extension == '.png' || extension == '.PNG') {
+	if(String::AreStringsEqual(extension, ".png") || String::AreStringsEqual(extension, ".PNG")) {
 		LoadPNG(fileName, arena, &colorData, &dimensions);
 	}
-	else if(extension == '.bmp' || extension == '.BMP') {
+	else if(String::AreStringsEqual(extension, ".bmp") || String::AreStringsEqual(extension, ".BMP")) {
 		LoadBMP(fileName, arena, &colorData, &dimensions);
 	}
 	else return {};
@@ -505,7 +503,7 @@ void AssetContainer::LoadPNG(const char* fileName, MemoryArena* arena, ByteColor
 	} else {
 		*outColors = new ByteColor[width*height];
 	}
-	memcpy(*outColors, loadedImage.begin()._Ptr, width*height);
+	memcpy(*outColors, loadedImage.begin()._Ptr, width * height * sizeof(ByteColor));
 	*outDimensions = {width, height};
 }
 

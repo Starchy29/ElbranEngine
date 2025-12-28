@@ -14,6 +14,8 @@ namespace String {
 	void AddStrings(const char* left, const char* right, char* outBuffer);
 	char* FindChar(char* string, char seeked);
 	const char* FindChar(const char* string, char seeked);
+	bool AreStringsEqual(const char* left, const char* right);
+
 	char DigitToChar(uint8_t digit);
 	void IntToString(int32_t number, char* outString);
 	void FloatToString(float number, uint8_t decimalPlaces, char* outString);
