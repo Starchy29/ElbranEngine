@@ -53,8 +53,8 @@ void ParticleBehavior::Update(GraphicsAPI* graphics, const AssetContainer* asset
     }
 
     const ComputeShader* moveShader = &assets->particleMoveCS;
-    graphics->WriteBuffer(&csInput, sizeof(ParticleMoveCSConstants), moveShader->constants.data);
-    graphics->SetConstants(ShaderStage::Compute, &moveShader->constants, 0);
+    graphics->WriteBuffer(&csInput, sizeof(ParticleMoveCSConstants), moveShader->constants);
+    graphics->SetConstants(ShaderStage::Compute, moveShader->constants, 0);
     graphics->SetEditBuffer(&particleRenderer->particleData.particleBuffer, 0);
     graphics->RunComputeShader(moveShader, particleRenderer->particleData.maxParticles, 1);
     graphics->SetEditBuffer(nullptr, 0); // unbind particles
@@ -150,8 +150,8 @@ void ParticleBehavior::Emit(GraphicsAPI* graphics, const AssetContainer* assets,
     const ComputeShader* spawnShader = &assets->particleSpawnCS;
     graphics->SetArray(ShaderStage::Compute, &spawnData, 0);
     graphics->SetEditBuffer(&particleRenderer->particleData.particleBuffer, 0);
-    graphics->WriteBuffer(&csInput, numParticles * sizeof(ParticleSpawnCSConstants), spawnShader->constants.data);
-    graphics->SetConstants(ShaderStage::Compute, &spawnShader->constants, 0);
+    graphics->WriteBuffer(&csInput, numParticles * sizeof(ParticleSpawnCSConstants), spawnShader->constants);
+    graphics->SetConstants(ShaderStage::Compute, spawnShader->constants, 0);
     graphics->RunComputeShader(spawnShader, numParticles, 1);
     graphics->SetEditBuffer(nullptr, 0); // unbind particles
 

@@ -3,7 +3,7 @@
 #include "Math.h"
 
 bool FileIO::platformLittleEndian = true;
-LoadedFile (*FileIO::LoadFile)(const char* fileName) = 0;
+LoadedFile (*FileIO::LoadFile)(const char* fileName, MemoryArena*) = 0;
 bool (*FileIO::SaveFile)(const char* fileName, void* bytes, uint64_t fileSize) = 0;
 
 void LoadedFile::Release() {
@@ -99,14 +99,14 @@ float LoadedFile::ReadF2Dot14() {
 
 int32_t LoadedFile::ReadTextInt() {
 	const char* parseEnd;
-	int32_t read = ParseInt((char*)bytes + readLocation, &parseEnd);
+	int32_t read = String::ParseInt((char*)bytes + readLocation, &parseEnd);
 	readLocation += (const uint8_t*)parseEnd - (bytes + readLocation);
 	return read;
 }
 
 float LoadedFile::ReadTextFloat() {
 	const char* parseEnd;
-	float read = ParseFloat((char*)bytes + readLocation, &parseEnd);
+	float read = String::ParseFloat((char*)bytes + readLocation, &parseEnd);
 	readLocation += (const uint8_t*)parseEnd - (bytes + readLocation);
 	return read;
 }

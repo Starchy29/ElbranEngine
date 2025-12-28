@@ -9,13 +9,17 @@
 #define ASSERT(condition)
 #endif
 
-uint32_t GetStringLength(const char* string);
-void AddStrings(const char* left, const char* right, char* outBuffer);
-char DigitToChar(uint8_t digit);
-void IntToString(int32_t number, char* outString);
-void FloatToString(float number, uint8_t decimalPlaces, char* outString);
-int32_t ParseInt(const char* string, const char** textNumberEnd = nullptr);
-float ParseFloat(const char* string, const char** textNumberEnd = nullptr);
+namespace String {
+	uint32_t GetStringLength(const char* string);
+	void AddStrings(const char* left, const char* right, char* outBuffer);
+	char* FindChar(char* string, char seeked);
+	const char* FindChar(const char* string, char seeked);
+	char DigitToChar(uint8_t digit);
+	void IntToString(int32_t number, char* outString);
+	void FloatToString(float number, uint8_t decimalPlaces, char* outString);
+	int32_t ParseInt(const char* string, const char** textNumberEnd = nullptr);
+	float ParseFloat(const char* string, const char** textNumberEnd = nullptr);
+}
 
 enum class Direction {
 	None,

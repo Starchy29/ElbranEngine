@@ -1,5 +1,5 @@
 #pragma once
-#include <stdint.h>
+#include "MemoryArena.h"
 
 struct LoadedFile {
 	uint64_t fileSize;
@@ -26,7 +26,7 @@ struct LoadedFile {
 namespace FileIO {
 	// these must be assigned by the platform layer
 	extern bool platformLittleEndian;
-	extern LoadedFile (*LoadFile)(const char* fileName);
+	extern LoadedFile (*LoadFile)(const char* fileName, MemoryArena*);
 	extern bool (*SaveFile)(const char* fileName, void* bytes, uint64_t fileSize); // returns false if failed
 };
 

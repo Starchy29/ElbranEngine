@@ -194,6 +194,12 @@
     <None Include="..\hlsl\ShaderStructs.hlsli" />
   </ItemGroup>
   <ItemGroup>
+    <FxCompile Include="..\hlsl\AtlasPS.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
+    </FxCompile>
     <FxCompile Include="..\hlsl\BloomFilterPP.hlsl" />
     <FxCompile Include="..\hlsl\BlurPP.hlsl" />
     <FxCompile Include="..\hlsl\BrightnessSumCS.hlsl" />

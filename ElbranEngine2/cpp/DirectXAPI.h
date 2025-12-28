@@ -31,9 +31,10 @@ public:
     ComputeShader CreateComputeShader(LoadedFile* shaderBlob) const;
 
     Texture2D CreateConstantTexture(uint32_t width, uint32_t height, const uint8_t* textureData) const;
-    Sampler CreateDefaultSampler() const;
+    Texture2DArray CreateTextureArray(const uint8_t* textureData, uint16_t numElements, uint32_t textureWidth, uint32_t textureHeight) const;
+    Sampler* CreateDefaultSampler() const;
     Mesh CreateMesh(const Vertex* vertices, uint16_t vertexCount, const uint32_t* indices, uint16_t indexCount, bool editable) const;
-    ConstantBuffer CreateConstantBuffer(uint32_t byteLength) const;
+    GraphicsBuffer* CreateConstantBuffer(uint32_t byteLength) const;
     ArrayBuffer CreateArrayBuffer(ShaderDataType type, uint32_t elements, uint32_t structBytes = 0u) const;
     EditBuffer CreateEditBuffer(ShaderDataType type, uint32_t elements, uint32_t structBytes = 0u) const;
     OutputBuffer CreateOutputBuffer(ShaderDataType type, uint32_t elements, uint32_t structBytes = 0u) const;
@@ -42,17 +43,18 @@ public:
     void CopyTexture(const Texture2D* source, Texture2D* destination) const;
 
     void SetEditBuffer(const EditBuffer* buffer, uint8_t slot);
-    void WriteBuffer(const void* data, uint32_t byteLength, Buffer* buffer) const;
+    void WriteBuffer(const void* data, uint32_t byteLength, GraphicsBuffer* buffer) const;
     void SetOutputBuffer(const OutputBuffer* buffer, uint8_t slot, const void* initialData);
     void ReadBuffer(const OutputBuffer* buffer, void* destination) const;
 
     void SetPrimitive(RenderPrimitive primitive);
     void SetBlendMode(BlendState mode);
 
-    void SetConstants(ShaderStage stage, const ConstantBuffer* buffer, uint8_t slot);
+    void SetConstants(ShaderStage stage, GraphicsBuffer* buffer, uint8_t slot);
     void SetArray(ShaderStage stage, const ArrayBuffer* buffer, uint8_t slot);
     void SetTexture(ShaderStage stage, const Texture2D* texture, uint8_t slot);
-    void SetSampler(ShaderStage stage, const Sampler* sampler, uint8_t slot);
+    void SetTextureArray(ShaderStage stage, const Texture2DArray* textures, uint8_t slot);
+    void SetSampler(ShaderStage stage, Sampler* sampler, uint8_t slot);
 
     void SetComputeTexture(const ComputeTexture* texture, uint8_t slot);
     void ClearMesh();
@@ -76,7 +78,7 @@ public:
     void ReleaseRenderTarget(RenderTarget* texture) const;
     void ReleaseComputeTexture(ComputeTexture* texture) const;
     void ReleaseMesh(Mesh* mesh) const;
-    void ReleaseConstantBuffer(ConstantBuffer* buffer) const;
+    void ReleaseBuffer(GraphicsBuffer* buffer) const;
     void ReleaseArrayBuffer(ArrayBuffer* buffer) const;
     void ReleaseEditBuffer(EditBuffer* buffer) const;
     void ReleaseOuputBuffer(OutputBuffer* buffer) const;
@@ -90,10 +92,10 @@ private:
     Microsoft::WRL::ComPtr<ID3D11BlendState> alphaBlendState;
     Microsoft::WRL::ComPtr<ID3D11BlendState> additiveBlendState;
 
-    TextureData* CreateTexture(uint32_t width, uint32_t height, bool renderTarget, bool computeWritable, const void* initialData = nullptr) const;
-    Buffer* CreateIndexedBuffer(uint32_t elements, uint32_t elementBytes, bool structured, bool cpuWrite, bool gpuWrite) const;
+    void CreateTexture(Texture2D* outTexture, uint32_t width, uint32_t height, bool renderTarget, bool computeWritable, const void* initialData = nullptr) const;
+    GraphicsBuffer* CreateIndexedBuffer(uint32_t elements, uint32_t elementBytes, bool structured, bool cpuWrite, bool gpuWrite) const;
 
-    ConstantBuffer LoadConstantBuffer(const LoadedFile* shaderBlob) const;
+    GraphicsBuffer* LoadConstantBuffer(const LoadedFile* shaderBlob) const;
 
     static DXGI_FORMAT FormatOf(ShaderDataType type);
     static uint32_t ByteLengthOf(ShaderDataType type);

@@ -15,6 +15,12 @@ struct TexturePSConstants {
 	GPU_BOOL lit;
 };
 
+struct AtlasPSConstants {
+	Color tint;
+	GPU_BOOL lit;
+	uint32_t textureIndex;
+};
+
 struct ConSatValPPConstants {
 	float contrast;
 	float saturation;
@@ -32,10 +38,9 @@ struct BlurPPConstants {
 struct ParticleQuadGSConstants {
 	float z;
 	float spriteAspectRatio;
-	int32_t animationFrames;
 	float animationFPS;
-	int32_t atlasRows;
-	int32_t atlasCols;
+	uint32_t atlasRows;
+	uint32_t atlasCols;
 };
 
 struct ParticleMoveCSConstants {

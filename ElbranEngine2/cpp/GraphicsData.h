@@ -66,16 +66,53 @@ struct ID3D11GeometryShader;
 struct ID3D11PixelShader;
 struct ID3D11ComputeShader;
 
-typedef ID3D11Buffer Buffer;
-typedef ID3D11Texture2D TextureData;
-typedef ID3D11SamplerState SamplerState;
-typedef ID3D11ShaderResourceView ShaderResourceView;
-typedef ID3D11RenderTargetView RenderTargetView;
-typedef ID3D11UnorderedAccessView UnorderedAccessView;
-typedef ID3D11VertexShader VSData;
-typedef ID3D11GeometryShader GSData;
-typedef ID3D11PixelShader PSData;
-typedef ID3D11ComputeShader CSData;
+typedef ID3D11Buffer GraphicsBuffer;
+typedef ID3D11SamplerState Sampler;
+typedef ID3D11VertexShader PlatformVS;
+typedef ID3D11GeometryShader PlatformGS;
+typedef ID3D11PixelShader PlatformPS;
+typedef ID3D11ComputeShader PlatformCS;
+
+struct Texture2D {
+	ID3D11Texture2D* pixels;
+	ID3D11ShaderResourceView* inputView;
+	uint32_t width;
+	uint32_t height;
+};
+
+struct Texture2DArray {
+	ID3D11Texture2D* pixels;
+	ID3D11ShaderResourceView* view;
+	uint32_t elementWidth;
+	uint32_t elementHeight;
+};
+
+struct RenderTarget {
+	Texture2D texture;
+	ID3D11RenderTargetView* outputView;
+};
+
+struct ComputeTexture {
+	Texture2D texture;
+	ID3D11UnorderedAccessView* outputView;
+};
+
+struct ArrayBuffer {
+	GraphicsBuffer* buffer;
+	ID3D11ShaderResourceView* view;
+};
+
+struct EditBuffer {
+	ArrayBuffer arrayBuffer;
+	ID3D11UnorderedAccessView* computeView;
+};
+
+struct OutputBuffer {
+	GraphicsBuffer* gpuBuffer;
+	GraphicsBuffer* cpuBuffer;
+	ID3D11UnorderedAccessView* view;
+	size_t byteLength;
+};
 #endif
 
 enum class BlendState {
@@ -109,90 +146,45 @@ struct Vertex {
 	Vector2 uv;
 };
 
-struct Sampler {
-	SamplerState* state;
-};
-
-struct Texture2D {
-	TextureData* data;
-	ShaderResourceView* inputView;
-	uint32_t width;
-	uint32_t height;
+struct Sprite {
+	Texture2D texture;
 	bool translucent;
-	inline float AspectRatio() const { return (float)width / height; }
+	inline float AspectRatio() const { return (float)texture.width / texture.height; }
 };
 
 struct SpriteSheet {
-	Texture2D texture;
+	Texture2DArray textures;
 	uint8_t rows;
 	uint8_t cols;
-	uint8_t spriteCount;
-
-	SpriteSheet() = default;
-	inline SpriteSheet(Texture2D texture) : SpriteSheet(texture, 1, 1, 1) {}
-	inline SpriteSheet(Texture2D texture, uint8_t rows, uint8_t cols, uint8_t spriteCount) {
-		this->texture = texture;
-		this->rows = rows;
-		this->cols = cols;
-		this->spriteCount = spriteCount;
-	}
-	inline float SpriteAspectRatio() const { return texture.AspectRatio() * rows / cols; }
-};
-
-struct RenderTarget : Texture2D {
-	RenderTargetView* outputView;
-};
-
-struct ComputeTexture : Texture2D {
-	UnorderedAccessView* outputView;
+	bool translucent;
+	inline uint16_t SpriteCount() const { return (uint16_t)rows * cols; } 
+	inline float ElementAspectRatio() const { return (float)textures.elementWidth / textures.elementHeight; }
 };
 
 struct Mesh {
 	uint16_t indexCount;
-	Buffer* vertices;
-	Buffer* indices;
-};
-
-struct ConstantBuffer {
-	Buffer* data;
-};
-
-struct ArrayBuffer {
-	Buffer* buffer;
-	ShaderResourceView* view;
-};
-
-// a gpu-writable buffer that gets bound to the render pipeline
-struct EditBuffer : ArrayBuffer {
-	UnorderedAccessView* computeView;
-};
-
-// a gpu-writable buffer that the cpu can read back from
-struct OutputBuffer {
-	Buffer* gpuBuffer;
-	Buffer* cpuBuffer;
-	UnorderedAccessView* view;
-	size_t byteLength;
+	GraphicsBuffer* vertices;
+	GraphicsBuffer* indices;
 };
 
 struct VertexShader {
-	VSData* shader;
-	ConstantBuffer constants;
+	PlatformVS* byteCode;
+	GraphicsBuffer* constants;
 };
 
 struct GeometryShader {
-	GSData* shader;
-	ConstantBuffer constants;
+	PlatformGS* byteCode;
+	GraphicsBuffer* constants;
 };
 
 struct PixelShader {
-	PSData* shader;
-	ConstantBuffer constants;
+	PlatformPS* byteCode;
+	GraphicsBuffer* constants;
 };
 
 struct ComputeShader {
-	CSData* shader;
-	ConstantBuffer constants;
+	PlatformCS* byteCode;
+	GraphicsBuffer* constants;
 	uint32_t xGroupSize;
 	uint32_t yGroupSize;
 	uint32_t zGroupSize;

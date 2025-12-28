@@ -246,5 +246,8 @@
     <FxCompile Include="..\hlsl\ParticleClearCS.hlsl">
       <Filter>Engine\Shaders\HLSL</Filter>
     </FxCompile>
+    <FxCompile Include="..\hlsl\AtlasPS.hlsl">
+      <Filter>Engine\Shaders\HLSL</Filter>
+    </FxCompile>
   </ItemGroup>
 </Project>

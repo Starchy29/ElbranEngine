@@ -25,7 +25,7 @@ void Renderer::Draw(GraphicsAPI* graphics, const AssetContainer* assets) {
 		TexturePSConstants psInput;
 		psInput.tint = spriteData.tint;
 		psInput.lit = spriteData.lit;
-		graphics->SetTexture(ShaderStage::Pixel, spriteData.sprite, 0);
+		graphics->SetTexture(ShaderStage::Pixel, &spriteData.sprite->texture, 0);
 		graphics->SetPixelShader(&assets->texturePS, &psInput, sizeof(TexturePSConstants));
 
 		graphics->DrawMesh(&assets->unitSquare);
@@ -34,16 +34,16 @@ void Renderer::Draw(GraphicsAPI* graphics, const AssetContainer* assets) {
 	case Type::Atlas: {
 		CameraVSConstants vsInput;
 		vsInput.worldTransform = worldMatrix->Transpose();
-		Vector2 tileScale = Vector2(1.0f / atlasData.atlas->cols, 1.0f / atlasData.atlas->rows);
-		vsInput.uvScale = tileScale * Vector2(atlasData.flipX ? -1.0f : 1.0f, atlasData.flipY ? -1.0f : 1.0f); // assumes wrap enabled on sampling
-		vsInput.uvOffset = Vector2(atlasData.col + (atlasData.flipX ? 1 : 0), atlasData.row + (atlasData.flipY ? 1 : 0)) * tileScale;
+		vsInput.uvOffset = Vector2::Zero;
+		vsInput.uvScale = Vector2(spriteData.flipX ? -1 : 1, spriteData.flipY ? -1 : 1); // assumes wrap enabled on sampling
 		graphics->SetVertexShader(&assets->cameraVS, &vsInput, sizeof(CameraVSConstants));
 
-		TexturePSConstants psInput;
+		AtlasPSConstants psInput;
 		psInput.tint = atlasData.tint;
 		psInput.lit = atlasData.lit;
-		graphics->SetTexture(ShaderStage::Pixel, &atlasData.atlas->texture, 0);
-		graphics->SetPixelShader(&assets->texturePS, &psInput, sizeof(TexturePSConstants));
+		psInput.textureIndex = atlasData.row * atlasData.atlas->cols + atlasData.col;
+		graphics->SetTextureArray(ShaderStage::Pixel, &atlasData.atlas->textures, 0);
+		graphics->SetPixelShader(&assets->texturePS, &psInput, sizeof(AtlasPSConstants));
 
 		graphics->DrawMesh(&assets->unitSquare);
 	} break;
@@ -67,7 +67,7 @@ void Renderer::Draw(GraphicsAPI* graphics, const AssetContainer* assets) {
 		TexturePSConstants psInput;
 		psInput.tint = patternData.tint;
 		psInput.lit = patternData.lit;
-		graphics->SetTexture(ShaderStage::Pixel, patternData.sprite, 0);
+		graphics->SetTexture(ShaderStage::Pixel, &patternData.sprite->texture, 0);
 		graphics->SetPixelShader(&assets->texturePS, &psInput, sizeof(TexturePSConstants));
 
 		graphics->DrawMesh(&assets->unitSquare);
@@ -117,25 +117,25 @@ void Renderer::Draw(GraphicsAPI* graphics, const AssetContainer* assets) {
 	case Type::Particles: {
 		// vertex shader
 		graphics->ClearMesh();
-		graphics->SetArray(ShaderStage::Vertex, &particleData.particleBuffer, 0);
+		graphics->SetArray(ShaderStage::Vertex, &particleData.particleBuffer.arrayBuffer, 0);
 		graphics->SetVertexShader(&assets->particlePassPS);
 
 		// geometry shader
 		ParticleQuadGSConstants gsInput = {};
 		gsInput.z = worldMatrix->values[2][3];
-		gsInput.spriteAspectRatio = particleData.sprites->SpriteAspectRatio();
+		gsInput.spriteAspectRatio = particleData.sprites->ElementAspectRatio();
 		gsInput.animationFPS = particleData.animationFPS;
-		gsInput.animationFrames = particleData.sprites->spriteCount;
 		gsInput.atlasRows = particleData.sprites->rows;
 		gsInput.atlasCols = particleData.sprites->cols;
 		graphics->SetGeometryShader(&assets->particleQuadGS, &gsInput, sizeof(ParticleQuadGSConstants));
 
 		// pixel shader
-		TexturePSConstants psInput;
+		AtlasPSConstants psInput;
 		psInput.lit = particleData.applyLights;
 		psInput.tint = particleData.tint;
-		graphics->SetTexture(ShaderStage::Pixel, &particleData.sprites->texture, 0);
-		graphics->SetPixelShader(&assets->texturePS, &psInput, sizeof(psInput));
+		psInput.textureIndex = 0; // sent from geo shader per-particle instead
+		graphics->SetTextureArray(ShaderStage::Pixel, &particleData.sprites->textures, 0);
+		graphics->SetPixelShader(&assets->texturePS, &psInput, sizeof(AtlasPSConstants));
 
 		// draw
 		if(particleData.blendAdditive) {
@@ -159,10 +159,10 @@ bool Renderer::IsTranslucent() const {
 	switch(type) {
 	case Type::Shape: return shapeData.color.alpha > 0.f && shapeData.color.alpha < 1.f;
 	case Type::Sprite: return spriteData.sprite->translucent || spriteData.tint.alpha > 0.f && spriteData.tint.alpha < 1.f;
-	case Type::Atlas: return atlasData.atlas->texture.translucent || atlasData.tint.alpha > 0.f && atlasData.tint.alpha < 1.f;
+	case Type::Atlas: return atlasData.atlas->translucent || atlasData.tint.alpha > 0.f && atlasData.tint.alpha < 1.f;
 	case Type::Pattern: return patternData.sprite->translucent || patternData.tint.alpha > 0.f && patternData.tint.alpha < 1.f;
 	case Type::Text: return true; // anti-aliasing uses alpha
-	case Type::Particles: return particleData.blendAdditive || particleData.sprites->texture.translucent;
+	case Type::Particles: return particleData.blendAdditive || particleData.sprites->translucent;
 	}
 	return false;
 }
@@ -185,7 +185,7 @@ void Renderer::InitShape(PrimitiveShape shape, Color color) {
 	shapeData.color = color;
 }
 
-void Renderer::InitSprite(const Texture2D* sprite) {
+void Renderer::InitSprite(const Sprite* sprite) {
 	type = Type::Sprite;
 	hidden = false;
 	spriteData.sprite = sprite;
@@ -207,7 +207,7 @@ void Renderer::InitAtlas(const SpriteSheet* atlas) {
 	atlasData.lit = false;
 }
 
-void Renderer::InitPattern(const Texture2D* sprite) {
+void Renderer::InitPattern(const Sprite* sprite) {
 	type = Type::Pattern;
 	hidden = false;
 	patternData.sprite = sprite;
@@ -339,8 +339,8 @@ void Renderer::UpdateTextMesh(const GraphicsAPI* graphics, MemoryArena* arena) {
 
 void Renderer::ClearParticles(GraphicsAPI* graphics, const AssetContainer* assets) {
 	ASSERT(type == Type::Particles)
-	graphics->WriteBuffer(&particleData.maxParticles, sizeof(uint16_t), assets->particleClearCS.constants.data);
-	graphics->SetConstants(ShaderStage::Compute, &assets->particleClearCS.constants, 0);
+	graphics->WriteBuffer(&particleData.maxParticles, sizeof(uint16_t), assets->particleClearCS.constants);
+	graphics->SetConstants(ShaderStage::Compute, assets->particleClearCS.constants, 0);
 	graphics->SetEditBuffer(&particleData.particleBuffer, 0);
 	graphics->RunComputeShader(&assets->particleClearCS, particleData.maxParticles, 1);
 	graphics->SetEditBuffer(nullptr, 0); // unbind particles

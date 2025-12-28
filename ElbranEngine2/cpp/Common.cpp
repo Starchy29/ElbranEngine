@@ -1,13 +1,13 @@
 #include "Common.h"
 #include "Math.h"
 
-uint32_t GetStringLength(const char* string) {
+uint32_t String::GetStringLength(const char* string) {
 	uint32_t length = 0;
 	while(string[length]) length++;
 	return length;
 }
 
-void AddStrings(const char* left, const char* right, char* outBuffer) {
+void String::AddStrings(const char* left, const char* right, char* outBuffer) {
 	uint64_t outIndex = 0;
 	while(left[outIndex]) {
 		outBuffer[outIndex] = left[outIndex];
@@ -22,7 +22,25 @@ void AddStrings(const char* left, const char* right, char* outBuffer) {
 	outBuffer[outIndex+1] = 0;
 }
 
-char DigitToChar(uint8_t digit) {
+const char* String::FindChar(const char* string, char seeked) {
+	uint32_t i = 0;
+	while(string[i] != 0) {
+		if(string[i] == seeked) return string + i;
+		i++;
+	}
+	return nullptr;
+}
+
+char* String::FindChar(char* string, char seeked) {
+	uint32_t i = 0;
+	while(string[i] != 0) {
+		if(string[i] == seeked) return string + i;
+		i++;
+	}
+	return nullptr;
+}
+
+char String::DigitToChar(uint8_t digit) {
 	switch(digit) {
 	case 0: return '0';
 	case 1: return '1';
@@ -38,7 +56,7 @@ char DigitToChar(uint8_t digit) {
 	return 0;
 }
 
-void IntToString(int32_t number, char* outString) {
+void String::IntToString(int32_t number, char* outString) {
 	if(number < 0) {
 		*outString = '-';
 		outString++;
@@ -67,7 +85,7 @@ void IntToString(int32_t number, char* outString) {
 	return;
 }
 
-void FloatToString(float number, uint8_t decimalPlaces, char* outString) {
+void String::FloatToString(float number, uint8_t decimalPlaces, char* outString) {
 	IntToString((int32_t)number, outString);
 	if(decimalPlaces == 0) return;
 	while(*outString) outString++; // find the new end of the string
@@ -82,7 +100,7 @@ void FloatToString(float number, uint8_t decimalPlaces, char* outString) {
 	*outString = 0;
 }
 
-int32_t ParseInt(const char* string, const char** textNumberEnd) {
+int32_t String::ParseInt(const char* string, const char** textNumberEnd) {
 	bool negative = string[0] == '-';
 	if(negative) string++;
 	int32_t total = 0;
@@ -129,7 +147,7 @@ int32_t ParseInt(const char* string, const char** textNumberEnd) {
 	return (negative ? -1 : 1) * total;
 }
 
-float ParseFloat(const char* string, const char** textNumberEnd) {
+float String::ParseFloat(const char* string, const char** textNumberEnd) {
 	const char* readLoc;
 	int32_t leftSide = ParseInt(string, &readLoc);
 	if(*readLoc != '.') {

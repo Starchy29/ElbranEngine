@@ -135,14 +135,14 @@ void RenderGroup::Draw(GraphicsAPI* graphics, const AssetContainer* assets, Memo
 	graphics->WriteBuffer(&lightData, sizeof(LightData) * MAX_LIGHTS_ONSCREEN, graphics->lightsBuffer.buffer);
 	graphics->SetArray(ShaderStage::Pixel, &graphics->lightsBuffer, LIGHTS_REGISTER);
 
-	graphics->WriteBuffer(&lightConstants, sizeof(LightConstants), graphics->lightInfoBuffer.data);
-	graphics->SetConstants(ShaderStage::Pixel, &graphics->lightInfoBuffer, LIGHT_INFO_REGISTER);
+	graphics->WriteBuffer(&lightConstants, sizeof(LightConstants), graphics->lightInfoBuffer);
+	graphics->SetConstants(ShaderStage::Pixel, graphics->lightInfoBuffer, LIGHT_INFO_REGISTER);
 
 	// send the projection matrix to the gpu for vertex shaders
 	viewProjection = viewProjection.Transpose();
-	graphics->WriteBuffer(&viewProjection, sizeof(Matrix), graphics->projectionBuffer.data);
-	graphics->SetConstants(ShaderStage::Vertex, &graphics->projectionBuffer, 1);
-	graphics->SetConstants(ShaderStage::Geometry, &graphics->projectionBuffer, 1);
+	graphics->WriteBuffer(&viewProjection, sizeof(Matrix), graphics->projectionBuffer);
+	graphics->SetConstants(ShaderStage::Vertex, graphics->projectionBuffer, 1);
+	graphics->SetConstants(ShaderStage::Geometry, graphics->projectionBuffer, 1);
 
 	// draw opaques front to back
 	for(uint32_t i = 0; i < numOpaque; i++) {

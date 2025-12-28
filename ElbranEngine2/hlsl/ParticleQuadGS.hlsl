@@ -5,10 +5,9 @@ cbuffer Constants : register(b0) {
 	float spriteAspectRatio;
 	
 	// for spriteSheet animation
-	int animationFrames;
 	float animationFPS;
-	int atlasRows;
-	int atlasCols;
+	uint atlasRows;
+	uint atlasCols;
 }
 
 cbuffer Scene : register(b1) {
@@ -39,20 +38,18 @@ void main(point Particle input[1], inout TriangleStream<VertexToPixel> output) {
 	};
 	
 	float2 atlasPosition = float2(0, 0);
-	if(animationFrames > 1) {
-		int frame = animationFrames - 1 - (int)(input[0].timeLeft * animationFPS) % animationFrames;
-		atlasPosition = float2(frame % atlasCols, frame / atlasCols); // (col, row) to match with (x, y)
-	}
+	uint animationFrames = atlasRows * atlasCols;
+	int frame = animationFrames - 1 - (int) (input[0].timeLeft * animationFPS) % animationFrames;
 	
 	VertexToPixel vertex;
-	float2 spriteDims = float2(1.0 / atlasCols, 1.0 / atlasRows);
 	
 	[unroll]
 	for(int i = 0; i < 4; i++) {
 		vertex.screenPosition = mul(viewProjection, corners[i]);
-		vertex.uv = spriteDims * (atlasPosition + uvs[i]);
+		vertex.uv = uvs[i];
 		vertex.worldPosition = corners[i].xy;
 		vertex.color = float4(1, 1, 1, input[0].alpha);
+		vertex.textureIndex = frame;
 		
 		output.Append(vertex);
 	}

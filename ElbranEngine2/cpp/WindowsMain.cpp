@@ -165,9 +165,9 @@ void QuitApp() {
 	PostQuitMessage(0);
 }
 
-LoadedFile LoadWindowsFile(const char* fileName) {
+LoadedFile LoadWindowsFile(const char* fileName, MemoryArena* arena) {
 	char fullPath[1024] {};
-	AddStrings(filePath, fileName, fullPath);
+	String::AddStrings(filePath, fileName, fullPath);
 	HANDLE fileHandle = CreateFileA(fullPath, GENERIC_READ, FILE_SHARE_READ, nullptr, OPEN_EXISTING, 0, nullptr);
 	if(fileHandle == INVALID_HANDLE_VALUE) return {};
 	LoadedFile file = {};
@@ -180,12 +180,17 @@ LoadedFile LoadWindowsFile(const char* fileName) {
 	ASSERT(file.fileSize < 0xFFFFFFFF); // windows file read has max size
 
 	// read file
-	file.bytes = new uint8_t[file.fileSize];
+	if(arena) {
+		file.bytes = (uint8_t*)arena->Reserve(file.fileSize);
+	} else {
+		file.bytes = new uint8_t[file.fileSize];
+	}
+
 	DWORD bytesRead;
 	success = ReadFile(fileHandle, file.bytes, file.fileSize, &bytesRead, 0);
 	CloseHandle(fileHandle);
 	if(!success || bytesRead != file.fileSize) {
-		delete[] file.bytes;
+		if(!arena) delete[] file.bytes;
 		return {};
 	}
 	return file;
@@ -193,7 +198,7 @@ LoadedFile LoadWindowsFile(const char* fileName) {
 
 bool SaveWindowsFile(const char* fileName, void* bytes, uint64_t fileSize) {
 	char fullPath[1024] {};
-	AddStrings(filePath, fileName, fullPath);
+	String::AddStrings(filePath, fileName, fullPath);
 	HANDLE fileHandle = CreateFileA(fullPath, GENERIC_WRITE, 0, nullptr, CREATE_ALWAYS, 0, nullptr);
 	if(fileHandle == INVALID_HANDLE_VALUE) return false;
 	DWORD writtenBytes;

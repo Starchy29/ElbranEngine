@@ -13,8 +13,8 @@ struct PostProcess;
 
 class GraphicsAPI {
 public:
-	ConstantBuffer projectionBuffer;
-	ConstantBuffer lightInfoBuffer;
+	GraphicsBuffer* projectionBuffer;
+	GraphicsBuffer* lightInfoBuffer;
 	ArrayBuffer lightsBuffer;
 	OutputBuffer totalBrightnessBuffer;
 	RenderTarget postProcessHelpers[MAX_POST_PROCESS_HELPER_TEXTURES];
@@ -40,21 +40,23 @@ public:
 	ComputeShader CreateComputeShader(LoadedFile* shaderBlob) const;
 
 	Texture2D CreateConstantTexture(uint32_t width, uint32_t height, const uint8_t* textureData) const;
-	Sampler CreateDefaultSampler() const;
+	Texture2DArray CreateTextureArray(const uint8_t* textureData, uint16_t numElements, uint32_t textureWidth, uint32_t textureHeight) const;
+	Sampler* CreateDefaultSampler() const;
 	Mesh CreateMesh(const Vertex* vertices, uint16_t vertexCount, const uint32_t* indices, uint16_t indexCount, bool editable) const;
-	ConstantBuffer CreateConstantBuffer(uint32_t byteLength) const;
+	GraphicsBuffer* CreateConstantBuffer(uint32_t byteLength) const;
 	ArrayBuffer CreateArrayBuffer(ShaderDataType type, uint32_t elements, uint32_t structBytes = 0u) const;
 	EditBuffer CreateEditBuffer(ShaderDataType type, uint32_t elements, uint32_t structBytes = 0u) const;
 	OutputBuffer CreateOutputBuffer(ShaderDataType type, uint32_t elements, uint32_t structBytes = 0u) const;
 	RenderTarget CreateRenderTarget(uint32_t width, uint32_t height) const;
 	ComputeTexture CreateComputeTexture(uint32_t width, uint32_t height) const;
 	
-	void WriteBuffer(const void* data, uint32_t byteLength, Buffer* buffer) const; // fails if the buffer was not created with cpu write access
+	void WriteBuffer(const void* data, uint32_t byteLength, GraphicsBuffer* buffer) const; // fails if the buffer was not created with cpu write access
 	void CopyTexture(const Texture2D* source, Texture2D* destination) const;
-	void SetConstants(ShaderStage stage, const ConstantBuffer* buffer, uint8_t slot);
+	void SetConstants(ShaderStage stage, GraphicsBuffer* constantBuffer, uint8_t slot);
 	void SetArray(ShaderStage stage, const ArrayBuffer* buffer, uint8_t slot);
 	void SetTexture(ShaderStage stage, const Texture2D* texture, uint8_t slot);
-	void SetSampler(ShaderStage stage, const Sampler* sampler, uint8_t slot);
+	void SetTextureArray(ShaderStage stage, const Texture2DArray* textures, uint8_t slot);
+	void SetSampler(ShaderStage stage, Sampler* sampler, uint8_t slot);
 	void ClearMesh();
 
 	void SetVertexShader(const VertexShader* shader, const void* constantInput = nullptr, uint32_t inputBytes = 0);
@@ -85,7 +87,7 @@ public:
 	void ReleaseTexture(Texture2D* texture) const;
 	void ReleaseComputeTexture(ComputeTexture* texture) const;
 	void ReleaseMesh(Mesh* mesh) const;
-	void ReleaseConstantBuffer(ConstantBuffer* buffer) const;
+	void ReleaseBuffer(GraphicsBuffer* buffer) const;
 	void ReleaseArrayBuffer(ArrayBuffer* buffer) const;
 	void ReleaseEditBuffer(EditBuffer* buffer) const;
 	void ReleaseOuputBuffer(OutputBuffer* buffer) const;

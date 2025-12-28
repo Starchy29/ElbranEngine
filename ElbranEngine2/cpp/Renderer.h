@@ -46,7 +46,7 @@ struct Renderer {
 		} shapeData;
 
 		struct {
-			const Texture2D* sprite;
+			const Sprite* sprite;
 			Color tint;
 			bool lit;
 			bool flipX;
@@ -90,7 +90,7 @@ struct Renderer {
 		} particleData;
 
 		struct {
-			const Texture2D* sprite;
+			const Sprite* sprite;
 			Color tint;
 			Vector2 origin;
 			Vector2 blockSize;
@@ -114,9 +114,9 @@ struct Renderer {
 	void Release(const GraphicsAPI*);
 
 	void InitShape(PrimitiveShape shape, Color color);
-	void InitSprite(const Texture2D* sprite);
+	void InitSprite(const Sprite* sprite);
 	void InitAtlas(const SpriteSheet* atlas);
-	void InitPattern(const Texture2D* sprite);
+	void InitPattern(const Sprite* sprite);
 	void InitLight(Color color, float radius);
 	void InitText(const GraphicsAPI*, MemoryArena*, const char* text, const Font* font, HorizontalAlignment horizontalAlignment = HorizontalAlignment::Center, float lineSpacing = 0.0f);
 	void InitParticles(const GraphicsAPI*, uint16_t maxParticles, const SpriteSheet* animation, float animationFPS);

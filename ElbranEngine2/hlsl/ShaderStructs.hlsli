@@ -11,6 +11,7 @@ struct VertexToPixel {
 	float2 uv : TEXCOORD;
 	float2 worldPosition : POSITION;
 	float4 color : COLOR;
+	uint textureIndex : INDEX;
 };
 
 struct Particle {
