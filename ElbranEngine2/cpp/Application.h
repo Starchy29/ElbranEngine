@@ -6,10 +6,6 @@
 #include "GraphicsAPI.h"
 #include "InputManager.h"
 
-#if defined(DEBUG) | defined(_DEBUG)
-#include "DebugHelper.h"
-#endif
-
 class Application {
 public:
 	GraphicsAPI graphics;
@@ -19,9 +15,6 @@ public:
 	Game game;
 	MemoryArena frameBuffer;
 
-#if defined(DEBUG) | defined(_DEBUG)
-	DebugHelper debugger;
-#endif
 	void (*quitFunction)();
 
 	Application() = default;

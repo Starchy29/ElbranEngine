@@ -5,6 +5,7 @@
 #include "WindowsAudio.h"
 #include "WindowsInput.h"
 #include "FileIO.h"
+#include "DebugHelper.h"
 #include <string>
 
 #define START_WINDOW_WIDTH 960

@@ -9,7 +9,7 @@
 #define LIGHT_INFO_REGISTER 1
 
 void RenderGroup::Initialize(uint32_t numTransforms, uint32_t numRenderers) {
-	ASSERT(numRenderers >= numTransforms);
+	ASSERT(numTransforms > numRenderers)
 	ambientLight = Color::White;
 	backgroundColor = Color::White;
 	backgroundImage = nullptr;

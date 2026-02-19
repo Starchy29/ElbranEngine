@@ -108,6 +108,7 @@ VertexShader AssetContainer::LoadVertexShader(const GraphicsAPI* graphics, Memor
 	char path[128] = "shaders\\";
 	String::AddStrings(path, fileName, path);
 	LoadedFile shaderBlob = FileIO::LoadFile(path, arena);
+	ASSERT(shaderBlob.bytes)
 	VertexShader result = graphics->CreateVertexShader(&shaderBlob);
 	if(arena) arena->Clear();
 	else shaderBlob.Release();
@@ -118,6 +119,7 @@ GeometryShader AssetContainer::LoadGeometryShader(const GraphicsAPI* graphics, M
 	char path[128] = "shaders\\";
 	String::AddStrings(path, fileName, path);
 	LoadedFile shaderBlob = FileIO::LoadFile(path, arena);
+	ASSERT(shaderBlob.bytes)
 	GeometryShader result = graphics->CreateGeometryShader(&shaderBlob);
 	if(arena) arena->Clear();
 	else shaderBlob.Release();
@@ -128,6 +130,7 @@ PixelShader AssetContainer::LoadPixelShader(const GraphicsAPI* graphics, MemoryA
 	char path[128] = "shaders\\";
 	String::AddStrings(path, fileName, path);
 	LoadedFile shaderBlob = FileIO::LoadFile(path, arena);
+	ASSERT(shaderBlob.bytes)
 	PixelShader result = graphics->CreatePixelShader(&shaderBlob);
 	if(arena) arena->Clear();
 	else shaderBlob.Release();
@@ -138,6 +141,7 @@ ComputeShader AssetContainer::LoadComputeShader(const GraphicsAPI* graphics, Mem
 	char path[128] = "shaders\\";
 	String::AddStrings(path, fileName, path);
 	LoadedFile shaderBlob = FileIO::LoadFile(path, arena);
+	ASSERT(shaderBlob.bytes)
 	ComputeShader result = graphics->CreateComputeShader(&shaderBlob);
 	if(arena) arena->Clear();
 	else shaderBlob.Release();
@@ -225,6 +229,7 @@ void AssetContainer::LoadBMP(const char* fileName, MemoryArena* arena, ByteColor
 	char path[128] = "assets\\";
 	String::AddStrings(path, fileName, path);
 	LoadedFile file = FileIO::LoadFile(path, arena);
+	ASSERT(file.bytes)
 	file.littleEndian = true;
 	ASSERT(file.ReadUInt16() == 0x4D42); // file type must be "BM"
 	file.readLocation = 10;
@@ -491,6 +496,7 @@ void AssetContainer::LoadPNG(const char* fileName, MemoryArena* arena, ByteColor
 	char path[128] = "assets\\";
 	String::AddStrings(path, fileName, path);
 	LoadedFile file = FileIO::LoadFile(path, arena);
+	ASSERT(file.bytes)
 	std::vector<uint8_t> lodeFile(file.bytes, file.bytes + file.fileSize);
 	std::vector<uint8_t> loadedImage;
 
@@ -511,6 +517,7 @@ AudioSample AssetContainer::LoadWAV(const char* fileName, MemoryArena* arena) {
 	char path[128] = "assets\\";
 	String::AddStrings(path, fileName, path);
 	LoadedFile file = FileIO::LoadFile(path, arena);
+	ASSERT(file.bytes)
 	file.littleEndian = true;
 	uint32_t chunkName = file.ReadUInt32();
 	ASSERT(chunkName == 'FFIR');
@@ -818,7 +825,7 @@ Font AssetContainer::LoadTTF(const GraphicsAPI* graphics, MemoryArena* arena, co
 	String::AddStrings(path, fileName, path);
 	loader.fontFile = FileIO::LoadFile(path, arena);
 	loader.fontFile.littleEndian = false;
-	ASSERT(loader.fontFile.bytes != nullptr);
+	ASSERT(loader.fontFile.bytes);
 
 	// determine number of data tables in this file
 	loader.fontFile.readLocation += 4;

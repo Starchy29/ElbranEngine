@@ -9,6 +9,7 @@ struct Renderer;
 
 class DebugHelper {
 public:
+	static DebugHelper instance;
 	RenderGroup* debugScene;
 
 	DebugHelper() = default;
