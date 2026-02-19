@@ -31,7 +31,7 @@ public:
     ComputeShader CreateComputeShader(LoadedFile* shaderBlob) const;
 
     Texture2D CreateConstantTexture(uint32_t width, uint32_t height, const uint8_t* textureData) const;
-    Texture2DArray CreateTextureArray(const uint8_t* textureData, uint16_t numElements, uint32_t textureWidth, uint32_t textureHeight) const;
+    Texture2DArray CreateTextureArray(const uint8_t* textureData, uint16_t numElements, uint32_t elementWidth, uint32_t elementHeight) const;
     Sampler* CreateDefaultSampler() const;
     Mesh CreateMesh(const Vertex* vertices, uint16_t vertexCount, const uint32_t* indices, uint16_t indexCount, bool editable) const;
     GraphicsBuffer* CreateConstantBuffer(uint32_t byteLength) const;

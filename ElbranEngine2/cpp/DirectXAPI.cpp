@@ -336,11 +336,11 @@ Texture2D DirectXAPI::CreateConstantTexture(uint32_t width, uint32_t height, con
 	return result;
 }
 
-Texture2DArray DirectXAPI::CreateTextureArray(const uint8_t* textureData, uint16_t numElements, uint32_t textureWidth, uint32_t textureHeight) const {
+Texture2DArray DirectXAPI::CreateTextureArray(const uint8_t* textureData, uint16_t numElements, uint32_t elementWidth, uint32_t elementHeight) const {
 	D3D11_TEXTURE2D_DESC textureDesc;
-	textureDesc.Width = textureWidth;
-	textureDesc.Height = textureHeight;
-	textureDesc.MipLevels = 0;
+	textureDesc.Width = elementWidth;
+	textureDesc.Height = elementHeight;
+	textureDesc.MipLevels = 1;
 	textureDesc.ArraySize = numElements;
 	textureDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
 	textureDesc.SampleDesc.Count = 1;
@@ -350,8 +350,8 @@ Texture2DArray DirectXAPI::CreateTextureArray(const uint8_t* textureData, uint16
 	textureDesc.CPUAccessFlags = 0;
 	textureDesc.BindFlags = D3D11_BIND_SHADER_RESOURCE;
 
-	uint32_t elementBytes = textureWidth * textureHeight / numElements * 4; // 4 bytes per pixel
-	uint32_t elementByteWidth = textureWidth * 4 / numElements;
+	uint32_t elementBytes = elementWidth * elementHeight * 4; // 4 bytes per pixel
+	uint32_t elementByteWidth = elementWidth * 4;
 	D3D11_SUBRESOURCE_DATA inputData[256] = {};
 	for(uint16_t i = 0; i < numElements; i++) {
 		inputData[i].pSysMem = textureData + i * elementBytes;
@@ -361,8 +361,8 @@ Texture2DArray DirectXAPI::CreateTextureArray(const uint8_t* textureData, uint16
 	Texture2DArray result;
 	device->CreateTexture2D(&textureDesc, inputData, &result.pixels);
 	device->CreateShaderResourceView(result.pixels, 0, &result.view);
-	result.elementWidth = textureWidth / numElements;
-	result.elementHeight = textureHeight / numElements;
+	result.elementWidth = elementWidth;
+	result.elementHeight = elementHeight;
 	return result;
 }
 

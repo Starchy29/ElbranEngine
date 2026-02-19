@@ -43,7 +43,7 @@ void Renderer::Draw(GraphicsAPI* graphics, const AssetContainer* assets) {
 		psInput.lit = atlasData.lit;
 		psInput.textureIndex = atlasData.row * atlasData.atlas->cols + atlasData.col;
 		graphics->SetTextureArray(ShaderStage::Pixel, &atlasData.atlas->textures, 0);
-		graphics->SetPixelShader(&assets->texturePS, &psInput, sizeof(AtlasPSConstants));
+		graphics->SetPixelShader(&assets->atlasPS, &psInput, sizeof(AtlasPSConstants));
 
 		graphics->DrawMesh(&assets->unitSquare);
 	} break;

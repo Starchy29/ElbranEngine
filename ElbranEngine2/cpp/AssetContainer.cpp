@@ -323,7 +323,7 @@ void AssetContainer::LoadBMP(const char* fileName, MemoryArena* arena, ByteColor
 
 	// load bits
 	ByteColor* loadedBits;
-	if(arena) loadedBits = (ByteColor*)arena->Reserve(width*height);
+	if(arena) loadedBits = (ByteColor*)arena->Reserve(width*height*sizeof(ByteColor));
 	else loadedBits = new ByteColor[width*height];
 
 	file.readLocation = bitmapOffset;
@@ -499,7 +499,7 @@ void AssetContainer::LoadPNG(const char* fileName, MemoryArena* arena, ByteColor
 	lodepng::decode(loadedImage, width, height, lodeFile); // thank you Lode Vandevenne
 
 	if(arena) {
-		*outColors = (ByteColor*)arena->Reserve(width*height);
+		*outColors = (ByteColor*)arena->Reserve(width*height*sizeof(ByteColor));
 	} else {
 		*outColors = new ByteColor[width*height];
 	}

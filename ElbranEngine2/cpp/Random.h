@@ -1,8 +1,6 @@
 #pragma once
 #include "Math.h"
 
-#define PERLIN_OCTAVES 6
-
 class Random {
 public:
 	Random() = default;
@@ -16,6 +14,7 @@ public:
 	float Perlin(float x, float y = 0.0f) const; // range: [-1, 1]
 
 private:
+	static constexpr int PERLIN_OCTAVES = 6;
 	static constexpr int primes[PERLIN_OCTAVES + 2] = {
 		995615039, 831731269, 174329291, 362489573, 457025711, 787070341, 405493717, 458904767
 	};

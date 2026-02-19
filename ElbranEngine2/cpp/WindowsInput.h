@@ -2,13 +2,12 @@
 #pragma once
 #include "InputManager.h"
 
-#define KEY_COUNT 256
-
 struct HWND__;
 struct _XINPUT_GAMEPAD;
 
 class WindowsInput {
 public:
+    static constexpr uint32_t KEY_COUNT = 256;
     float mouseWheelDelta;
 
     WindowsInput(HWND__* windowHandle);
