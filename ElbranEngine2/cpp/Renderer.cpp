@@ -292,7 +292,7 @@ void Renderer::UpdateTextMesh(const GraphicsAPI* graphics, MemoryArena* arena) {
 	float totalHeight = rows + (rows - 1) * textData.lineSpacing;
 
 	// create mesh to fit in a 1x1 square
-	Vertex* vertices = (Vertex*)arena->Reserve(sizeof(Vertex) * 4 * textLength);
+	Mesh::Vertex* vertices = (Mesh::Vertex*)arena->Reserve(sizeof(Mesh::Vertex) * 4 * textLength);
 	uint32_t* indices = (uint32_t*)arena->Reserve(sizeof(uint32_t) * 6 * textLength);
 	Vector2 cursor = Vector2(0.f, -1.f); // start at y=-1 so the top is at y=0
 	if(textData.horizontalAlignment == HorizontalAlignment::Right) cursor.x = maxWidth - rowWidths[0];
@@ -317,10 +317,10 @@ void Renderer::UpdateTextMesh(const GraphicsAPI* graphics, MemoryArena* arena) {
 			glyphBox.top /= totalHeight;
 			glyphBox.bottom /= totalHeight;
 
-			vertices[4*i] = Vertex{Vector2(glyphBox.left, glyphBox.bottom), Vector2(glyphIndex + 0.0f, glyphIndex + 1.0f)};
-			vertices[4*i+1] = Vertex{Vector2(glyphBox.left, glyphBox.top), Vector2(glyphIndex + 0.0f, glyphIndex + 0.0f)};
-			vertices[4*i+2] = Vertex{Vector2(glyphBox.right, glyphBox.top), Vector2(glyphIndex + 1.0f, glyphIndex + 0.0f)};
-			vertices[4*i+3] = Vertex{Vector2(glyphBox.right, glyphBox.bottom), Vector2(glyphIndex + 1.0f, glyphIndex + 1.0f)};
+			vertices[4*i] = Mesh::Vertex{Vector2(glyphBox.left, glyphBox.bottom), 0.f, Vector2(glyphIndex + 0.0f, glyphIndex + 1.0f)};
+			vertices[4*i+1] = Mesh::Vertex{Vector2(glyphBox.left, glyphBox.top), 0.f, Vector2(glyphIndex + 0.0f, glyphIndex + 0.0f)};
+			vertices[4*i+2] = Mesh::Vertex{Vector2(glyphBox.right, glyphBox.top), 0.f, Vector2(glyphIndex + 1.0f, glyphIndex + 0.0f)};
+			vertices[4*i+3] = Mesh::Vertex{Vector2(glyphBox.right, glyphBox.bottom), 0.f,  Vector2(glyphIndex + 1.0f, glyphIndex + 1.0f)};
 
 			indices[6*i] = 4*i;
 			indices[6*i+1] = 4*i+1;

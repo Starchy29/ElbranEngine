@@ -141,9 +141,17 @@ enum class ShaderDataType {
 	Float, Float2, Float3, Float4
 };
 
-struct Vertex {
-	Vector2 position;
-	Vector2 uv;
+struct Mesh {
+	struct Vertex {
+		Vector2 position;
+		float z;
+		Vector2 uv;
+	};
+
+	GraphicsBuffer* vertices;
+	GraphicsBuffer* indices;
+	uint32_t vertexCount;
+	uint32_t indexCount;
 };
 
 struct Sprite {
@@ -159,12 +167,6 @@ struct SpriteSheet {
 	bool translucent;
 	inline uint16_t SpriteCount() const { return rows * cols; } 
 	inline float ElementAspectRatio() const { return (float)textures.elementWidth / textures.elementHeight; }
-};
-
-struct Mesh {
-	GraphicsBuffer* vertices;
-	GraphicsBuffer* indices;
-	uint16_t indexCount;
 };
 
 struct VertexShader {

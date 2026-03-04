@@ -155,16 +155,22 @@ void DirectXAPI::Resize(UInt2 windowDims, UInt2 viewportDims, UInt2 viewportOffs
 	context->RSSetViewports(1, &viewport);
 }
 
-void DirectXAPI::DrawVertices(uint16_t numVertices) {
+void DirectXAPI::SetVertexBuffer(GraphicsBuffer* vertices) {
+	UINT stride = sizeof(Mesh::Vertex);
+	UINT offset = 0;
+	context->IASetVertexBuffers(0, 1, &vertices, &stride, &offset);
+}
+
+void DirectXAPI::SetIndexBuffer(GraphicsBuffer* indices) {
+	context->IASetIndexBuffer(indices, DXGI_FORMAT_R32_UINT, 0);
+}
+
+void DirectXAPI::DrawVertices(uint32_t numVertices) {
 	context->Draw(numVertices, 0);
 }
 
-void DirectXAPI::DrawMesh(const Mesh* mesh) {
-	UINT stride = sizeof(Vertex);
-	UINT offset = 0;
-	context->IASetVertexBuffers(0, 1, &(mesh->vertices), &stride, &offset);
-	context->IASetIndexBuffer(mesh->indices, DXGI_FORMAT_R32_UINT, 0);
-	context->DrawIndexed(mesh->indexCount, 0, 0);
+void DirectXAPI::DrawIndices(uint32_t numIndices) {
+	context->DrawIndexed(numIndices, 0, 0);
 }
 
 VertexShader DirectXAPI::CreateVertexShader(LoadedFile shaderBlob) const {
@@ -202,40 +208,6 @@ ComputeShader DirectXAPI::CreateComputeShader(LoadedFile shaderBlob) const {
 	reflection->GetThreadGroupSize(&newShader.xGroupSize, &newShader.yGroupSize, &newShader.zGroupSize);
 
 	return newShader;
-}
-
-Mesh DirectXAPI::CreateMesh(const Vertex* vertices, uint16_t vertexCount, const uint32_t* indices, uint16_t indexCount, bool editable) const {
-	Mesh result = {};
-	result.indexCount = indexCount;
-
-	// create the vertex buffer
-	D3D11_BUFFER_DESC vertexDescription = {};
-	vertexDescription.Usage = editable ? D3D11_USAGE_DYNAMIC : D3D11_USAGE_IMMUTABLE;
-	vertexDescription.ByteWidth = sizeof(Vertex) * vertexCount;
-	vertexDescription.BindFlags = D3D11_BIND_VERTEX_BUFFER;
-	vertexDescription.CPUAccessFlags = editable ? D3D11_CPU_ACCESS_WRITE : 0;
-	vertexDescription.MiscFlags = 0;
-	vertexDescription.StructureByteStride = 0;
-
-	D3D11_SUBRESOURCE_DATA initialData = {};
-	initialData.pSysMem = vertices;
-
-	device->CreateBuffer(&vertexDescription, &initialData, &(result.vertices));
-
-	// create the index buffer
-	D3D11_BUFFER_DESC indexDescription = {};
-	indexDescription.Usage = D3D11_USAGE_IMMUTABLE;
-	indexDescription.ByteWidth = sizeof(unsigned int) * indexCount;
-	indexDescription.BindFlags = D3D11_BIND_INDEX_BUFFER;
-	indexDescription.CPUAccessFlags = 0;
-	indexDescription.MiscFlags = 0;
-	indexDescription.StructureByteStride = 0;
-
-	initialData.pSysMem = indices;
-
-	device->CreateBuffer(&indexDescription, &initialData, &(result.indices));
-
-	return result;
 }
 
 GraphicsBuffer* DirectXAPI::CreateConstantBuffer(uint32_t byteLength) const {
@@ -659,13 +631,49 @@ Sampler* DirectXAPI::CreateDefaultSampler() const {
 void DirectXAPI::CreateDefaultInputLayout(LoadedFile vertexShaderBlob) {
 	// set the input layout to match the Vertex struct in GraphicsData.h
 	D3D11_INPUT_ELEMENT_DESC inputDescriptions[2];
-	inputDescriptions[0] = { "POSITION", 0, DXGI_FORMAT_R32G32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT };
+	inputDescriptions[0] = { "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT };
 	inputDescriptions[1] = { "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT };
 
 	ID3D11InputLayout* defaultLayout;
 	device->CreateInputLayout(inputDescriptions, 2, vertexShaderBlob.bytes, vertexShaderBlob.fileSize, &defaultLayout);
 	context->IASetInputLayout(defaultLayout);
 	defaultLayout->Release();
+}
+
+GraphicsBuffer* DirectXAPI::CreateVertexBuffer(const Mesh::Vertex* vertices, uint32_t vertexCount, bool editable) const {
+	GraphicsBuffer* result;
+
+	D3D11_BUFFER_DESC vertexDescription = {};
+	vertexDescription.Usage = editable ? D3D11_USAGE_DYNAMIC : D3D11_USAGE_IMMUTABLE;
+	vertexDescription.ByteWidth = sizeof(Mesh::Vertex) * vertexCount;
+	vertexDescription.BindFlags = D3D11_BIND_VERTEX_BUFFER;
+	vertexDescription.CPUAccessFlags = editable ? D3D11_CPU_ACCESS_WRITE : 0;
+	vertexDescription.MiscFlags = 0;
+	vertexDescription.StructureByteStride = 0;
+
+	D3D11_SUBRESOURCE_DATA initialData = {};
+	initialData.pSysMem = vertices;
+
+	device->CreateBuffer(&vertexDescription, &initialData, &result);
+	return result;
+}
+
+GraphicsBuffer* DirectXAPI::CreateIndexBuffer(const uint32_t* indices, uint32_t indexCount) const {
+	GraphicsBuffer* result;
+	
+	D3D11_BUFFER_DESC indexDescription = {};
+	indexDescription.Usage = D3D11_USAGE_IMMUTABLE;
+	indexDescription.ByteWidth = sizeof(unsigned int) * indexCount;
+	indexDescription.BindFlags = D3D11_BIND_INDEX_BUFFER;
+	indexDescription.CPUAccessFlags = 0;
+	indexDescription.MiscFlags = 0;
+	indexDescription.StructureByteStride = 0;
+
+	D3D11_SUBRESOURCE_DATA initialData = {};
+	initialData.pSysMem = indices;
+
+	device->CreateBuffer(&indexDescription, &initialData, &result);
+	return result;
 }
 
 void DirectXAPI::CreateTexture(Texture2D* outTexture, uint32_t width, uint32_t height, bool renderTarget, bool computeWritable, const void* initialData) const {

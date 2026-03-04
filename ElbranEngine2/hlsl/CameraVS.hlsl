@@ -12,7 +12,7 @@ cbuffer Scene : register(b1) {
 
 VertexToPixel main(Vertex input) {
 	VertexToPixel output;
-	float4 fullPosition = float4(input.position, 0, 1);
+	float4 fullPosition = float4(input.position, 1);
 	fullPosition = mul(worldTransform, fullPosition);
 	output.worldPosition = fullPosition.xy;
 	output.screenPosition = mul(viewProjection, fullPosition);

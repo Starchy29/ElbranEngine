@@ -122,14 +122,6 @@ void GraphicsAPI::PresentFrame() {
 	platformGraphics->PresentFrame();
 }
 
-bool GraphicsAPI::IsFullscreen() const { return platformGraphics->IsFullscreen(); }
-void GraphicsAPI::SetFullscreen(bool fullscreen) { platformGraphics->SetFullscreen(fullscreen); }
-
-VertexShader GraphicsAPI::CreateVertexShader(LoadedFile shaderBlob) const { return platformGraphics->CreateVertexShader(shaderBlob); }
-GeometryShader GraphicsAPI::CreateGeometryShader(LoadedFile shaderBlob) const { return platformGraphics->CreateGeometryShader(shaderBlob); }
-PixelShader GraphicsAPI::CreatePixelShader(LoadedFile shaderBlob) const { return platformGraphics->CreatePixelShader(shaderBlob); }
-ComputeShader GraphicsAPI::CreateComputeShader(LoadedFile shaderBlob) const { return platformGraphics->CreateComputeShader(shaderBlob); }
-
 Sprite GraphicsAPI::CreateSprite(ImageBuffer image) const {
 	Sprite result = {};
 	result.texture = CreateConstantTexture(image.width, image.height, (uint8_t*)image.pixels);
@@ -182,11 +174,35 @@ SpriteSheet GraphicsAPI::CreateSpriteSheet(MemoryArena* arena, ImageBuffer image
 	return result;
 }
 
+Mesh GraphicsAPI::CreateMesh(const Mesh::Vertex* vertices, uint32_t vertexCount, const uint32_t* indices, uint32_t indexCount, bool editable) const {
+	Mesh result = {};
+	result.vertexCount = vertexCount;
+	result.indexCount = indexCount;
+	result.vertices = platformGraphics->CreateVertexBuffer(vertices, vertexCount, editable);
+	result.indices = platformGraphics->CreateIndexBuffer(indices, indexCount);
+	return result;
+}
+
+void GraphicsAPI::DrawMesh(const Mesh* mesh) {
+	platformGraphics->SetVertexBuffer(mesh->vertices);
+	platformGraphics->SetIndexBuffer(mesh->indices);
+	platformGraphics->DrawIndices(mesh->indexCount);
+}
+
+bool GraphicsAPI::IsFullscreen() const { return platformGraphics->IsFullscreen(); }
+void GraphicsAPI::SetFullscreen(bool fullscreen) { platformGraphics->SetFullscreen(fullscreen); }
+
+VertexShader GraphicsAPI::CreateVertexShader(LoadedFile shaderBlob) const { return platformGraphics->CreateVertexShader(shaderBlob); }
+GeometryShader GraphicsAPI::CreateGeometryShader(LoadedFile shaderBlob) const { return platformGraphics->CreateGeometryShader(shaderBlob); }
+PixelShader GraphicsAPI::CreatePixelShader(LoadedFile shaderBlob) const { return platformGraphics->CreatePixelShader(shaderBlob); }
+ComputeShader GraphicsAPI::CreateComputeShader(LoadedFile shaderBlob) const { return platformGraphics->CreateComputeShader(shaderBlob); }
+
 Texture2D GraphicsAPI::CreateConstantTexture(uint32_t width, uint32_t height, const uint8_t* textureData) const { return platformGraphics->CreateConstantTexture(width, height, textureData); }
 Texture2DArray GraphicsAPI::CreateTextureArray(const uint8_t* textureData, uint16_t numElements, uint32_t textureWidth, uint32_t textureHeight) const { return platformGraphics->CreateTextureArray(textureData, numElements, textureWidth, textureHeight); }
 Sampler* GraphicsAPI::CreateDefaultSampler() const { return platformGraphics->CreateDefaultSampler(); }
 void GraphicsAPI::CreateDefaultInputLayout(LoadedFile vertexShaderBlob) { platformGraphics->CreateDefaultInputLayout(vertexShaderBlob); }
-Mesh GraphicsAPI::CreateMesh(const Vertex* vertices, uint16_t vertexCount, const uint32_t* indices, uint16_t indexCount, bool editable) const { return platformGraphics->CreateMesh(vertices, vertexCount, indices, indexCount, editable); }
+GraphicsBuffer* GraphicsAPI::CreateVertexBuffer(const Mesh::Vertex* vertices, uint32_t vertexCount, bool editable) const { return platformGraphics->CreateVertexBuffer(vertices, vertexCount, editable); }
+GraphicsBuffer* GraphicsAPI::CreateIndexBuffer(const uint32_t* indices, uint32_t indexCount) const { return platformGraphics->CreateIndexBuffer(indices, indexCount); }
 GraphicsBuffer* GraphicsAPI::CreateConstantBuffer(uint32_t byteLength) const { return platformGraphics->CreateConstantBuffer(byteLength); }
 ArrayBuffer GraphicsAPI::CreateArrayBuffer(ShaderDataType type, uint32_t elements, uint32_t structBytes) const{ return platformGraphics->CreateArrayBuffer(type, elements, structBytes); }
 EditBuffer GraphicsAPI::CreateEditBuffer(ShaderDataType type, uint32_t elements, uint32_t structBytes) const { return platformGraphics->CreateEditBuffer(type, elements, structBytes); }
@@ -197,8 +213,10 @@ ComputeTexture GraphicsAPI::CreateComputeTexture(uint32_t width, uint32_t height
 void GraphicsAPI::SetBlendMode(BlendState mode) { platformGraphics->SetBlendMode(mode); }
 void GraphicsAPI::SetPrimitive(RenderPrimitive primitive) { platformGraphics->SetPrimitive(primitive); }
 void GraphicsAPI::SetRenderTarget(const RenderTarget* renderTarget, bool useDepthStencil) { platformGraphics->SetRenderTarget(renderTarget, useDepthStencil); }
-void GraphicsAPI::DrawVertices(uint16_t numVertices) const { platformGraphics->DrawVertices(numVertices); }
-void GraphicsAPI::DrawMesh(const Mesh* mesh) const { platformGraphics->DrawMesh(mesh); }
+void GraphicsAPI::SetVertexBuffer(GraphicsBuffer* vertices) { platformGraphics->SetVertexBuffer(vertices); }
+void GraphicsAPI::SetIndexBuffer(GraphicsBuffer* indices) { platformGraphics->SetIndexBuffer(indices); }
+void GraphicsAPI::DrawVertices(uint32_t numVertices) { platformGraphics->DrawVertices(numVertices); }
+void GraphicsAPI::DrawIndices(uint32_t numIndices) { platformGraphics->DrawIndices(numIndices); }
 
 void GraphicsAPI::SetComputeTexture(const ComputeTexture* texture, uint8_t slot) { platformGraphics->SetComputeTexture(texture, slot); }
 void GraphicsAPI::SetEditBuffer(const EditBuffer* buffer, uint8_t slot) { platformGraphics->SetEditBuffer(buffer, slot); }

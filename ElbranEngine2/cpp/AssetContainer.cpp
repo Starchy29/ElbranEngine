@@ -12,11 +12,11 @@ void AssetContainer::Initialize(GraphicsAPI* graphics, MemoryArena* arena) {
 	graphics->SetSampler(ShaderStage::Compute, defaultSampler, 0);
 
 	// create unit square
-	Vertex vertices[] = {
-		{ Vector2(-0.5f, -0.5f), Vector2(0.0f, 1.0f) },
-		{ Vector2(-0.5f, 0.5f), Vector2(0.0f, 0.0f) },
-		{ Vector2(0.5f, 0.5f), Vector2(1.0f, 0.0f) },
-		{ Vector2(0.5f, -0.5f), Vector2(1.0f, 1.0f) }
+	const Mesh::Vertex vertices[] = {
+		{ Vector2(-0.5f, -0.5f), 0.f, Vector2(0.0f, 1.0f) },
+		{ Vector2(-0.5f, 0.5f), 0.f, Vector2(0.0f, 0.0f) },
+		{ Vector2(0.5f, 0.5f), 0.f, Vector2(1.0f, 0.0f) },
+		{ Vector2(0.5f, -0.5f), 0.f, Vector2(1.0f, 1.0f) }
 	};
 
 	uint32_t indices[] = {
@@ -27,10 +27,10 @@ void AssetContainer::Initialize(GraphicsAPI* graphics, MemoryArena* arena) {
 	unitSquare = graphics->CreateMesh(vertices, 4, indices, 6, false);
 
 	// create unit triangle
-	Vertex triVerts[] = {
-		{ Vector2(-0.5f, 0.5f), Vector2(0.0f, 0.0f) },
-		{ Vector2(0.5f, 0.f), Vector2(1.0f, 0.5f) },
-		{ Vector2(-0.5f, -0.5f), Vector2(0.0f, 1.0f) }
+	const Mesh::Vertex triVerts[] = {
+		{ Vector2(-0.5f, 0.5f), 0.f, Vector2(0.0f, 0.0f) },
+		{ Vector2(0.5f, 0.f), 0.f, Vector2(1.0f, 0.5f) },
+		{ Vector2(-0.5f, -0.5f), 0.f, Vector2(0.0f, 1.0f) }
 	};
 
 	uint32_t triIndices[] = { 0, 1, 2 };

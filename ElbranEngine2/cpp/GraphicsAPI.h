@@ -47,7 +47,9 @@ public:
 	Texture2DArray CreateTextureArray(const uint8_t* textureData, uint16_t numElements, uint32_t textureWidth, uint32_t textureHeight) const;
 	Sampler* CreateDefaultSampler() const;
 	void CreateDefaultInputLayout(LoadedFile vertexShaderBlob);
-	Mesh CreateMesh(const Vertex* vertices, uint16_t vertexCount, const uint32_t* indices, uint16_t indexCount, bool editable) const;
+	GraphicsBuffer* CreateVertexBuffer(const Mesh::Vertex* vertices, uint32_t vertexCount, bool editable) const;
+	GraphicsBuffer* CreateIndexBuffer(const uint32_t* indices, uint32_t indexCount) const;
+	Mesh CreateMesh(const Mesh::Vertex* vertices, uint32_t vertexCount, const uint32_t* indices, uint32_t indexCount, bool editable) const;
 	GraphicsBuffer* CreateConstantBuffer(uint32_t byteLength) const;
 	ArrayBuffer CreateArrayBuffer(ShaderDataType type, uint32_t elements, uint32_t structBytes = 0u) const;
 	EditBuffer CreateEditBuffer(ShaderDataType type, uint32_t elements, uint32_t structBytes = 0u) const;
@@ -72,8 +74,11 @@ public:
 	void SetPrimitive(RenderPrimitive primitive);
 	void SetRenderTarget(const RenderTarget* renderTarget, bool useDepthStencil);
 
-	void DrawVertices(uint16_t numVertices) const;
-	void DrawMesh(const Mesh* mesh) const;
+	void SetVertexBuffer(GraphicsBuffer* vertices);
+	void SetIndexBuffer(GraphicsBuffer* indices);
+	void DrawVertices(uint32_t numVertices);
+	void DrawIndices(uint32_t numIndices);
+	void DrawMesh(const Mesh* mesh);
 	void DrawFullscreen(const AssetContainer*);
 
 	// compute shader functions

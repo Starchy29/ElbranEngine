@@ -2,7 +2,7 @@
 #define __STRUCTS_INCLUDES__
 
 struct Vertex {
-	float2 position : POSITION;
+	float3 position : POSITION;
 	float2 uv : TEXCOORD;
 };
 

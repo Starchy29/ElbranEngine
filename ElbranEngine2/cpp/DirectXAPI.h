@@ -23,8 +23,10 @@ public:
     void SetFullscreen(bool fullscreen);
     void Resize(UInt2 windowDims, UInt2 viewportDims, UInt2 viewportOffset);
 
-    void DrawVertices(uint16_t numVertices);
-    void DrawMesh(const Mesh* mesh);
+    void SetVertexBuffer(GraphicsBuffer* vertices);
+    void SetIndexBuffer(GraphicsBuffer* indices);
+    void DrawVertices(uint32_t numVertices);
+    void DrawIndices(uint32_t numIndices);
 
     VertexShader CreateVertexShader(LoadedFile shaderBlob) const;
     GeometryShader CreateGeometryShader(LoadedFile shaderBlob) const;
@@ -35,7 +37,8 @@ public:
     Texture2DArray CreateTextureArray(const uint8_t* textureData, uint16_t numElements, uint32_t elementWidth, uint32_t elementHeight) const;
     Sampler* CreateDefaultSampler() const;
     void CreateDefaultInputLayout(LoadedFile vertexShaderBlob);
-    Mesh CreateMesh(const Vertex* vertices, uint16_t vertexCount, const uint32_t* indices, uint16_t indexCount, bool editable) const;
+    GraphicsBuffer* CreateVertexBuffer(const Mesh::Vertex* vertices, uint32_t vertexCount, bool editable) const;
+    GraphicsBuffer* CreateIndexBuffer(const uint32_t* indices, uint32_t indexCount) const;
     GraphicsBuffer* CreateConstantBuffer(uint32_t byteLength) const;
     ArrayBuffer CreateArrayBuffer(ShaderDataType type, uint32_t elements, uint32_t structBytes = 0u) const;
     EditBuffer CreateEditBuffer(ShaderDataType type, uint32_t elements, uint32_t structBytes = 0u) const;
