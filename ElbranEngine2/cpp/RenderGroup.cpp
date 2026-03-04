@@ -8,23 +8,22 @@
 #define LIGHTS_REGISTER 127
 #define LIGHT_INFO_REGISTER 1
 
-void RenderGroup::Initialize(uint32_t numTransforms, uint32_t numRenderers) {
-	ASSERT(numTransforms > numRenderers)
+void RenderGroup::Initialize(uint32_t maxRenderers, uint32_t extraTransforms) {
 	ambientLight = Color::White;
 	backgroundColor = Color::White;
 	backgroundImage = nullptr;
 	camera = {};
 
-	transformCount = 0;
-	transformCapacity = numTransforms;
 	rendererCount = 0;
-	rendererCapacity = numRenderers;
+	rendererCapacity = maxRenderers;
+	transformCount = 0;
+	transformCapacity = maxRenderers + 1 + extraTransforms; // reserve an extra transform for the camera
 
-	uint8_t* dataBlock = new uint8_t[numTransforms * (sizeof(Transform) + sizeof(Matrix)) + numRenderers * sizeof(Renderer)] {};
+	uint8_t* dataBlock = new uint8_t[transformCapacity * (sizeof(Transform) + sizeof(Matrix)) + rendererCapacity * sizeof(Renderer)] {};
 	transforms = (Transform*)dataBlock;
-	dataBlock += numTransforms * sizeof(Transform);
+	dataBlock += transformCapacity * sizeof(Transform);
 	worldMatrices = (Matrix*)dataBlock;
-	dataBlock += numTransforms * sizeof(Matrix);
+	dataBlock += transformCapacity * sizeof(Matrix);
 	renderers = (Renderer*)dataBlock;
 
 	camera.viewWidth = 1.f;
@@ -32,9 +31,7 @@ void RenderGroup::Initialize(uint32_t numTransforms, uint32_t numRenderers) {
 }
 
 void RenderGroup::Release(const GraphicsAPI* graphics) {
-	for(uint32_t i = 0; i < rendererCount; i++) {
-		renderers[i].Release(graphics);
-	}
+	for(uint32_t i = 0; i < rendererCount; i++) renderers[i].Release(graphics);
 	delete[] transforms; // all three arrays were allocated in one allocation
 }
 

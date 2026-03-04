@@ -24,7 +24,7 @@ struct RenderGroup {
 	Renderer* renderers;
 
 	RenderGroup() = default;
-	void Initialize(uint32_t numTransforms, uint32_t numRenderers);
+	void Initialize(uint32_t maxRenderers, uint32_t extraTransforms = 0);
 	void Release(const GraphicsAPI*);
 
 	void Draw(GraphicsAPI*, const AssetContainer*, MemoryArena*) const;
