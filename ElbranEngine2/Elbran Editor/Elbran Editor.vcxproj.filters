@@ -198,10 +198,10 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <FxCompile Include="..\hlsl\BloomFilterPP.hlsl">
+    <FxCompile Include="..\hlsl\BloomFilterPS.hlsl">
       <Filter>Engine\Shaders\HLSL</Filter>
     </FxCompile>
-    <FxCompile Include="..\hlsl\BlurPP.hlsl">
+    <FxCompile Include="..\hlsl\BlurPS.hlsl">
       <Filter>Engine\Shaders\HLSL</Filter>
     </FxCompile>
     <FxCompile Include="..\hlsl\BrightnessSumCS.hlsl">
@@ -213,7 +213,7 @@
     <FxCompile Include="..\hlsl\CircleFillPS.hlsl">
       <Filter>Engine\Shaders\HLSL</Filter>
     </FxCompile>
-    <FxCompile Include="..\hlsl\ConSatValPP.hlsl">
+    <FxCompile Include="..\hlsl\ConSatValPS.hlsl">
       <Filter>Engine\Shaders\HLSL</Filter>
     </FxCompile>
     <FxCompile Include="..\hlsl\FullscreenVS.hlsl">
@@ -231,7 +231,7 @@
     <FxCompile Include="..\hlsl\ParticleSpawnCS.hlsl">
       <Filter>Engine\Shaders\HLSL</Filter>
     </FxCompile>
-    <FxCompile Include="..\hlsl\ScreenSumPP.hlsl">
+    <FxCompile Include="..\hlsl\ScreenSumPS.hlsl">
       <Filter>Engine\Shaders\HLSL</Filter>
     </FxCompile>
     <FxCompile Include="..\hlsl\SolidColorPS.hlsl">

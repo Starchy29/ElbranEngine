@@ -3,7 +3,6 @@
 #include <d3d11.h>
 #include <dxgi1_3.h>
 #include "DirectXAPI.h"
-#include "FileIO.h"
 #include "Math.h"
 
 #define SafeRelease(x) if(x) x->Release()
@@ -104,19 +103,7 @@ DirectXAPI::DirectXAPI(HWND windowHandle) {
 
 	device->CreateBlendState(&blendDescription, additiveBlendState.GetAddressOf());
 
-	// set the input layout to match the Vertex struct in GraphicsData.h
-	D3D11_INPUT_ELEMENT_DESC inputDescriptions[2];
-	inputDescriptions[0] = { "POSITION", 0, DXGI_FORMAT_R32G32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT };
-	inputDescriptions[1] = { "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT };
-
-	ID3D11InputLayout* defaultLayout;
-	LoadedFile sampleShader = FileIO::LoadFile("shaders\\CameraVS.cso", nullptr);
-	device->CreateInputLayout(inputDescriptions, 2, sampleShader.bytes, sampleShader.fileSize, &defaultLayout);
-	context->IASetInputLayout(defaultLayout);
-	defaultLayout->Release();
-	sampleShader.Release();
-
-	// set other defaults
+	// set default topology
 	context->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 }
 
@@ -180,38 +167,38 @@ void DirectXAPI::DrawMesh(const Mesh* mesh) {
 	context->DrawIndexed(mesh->indexCount, 0, 0);
 }
 
-VertexShader DirectXAPI::CreateVertexShader(LoadedFile* shaderBlob) const {
+VertexShader DirectXAPI::CreateVertexShader(LoadedFile shaderBlob) const {
 	VertexShader newShader = {};
-	HRESULT result = device->CreateVertexShader(shaderBlob->bytes, shaderBlob->fileSize, 0, &newShader.byteCode);
-	ASSERT(result == S_OK);
-	newShader.constants = LoadConstantBuffer(shaderBlob);
+	HRESULT result = device->CreateVertexShader(shaderBlob.bytes, shaderBlob.fileSize, 0, &newShader.byteCode);
+	ASSERT(result == S_OK)
+	newShader.constants = LoadConstantBuffer(&shaderBlob);
 	return newShader;
 }
 
-GeometryShader DirectXAPI::CreateGeometryShader(LoadedFile* shaderBlob) const {
+GeometryShader DirectXAPI::CreateGeometryShader(LoadedFile shaderBlob) const {
 	GeometryShader newShader{};
-	HRESULT result = device->CreateGeometryShader(shaderBlob->bytes, shaderBlob->fileSize, 0, &newShader.byteCode);
-	ASSERT(result == S_OK);
-	newShader.constants = LoadConstantBuffer(shaderBlob);
+	HRESULT result = device->CreateGeometryShader(shaderBlob.bytes, shaderBlob.fileSize, 0, &newShader.byteCode);
+	ASSERT(result == S_OK)
+	newShader.constants = LoadConstantBuffer(&shaderBlob);
 	return newShader;
 }
 
-PixelShader DirectXAPI::CreatePixelShader(LoadedFile* shaderBlob) const {
+PixelShader DirectXAPI::CreatePixelShader(LoadedFile shaderBlob) const {
 	PixelShader newShader{};
-	HRESULT result = device->CreatePixelShader(shaderBlob->bytes, shaderBlob->fileSize, 0, &newShader.byteCode);
-	ASSERT(result == S_OK);
-	newShader.constants = LoadConstantBuffer(shaderBlob);
+	HRESULT result = device->CreatePixelShader(shaderBlob.bytes, shaderBlob.fileSize, 0, &newShader.byteCode);
+	ASSERT(result == S_OK)
+	newShader.constants = LoadConstantBuffer(&shaderBlob);
 	return newShader;
 }
 
-ComputeShader DirectXAPI::CreateComputeShader(LoadedFile* shaderBlob) const {
+ComputeShader DirectXAPI::CreateComputeShader(LoadedFile shaderBlob) const {
 	ComputeShader newShader{};
-	HRESULT result = device->CreateComputeShader(shaderBlob->bytes, shaderBlob->fileSize, 0, &newShader.byteCode);
-	ASSERT(result == S_OK);
-	newShader.constants = LoadConstantBuffer(shaderBlob);
+	HRESULT result = device->CreateComputeShader(shaderBlob.bytes, shaderBlob.fileSize, 0, &newShader.byteCode);
+	ASSERT(result == S_OK)
+	newShader.constants = LoadConstantBuffer(&shaderBlob);
 
 	Microsoft::WRL::ComPtr<ID3D11ShaderReflection> reflection;
-	D3DReflect(shaderBlob->bytes, shaderBlob->fileSize, IID_ID3D11ShaderReflection, (void**)reflection.GetAddressOf());
+	D3DReflect(shaderBlob.bytes, shaderBlob.fileSize, IID_ID3D11ShaderReflection, (void**)reflection.GetAddressOf());
 	reflection->GetThreadGroupSize(&newShader.xGroupSize, &newShader.yGroupSize, &newShader.zGroupSize);
 
 	return newShader;
@@ -667,6 +654,18 @@ Sampler* DirectXAPI::CreateDefaultSampler() const {
 
 	device->CreateSamplerState(&descriptiom, &result);
 	return result;
+}
+
+void DirectXAPI::CreateDefaultInputLayout(LoadedFile vertexShaderBlob) {
+	// set the input layout to match the Vertex struct in GraphicsData.h
+	D3D11_INPUT_ELEMENT_DESC inputDescriptions[2];
+	inputDescriptions[0] = { "POSITION", 0, DXGI_FORMAT_R32G32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT };
+	inputDescriptions[1] = { "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT };
+
+	ID3D11InputLayout* defaultLayout;
+	device->CreateInputLayout(inputDescriptions, 2, vertexShaderBlob.bytes, vertexShaderBlob.fileSize, &defaultLayout);
+	context->IASetInputLayout(defaultLayout);
+	defaultLayout->Release();
 }
 
 void DirectXAPI::CreateTexture(Texture2D* outTexture, uint32_t width, uint32_t height, bool renderTarget, bool computeWritable, const void* initialData) const {

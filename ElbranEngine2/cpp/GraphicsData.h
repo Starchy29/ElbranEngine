@@ -154,17 +154,17 @@ struct Sprite {
 
 struct SpriteSheet {
 	Texture2DArray textures;
-	uint8_t rows;
-	uint8_t cols;
+	uint16_t rows;
+	uint16_t cols;
 	bool translucent;
-	inline uint16_t SpriteCount() const { return (uint16_t)rows * cols; } 
+	inline uint16_t SpriteCount() const { return rows * cols; } 
 	inline float ElementAspectRatio() const { return (float)textures.elementWidth / textures.elementHeight; }
 };
 
 struct Mesh {
-	uint16_t indexCount;
 	GraphicsBuffer* vertices;
 	GraphicsBuffer* indices;
+	uint16_t indexCount;
 };
 
 struct VertexShader {
@@ -196,4 +196,16 @@ struct Font {
 	ArrayBuffer firstCurveIndices;
 	Vector2* glyphDimensions;
 	float* glyphBaselines; // 0-1, where 0 is the bottom and 1 is the top
+};
+
+struct ImageBuffer {
+	struct Pixel {
+		uint8_t red;
+		uint8_t green;
+		uint8_t blue;
+		uint8_t alpha;
+	};
+	Pixel* pixels;
+	uint32_t width;
+	uint32_t height;
 };

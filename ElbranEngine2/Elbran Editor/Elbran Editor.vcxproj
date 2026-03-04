@@ -200,12 +200,12 @@
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Pixel</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
     </FxCompile>
-    <FxCompile Include="..\hlsl\BloomFilterPP.hlsl" />
-    <FxCompile Include="..\hlsl\BlurPP.hlsl" />
+    <FxCompile Include="..\hlsl\BloomFilterPS.hlsl" />
+    <FxCompile Include="..\hlsl\BlurPS.hlsl" />
     <FxCompile Include="..\hlsl\BrightnessSumCS.hlsl" />
     <FxCompile Include="..\hlsl\CameraVS.hlsl" />
     <FxCompile Include="..\hlsl\CircleFillPS.hlsl" />
-    <FxCompile Include="..\hlsl\ConSatValPP.hlsl" />
+    <FxCompile Include="..\hlsl\ConSatValPS.hlsl" />
     <FxCompile Include="..\hlsl\FullscreenVS.hlsl" />
     <FxCompile Include="..\hlsl\ParticleClearCS.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Compute</ShaderType>
@@ -221,7 +221,7 @@
     <FxCompile Include="..\hlsl\ParticlePassVS.hlsl" />
     <FxCompile Include="..\hlsl\ParticleQuadGS.hlsl" />
     <FxCompile Include="..\hlsl\ParticleSpawnCS.hlsl" />
-    <FxCompile Include="..\hlsl\ScreenSumPP.hlsl" />
+    <FxCompile Include="..\hlsl\ScreenSumPS.hlsl" />
     <FxCompile Include="..\hlsl\SolidColorPS.hlsl" />
     <FxCompile Include="..\hlsl\TextRasterizePS.hlsl" />
     <FxCompile Include="..\hlsl\TexturePS.hlsl" />

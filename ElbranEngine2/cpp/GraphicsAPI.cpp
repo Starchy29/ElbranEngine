@@ -125,14 +125,67 @@ void GraphicsAPI::PresentFrame() {
 bool GraphicsAPI::IsFullscreen() const { return platformGraphics->IsFullscreen(); }
 void GraphicsAPI::SetFullscreen(bool fullscreen) { platformGraphics->SetFullscreen(fullscreen); }
 
-VertexShader GraphicsAPI::CreateVertexShader(LoadedFile* shaderBlob) const { return platformGraphics->CreateVertexShader(shaderBlob); }
-GeometryShader GraphicsAPI::CreateGeometryShader(LoadedFile* shaderBlob) const { return platformGraphics->CreateGeometryShader(shaderBlob); }
-PixelShader GraphicsAPI::CreatePixelShader(LoadedFile* shaderBlob) const { return platformGraphics->CreatePixelShader(shaderBlob); }
-ComputeShader GraphicsAPI::CreateComputeShader(LoadedFile* shaderBlob) const { return platformGraphics->CreateComputeShader(shaderBlob); }
+VertexShader GraphicsAPI::CreateVertexShader(LoadedFile shaderBlob) const { return platformGraphics->CreateVertexShader(shaderBlob); }
+GeometryShader GraphicsAPI::CreateGeometryShader(LoadedFile shaderBlob) const { return platformGraphics->CreateGeometryShader(shaderBlob); }
+PixelShader GraphicsAPI::CreatePixelShader(LoadedFile shaderBlob) const { return platformGraphics->CreatePixelShader(shaderBlob); }
+ComputeShader GraphicsAPI::CreateComputeShader(LoadedFile shaderBlob) const { return platformGraphics->CreateComputeShader(shaderBlob); }
+
+Sprite GraphicsAPI::CreateSprite(ImageBuffer image) const {
+	Sprite result = {};
+	result.texture = CreateConstantTexture(image.width, image.height, (uint8_t*)image.pixels);
+	for(uint32_t i = 0; i < image.width * image.height; i++) {
+		if(image.pixels[i].alpha > 0 && image.pixels[i].alpha < 255)  {
+			result.translucent = true;
+			break;
+		}
+	}
+	return result;
+}
+
+SpriteSheet GraphicsAPI::CreateSpriteSheet(MemoryArena* arena, ImageBuffer image, uint16_t rows, uint16_t cols) const {
+	SpriteSheet result = {};
+	result.rows = rows;
+	result.cols = cols;
+
+	// reorder pixels
+	uint32_t elementWidth = image.width / cols;
+	uint32_t elementHeight = image.height / rows;
+	uint32_t pixelsPerElement = elementHeight * elementWidth;
+	uint32_t elements = (uint32_t)rows * cols;
+
+	ImageBuffer::Pixel* reorderedPixels;
+	if(arena) reorderedPixels = (ImageBuffer::Pixel*)arena->Reserve(sizeof(ImageBuffer::Pixel) * image.width * image.height);
+	else reorderedPixels = new ImageBuffer::Pixel[image.width * image.height];
+
+	for(uint8_t r = 0; r < rows; r++) {
+		for(uint8_t c = 0; c < cols; c++) {
+			for(uint32_t h = 0; h < elementHeight; h++) {
+				memcpy(reorderedPixels + c * pixelsPerElement + r * cols * pixelsPerElement + h * elementWidth,
+					image.pixels + c * elementWidth + r * image.width * elementHeight + h * image.height, 
+					elementWidth * sizeof(ImageBuffer::Pixel)
+				);
+			}
+		}
+	}
+
+	result.textures = CreateTextureArray((uint8_t*)reorderedPixels, elements, image.width, image.height);
+
+	// check for translucency
+	for(uint32_t i = 0; i < image.width * image.height; i++) {
+		if(image.pixels[i].alpha > 0 && image.pixels[i].alpha < 255)  {
+			result.translucent = true;
+			break;
+		}
+	}
+
+	if(!arena) delete[] reorderedPixels;
+	return result;
+}
 
 Texture2D GraphicsAPI::CreateConstantTexture(uint32_t width, uint32_t height, const uint8_t* textureData) const { return platformGraphics->CreateConstantTexture(width, height, textureData); }
 Texture2DArray GraphicsAPI::CreateTextureArray(const uint8_t* textureData, uint16_t numElements, uint32_t textureWidth, uint32_t textureHeight) const { return platformGraphics->CreateTextureArray(textureData, numElements, textureWidth, textureHeight); }
 Sampler* GraphicsAPI::CreateDefaultSampler() const { return platformGraphics->CreateDefaultSampler(); }
+void GraphicsAPI::CreateDefaultInputLayout(LoadedFile vertexShaderBlob) { platformGraphics->CreateDefaultInputLayout(vertexShaderBlob); }
 Mesh GraphicsAPI::CreateMesh(const Vertex* vertices, uint16_t vertexCount, const uint32_t* indices, uint16_t indexCount, bool editable) const { return platformGraphics->CreateMesh(vertices, vertexCount, indices, indexCount, editable); }
 GraphicsBuffer* GraphicsAPI::CreateConstantBuffer(uint32_t byteLength) const { return platformGraphics->CreateConstantBuffer(byteLength); }
 ArrayBuffer GraphicsAPI::CreateArrayBuffer(ShaderDataType type, uint32_t elements, uint32_t structBytes) const{ return platformGraphics->CreateArrayBuffer(type, elements, structBytes); }

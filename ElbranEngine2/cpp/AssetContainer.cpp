@@ -3,7 +3,6 @@
 #include "MemoryArena.h"
 #include "lodepng.h"
 #include "FixedList.h"
-#include "FileIO.h"
 
 void AssetContainer::Initialize(GraphicsAPI* graphics, MemoryArena* arena) {
 	defaultSampler = graphics->CreateDefaultSampler();
@@ -37,30 +36,37 @@ void AssetContainer::Initialize(GraphicsAPI* graphics, MemoryArena* arena) {
 	uint32_t triIndices[] = { 0, 1, 2 };
 	unitTriangle = graphics->CreateMesh(triVerts, 3, triIndices, 3, false);
 
-	fullscreenVS = LoadVertexShader(graphics, arena, "FullscreenVS.cso");
-	cameraVS = LoadVertexShader(graphics, arena, "CameraVS.cso");
-	particlePassPS = LoadVertexShader(graphics, arena, "ParticlePassVS.cso");
+	// Load assets
+	LoadedFile packedAssets = FileIO::LoadFile("gameAssets.bin", 0);
 
-	particleQuadGS = LoadGeometryShader(graphics, arena, "ParticleQuadGS.cso");
+	LoadedFile cameraShaderBlob = UnpackFile(packedAssets, "CameraVS.cso");
+	graphics->CreateDefaultInputLayout(cameraShaderBlob);
+	cameraVS = graphics->CreateVertexShader(cameraShaderBlob);
+	fullscreenVS = graphics->CreateVertexShader(UnpackFile(packedAssets, "FullscreenVS.cso"));
+	particlePassPS = graphics->CreateVertexShader(UnpackFile(packedAssets, "ParticlePassVS.cso"));
 
-	solidColorPS = LoadPixelShader(graphics, arena, "SolidColorPS.cso");
-	texturePS = LoadPixelShader(graphics, arena, "TexturePS.cso");
-	atlasPS = LoadPixelShader(graphics, arena, "AtlasPS.cso");
-	circleFillPS = LoadPixelShader(graphics, arena, "CircleFillPS.cso");
-	textRasterizePS = LoadPixelShader(graphics, arena, "TextRasterizePS.cso");
+	particleQuadGS = graphics->CreateGeometryShader(UnpackFile(packedAssets, "ParticleQuadGS.cso"));
 
-	conSatValPP = LoadPixelShader(graphics, arena, "ConSatValPP.cso");
-	blurPP = LoadPixelShader(graphics, arena, "BlurPP.cso");
-	bloomFilterPP = LoadPixelShader(graphics, arena, "BloomFilterPP.cso");
-	screenSumPP = LoadPixelShader(graphics, arena, "ScreenSumPP.cso");
+	solidColorPS = graphics->CreatePixelShader(UnpackFile(packedAssets, "SolidColorPS.cso"));
+	texturePS = graphics->CreatePixelShader(UnpackFile(packedAssets, "TexturePS.cso"));
+	atlasPS = graphics->CreatePixelShader(UnpackFile(packedAssets, "AtlasPS.cso"));
+	circleFillPS = graphics->CreatePixelShader(UnpackFile(packedAssets, "CircleFillPS.cso"));
+	textRasterizePS = graphics->CreatePixelShader(UnpackFile(packedAssets, "TextRasterizePS.cso"));
 
-	brightnessSumCS = LoadComputeShader(graphics, arena, "BrightnessSumCS.cso");
-	particleSpawnCS = LoadComputeShader(graphics, arena, "ParticleSpawnCS.cso");
-	particleMoveCS = LoadComputeShader(graphics, arena, "ParticleMoveCS.cso");
-	particleClearCS = LoadComputeShader(graphics, arena, "ParticleClearCS.cso");
+	conSatValPP = graphics->CreatePixelShader(UnpackFile(packedAssets, "ConSatValPS.cso"));
+	blurPP = graphics->CreatePixelShader(UnpackFile(packedAssets, "BlurPS.cso"));
+	bloomFilterPP = graphics->CreatePixelShader(UnpackFile(packedAssets, "BloomFilterPS.cso"));
+	screenSumPP = graphics->CreatePixelShader(UnpackFile(packedAssets, "ScreenSumPS.cso"));
 
-	testSprite = LoadSprite(graphics, arena, "elbran.png");
-	arial = LoadTTF(graphics, arena, "arial.ttf");
+	brightnessSumCS = graphics->CreateComputeShader(UnpackFile(packedAssets, "BrightnessSumCS.cso"));
+	particleSpawnCS = graphics->CreateComputeShader(UnpackFile(packedAssets, "ParticleSpawnCS.cso"));
+	particleMoveCS = graphics->CreateComputeShader(UnpackFile(packedAssets, "ParticleMoveCS.cso"));
+	particleClearCS = graphics->CreateComputeShader(UnpackFile(packedAssets, "ParticleClearCS.cso"));
+
+	testSprite = graphics->CreateSprite(LoadPNG(UnpackFile(packedAssets, "elbran.png"), arena));
+	arial = LoadTTF(UnpackFile(packedAssets, "arial.ttf"), graphics, arena);
+
+	packedAssets.Release();
 }
 
 void AssetContainer::Release(GraphicsAPI* graphics) {
@@ -95,6 +101,56 @@ void AssetContainer::Release(GraphicsAPI* graphics) {
 	ReleaseFont(graphics, &arial);
 }
 
+LoadedFile AssetContainer::UnpackFile(LoadedFile loadedPackFile, const char* fileName) {
+	if(!fileName || fileName[0] == 0) return {};
+
+	/* pack file format:
+		uint32: version number
+		uint32: file count
+		uint32: byte location of file starts table
+		uint8[?]: file binaries
+		uint32[file count]: table containing the start bytes of the files in order
+		char[?]: null-terminated file names in order
+	*/
+
+	loadedPackFile.littleEndian = true;
+	loadedPackFile.readLocation = 4;
+	uint32_t fileCount = loadedPackFile.ReadUInt32();
+	uint32_t startsTableLocation = loadedPackFile.ReadUInt32();
+	uint32_t* fileStarts = (uint32_t*)(loadedPackFile.bytes + startsTableLocation);
+
+	// find the index of this file by name
+	const char* nextTableChar = (char*)&loadedPackFile.bytes[startsTableLocation + sizeof(uint32_t) * fileCount];
+	const char* nextTargetChar = fileName;
+	uint32_t fileIndex = 0;
+	while(fileIndex < fileCount) {
+		if(*nextTableChar != *nextTargetChar) {
+			// not a match: skip to next file name
+			while(*nextTableChar) nextTableChar++;
+			nextTableChar++;
+			fileIndex++;
+			nextTargetChar = fileName;
+		}
+		else if(*nextTargetChar == 0) {
+			// found a match
+			break;
+		}
+		else {
+			// advance to next char comparison
+			nextTableChar++;
+			nextTargetChar++;
+		}
+	}
+
+	ASSERT(fileIndex < fileCount)
+	if(fileIndex >= fileCount) return {}; // failed to find file name
+
+	LoadedFile unpackedFile = {};
+	unpackedFile.bytes = loadedPackFile.bytes + fileStarts[fileIndex];
+	unpackedFile.fileSize = (fileIndex == fileCount - 1 ? startsTableLocation : fileStarts[fileIndex + 1]) - fileStarts[fileIndex];
+	return unpackedFile;
+}
+
 void AssetContainer::ReleaseFont(const GraphicsAPI* graphics, Font* font) {
 	graphics->ReleaseArrayBuffer(&font->glyphCurves);
 	graphics->ReleaseArrayBuffer(&font->firstCurveIndices);
@@ -103,135 +159,13 @@ void AssetContainer::ReleaseFont(const GraphicsAPI* graphics, Font* font) {
 	font->charToGlyphIndex.Release();
 }
 
-#pragma region File Loaders
-VertexShader AssetContainer::LoadVertexShader(const GraphicsAPI* graphics, MemoryArena* arena, const char* fileName) {
-	char path[128] = "shaders\\";
-	String::AddStrings(path, fileName, path);
-	LoadedFile shaderBlob = FileIO::LoadFile(path, arena);
-	ASSERT(shaderBlob.bytes)
-	VertexShader result = graphics->CreateVertexShader(&shaderBlob);
-	if(arena) arena->Clear();
-	else shaderBlob.Release();
-	return result;
-}
-
-GeometryShader AssetContainer::LoadGeometryShader(const GraphicsAPI* graphics, MemoryArena* arena, const char* fileName) {
-	char path[128] = "shaders\\";
-	String::AddStrings(path, fileName, path);
-	LoadedFile shaderBlob = FileIO::LoadFile(path, arena);
-	ASSERT(shaderBlob.bytes)
-	GeometryShader result = graphics->CreateGeometryShader(&shaderBlob);
-	if(arena) arena->Clear();
-	else shaderBlob.Release();
-	return result;
-}
-
-PixelShader AssetContainer::LoadPixelShader(const GraphicsAPI* graphics, MemoryArena* arena, const char* fileName) {
-	char path[128] = "shaders\\";
-	String::AddStrings(path, fileName, path);
-	LoadedFile shaderBlob = FileIO::LoadFile(path, arena);
-	ASSERT(shaderBlob.bytes)
-	PixelShader result = graphics->CreatePixelShader(&shaderBlob);
-	if(arena) arena->Clear();
-	else shaderBlob.Release();
-	return result;
-}
-
-ComputeShader AssetContainer::LoadComputeShader(const GraphicsAPI* graphics, MemoryArena* arena, const char* fileName) {
-	char path[128] = "shaders\\";
-	String::AddStrings(path, fileName, path);
-	LoadedFile shaderBlob = FileIO::LoadFile(path, arena);
-	ASSERT(shaderBlob.bytes)
-	ComputeShader result = graphics->CreateComputeShader(&shaderBlob);
-	if(arena) arena->Clear();
-	else shaderBlob.Release();
-	return result;
-}
-
-Sprite AssetContainer::LoadSprite(const GraphicsAPI* graphics, MemoryArena* arena, const char* fileName) {
-	ASSERT(arena)
-	const char* extension = String::FindChar(fileName, '.');
-	if(!extension) return {};
-
-	UInt2 dimensions = {};
-	ByteColor* colorData = nullptr;
-	if(String::AreStringsEqual(extension, ".png") || String::AreStringsEqual(extension, ".PNG")) {
-		LoadPNG(fileName, arena, &colorData, &dimensions);
-	}
-	else if(String::AreStringsEqual(extension, ".bmp") || String::AreStringsEqual(extension, ".BMP")) {
-		LoadBMP(fileName, arena, &colorData, &dimensions);
-	}
-	else return {};
-
-	Sprite result = {};
-	result.texture = graphics->CreateConstantTexture(dimensions.x, dimensions.y, (uint8_t*)colorData);
-
-	for(uint32_t i = 0; i < dimensions.x * dimensions.y; i++) {
-		if(colorData[i].alpha > 0 && colorData[i].alpha < 255)  {
-			result.translucent = true;
-			break;
-		}
-	}
-
-	arena->Clear();
-	return result;
-}
-
-SpriteSheet AssetContainer::LoadSpriteSheet(const GraphicsAPI* graphics, MemoryArena* arena, const char* fileName, uint8_t rows, uint8_t cols) {
-	ASSERT(arena)
-	const char* extension = String::FindChar(fileName, '.');
-	if(!extension) return {};
-
-	UInt2 dimensions = {};
-	ByteColor* colorData = nullptr;
-	if(String::AreStringsEqual(extension, ".png") || String::AreStringsEqual(extension, ".PNG")) {
-		LoadPNG(fileName, arena, &colorData, &dimensions);
-	}
-	else if(String::AreStringsEqual(extension, ".bmp") || String::AreStringsEqual(extension, ".BMP")) {
-		LoadBMP(fileName, arena, &colorData, &dimensions);
-	}
-	else return {};
-
-	// reorder pixels
-	uint32_t elementWidth = dimensions.x / cols;
-	uint32_t elementHeight = dimensions.y / rows;
-	uint32_t pixelsPerElement = elementHeight * elementWidth;
-	uint32_t elements = (uint32_t)rows * cols;
-	ByteColor* reorderedPixels = (ByteColor*)arena->Reserve(sizeof(ByteColor) * dimensions.x * dimensions.y);
-	for(uint8_t r = 0; r < rows; r++) {
-		for(uint8_t c = 0; c < cols; c++) {
-			for(uint32_t h = 0; h < elementHeight; h++) {
-				memcpy(reorderedPixels + c * pixelsPerElement + r * cols * pixelsPerElement + h * elementWidth,
-					colorData + c * elementWidth + r * dimensions.x * elementHeight + h * dimensions.x, 
-					elementWidth * sizeof(ByteColor)
-				);
-			}
-		}
-	}
-
-	SpriteSheet result = {};
-	result.rows = rows;
-	result.cols = cols;
-	result.textures = graphics->CreateTextureArray((uint8_t*)reorderedPixels, elements, dimensions.x, dimensions.y);
-
-	for(uint32_t i = 0; i < dimensions.x * dimensions.y; i++) {
-		if(colorData[i].alpha > 0 && colorData[i].alpha < 255)  {
-			result.translucent = true;
-			break;
-		}
-	}
-
-	arena->Clear();
-	return result;
-}
-
-void AssetContainer::LoadBMP(const char* fileName, MemoryArena* arena, ByteColor** outColors, UInt2* outDimensions) {
-	char path[128] = "assets\\";
-	String::AddStrings(path, fileName, path);
-	LoadedFile file = FileIO::LoadFile(path, arena);
+ImageBuffer AssetContainer::LoadBMP(LoadedFile file, MemoryArena* arena) {
 	ASSERT(file.bytes)
+	if(arena) arena->Clear();
+
 	file.littleEndian = true;
-	ASSERT(file.ReadUInt16() == 0x4D42); // file type must be "BM"
+	file.readLocation = 0;
+	ASSERT(file.ReadUInt16() == 0x4D42) // file type must be "BM"
 	file.readLocation = 10;
 	uint32_t bitmapOffset = file.ReadUInt32();
 
@@ -279,7 +213,7 @@ void AssetContainer::LoadBMP(const char* fileName, MemoryArena* arena, ByteColor
 	}
 
 	// read color palette
-	ByteColor palette[256];
+	ImageBuffer::Pixel palette[256];
 	if(bitsPerPixel <= 8) {
 		if(colorsUsed == 0) colorsUsed = 1 << bitsPerPixel;
 		for(uint32_t i = 0; i < colorsUsed; i++) {
@@ -287,7 +221,7 @@ void AssetContainer::LoadBMP(const char* fileName, MemoryArena* arena, ByteColor
 			uint8_t green = file.ReadByte();
 			uint8_t red = file.ReadByte();
 			if(version != 2) file.readLocation++;
-			palette[i] = ByteColor(red, green, blue, 255);
+			palette[i] = {red, green, blue, 255};
 		}
 	}
 
@@ -327,9 +261,11 @@ void AssetContainer::LoadBMP(const char* fileName, MemoryArena* arena, ByteColor
 	}
 
 	// load bits
-	ByteColor* loadedBits;
-	if(arena) loadedBits = (ByteColor*)arena->Reserve(width*height*sizeof(ByteColor));
-	else loadedBits = new ByteColor[width*height];
+	ImageBuffer result = {};
+	result.width = width;
+	result.height = height;
+	if(arena) result.pixels = (ImageBuffer::Pixel*)arena->Reserve(width*height*sizeof(ImageBuffer::Pixel));
+	else result.pixels = new ImageBuffer::Pixel[width*height];
 
 	file.readLocation = bitmapOffset;
 	bool topDown = height < 0;
@@ -355,7 +291,7 @@ void AssetContainer::LoadBMP(const char* fileName, MemoryArena* arena, ByteColor
 			case 1:
 				colorByte = file.ReadByte();
 				for(int32_t i = 0; i < 8 && x < width; i++) {
-					loadedBits[x + y * width] = palette[colorByte & 0b00000001];
+					result.pixels[x + y * width] = palette[colorByte & 0b00000001];
 					colorByte = colorByte >> 1;
 					x++;
 				}
@@ -385,7 +321,7 @@ void AssetContainer::LoadBMP(const char* fileName, MemoryArena* arena, ByteColor
 						// unencoded run
 						for(uint8_t j = 0; j < encodeByte; j++) {
 							if(j % 2 == 0) colorByte = file.ReadByte();
-							loadedBits[x + y * width] = palette[j % 2 == 0? colorByte & 0b11110000 : colorByte & 0b00001111];
+							result.pixels[x + y * width] = palette[j % 2 == 0? colorByte & 0b11110000 : colorByte & 0b00001111];
 							x++;
 						}
 						if(encodeByte % 2 == 1) file.readLocation++;
@@ -393,17 +329,17 @@ void AssetContainer::LoadBMP(const char* fileName, MemoryArena* arena, ByteColor
 						// encoded run
 						colorByte = file.ReadByte();;
 						for(uint8_t j = 0; j < encodeByte; j++) {
-							loadedBits[x + y * width] = palette[j % 2 == 0? colorByte & 0b11110000 : colorByte & 0b00001111];
+							result.pixels[x + y * width] = palette[j % 2 == 0? colorByte & 0b11110000 : colorByte & 0b00001111];
 							x++;
 						}
 					}
 				} else {
 					colorByte = file.ReadByte();
-					loadedBits[x + y * width] = palette[colorByte & 0b00001111];
+					result.pixels[x + y * width] = palette[colorByte & 0b00001111];
 					x++;
 					if(x >= width) break;
 					colorByte = colorByte >> 4;
-					loadedBits[x + y * width] = palette[colorByte];
+					result.pixels[x + y * width] = palette[colorByte];
 				}
 				break;
 			case 8:
@@ -430,7 +366,7 @@ void AssetContainer::LoadBMP(const char* fileName, MemoryArena* arena, ByteColor
 
 						// unencoded run
 						for(uint8_t j = 0; j < encodeByte; j++) {
-							loadedBits[x + y * width] = palette[file.ReadByte()];
+							result.pixels[x + y * width] = palette[file.ReadByte()];
 							x++;
 						}
 						if(encodeByte % 2 == 1) file.readLocation++;
@@ -438,41 +374,41 @@ void AssetContainer::LoadBMP(const char* fileName, MemoryArena* arena, ByteColor
 						// encoded run
 						colorByte = file.ReadByte();;
 						for(uint8_t j = 0; j < encodeByte; j++) {
-							loadedBits[x + y * width] = palette[colorByte];
+							result.pixels[x + y * width] = palette[colorByte];
 							x++;
 						}
 					}
 				} else {
-					loadedBits[x + y * width] = palette[file.ReadByte()];
+					result.pixels[x + y * width] = palette[file.ReadByte()];
 					x++;
 				}
 				break;
 			case 16:
 				colorWord = file.ReadUInt16();
 				colorDWord = colorWord << 16;
-				loadedBits[x + y * width] = ByteColor(
-					(colorDWord & redMask) >> redMaskShift, 
-					(colorDWord & greenMask) >> greenMaskShift, 
-					(colorDWord & blueMask) >> blueMaskShift, 
+				result.pixels[x + y * width] = {
+					(uint8_t)((colorDWord & redMask) >> redMaskShift), 
+					(uint8_t)((colorDWord & greenMask) >> greenMaskShift), 
+					(uint8_t)((colorDWord & blueMask) >> blueMaskShift), 
 					255
-				);
+				};
 				x++;
 				break;
 			case 24:
 				blue = file.ReadByte();
 				green = file.ReadByte();
 				red = file.ReadByte();
-				loadedBits[x + y * width] = ByteColor(red, green, blue, 255);
+				result.pixels[x + y * width] = {red, green, blue, 255};
 				x++;
 				break;
 			case 32:
 				colorDWord = file.ReadUInt32();
-				loadedBits[x + y * width] = ByteColor(
-					(colorDWord & redMask) >> redMaskShift, 
-					(colorDWord & greenMask) >> greenMaskShift, 
-					(colorDWord & blueMask) >> blueMaskShift, 
+				result.pixels[x + y * width] = {
+					(uint8_t)((colorDWord & redMask) >> redMaskShift), 
+					(uint8_t)((colorDWord & greenMask) >> greenMaskShift), 
+					(uint8_t)((colorDWord & blueMask) >> blueMaskShift), 
 					255
-				);
+				};
 				x++;
 				break;
 			default:
@@ -487,44 +423,33 @@ void AssetContainer::LoadBMP(const char* fileName, MemoryArena* arena, ByteColor
 		}
 	}
 
-	if(!arena) file.Release();
-	*outDimensions = {(uint32_t)width, (uint32_t)height};
-	*outColors = loadedBits;
+	return result;
 }
 
-void AssetContainer::LoadPNG(const char* fileName, MemoryArena* arena, ByteColor** outColors, UInt2* outDimensions) {
-	char path[128] = "assets\\";
-	String::AddStrings(path, fileName, path);
-	LoadedFile file = FileIO::LoadFile(path, arena);
+ImageBuffer AssetContainer::LoadPNG(LoadedFile file, MemoryArena* arena) {
 	ASSERT(file.bytes)
+	if(arena) arena->Clear();
 	std::vector<uint8_t> lodeFile(file.bytes, file.bytes + file.fileSize);
 	std::vector<uint8_t> loadedImage;
 
-	uint32_t width;
-	uint32_t height;
-	lodepng::decode(loadedImage, width, height, lodeFile); // thank you Lode Vandevenne
-
-	if(arena) {
-		*outColors = (ByteColor*)arena->Reserve(width*height*sizeof(ByteColor));
-	} else {
-		*outColors = new ByteColor[width*height];
-	}
-	memcpy(*outColors, loadedImage.begin()._Ptr, width * height * sizeof(ByteColor));
-	*outDimensions = {width, height};
+	ImageBuffer result;
+	lodepng::decode(loadedImage, result.width, result.height, lodeFile); // thank you Lode Vandevenne
+	
+	if(arena) result.pixels = (ImageBuffer::Pixel*)arena->Reserve(result.width * result.height * sizeof(ImageBuffer::Pixel));
+	else result.pixels = new ImageBuffer::Pixel[result.width * result.height];
+	memcpy(result.pixels, loadedImage.begin()._Ptr, result.width * result.height * sizeof(ImageBuffer::Pixel));
+	return result;
 }
 
-AudioSample AssetContainer::LoadWAV(const char* fileName, MemoryArena* arena) {
-	char path[128] = "assets\\";
-	String::AddStrings(path, fileName, path);
-	LoadedFile file = FileIO::LoadFile(path, arena);
+AudioSample AssetContainer::LoadWAV(LoadedFile file, MemoryArena* arena) {
 	ASSERT(file.bytes)
 	file.littleEndian = true;
 	uint32_t chunkName = file.ReadUInt32();
-	ASSERT(chunkName == 'FFIR');
+	ASSERT(chunkName == 'FFIR')
 
 	file.readLocation += 4;
 	chunkName = file.ReadUInt32();
-	ASSERT(chunkName == 'EVAW');
+	ASSERT(chunkName == 'EVAW')
 
 	AudioSample loadedSound = {};
 	loadedSound.baseVolume = 1.0f;
@@ -815,17 +740,14 @@ struct FontLoader {
 	}
 };
 
-Font AssetContainer::LoadTTF(const GraphicsAPI* graphics, MemoryArena* arena, const char* fileName) {
-	ASSERT(arena);
-	FontLoader loader = {};
+Font AssetContainer::LoadTTF(LoadedFile file, const GraphicsAPI* graphics, MemoryArena* arena) {
+	ASSERT(file.bytes)
+	ASSERT(arena)
+	arena->Clear();
 	Font loaded = {};
-
-	// parse file
-	char path[128] = "assets\\";
-	String::AddStrings(path, fileName, path);
-	loader.fontFile = FileIO::LoadFile(path, arena);
+	FontLoader loader = {};
+	loader.fontFile = file;
 	loader.fontFile.littleEndian = false;
-	ASSERT(loader.fontFile.bytes);
 
 	// determine number of data tables in this file
 	loader.fontFile.readLocation += 4;
@@ -966,7 +888,7 @@ Font AssetContainer::LoadTTF(const GraphicsAPI* graphics, MemoryArena* arena, co
 	loader.flags = (uint8_t*)arena->Reserve(maxPoints * sizeof(uint8_t));
 	loader.points = (Vector2*)arena->Reserve(maxPoints * sizeof(Vector2));
 
-	loader.curves = (BezierCurve*)arena->Reserve(0); // this arena may not store anything other curves after this line until the end of this function
+	loader.curves = (BezierCurve*)arena->Reserve(0); // this arena may not store anything other than curves after this line until the end of this function
 	loader.curveArena = arena;
 
 	loaded.glyphDimensions = new Vector2[numGlyphs];
@@ -986,9 +908,6 @@ Font AssetContainer::LoadTTF(const GraphicsAPI* graphics, MemoryArena* arena, co
 	loaded.firstCurveIndices = graphics->CreateArrayBuffer(ShaderDataType::UInt, glyphStartIndices.size);
 	graphics->WriteBuffer(loader.curves, loader.numCurves * sizeof(BezierCurve), loaded.glyphCurves.buffer);
 	graphics->WriteBuffer(glyphStartIndices.data, glyphStartIndices.size * sizeof(uint32_t), loaded.firstCurveIndices.buffer);
-
-	// clean up
-	arena->Clear();
 	return loaded;
 }
 #pragma endregion

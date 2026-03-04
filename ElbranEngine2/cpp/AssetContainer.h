@@ -1,16 +1,10 @@
 #pragma once
 #include "GraphicsData.h"
 #include "AudioData.h"
+#include "FileIO.h"
 
 class GraphicsAPI;
 class MemoryArena;
-
-struct ByteColor {
-	uint8_t red;
-	uint8_t green;
-	uint8_t blue;
-	uint8_t alpha;
-};
 
 class AssetContainer {
 public:
@@ -47,17 +41,12 @@ public:
 	void Initialize(GraphicsAPI*, MemoryArena*);
 	void Release(GraphicsAPI*);
 
-	static VertexShader LoadVertexShader(const GraphicsAPI*, MemoryArena*, const char* fileName);
-	static GeometryShader LoadGeometryShader(const GraphicsAPI*, MemoryArena*, const char* fileName);
-	static PixelShader LoadPixelShader(const GraphicsAPI*, MemoryArena*, const char* fileName) ;
-	static ComputeShader LoadComputeShader(const GraphicsAPI*, MemoryArena*, const char* fileName);
+	static LoadedFile UnpackFile(LoadedFile loadedPackFile, const char* fileName);
 
-	static Sprite LoadSprite(const GraphicsAPI*, MemoryArena*, const char* fileName);
-	static SpriteSheet LoadSpriteSheet(const GraphicsAPI*, MemoryArena*, const char* fileName, uint8_t rows, uint8_t cols);
-	static void LoadBMP(const char* fileName, MemoryArena*, ByteColor** outColors, UInt2* outDimensions);
-	static void LoadPNG(const char* fileName, MemoryArena*, ByteColor** outColors, UInt2* outDimensions);
-	static Font LoadTTF(const GraphicsAPI*, MemoryArena* arena, const char* fileName);
-	static AudioSample LoadWAV(const char* fileName, MemoryArena*);
+	static ImageBuffer LoadBMP(LoadedFile, MemoryArena*);
+	static ImageBuffer LoadPNG(LoadedFile, MemoryArena*);
+	static Font LoadTTF(LoadedFile, const GraphicsAPI*, MemoryArena* arena);
+	static AudioSample LoadWAV(LoadedFile, MemoryArena*);
 
 	static void ReleaseFont(const GraphicsAPI*, Font*);
 };
