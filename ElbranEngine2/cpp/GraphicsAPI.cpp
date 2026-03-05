@@ -160,7 +160,7 @@ SpriteSheet GraphicsAPI::CreateSpriteSheet(MemoryArena* arena, ImageBuffer image
 		}
 	}
 
-	result.textures = CreateTextureArray((uint8_t*)reorderedPixels, elements, image.width, image.height);
+	result.textures = CreateTextureArray((uint8_t*)reorderedPixels, elements, elementWidth, elementHeight);
 
 	// check for translucency
 	for(uint32_t i = 0; i < image.width * image.height; i++) {
