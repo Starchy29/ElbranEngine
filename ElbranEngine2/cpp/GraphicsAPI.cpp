@@ -153,7 +153,7 @@ SpriteSheet GraphicsAPI::CreateSpriteSheet(MemoryArena* arena, ImageBuffer image
 		for(uint8_t c = 0; c < cols; c++) {
 			for(uint32_t h = 0; h < elementHeight; h++) {
 				memcpy(reorderedPixels + c * pixelsPerElement + r * cols * pixelsPerElement + h * elementWidth,
-					image.pixels + c * elementWidth + r * image.width * elementHeight + h * image.height, 
+					image.pixels + c * elementWidth + r * image.width * elementHeight + h * image.width, 
 					elementWidth * sizeof(ImageBuffer::Pixel)
 				);
 			}
