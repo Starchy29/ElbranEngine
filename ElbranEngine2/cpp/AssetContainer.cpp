@@ -36,36 +36,40 @@ void AssetContainer::Initialize(GraphicsAPI* graphics, MemoryArena* arena) {
 	uint32_t triIndices[] = { 0, 1, 2 };
 	unitTriangle = graphics->CreateMesh(triVerts, 3, triIndices, 3, false);
 
-	// Load assets
-	LoadedFile packedAssets = FileIO::LoadFile("gameAssets.bin", 0);
+	// Load shaders
+	LoadedFile packedShaders = FileIO::LoadFile("shaders.bin", 0);
 
-	LoadedFile cameraShaderBlob = UnpackFile(packedAssets, "CameraVS.cso");
+	LoadedFile cameraShaderBlob = UnpackFile(packedShaders, "CameraVS.cso");
 	graphics->CreateDefaultInputLayout(cameraShaderBlob);
 	cameraVS = graphics->CreateVertexShader(cameraShaderBlob);
-	fullscreenVS = graphics->CreateVertexShader(UnpackFile(packedAssets, "FullscreenVS.cso"));
-	particlePassPS = graphics->CreateVertexShader(UnpackFile(packedAssets, "ParticlePassVS.cso"));
+	fullscreenVS = graphics->CreateVertexShader(UnpackFile(packedShaders, "FullscreenVS.cso"));
+	particlePassPS = graphics->CreateVertexShader(UnpackFile(packedShaders, "ParticlePassVS.cso"));
 
-	particleQuadGS = graphics->CreateGeometryShader(UnpackFile(packedAssets, "ParticleQuadGS.cso"));
+	particleQuadGS = graphics->CreateGeometryShader(UnpackFile(packedShaders, "ParticleQuadGS.cso"));
 
-	solidColorPS = graphics->CreatePixelShader(UnpackFile(packedAssets, "SolidColorPS.cso"));
-	texturePS = graphics->CreatePixelShader(UnpackFile(packedAssets, "TexturePS.cso"));
-	atlasPS = graphics->CreatePixelShader(UnpackFile(packedAssets, "AtlasPS.cso"));
-	circleFillPS = graphics->CreatePixelShader(UnpackFile(packedAssets, "CircleFillPS.cso"));
-	textRasterizePS = graphics->CreatePixelShader(UnpackFile(packedAssets, "TextRasterizePS.cso"));
+	solidColorPS = graphics->CreatePixelShader(UnpackFile(packedShaders, "SolidColorPS.cso"));
+	texturePS = graphics->CreatePixelShader(UnpackFile(packedShaders, "TexturePS.cso"));
+	atlasPS = graphics->CreatePixelShader(UnpackFile(packedShaders, "AtlasPS.cso"));
+	circleFillPS = graphics->CreatePixelShader(UnpackFile(packedShaders, "CircleFillPS.cso"));
+	textRasterizePS = graphics->CreatePixelShader(UnpackFile(packedShaders, "TextRasterizePS.cso"));
 
-	conSatValPP = graphics->CreatePixelShader(UnpackFile(packedAssets, "ConSatValPS.cso"));
-	blurPP = graphics->CreatePixelShader(UnpackFile(packedAssets, "BlurPS.cso"));
-	bloomFilterPP = graphics->CreatePixelShader(UnpackFile(packedAssets, "BloomFilterPS.cso"));
-	screenSumPP = graphics->CreatePixelShader(UnpackFile(packedAssets, "ScreenSumPS.cso"));
+	conSatValPP = graphics->CreatePixelShader(UnpackFile(packedShaders, "ConSatValPS.cso"));
+	blurPP = graphics->CreatePixelShader(UnpackFile(packedShaders, "BlurPS.cso"));
+	bloomFilterPP = graphics->CreatePixelShader(UnpackFile(packedShaders, "BloomFilterPS.cso"));
+	screenSumPP = graphics->CreatePixelShader(UnpackFile(packedShaders, "ScreenSumPS.cso"));
 
-	brightnessSumCS = graphics->CreateComputeShader(UnpackFile(packedAssets, "BrightnessSumCS.cso"));
-	particleSpawnCS = graphics->CreateComputeShader(UnpackFile(packedAssets, "ParticleSpawnCS.cso"));
-	particleMoveCS = graphics->CreateComputeShader(UnpackFile(packedAssets, "ParticleMoveCS.cso"));
-	particleClearCS = graphics->CreateComputeShader(UnpackFile(packedAssets, "ParticleClearCS.cso"));
+	brightnessSumCS = graphics->CreateComputeShader(UnpackFile(packedShaders, "BrightnessSumCS.cso"));
+	particleSpawnCS = graphics->CreateComputeShader(UnpackFile(packedShaders, "ParticleSpawnCS.cso"));
+	particleMoveCS = graphics->CreateComputeShader(UnpackFile(packedShaders, "ParticleMoveCS.cso"));
+	particleClearCS = graphics->CreateComputeShader(UnpackFile(packedShaders, "ParticleClearCS.cso"));
+
+	// Load assets
+	LoadedFile packedAssets = FileIO::LoadFile("game_assets.bin", 0);
 
 	testSprite = graphics->CreateSprite(LoadPNG(UnpackFile(packedAssets, "elbran.png"), arena));
 	arial = LoadTTF(UnpackFile(packedAssets, "arial.ttf"), graphics, arena);
 
+	packedShaders.Release();
 	packedAssets.Release();
 }
 
