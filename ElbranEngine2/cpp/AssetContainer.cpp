@@ -41,33 +41,33 @@ void AssetContainer::Initialize(const GraphicsAPI* graphics, MemoryArena* arena)
 
 	LoadedFile cameraShaderBlob = UnpackFile(packedShaders, "CameraVS.cso");
 	graphics->CreateDefaultInputLayout(cameraShaderBlob);
-	cameraVS = graphics->CreateVertexShader(cameraShaderBlob);
-	fullscreenVS = graphics->CreateVertexShader(UnpackFile(packedShaders, "FullscreenVS.cso"));
-	particlePassPS = graphics->CreateVertexShader(UnpackFile(packedShaders, "ParticlePassVS.cso"));
+	shaders.cameraVS = graphics->CreateVertexShader(cameraShaderBlob);
+	shaders.fullscreenVS = graphics->CreateVertexShader(UnpackFile(packedShaders, "FullscreenVS.cso"));
+	shaders.particlePassPS = graphics->CreateVertexShader(UnpackFile(packedShaders, "ParticlePassVS.cso"));
 
-	particleQuadGS = graphics->CreateGeometryShader(UnpackFile(packedShaders, "ParticleQuadGS.cso"));
+	shaders.particleQuadGS = graphics->CreateGeometryShader(UnpackFile(packedShaders, "ParticleQuadGS.cso"));
 
-	solidColorPS = graphics->CreatePixelShader(UnpackFile(packedShaders, "SolidColorPS.cso"));
-	texturePS = graphics->CreatePixelShader(UnpackFile(packedShaders, "TexturePS.cso"));
-	atlasPS = graphics->CreatePixelShader(UnpackFile(packedShaders, "AtlasPS.cso"));
-	circleFillPS = graphics->CreatePixelShader(UnpackFile(packedShaders, "CircleFillPS.cso"));
-	textRasterizePS = graphics->CreatePixelShader(UnpackFile(packedShaders, "TextRasterizePS.cso"));
+	shaders.solidColorPS = graphics->CreatePixelShader(UnpackFile(packedShaders, "SolidColorPS.cso"));
+	shaders.texturePS = graphics->CreatePixelShader(UnpackFile(packedShaders, "TexturePS.cso"));
+	shaders.atlasPS = graphics->CreatePixelShader(UnpackFile(packedShaders, "AtlasPS.cso"));
+	shaders.circleFillPS = graphics->CreatePixelShader(UnpackFile(packedShaders, "CircleFillPS.cso"));
+	shaders.textRasterizePS = graphics->CreatePixelShader(UnpackFile(packedShaders, "TextRasterizePS.cso"));
 
-	conSatValPP = graphics->CreatePixelShader(UnpackFile(packedShaders, "ConSatValPS.cso"));
-	blurPP = graphics->CreatePixelShader(UnpackFile(packedShaders, "BlurPS.cso"));
-	bloomFilterPP = graphics->CreatePixelShader(UnpackFile(packedShaders, "BloomFilterPS.cso"));
-	screenSumPP = graphics->CreatePixelShader(UnpackFile(packedShaders, "ScreenSumPS.cso"));
+	shaders.conSatValPP = graphics->CreatePixelShader(UnpackFile(packedShaders, "ConSatValPS.cso"));
+	shaders.blurPP = graphics->CreatePixelShader(UnpackFile(packedShaders, "BlurPS.cso"));
+	shaders.bloomFilterPP = graphics->CreatePixelShader(UnpackFile(packedShaders, "BloomFilterPS.cso"));
+	shaders.screenSumPP = graphics->CreatePixelShader(UnpackFile(packedShaders, "ScreenSumPS.cso"));
 
-	brightnessSumCS = graphics->CreateComputeShader(UnpackFile(packedShaders, "BrightnessSumCS.cso"));
-	particleSpawnCS = graphics->CreateComputeShader(UnpackFile(packedShaders, "ParticleSpawnCS.cso"));
-	particleMoveCS = graphics->CreateComputeShader(UnpackFile(packedShaders, "ParticleMoveCS.cso"));
-	particleClearCS = graphics->CreateComputeShader(UnpackFile(packedShaders, "ParticleClearCS.cso"));
+	shaders.brightnessSumCS = graphics->CreateComputeShader(UnpackFile(packedShaders, "BrightnessSumCS.cso"));
+	shaders.particleSpawnCS = graphics->CreateComputeShader(UnpackFile(packedShaders, "ParticleSpawnCS.cso"));
+	shaders.particleMoveCS = graphics->CreateComputeShader(UnpackFile(packedShaders, "ParticleMoveCS.cso"));
+	shaders.particleClearCS = graphics->CreateComputeShader(UnpackFile(packedShaders, "ParticleClearCS.cso"));
 
 	// Load assets
 	LoadedFile packedAssets = FileIO::LoadFile("game_assets.bin", 0);
 
-	testSprite = graphics->CreateSprite(LoadPNG(UnpackFile(packedAssets, "elbran.png"), arena));
-	arial = LoadTTF(UnpackFile(packedAssets, "arial.ttf"), graphics, arena);
+	sprites.testSprite = graphics->CreateSprite(LoadPNG(UnpackFile(packedAssets, "elbran.png"), arena));
+	fonts.arial = LoadTTF(UnpackFile(packedAssets, "arial.ttf"), graphics, arena);
 
 	packedShaders.Release();
 	packedAssets.Release();
@@ -78,31 +78,31 @@ void AssetContainer::Release(const GraphicsAPI* graphics) {
 	graphics->ReleaseMesh(&unitSquare);
 	graphics->ReleaseMesh(&unitTriangle);
 
-	graphics->ReleaseShader(&fullscreenVS);
-	graphics->ReleaseShader(&cameraVS);
-	graphics->ReleaseShader(&particlePassPS);
+	graphics->ReleaseShader(&shaders.fullscreenVS);
+	graphics->ReleaseShader(&shaders.cameraVS);
+	graphics->ReleaseShader(&shaders.particlePassPS);
 
-	graphics->ReleaseShader(&particleQuadGS);
+	graphics->ReleaseShader(&shaders.particleQuadGS);
 
-	graphics->ReleaseShader(&solidColorPS);
-	graphics->ReleaseShader(&texturePS);
-	graphics->ReleaseShader(&atlasPS);
-	graphics->ReleaseShader(&circleFillPS);
-	graphics->ReleaseShader(&textRasterizePS);
+	graphics->ReleaseShader(&shaders.solidColorPS);
+	graphics->ReleaseShader(&shaders.texturePS);
+	graphics->ReleaseShader(&shaders.atlasPS);
+	graphics->ReleaseShader(&shaders.circleFillPS);
+	graphics->ReleaseShader(&shaders.textRasterizePS);
 
-	graphics->ReleaseShader(&conSatValPP);
-	graphics->ReleaseShader(&blurPP);
-	graphics->ReleaseShader(&bloomFilterPP);
-	graphics->ReleaseShader(&screenSumPP);
+	graphics->ReleaseShader(&shaders.conSatValPP);
+	graphics->ReleaseShader(&shaders.blurPP);
+	graphics->ReleaseShader(&shaders.bloomFilterPP);
+	graphics->ReleaseShader(&shaders.screenSumPP);
 
-	graphics->ReleaseShader(&brightnessSumCS);
-	graphics->ReleaseShader(&particleSpawnCS);
-	graphics->ReleaseShader(&particleMoveCS);
-	graphics->ReleaseShader(&particleClearCS);
+	graphics->ReleaseShader(&shaders.brightnessSumCS);
+	graphics->ReleaseShader(&shaders.particleSpawnCS);
+	graphics->ReleaseShader(&shaders.particleMoveCS);
+	graphics->ReleaseShader(&shaders.particleClearCS);
 
-	graphics->ReleaseTexture(&testSprite.texture);
+	graphics->ReleaseTexture(&sprites.testSprite.texture);
 
-	ReleaseFont(graphics, &arial);
+	ReleaseFont(graphics, &fonts.arial);
 }
 
 LoadedFile AssetContainer::UnpackFile(LoadedFile loadedPackFile, const char* fileName) {

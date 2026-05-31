@@ -10,8 +10,8 @@ void Renderer::Draw(DrawComponents app) {
 		CameraVSConstants vsInput = {};
 		vsInput.uvScale = Vector2(1.f, 1.f);
 		vsInput.worldTransform = worldMatrix->Transpose();
-		app.graphics->SetVertexShader(&app.assets->cameraVS, &vsInput, sizeof(CameraVSConstants));
-		app.graphics->SetPixelShader(shapeData.shape == PrimitiveShape::Circle ? &app.assets->circleFillPS : &app.assets->solidColorPS, &shapeData.color, sizeof(Color));
+		app.graphics->SetVertexShader(&app.assets->shaders.cameraVS, &vsInput, sizeof(CameraVSConstants));
+		app.graphics->SetPixelShader(shapeData.shape == PrimitiveShape::Circle ? &app.assets->shaders.circleFillPS : &app.assets->shaders.solidColorPS, &shapeData.color, sizeof(Color));
 		app.graphics->DrawMesh(shapeData.shape == PrimitiveShape::Triangle ? &app.assets->unitTriangle : &app.assets->unitSquare);
 	} break;
 
@@ -20,13 +20,13 @@ void Renderer::Draw(DrawComponents app) {
 		vsInput.worldTransform = worldMatrix->Transpose();
 		vsInput.uvOffset = Vector2::Zero;
 		vsInput.uvScale = Vector2(spriteData.flipX ? -1 : 1, spriteData.flipY ? -1 : 1); // assumes wrap enabled on sampling
-		app.graphics->SetVertexShader(&app.assets->cameraVS, &vsInput, sizeof(CameraVSConstants));
+		app.graphics->SetVertexShader(&app.assets->shaders.cameraVS, &vsInput, sizeof(CameraVSConstants));
 
 		TexturePSConstants psInput;
 		psInput.tint = spriteData.tint;
 		psInput.lit = spriteData.lit;
 		app.graphics->SetTexture(ShaderStage::Pixel, &spriteData.sprite->texture, 0);
-		app.graphics->SetPixelShader(&app.assets->texturePS, &psInput, sizeof(TexturePSConstants));
+		app.graphics->SetPixelShader(&app.assets->shaders.texturePS, &psInput, sizeof(TexturePSConstants));
 
 		app.graphics->DrawMesh(&app.assets->unitSquare);
 	} break;
@@ -36,14 +36,14 @@ void Renderer::Draw(DrawComponents app) {
 		vsInput.worldTransform = worldMatrix->Transpose();
 		vsInput.uvOffset = Vector2::Zero;
 		vsInput.uvScale = Vector2(spriteData.flipX ? -1 : 1, spriteData.flipY ? -1 : 1); // assumes wrap enabled on sampling
-		app.graphics->SetVertexShader(&app.assets->cameraVS, &vsInput, sizeof(CameraVSConstants));
+		app.graphics->SetVertexShader(&app.assets->shaders.cameraVS, &vsInput, sizeof(CameraVSConstants));
 
 		AtlasPSConstants psInput;
 		psInput.tint = atlasData.tint;
 		psInput.lit = atlasData.lit;
 		psInput.textureIndex = atlasData.row * atlasData.atlas->cols + atlasData.col;
 		app.graphics->SetTextureArray(ShaderStage::Pixel, &atlasData.atlas->textures, 0);
-		app.graphics->SetPixelShader(&app.assets->atlasPS, &psInput, sizeof(AtlasPSConstants));
+		app.graphics->SetPixelShader(&app.assets->shaders.atlasPS, &psInput, sizeof(AtlasPSConstants));
 
 		app.graphics->DrawMesh(&app.assets->unitSquare);
 	} break;
@@ -62,13 +62,13 @@ void Renderer::Draw(DrawComponents app) {
 		worldOffset.y *= -1.f; // uvs are flipped vertically
 		vsInput.uvOffset = worldOffset / patternData.blockSize + Vector2(0.f, -Math::FractionOf(globalScale.y / patternData.blockSize.y));
 		vsInput.uvOffset *= flips;
-		app.graphics->SetVertexShader(&app.assets->cameraVS, &vsInput, sizeof(CameraVSConstants));
+		app.graphics->SetVertexShader(&app.assets->shaders.cameraVS, &vsInput, sizeof(CameraVSConstants));
 
 		TexturePSConstants psInput;
 		psInput.tint = patternData.tint;
 		psInput.lit = patternData.lit;
 		app.graphics->SetTexture(ShaderStage::Pixel, &patternData.sprite->texture, 0);
-		app.graphics->SetPixelShader(&app.assets->texturePS, &psInput, sizeof(TexturePSConstants));
+		app.graphics->SetPixelShader(&app.assets->shaders.texturePS, &psInput, sizeof(TexturePSConstants));
 
 		app.graphics->DrawMesh(&app.assets->unitSquare);
 	} break;
@@ -103,12 +103,12 @@ void Renderer::Draw(DrawComponents app) {
 		vsInput.worldTransform = (*worldMatrix * Matrix::Translation(alignment.x, alignment.y) * Matrix::Scale(unstretchFactor.x, unstretchFactor.y)).Transpose();
 		vsInput.uvOffset = Vector2::Zero;
 		vsInput.uvScale = Vector2(1.f, 1.f);
-		app.graphics->SetVertexShader(&app.assets->cameraVS, &vsInput, sizeof(CameraVSConstants));
+		app.graphics->SetVertexShader(&app.assets->shaders.cameraVS, &vsInput, sizeof(CameraVSConstants));
 
 		// set pixel shader
 		app.graphics->SetArray(ShaderStage::Pixel, &textData.font->glyphCurves, 0);
 		app.graphics->SetArray(ShaderStage::Pixel, &textData.font->firstCurveIndices, 1);
-		app.graphics->SetPixelShader(&app.assets->textRasterizePS, &textData.color, sizeof(Color));
+		app.graphics->SetPixelShader(&app.assets->shaders.textRasterizePS, &textData.color, sizeof(Color));
 
 		// draw mesh
 		app.graphics->DrawMesh(&textData.textMesh);
@@ -118,7 +118,7 @@ void Renderer::Draw(DrawComponents app) {
 		// vertex shader
 		app.graphics->ClearMesh();
 		app.graphics->SetArray(ShaderStage::Vertex, &particleData.particleBuffer.arrayBuffer, 0);
-		app.graphics->SetVertexShader(&app.assets->particlePassPS);
+		app.graphics->SetVertexShader(&app.assets->shaders.particlePassPS);
 
 		// geometry shader
 		ParticleQuadGSConstants gsInput = {};
@@ -127,7 +127,7 @@ void Renderer::Draw(DrawComponents app) {
 		gsInput.animationFPS = particleData.animationFPS;
 		gsInput.atlasRows = particleData.sprites->rows;
 		gsInput.atlasCols = particleData.sprites->cols;
-		app.graphics->SetGeometryShader(&app.assets->particleQuadGS, &gsInput, sizeof(ParticleQuadGSConstants));
+		app.graphics->SetGeometryShader(&app.assets->shaders.particleQuadGS, &gsInput, sizeof(ParticleQuadGSConstants));
 
 		// pixel shader
 		AtlasPSConstants psInput;
@@ -135,7 +135,7 @@ void Renderer::Draw(DrawComponents app) {
 		psInput.tint = particleData.tint;
 		psInput.textureIndex = 0; // sent from geo shader per-particle instead
 		app.graphics->SetTextureArray(ShaderStage::Pixel, &particleData.sprites->textures, 0);
-		app.graphics->SetPixelShader(&app.assets->texturePS, &psInput, sizeof(AtlasPSConstants));
+		app.graphics->SetPixelShader(&app.assets->shaders.texturePS, &psInput, sizeof(AtlasPSConstants));
 
 		// draw
 		if(particleData.blendAdditive) {
@@ -339,9 +339,9 @@ void Renderer::UpdateTextMesh(AppComponents app) {
 
 void Renderer::ClearParticles(const GraphicsAPI* graphics, const AssetContainer* assets) {
 	ASSERT(type == Type::Particles)
-	graphics->WriteBuffer(&particleData.maxParticles, sizeof(uint16_t), assets->particleClearCS.constants);
-	graphics->SetConstants(ShaderStage::Compute, assets->particleClearCS.constants, 0);
+	graphics->WriteBuffer(&particleData.maxParticles, sizeof(uint16_t), assets->shaders.particleClearCS.constants);
+	graphics->SetConstants(ShaderStage::Compute, assets->shaders.particleClearCS.constants, 0);
 	graphics->SetEditBuffer(&particleData.particleBuffer, 0);
-	graphics->RunComputeShader(&assets->particleClearCS, particleData.maxParticles, 1);
+	graphics->RunComputeShader(&assets->shaders.particleClearCS, particleData.maxParticles, 1);
 	graphics->SetEditBuffer(nullptr, 0); // unbind particles
 }

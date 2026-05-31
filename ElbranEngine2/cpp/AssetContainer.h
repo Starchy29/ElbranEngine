@@ -12,30 +12,41 @@ public:
 	Mesh unitSquare;
 	Mesh unitTriangle;
 
-	VertexShader fullscreenVS;
-	VertexShader cameraVS;
-	VertexShader particlePassPS;
+	struct {
+		VertexShader fullscreenVS;
+		VertexShader cameraVS;
+		VertexShader particlePassPS;
+	
+		GeometryShader particleQuadGS;
 
-	GeometryShader particleQuadGS;
+		PixelShader solidColorPS;
+		PixelShader texturePS;
+		PixelShader atlasPS;
+		PixelShader circleFillPS;
+		PixelShader textRasterizePS;
 
-	PixelShader solidColorPS;
-	PixelShader texturePS;
-	PixelShader atlasPS;
-	PixelShader circleFillPS;
-	PixelShader textRasterizePS;
+		PixelShader conSatValPP;
+		PixelShader blurPP;
+		PixelShader bloomFilterPP;
+		PixelShader screenSumPP;
 
-	PixelShader conSatValPP;
-	PixelShader blurPP;
-	PixelShader bloomFilterPP;
-	PixelShader screenSumPP;
+		ComputeShader brightnessSumCS;
+		ComputeShader particleSpawnCS;
+		ComputeShader particleMoveCS;
+		ComputeShader particleClearCS;
+	} shaders;
 
-	ComputeShader brightnessSumCS;
-	ComputeShader particleSpawnCS;
-	ComputeShader particleMoveCS;
-	ComputeShader particleClearCS;
+	struct {
+		Sprite testSprite;
+	} sprites;
+	
+	struct {
+		Font arial;
+	} fonts;
 
-	Sprite testSprite;
-	Font arial;
+	struct {
+	
+	} audio;
 
 	AssetContainer() = default;
 	void Initialize(const GraphicsAPI*, MemoryArena*);

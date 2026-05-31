@@ -75,7 +75,7 @@ void GraphicsAPI::ApplyPostProcesses(DrawComponents app, const PostProcess* post
 }
 
 void GraphicsAPI::DrawFullscreen(const AssetContainer* assets) {
-	SetVertexShader(&assets->fullscreenVS);
+	SetVertexShader(&assets->shaders.fullscreenVS);
 	DrawVertices(3); // fullscreen triangle
 }
 

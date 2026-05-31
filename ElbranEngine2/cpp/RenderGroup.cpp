@@ -153,9 +153,9 @@ void RenderGroup::Draw(DrawComponents app) {
 		psInput.lit = false;
 
 		app.graphics->SetTexture(ShaderStage::Pixel, backgroundImage, 0);
-		app.graphics->SetPixelShader(&app.assets->texturePS, &psInput, sizeof(TexturePSConstants));
+		app.graphics->SetPixelShader(&app.assets->shaders.texturePS, &psInput, sizeof(TexturePSConstants));
 	} else {
-		app.graphics->SetPixelShader(&app.assets->solidColorPS, &backgroundColor, sizeof(Color));
+		app.graphics->SetPixelShader(&app.assets->shaders.solidColorPS, &backgroundColor, sizeof(Color));
 	}
 	app.graphics->DrawFullscreen(app.assets);
 

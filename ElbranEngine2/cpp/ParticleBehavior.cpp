@@ -52,7 +52,7 @@ void ParticleBehavior::Update(AppComponents app, float deltaTime) {
 		csInput.growthRate *= CalcParentScaler();
     }
 
-    const ComputeShader* moveShader = &app.assets->particleMoveCS;
+    const ComputeShader* moveShader = &app.assets->shaders.particleMoveCS;
     app.graphics->WriteBuffer(&csInput, sizeof(ParticleMoveCSConstants), moveShader->constants);
     app.graphics->SetConstants(ShaderStage::Compute, moveShader->constants, 0);
     app.graphics->SetEditBuffer(&particleRenderer->particleData.particleBuffer, 0);
@@ -147,7 +147,7 @@ void ParticleBehavior::Emit(AppComponents app, uint16_t numParticles, float dura
         csInput.width *= parentScalar;
     }
 
-    const ComputeShader* spawnShader = &app.assets->particleSpawnCS;
+    const ComputeShader* spawnShader = &app.assets->shaders.particleSpawnCS;
     app.graphics->SetArray(ShaderStage::Compute, &spawnData, 0);
     app.graphics->SetEditBuffer(&particleRenderer->particleData.particleBuffer, 0);
     app.graphics->WriteBuffer(&csInput, numParticles * sizeof(ParticleSpawnCSConstants), spawnShader->constants);

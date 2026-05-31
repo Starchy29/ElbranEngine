@@ -8,7 +8,7 @@ void PostProcess::Render(const RenderTarget* input, RenderTarget* output, DrawCo
 
 	switch(type) {
 	case Type::Blur: {
-		const PixelShader* blurShader = &app.assets->blurPP;
+		const PixelShader* blurShader = &app.assets->shaders.blurPP;
 		RenderTarget* midTarget = &app.graphics->postProcessHelpers[0];
 
 		BlurPPConstants psInput = {};
@@ -45,7 +45,7 @@ void PostProcess::Render(const RenderTarget* input, RenderTarget* output, DrawCo
 
 		if(hsvData.contrast != 0) {
 			// determine average brightness for contrast adjustment
-			const ComputeShader* totalShader = &app.assets->brightnessSumCS;
+			const ComputeShader* totalShader = &app.assets->shaders.brightnessSumCS;
 			UInt2 viewDims = app.graphics->viewportDims;
 			app.graphics->WriteBuffer(&viewDims, sizeof(UInt2), totalShader->constants);
 			app.graphics->SetConstants(ShaderStage::Compute, totalShader->constants, 0);
@@ -62,7 +62,7 @@ void PostProcess::Render(const RenderTarget* input, RenderTarget* output, DrawCo
 		}
 
 		app.graphics->SetTexture(ShaderStage::Pixel, &input->texture, 0);
-		app.graphics->SetPixelShader(&app.assets->conSatValPP, &psInput, sizeof(ConSatValPPConstants));
+		app.graphics->SetPixelShader(&app.assets->shaders.conSatValPP, &psInput, sizeof(ConSatValPPConstants));
 
 		app.graphics->DrawFullscreen(app.assets);
 		app.graphics->SetTexture(ShaderStage::Pixel, nullptr, 0);
@@ -73,7 +73,7 @@ void PostProcess::Render(const RenderTarget* input, RenderTarget* output, DrawCo
 		RenderTarget* brightPixels = &app.graphics->postProcessHelpers[1]; // blur shader uses slot 0
 		app.graphics->SetRenderTarget(brightPixels, false);
 		app.graphics->SetTexture(ShaderStage::Pixel, &input->texture, 0);
-		app.graphics->SetPixelShader(&app.assets->bloomFilterPP, &bloomData.brightnessThreshold, 2 * sizeof(float));
+		app.graphics->SetPixelShader(&app.assets->shaders.bloomFilterPP, &bloomData.brightnessThreshold, 2 * sizeof(float));
 		app.graphics->DrawFullscreen(app.assets);
 
 		// blur bright pixels
@@ -85,7 +85,7 @@ void PostProcess::Render(const RenderTarget* input, RenderTarget* output, DrawCo
 		app.graphics->SetRenderTarget(output, false);
 		app.graphics->SetTexture(ShaderStage::Pixel, &input->texture, 0);
 		app.graphics->SetTexture(ShaderStage::Pixel, &blurredBrightness->texture, 1);
-		app.graphics->SetPixelShader(&app.assets->screenSumPP);
+		app.graphics->SetPixelShader(&app.assets->shaders.screenSumPP);
 		app.graphics->DrawFullscreen(app.assets);
 
 		app.graphics->SetTexture(ShaderStage::Pixel, nullptr, 0);
