@@ -20,7 +20,7 @@ struct FixedList {
 		data = new Type[capacity] {};
 	}
 
-	void Initialize(uint32_t capacity, MemoryArena* arena) {
+	void Initialize(uint32_t capacity, const MemoryArena* arena) {
 		size = 0u;
 		data = (Type*)arena->Reserve(capacity * sizeof(Type));
 	}

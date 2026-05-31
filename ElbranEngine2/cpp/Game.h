@@ -2,20 +2,15 @@
 #define GAME_TITLE L"Elbran Engine"
 #define MAX_FPS 240.f
 
-class GraphicsAPI;
-class AssetContainer;
-class InputManager;
-class SoundMixer;
-class MemoryArena;
-class Application;
+#include "AppComponents.h"
 
 class Game {
 public:
 	Game() = default;
-	void Initialize(Application*);
-	void Release(GraphicsAPI*);
+	void Initialize(AppComponents);
+	void Release(const GraphicsAPI*);
 
-	void Update(Application*, float deltaTime);
-	void Draw(GraphicsAPI*, const AssetContainer*, MemoryArena*);
+	void Update(AppComponents, float deltaTime);
+	void Draw(DrawComponents);
 };
 

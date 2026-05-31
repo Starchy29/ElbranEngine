@@ -1,9 +1,6 @@
 #pragma once
 #include "Renderer.h"
-
-class GraphicsAPI;
-class AssetContainer;
-class MemoryArena;
+#include "AppComponents.h"
 
 #define CAMERA_Z 0
 #define CAMERA_DEPTH 100
@@ -27,7 +24,7 @@ struct RenderGroup {
 	void Initialize(uint32_t maxRenderers, uint32_t extraTransforms = 0);
 	void Release(const GraphicsAPI*);
 
-	void Draw(GraphicsAPI*, const AssetContainer*, MemoryArena*) const;
+	void Draw(DrawComponents);
 
 	Transform* ReserveTransform(const Matrix** outMatrix = nullptr);
 	Renderer* ReserveRenderer();

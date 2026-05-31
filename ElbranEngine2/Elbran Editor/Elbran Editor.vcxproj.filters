@@ -159,6 +159,7 @@
     <ClInclude Include="..\cpp\FileIO.h">
       <Filter>Engine</Filter>
     </ClInclude>
+    <ClInclude Include="..\cpp\AppComponents.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\hlsl\ColorConversion.hlsli">

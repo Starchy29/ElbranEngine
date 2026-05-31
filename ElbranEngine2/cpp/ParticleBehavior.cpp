@@ -13,7 +13,7 @@ struct ParticleSpawnState {
     float rotation;
 };
 
-void ParticleBehavior::Initialize(GraphicsAPI* graphics, Renderer* particleRenderer) {
+void ParticleBehavior::Initialize(const GraphicsAPI* graphics, Renderer* particleRenderer) {
     ASSERT(particleRenderer && particleRenderer->type == Renderer::Type::Particles);
     this->particleRenderer = particleRenderer;
     moveStyle = MoveStyle::None;
@@ -40,7 +40,7 @@ void ParticleBehavior::Release(const GraphicsAPI* graphics) {
     graphics->ReleaseArrayBuffer(&spawnData);
 }
 
-void ParticleBehavior::Update(GraphicsAPI* graphics, const AssetContainer* assets, MemoryArena* frameBuffer, float deltaTime) {
+void ParticleBehavior::Update(AppComponents app, float deltaTime) {
 	// move particles
     ParticleMoveCSConstants csInput = {};
 	csInput.deltaTime = deltaTime;
@@ -52,12 +52,12 @@ void ParticleBehavior::Update(GraphicsAPI* graphics, const AssetContainer* asset
 		csInput.growthRate *= CalcParentScaler();
     }
 
-    const ComputeShader* moveShader = &assets->particleMoveCS;
-    graphics->WriteBuffer(&csInput, sizeof(ParticleMoveCSConstants), moveShader->constants);
-    graphics->SetConstants(ShaderStage::Compute, moveShader->constants, 0);
-    graphics->SetEditBuffer(&particleRenderer->particleData.particleBuffer, 0);
-    graphics->RunComputeShader(moveShader, particleRenderer->particleData.maxParticles, 1);
-    graphics->SetEditBuffer(nullptr, 0); // unbind particles
+    const ComputeShader* moveShader = &app.assets->particleMoveCS;
+    app.graphics->WriteBuffer(&csInput, sizeof(ParticleMoveCSConstants), moveShader->constants);
+    app.graphics->SetConstants(ShaderStage::Compute, moveShader->constants, 0);
+    app.graphics->SetEditBuffer(&particleRenderer->particleData.particleBuffer, 0);
+    app.graphics->RunComputeShader(moveShader, particleRenderer->particleData.maxParticles, 1);
+    app.graphics->SetEditBuffer(nullptr, 0); // unbind particles
 
     // update spawning
     if(spawnsLeft > 0 || spawnsLeft == CONTINUOUS_SPAWN) {
@@ -67,12 +67,12 @@ void ParticleBehavior::Update(GraphicsAPI* graphics, const AssetContainer* asset
             if(spawnsLeft != CONTINUOUS_SPAWN) {
                 spawnsLeft--;
             }
-            Emit(graphics, assets, frameBuffer, spawnsPerInterval);
+            Emit(app, spawnsPerInterval);
         }
     }
 }
 
-void ParticleBehavior::Emit(GraphicsAPI* graphics, const AssetContainer* assets, MemoryArena* frameBuffer, uint16_t numParticles, float duration) {
+void ParticleBehavior::Emit(AppComponents app, uint16_t numParticles, float duration) {
     if(duration > 0.f) {
         spawnsLeft += numParticles;
         spawnInterval = duration / numParticles;
@@ -82,7 +82,7 @@ void ParticleBehavior::Emit(GraphicsAPI* graphics, const AssetContainer* assets,
     }
     
     // set up initial states
-    ParticleSpawnState* spawnStates = (ParticleSpawnState*)frameBuffer->Reserve(numParticles * sizeof(ParticleSpawnState));
+    ParticleSpawnState* spawnStates = (ParticleSpawnState*)app.arena->Reserve(numParticles * sizeof(ParticleSpawnState));
 
     float trueSpeed = speed;
     float parentScalar = CalcParentScaler();
@@ -135,7 +135,7 @@ void ParticleBehavior::Emit(GraphicsAPI* graphics, const AssetContainer* assets,
     }
     
     // send initial data to gpu and run compute shader to update the particle data
-    graphics->WriteBuffer(spawnStates, sizeof(ParticleSpawnState) * numParticles, spawnData.buffer);
+    app.graphics->WriteBuffer(spawnStates, sizeof(ParticleSpawnState) * numParticles, spawnData.buffer);
 
     ParticleSpawnCSConstants csInput = {};
     csInput.spawnCount = numParticles;
@@ -147,13 +147,13 @@ void ParticleBehavior::Emit(GraphicsAPI* graphics, const AssetContainer* assets,
         csInput.width *= parentScalar;
     }
 
-    const ComputeShader* spawnShader = &assets->particleSpawnCS;
-    graphics->SetArray(ShaderStage::Compute, &spawnData, 0);
-    graphics->SetEditBuffer(&particleRenderer->particleData.particleBuffer, 0);
-    graphics->WriteBuffer(&csInput, numParticles * sizeof(ParticleSpawnCSConstants), spawnShader->constants);
-    graphics->SetConstants(ShaderStage::Compute, spawnShader->constants, 0);
-    graphics->RunComputeShader(spawnShader, numParticles, 1);
-    graphics->SetEditBuffer(nullptr, 0); // unbind particles
+    const ComputeShader* spawnShader = &app.assets->particleSpawnCS;
+    app.graphics->SetArray(ShaderStage::Compute, &spawnData, 0);
+    app.graphics->SetEditBuffer(&particleRenderer->particleData.particleBuffer, 0);
+    app.graphics->WriteBuffer(&csInput, numParticles * sizeof(ParticleSpawnCSConstants), spawnShader->constants);
+    app.graphics->SetConstants(ShaderStage::Compute, spawnShader->constants, 0);
+    app.graphics->RunComputeShader(spawnShader, numParticles, 1);
+    app.graphics->SetEditBuffer(nullptr, 0); // unbind particles
 
     lastParticle += numParticles;
     lastParticle %= particleRenderer->particleData.maxParticles;

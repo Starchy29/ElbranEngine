@@ -4,15 +4,15 @@
 #include "AssetContainer.h"
 #include "ShaderConstants.h"
 
-void Renderer::Draw(GraphicsAPI* graphics, const AssetContainer* assets) {
+void Renderer::Draw(DrawComponents app) {
 	switch(type) {
 	case Type::Shape: {
 		CameraVSConstants vsInput = {};
 		vsInput.uvScale = Vector2(1.f, 1.f);
 		vsInput.worldTransform = worldMatrix->Transpose();
-		graphics->SetVertexShader(&assets->cameraVS, &vsInput, sizeof(CameraVSConstants));
-		graphics->SetPixelShader(shapeData.shape == PrimitiveShape::Circle ? &assets->circleFillPS : &assets->solidColorPS, &shapeData.color, sizeof(Color));
-		graphics->DrawMesh(shapeData.shape == PrimitiveShape::Triangle ? &assets->unitTriangle : &assets->unitSquare);
+		app.graphics->SetVertexShader(&app.assets->cameraVS, &vsInput, sizeof(CameraVSConstants));
+		app.graphics->SetPixelShader(shapeData.shape == PrimitiveShape::Circle ? &app.assets->circleFillPS : &app.assets->solidColorPS, &shapeData.color, sizeof(Color));
+		app.graphics->DrawMesh(shapeData.shape == PrimitiveShape::Triangle ? &app.assets->unitTriangle : &app.assets->unitSquare);
 	} break;
 
 	case Type::Sprite: {
@@ -20,15 +20,15 @@ void Renderer::Draw(GraphicsAPI* graphics, const AssetContainer* assets) {
 		vsInput.worldTransform = worldMatrix->Transpose();
 		vsInput.uvOffset = Vector2::Zero;
 		vsInput.uvScale = Vector2(spriteData.flipX ? -1 : 1, spriteData.flipY ? -1 : 1); // assumes wrap enabled on sampling
-		graphics->SetVertexShader(&assets->cameraVS, &vsInput, sizeof(CameraVSConstants));
+		app.graphics->SetVertexShader(&app.assets->cameraVS, &vsInput, sizeof(CameraVSConstants));
 
 		TexturePSConstants psInput;
 		psInput.tint = spriteData.tint;
 		psInput.lit = spriteData.lit;
-		graphics->SetTexture(ShaderStage::Pixel, &spriteData.sprite->texture, 0);
-		graphics->SetPixelShader(&assets->texturePS, &psInput, sizeof(TexturePSConstants));
+		app.graphics->SetTexture(ShaderStage::Pixel, &spriteData.sprite->texture, 0);
+		app.graphics->SetPixelShader(&app.assets->texturePS, &psInput, sizeof(TexturePSConstants));
 
-		graphics->DrawMesh(&assets->unitSquare);
+		app.graphics->DrawMesh(&app.assets->unitSquare);
 	} break;
 
 	case Type::Atlas: {
@@ -36,16 +36,16 @@ void Renderer::Draw(GraphicsAPI* graphics, const AssetContainer* assets) {
 		vsInput.worldTransform = worldMatrix->Transpose();
 		vsInput.uvOffset = Vector2::Zero;
 		vsInput.uvScale = Vector2(spriteData.flipX ? -1 : 1, spriteData.flipY ? -1 : 1); // assumes wrap enabled on sampling
-		graphics->SetVertexShader(&assets->cameraVS, &vsInput, sizeof(CameraVSConstants));
+		app.graphics->SetVertexShader(&app.assets->cameraVS, &vsInput, sizeof(CameraVSConstants));
 
 		AtlasPSConstants psInput;
 		psInput.tint = atlasData.tint;
 		psInput.lit = atlasData.lit;
 		psInput.textureIndex = atlasData.row * atlasData.atlas->cols + atlasData.col;
-		graphics->SetTextureArray(ShaderStage::Pixel, &atlasData.atlas->textures, 0);
-		graphics->SetPixelShader(&assets->atlasPS, &psInput, sizeof(AtlasPSConstants));
+		app.graphics->SetTextureArray(ShaderStage::Pixel, &atlasData.atlas->textures, 0);
+		app.graphics->SetPixelShader(&app.assets->atlasPS, &psInput, sizeof(AtlasPSConstants));
 
-		graphics->DrawMesh(&assets->unitSquare);
+		app.graphics->DrawMesh(&app.assets->unitSquare);
 	} break;
 
 	case Type::Pattern: {
@@ -62,15 +62,15 @@ void Renderer::Draw(GraphicsAPI* graphics, const AssetContainer* assets) {
 		worldOffset.y *= -1.f; // uvs are flipped vertically
 		vsInput.uvOffset = worldOffset / patternData.blockSize + Vector2(0.f, -Math::FractionOf(globalScale.y / patternData.blockSize.y));
 		vsInput.uvOffset *= flips;
-		graphics->SetVertexShader(&assets->cameraVS, &vsInput, sizeof(CameraVSConstants));
+		app.graphics->SetVertexShader(&app.assets->cameraVS, &vsInput, sizeof(CameraVSConstants));
 
 		TexturePSConstants psInput;
 		psInput.tint = patternData.tint;
 		psInput.lit = patternData.lit;
-		graphics->SetTexture(ShaderStage::Pixel, &patternData.sprite->texture, 0);
-		graphics->SetPixelShader(&assets->texturePS, &psInput, sizeof(TexturePSConstants));
+		app.graphics->SetTexture(ShaderStage::Pixel, &patternData.sprite->texture, 0);
+		app.graphics->SetPixelShader(&app.assets->texturePS, &psInput, sizeof(TexturePSConstants));
 
-		graphics->DrawMesh(&assets->unitSquare);
+		app.graphics->DrawMesh(&app.assets->unitSquare);
 	} break;
 
 	case Type::Text: {
@@ -103,22 +103,22 @@ void Renderer::Draw(GraphicsAPI* graphics, const AssetContainer* assets) {
 		vsInput.worldTransform = (*worldMatrix * Matrix::Translation(alignment.x, alignment.y) * Matrix::Scale(unstretchFactor.x, unstretchFactor.y)).Transpose();
 		vsInput.uvOffset = Vector2::Zero;
 		vsInput.uvScale = Vector2(1.f, 1.f);
-		graphics->SetVertexShader(&assets->cameraVS, &vsInput, sizeof(CameraVSConstants));
+		app.graphics->SetVertexShader(&app.assets->cameraVS, &vsInput, sizeof(CameraVSConstants));
 
 		// set pixel shader
-		graphics->SetArray(ShaderStage::Pixel, &textData.font->glyphCurves, 0);
-		graphics->SetArray(ShaderStage::Pixel, &textData.font->firstCurveIndices, 1);
-		graphics->SetPixelShader(&assets->textRasterizePS, &textData.color, sizeof(Color));
+		app.graphics->SetArray(ShaderStage::Pixel, &textData.font->glyphCurves, 0);
+		app.graphics->SetArray(ShaderStage::Pixel, &textData.font->firstCurveIndices, 1);
+		app.graphics->SetPixelShader(&app.assets->textRasterizePS, &textData.color, sizeof(Color));
 
 		// draw mesh
-		graphics->DrawMesh(&textData.textMesh);
+		app.graphics->DrawMesh(&textData.textMesh);
 	} break;
 
 	case Type::Particles: {
 		// vertex shader
-		graphics->ClearMesh();
-		graphics->SetArray(ShaderStage::Vertex, &particleData.particleBuffer.arrayBuffer, 0);
-		graphics->SetVertexShader(&assets->particlePassPS);
+		app.graphics->ClearMesh();
+		app.graphics->SetArray(ShaderStage::Vertex, &particleData.particleBuffer.arrayBuffer, 0);
+		app.graphics->SetVertexShader(&app.assets->particlePassPS);
 
 		// geometry shader
 		ParticleQuadGSConstants gsInput = {};
@@ -127,30 +127,30 @@ void Renderer::Draw(GraphicsAPI* graphics, const AssetContainer* assets) {
 		gsInput.animationFPS = particleData.animationFPS;
 		gsInput.atlasRows = particleData.sprites->rows;
 		gsInput.atlasCols = particleData.sprites->cols;
-		graphics->SetGeometryShader(&assets->particleQuadGS, &gsInput, sizeof(ParticleQuadGSConstants));
+		app.graphics->SetGeometryShader(&app.assets->particleQuadGS, &gsInput, sizeof(ParticleQuadGSConstants));
 
 		// pixel shader
 		AtlasPSConstants psInput;
 		psInput.lit = particleData.applyLights;
 		psInput.tint = particleData.tint;
 		psInput.textureIndex = 0; // sent from geo shader per-particle instead
-		graphics->SetTextureArray(ShaderStage::Pixel, &particleData.sprites->textures, 0);
-		graphics->SetPixelShader(&assets->texturePS, &psInput, sizeof(AtlasPSConstants));
+		app.graphics->SetTextureArray(ShaderStage::Pixel, &particleData.sprites->textures, 0);
+		app.graphics->SetPixelShader(&app.assets->texturePS, &psInput, sizeof(AtlasPSConstants));
 
 		// draw
 		if(particleData.blendAdditive) {
-			graphics->SetBlendMode(BlendState::Additive);
+			app.graphics->SetBlendMode(BlendState::Additive);
 		}
-		graphics->SetPrimitive(RenderPrimitive::Point);
-		graphics->DrawVertices(particleData.maxParticles);
+		app.graphics->SetPrimitive(RenderPrimitive::Point);
+		app.graphics->DrawVertices(particleData.maxParticles);
 
 		// clean up
 		if(particleData.blendAdditive) {
-			graphics->SetBlendMode(BlendState::AlphaBlend);
+			app.graphics->SetBlendMode(BlendState::AlphaBlend);
 		}
-		graphics->SetPrimitive(RenderPrimitive::Triangle);
-		graphics->SetGeometryShader(nullptr);
-		graphics->SetArray(ShaderStage::Vertex, nullptr, 0); // unbind particles
+		app.graphics->SetPrimitive(RenderPrimitive::Triangle);
+		app.graphics->SetGeometryShader(nullptr);
+		app.graphics->SetArray(ShaderStage::Vertex, nullptr, 0); // unbind particles
 	} break;
 	}
 }
@@ -228,7 +228,7 @@ void Renderer::InitLight(Color color, float radius) {
 	lightData.coneSize = PI * 2.0f;
 }
 
-void Renderer::InitText(const GraphicsAPI* graphics, MemoryArena* arena, const char* text, const Font* font, HorizontalAlignment horizontalAlignment, float lineSpacing) {
+void Renderer::InitText(AppComponents app, const char* text, const Font* font, HorizontalAlignment horizontalAlignment, float lineSpacing) {
 	type = Type::Text;
 	hidden = false;
 
@@ -240,7 +240,7 @@ void Renderer::InitText(const GraphicsAPI* graphics, MemoryArena* arena, const c
 	textData.verticalAlignment = VerticalAlignment::Center;
 	textData.color = Color::White;
 
-	UpdateTextMesh(graphics, arena);
+	UpdateTextMesh(app);
 }
 
 #define PARTICLE_BYTES 32 // based on struct in ShaderStructs.hlsli
@@ -259,10 +259,10 @@ void Renderer::InitParticles(const GraphicsAPI* graphics, uint16_t maxParticles,
 	particleData.particleBuffer = graphics->CreateEditBuffer(ShaderDataType::Structured, maxParticles, PARTICLE_BYTES);
 }
 
-void Renderer::UpdateTextMesh(const GraphicsAPI* graphics, MemoryArena* arena) {
+void Renderer::UpdateTextMesh(AppComponents app) {
 	ASSERT(type == Type::Text)
 
-	graphics->ReleaseMesh(&textData.textMesh);
+	app.graphics->ReleaseMesh(&textData.textMesh);
 
 	// determine dimensions
 	uint16_t rows = 1;
@@ -272,7 +272,7 @@ void Renderer::UpdateTextMesh(const GraphicsAPI* graphics, MemoryArena* arena) {
 		charIndex++;
 	}
 	uint32_t textLength = charIndex; // excludes null terminator
-	float* rowWidths = (float*)arena->Reserve(sizeof(float) * rows);
+	float* rowWidths = (float*)app.arena->Reserve(sizeof(float) * rows);
 
 	uint16_t currentRow = 0;
 	charIndex = 0;
@@ -292,8 +292,8 @@ void Renderer::UpdateTextMesh(const GraphicsAPI* graphics, MemoryArena* arena) {
 	float totalHeight = rows + (rows - 1) * textData.lineSpacing;
 
 	// create mesh to fit in a 1x1 square
-	Mesh::Vertex* vertices = (Mesh::Vertex*)arena->Reserve(sizeof(Mesh::Vertex) * 4 * textLength);
-	uint32_t* indices = (uint32_t*)arena->Reserve(sizeof(uint32_t) * 6 * textLength);
+	Mesh::Vertex* vertices = (Mesh::Vertex*)app.arena->Reserve(sizeof(Mesh::Vertex) * 4 * textLength);
+	uint32_t* indices = (uint32_t*)app.arena->Reserve(sizeof(uint32_t) * 6 * textLength);
 	Vector2 cursor = Vector2(0.f, -1.f); // start at y=-1 so the top is at y=0
 	if(textData.horizontalAlignment == HorizontalAlignment::Right) cursor.x = maxWidth - rowWidths[0];
 	else if(textData.horizontalAlignment == HorizontalAlignment::Center) cursor.x = (maxWidth - rowWidths[0]) * 0.5f;
@@ -333,11 +333,11 @@ void Renderer::UpdateTextMesh(const GraphicsAPI* graphics, MemoryArena* arena) {
 		}
 	}
 
-	textData.textMesh = graphics->CreateMesh(vertices, 4 * textLength, indices, 6 * textLength, false);
+	textData.textMesh = app.graphics->CreateMesh(vertices, 4 * textLength, indices, 6 * textLength, false);
 	textData.blockAspectRatio = maxWidth / totalHeight;
 }
 
-void Renderer::ClearParticles(GraphicsAPI* graphics, const AssetContainer* assets) {
+void Renderer::ClearParticles(const GraphicsAPI* graphics, const AssetContainer* assets) {
 	ASSERT(type == Type::Particles)
 	graphics->WriteBuffer(&particleData.maxParticles, sizeof(uint16_t), assets->particleClearCS.constants);
 	graphics->SetConstants(ShaderStage::Compute, assets->particleClearCS.constants, 0);

@@ -5,6 +5,7 @@
 #include "SoundMixer.h"
 #include "GraphicsAPI.h"
 #include "InputManager.h"
+#include "AppComponents.h"
 
 class Application {
 public:
@@ -22,4 +23,8 @@ public:
 	void Release();
 
 	void StepFrame(float deltaTime);
+
+private:
+	AppComponents updateComponents;
+	DrawComponents drawComponents;
 };

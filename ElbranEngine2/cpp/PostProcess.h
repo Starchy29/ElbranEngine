@@ -1,8 +1,7 @@
 #pragma once
 #include "Common.h"
+#include "AppComponents.h"
 
-class GraphicsAPI;
-class AssetContainer;
 struct RenderTarget;
 
 struct PostProcess {
@@ -32,7 +31,7 @@ struct PostProcess {
 		} bloomData;
 	};
 
-	void Render(const RenderTarget* input, RenderTarget* output, GraphicsAPI*, const AssetContainer*) const;
+	void Render(const RenderTarget* input, RenderTarget* output, DrawComponents) const;
 	bool IsActive() const;
 
 	void Blur(uint16_t blurRadius);

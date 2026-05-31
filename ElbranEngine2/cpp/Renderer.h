@@ -1,10 +1,7 @@
 #pragma once
 #include "GraphicsData.h"
 #include "Common.h"
-
-class GraphicsAPI;
-class AssetContainer;
-class MemoryArena;
+#include "AppComponents.h"
 
 enum class PrimitiveShape : uint8_t {
 	Square,
@@ -109,7 +106,7 @@ struct Renderer {
 
 	bool hidden;
 	
-	void Draw(GraphicsAPI*, const AssetContainer*);
+	void Draw(DrawComponents);
 	bool IsTranslucent() const;
 	void Release(const GraphicsAPI*);
 
@@ -118,9 +115,9 @@ struct Renderer {
 	void InitAtlas(const SpriteSheet* atlas);
 	void InitPattern(const Sprite* sprite);
 	void InitLight(Color color, float radius);
-	void InitText(const GraphicsAPI*, MemoryArena*, const char* text, const Font* font, HorizontalAlignment horizontalAlignment = HorizontalAlignment::Center, float lineSpacing = 0.0f);
+	void InitText(AppComponents, const char* text, const Font* font, HorizontalAlignment horizontalAlignment = HorizontalAlignment::Center, float lineSpacing = 0.0f);
 	void InitParticles(const GraphicsAPI*, uint16_t maxParticles, const SpriteSheet* animation, float animationFPS);
 
-	void UpdateTextMesh(const GraphicsAPI*, MemoryArena*); // for text renderers
-	void ClearParticles(GraphicsAPI*, const AssetContainer*); // for particle renderers
+	void UpdateTextMesh(AppComponents); // for text renderers
+	void ClearParticles(const GraphicsAPI*, const AssetContainer*); // for particle renderers
 };

@@ -8,7 +8,7 @@ void MemoryArena::Initialize(uint64_t size) {
 	this->size = size;
 }
 
-void* MemoryArena::Reserve(uint64_t bytes) {
+void* MemoryArena::Reserve(uint64_t bytes) const {
 	ASSERT(size - (next - data) >= bytes)
 	ASSERT(*next == 0) // fails when a previous reservation exceeded its buffer
 	uint8_t* address = next;
@@ -16,7 +16,7 @@ void* MemoryArena::Reserve(uint64_t bytes) {
 	return address;
 }
 
-MemoryArena MemoryArena::ReserveSubArena(uint64_t bytes) {
+MemoryArena MemoryArena::ReserveSubArena(uint64_t bytes) const {
 	MemoryArena result;
 	result.data = (uint8_t*)Reserve(bytes);
 	result.next = result.data;

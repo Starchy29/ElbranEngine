@@ -2,6 +2,9 @@
 #include "Random.h"
 
 void Application::Initialize(void (*quitFunction)(), UInt2 windowSize, PlatformGraphics* platformGraphics, PlatformAudio* platformAudio, PlatformInput* platformInput) {
+	updateComponents = {&graphics, &audio, &input, &assets, &frameBuffer};
+	drawComponents = {&graphics, &assets, &frameBuffer};
+
 	frameBuffer.Initialize(4194304);
 	_rng.Initialize();
 	this->quitFunction = quitFunction;
@@ -11,7 +14,7 @@ void Application::Initialize(void (*quitFunction)(), UInt2 windowSize, PlatformG
 	input.Initialize(platformInput);
 
 	assets.Initialize(&graphics, &frameBuffer);
-	game.Initialize(this);
+	game.Initialize(updateComponents);
 	frameBuffer.Clear();
 }
 
@@ -28,10 +31,10 @@ void Application::Release() {
 void Application::StepFrame(float deltaTime) {
 	input.Update(deltaTime, graphics.viewportDims, graphics.viewportOffset);
 	audio.Update(deltaTime);
-	game.Update(this, deltaTime);
+	game.Update(updateComponents, deltaTime);
 
 	graphics.ResetRenderTargets();
-	game.Draw(&graphics, &assets, &frameBuffer);
+	game.Draw(drawComponents);
 	graphics.PresentFrame();
 
 	frameBuffer.Clear();

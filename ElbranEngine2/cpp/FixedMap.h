@@ -15,7 +15,7 @@ public:
 		pairs = new KeyVal[capacity] {};
 	}
 
-	void Initialize(MemoryArena* arena, uint16_t capacity, uint32_t (*hashFunction)(KeyType) = nullptr) {
+	void Initialize(const MemoryArena* arena, uint16_t capacity, uint32_t (*hashFunction)(KeyType) = nullptr) {
 		size = 0;
 		this->capacity = capacity;
 		hasher = hashFunction;

@@ -4,7 +4,7 @@
 #include "lodepng.h"
 #include "FixedList.h"
 
-void AssetContainer::Initialize(GraphicsAPI* graphics, MemoryArena* arena) {
+void AssetContainer::Initialize(const GraphicsAPI* graphics, MemoryArena* arena) {
 	defaultSampler = graphics->CreateDefaultSampler();
 	graphics->SetSampler(ShaderStage::Vertex, defaultSampler, 0);
 	graphics->SetSampler(ShaderStage::Geometry, defaultSampler, 0);
@@ -73,7 +73,7 @@ void AssetContainer::Initialize(GraphicsAPI* graphics, MemoryArena* arena) {
 	packedAssets.Release();
 }
 
-void AssetContainer::Release(GraphicsAPI* graphics) {
+void AssetContainer::Release(const GraphicsAPI* graphics) {
 	graphics->ReleaseSampler(defaultSampler);
 	graphics->ReleaseMesh(&unitSquare);
 	graphics->ReleaseMesh(&unitTriangle);
@@ -163,9 +163,8 @@ void AssetContainer::ReleaseFont(const GraphicsAPI* graphics, Font* font) {
 	font->charToGlyphIndex.Release();
 }
 
-ImageBuffer AssetContainer::LoadBMP(LoadedFile file, MemoryArena* arena) {
+ImageBuffer AssetContainer::LoadBMP(LoadedFile file, const MemoryArena* arena) {
 	ASSERT(file.bytes)
-	if(arena) arena->Clear();
 
 	file.littleEndian = true;
 	file.readLocation = 0;
@@ -430,9 +429,8 @@ ImageBuffer AssetContainer::LoadBMP(LoadedFile file, MemoryArena* arena) {
 	return result;
 }
 
-ImageBuffer AssetContainer::LoadPNG(LoadedFile file, MemoryArena* arena) {
+ImageBuffer AssetContainer::LoadPNG(LoadedFile file, const MemoryArena* arena) {
 	ASSERT(file.bytes)
-	if(arena) arena->Clear();
 	std::vector<uint8_t> lodeFile(file.bytes, file.bytes + file.fileSize);
 	std::vector<uint8_t> loadedImage;
 
@@ -445,7 +443,7 @@ ImageBuffer AssetContainer::LoadPNG(LoadedFile file, MemoryArena* arena) {
 	return result;
 }
 
-AudioSample AssetContainer::LoadWAV(LoadedFile file, MemoryArena* arena) {
+AudioSample AssetContainer::LoadWAV(LoadedFile file, const MemoryArena* arena) {
 	ASSERT(file.bytes)
 	file.littleEndian = true;
 	uint32_t chunkName = file.ReadUInt32();
@@ -515,7 +513,7 @@ struct FontLoader {
     int16_t* leftSideBearings;
     uint16_t* advanceWidths;
 
-	MemoryArena* curveArena;
+	const MemoryArena* curveArena;
 	BezierCurve* curves;
 	uint64_t numCurves;
 
@@ -744,10 +742,9 @@ struct FontLoader {
 	}
 };
 
-Font AssetContainer::LoadTTF(LoadedFile file, const GraphicsAPI* graphics, MemoryArena* arena) {
+Font AssetContainer::LoadTTF(LoadedFile file, const GraphicsAPI* graphics, const MemoryArena* arena) {
 	ASSERT(file.bytes)
 	ASSERT(arena)
-	arena->Clear();
 	Font loaded = {};
 	FontLoader loader = {};
 	loader.fontFile = file;

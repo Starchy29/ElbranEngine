@@ -40,9 +40,9 @@ struct OrderedRenderer {
 	float globalZ;
 };
 
-void RenderGroup::Draw(GraphicsAPI* graphics, const AssetContainer* assets, MemoryArena* frameBuffer) const {
+void RenderGroup::Draw(DrawComponents app) {
 	// convert all transforms into local matrices
-	Matrix* localMatrices = (Matrix*)frameBuffer->Reserve(sizeof(Matrix) * transformCount);
+	Matrix* localMatrices = (Matrix*)app.arena->Reserve(sizeof(Matrix) * transformCount);
 	for(uint32_t i = 0; i < transformCount; i++) {
 		localMatrices[i] =
 			Matrix::Translation(transforms[i].position.x, transforms[i].position.y, transforms[i].zOrder) *
@@ -76,8 +76,8 @@ void RenderGroup::Draw(GraphicsAPI* graphics, const AssetContainer* assets, Memo
 
 	uint32_t numOpaque = 0;
 	uint32_t numTranslucent = 0;
-	OrderedRenderer* opaques = (OrderedRenderer*)frameBuffer->Reserve(sizeof(OrderedRenderer) * rendererCount);
-	OrderedRenderer* translucents = (OrderedRenderer*)frameBuffer->Reserve(sizeof(OrderedRenderer) * rendererCount);
+	OrderedRenderer* opaques = (OrderedRenderer*)app.arena->Reserve(sizeof(OrderedRenderer) * rendererCount);
+	OrderedRenderer* translucents = (OrderedRenderer*)app.arena->Reserve(sizeof(OrderedRenderer) * rendererCount);
 
 	for(uint32_t i = 0; i < rendererCount; i++) {
 		if(renderers[i].hidden) continue;
@@ -129,21 +129,21 @@ void RenderGroup::Draw(GraphicsAPI* graphics, const AssetContainer* assets, Memo
 	}
 
 	// send the light data to the gpu for pixel shaders
-	graphics->WriteBuffer(&lightData, sizeof(LightData) * MAX_LIGHTS_ONSCREEN, graphics->lightsBuffer.buffer);
-	graphics->SetArray(ShaderStage::Pixel, &graphics->lightsBuffer, LIGHTS_REGISTER);
+	app.graphics->WriteBuffer(&lightData, sizeof(LightData) * MAX_LIGHTS_ONSCREEN, app.graphics->lightsBuffer.buffer);
+	app.graphics->SetArray(ShaderStage::Pixel, &app.graphics->lightsBuffer, LIGHTS_REGISTER);
 
-	graphics->WriteBuffer(&lightConstants, sizeof(LightConstants), graphics->lightInfoBuffer);
-	graphics->SetConstants(ShaderStage::Pixel, graphics->lightInfoBuffer, LIGHT_INFO_REGISTER);
+	app.graphics->WriteBuffer(&lightConstants, sizeof(LightConstants), app.graphics->lightInfoBuffer);
+	app.graphics->SetConstants(ShaderStage::Pixel, app.graphics->lightInfoBuffer, LIGHT_INFO_REGISTER);
 
 	// send the projection matrix to the gpu for vertex shaders
 	viewProjection = viewProjection.Transpose();
-	graphics->WriteBuffer(&viewProjection, sizeof(Matrix), graphics->projectionBuffer);
-	graphics->SetConstants(ShaderStage::Vertex, graphics->projectionBuffer, 1);
-	graphics->SetConstants(ShaderStage::Geometry, graphics->projectionBuffer, 1);
+	app.graphics->WriteBuffer(&viewProjection, sizeof(Matrix), app.graphics->projectionBuffer);
+	app.graphics->SetConstants(ShaderStage::Vertex, app.graphics->projectionBuffer, 1);
+	app.graphics->SetConstants(ShaderStage::Geometry, app.graphics->projectionBuffer, 1);
 
 	// draw opaques front to back
 	for(uint32_t i = 0; i < numOpaque; i++) {
-		opaques[i].renderer->Draw(graphics, assets);
+		opaques[i].renderer->Draw(app);
 	}
 
 	// draw the background
@@ -152,19 +152,19 @@ void RenderGroup::Draw(GraphicsAPI* graphics, const AssetContainer* assets, Memo
 		psInput.tint = backgroundColor;
 		psInput.lit = false;
 
-		graphics->SetTexture(ShaderStage::Pixel, backgroundImage, 0);
-		graphics->SetPixelShader(&assets->texturePS, &psInput, sizeof(TexturePSConstants));
+		app.graphics->SetTexture(ShaderStage::Pixel, backgroundImage, 0);
+		app.graphics->SetPixelShader(&app.assets->texturePS, &psInput, sizeof(TexturePSConstants));
 	} else {
-		graphics->SetPixelShader(&assets->solidColorPS, &backgroundColor, sizeof(Color));
+		app.graphics->SetPixelShader(&app.assets->solidColorPS, &backgroundColor, sizeof(Color));
 	}
-	graphics->DrawFullscreen(assets);
+	app.graphics->DrawFullscreen(app.assets);
 
 	// draw translucents back to front
-	graphics->SetBlendMode(BlendState::AlphaBlend);
+	app.graphics->SetBlendMode(BlendState::AlphaBlend);
 	for(int i = 0; i < numTranslucent; i++) {
-		translucents[i].renderer->Draw(graphics, assets);
+		translucents[i].renderer->Draw(app);
 	}
-	graphics->SetBlendMode(BlendState::None);
+	app.graphics->SetBlendMode(BlendState::None);
 }
 
 Transform* RenderGroup::ReserveTransform(const Matrix** outMatrix) {

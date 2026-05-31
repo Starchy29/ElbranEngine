@@ -1,18 +1,17 @@
 #include "Game.h"
-#include "Application.h"
 
-void Game::Initialize(Application* app) {
+void Game::Initialize(AppComponents app) {
 
 }
 
-void Game::Release(GraphicsAPI* graphics) {
+void Game::Release(const GraphicsAPI* graphics) {
 	
 }
 
-void Game::Update(Application* app, float deltaTime) {
+void Game::Update(AppComponents app, float deltaTime) {
 	
 }
 
-void Game::Draw(GraphicsAPI* graphics, const AssetContainer* assets, MemoryArena* frameBuffer) {
+void Game::Draw(DrawComponents app) {
 	
 }

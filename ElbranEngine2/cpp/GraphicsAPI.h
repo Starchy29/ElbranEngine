@@ -2,6 +2,7 @@
 #include "Common.h"
 #include "GraphicsData.h"
 #include "FileIO.h"
+#include "AppComponents.h"
 
 #ifdef WINDOWS
 class DirectXAPI;
@@ -9,9 +10,7 @@ typedef DirectXAPI PlatformGraphics;
 #endif
 
 struct LoadedFile;
-class AssetContainer;
 struct PostProcess;
-class MemoryArena;
 
 class GraphicsAPI {
 public:
@@ -31,7 +30,7 @@ public:
 
 	void ResetRenderTargets();
 	void PresentFrame();
-	void ApplyPostProcesses(const AssetContainer*, const PostProcess* postProcessSequence, uint8_t ppCount);
+	void ApplyPostProcesses(DrawComponents, const PostProcess* postProcessSequence, uint8_t ppCount);
 
 	bool IsFullscreen() const;
 	void SetFullscreen(bool fullscreen);
@@ -46,7 +45,7 @@ public:
 	Texture2D CreateConstantTexture(uint32_t width, uint32_t height, const uint8_t* textureData) const;
 	Texture2DArray CreateTextureArray(const uint8_t* textureData, uint16_t numElements, uint32_t textureWidth, uint32_t textureHeight) const;
 	Sampler* CreateDefaultSampler() const;
-	void CreateDefaultInputLayout(LoadedFile vertexShaderBlob);
+	void CreateDefaultInputLayout(LoadedFile vertexShaderBlob) const;
 	GraphicsBuffer* CreateVertexBuffer(const Mesh::Vertex* vertices, uint32_t vertexCount, bool editable) const;
 	GraphicsBuffer* CreateIndexBuffer(const uint32_t* indices, uint32_t indexCount) const;
 	Mesh CreateMesh(const Mesh::Vertex* vertices, uint32_t vertexCount, const uint32_t* indices, uint32_t indexCount, bool editable) const;
@@ -59,19 +58,19 @@ public:
 	
 	void WriteBuffer(const void* data, uint32_t byteLength, GraphicsBuffer* buffer) const; // fails if the buffer was not created with cpu write access
 	void CopyTexture(const Texture2D* source, Texture2D* destination) const;
-	void SetConstants(ShaderStage stage, GraphicsBuffer* constantBuffer, uint8_t slot);
-	void SetArray(ShaderStage stage, const ArrayBuffer* buffer, uint8_t slot);
-	void SetTexture(ShaderStage stage, const Texture2D* texture, uint8_t slot);
-	void SetTextureArray(ShaderStage stage, const Texture2DArray* textures, uint8_t slot);
-	void SetSampler(ShaderStage stage, Sampler* sampler, uint8_t slot);
-	void ClearMesh();
+	void SetConstants(ShaderStage stage, GraphicsBuffer* constantBuffer, uint8_t slot) const;
+	void SetArray(ShaderStage stage, const ArrayBuffer* buffer, uint8_t slot) const;
+	void SetTexture(ShaderStage stage, const Texture2D* texture, uint8_t slot) const;
+	void SetTextureArray(ShaderStage stage, const Texture2DArray* textures, uint8_t slot) const;
+	void SetSampler(ShaderStage stage, Sampler* sampler, uint8_t slot) const;
+	void ClearMesh() const;
 
-	void SetVertexShader(const VertexShader* shader, const void* constantInput = nullptr, uint32_t inputBytes = 0);
-	void SetGeometryShader(const GeometryShader* shader, const void* constantInput = nullptr, uint32_t inputBytes = 0);
-	void SetPixelShader(const PixelShader* shader, const void* constantInput = nullptr, uint32_t inputBytes = 0);
+	void SetVertexShader(const VertexShader* shader, const void* constantInput = nullptr, uint32_t inputBytes = 0) const;
+	void SetGeometryShader(const GeometryShader* shader, const void* constantInput = nullptr, uint32_t inputBytes = 0) const;
+	void SetPixelShader(const PixelShader* shader, const void* constantInput = nullptr, uint32_t inputBytes = 0) const;
 
-	void SetBlendMode(BlendState mode);
-	void SetPrimitive(RenderPrimitive primitive);
+	void SetBlendMode(BlendState mode) const;
+	void SetPrimitive(RenderPrimitive primitive) const;
 	void SetRenderTarget(const RenderTarget* renderTarget, bool useDepthStencil);
 
 	void SetVertexBuffer(GraphicsBuffer* vertices);
@@ -82,9 +81,9 @@ public:
 	void DrawFullscreen(const AssetContainer*);
 
 	// compute shader functions
-	void SetComputeTexture(const ComputeTexture* texture, uint8_t slot);
-	void SetEditBuffer(const EditBuffer* buffer, uint8_t slot);
-	void SetOutputBuffer(const OutputBuffer* buffer, uint8_t slot, const void* initialData = nullptr);
+	void SetComputeTexture(const ComputeTexture* texture, uint8_t slot) const;
+	void SetEditBuffer(const EditBuffer* buffer, uint8_t slot) const;
+	void SetOutputBuffer(const OutputBuffer* buffer, uint8_t slot, const void* initialData = nullptr) const;
 	void ReadBuffer(const OutputBuffer* buffer, void* destination) const;
 	void RunComputeShader(const ComputeShader* shader, uint16_t xThreads, uint16_t yThreads, uint16_t zThreads = 1) const;
 
