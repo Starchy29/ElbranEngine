@@ -12,6 +12,8 @@ enum class InputAction {
 	COUNT
 };
 
+char buf[1024];
+
 void Game::Initialize(AppComponents app) {
 	// set default key bindings
 	app.input->controllers = &controls;
@@ -29,7 +31,7 @@ void Game::Release(const GraphicsAPI* graphics) {
 }
 
 void Game::Update(AppComponents app, float deltaTime) {
-	
+
 }
 
 void Game::Draw(DrawComponents app) {

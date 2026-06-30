@@ -9,6 +9,7 @@ class WindowsInput {
 public:
     static constexpr uint32_t KEY_COUNT = 256;
     float mouseWheelDelta;
+    char typedKey;
 
     WindowsInput(HWND__* windowHandle);
     ~WindowsInput();
@@ -20,6 +21,7 @@ public:
     Vector2 GetGamepadStick(bool left, uint8_t playerIndex);
     Vector2 GetMouseScreenPosition(UInt2 viewDimensions, UInt2 viewOffset);
     float DetermineMouseSpin();
+    char GetTypedKey();
     void SetRumble(uint8_t playerIndex, float strength);
 
 private:

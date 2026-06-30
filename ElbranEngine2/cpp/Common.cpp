@@ -361,6 +361,20 @@ StringBuffer& StringBuffer::Append(const char* string) {
 	return *this;
 }
 
+StringBuffer& StringBuffer::Append(char character) {
+	uint32_t textLength = FindTextLength();
+	if(textLength >= capacity - 1) return *this;
+	if(textLength > 0) {
+		chars[textLength] = character;
+		chars[textLength + 1] = 0;
+	}
+	else if(capacity > 1) {
+		chars[0] = character;
+		chars[1] = 0;
+	}
+	return *this;
+}
+
 StringBuffer& StringBuffer::Insert(StringBuffer inserted, uint32_t index) {
 	uint32_t insertLength = inserted.FindTextLength();
 	uint32_t i = index + insertLength;

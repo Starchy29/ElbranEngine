@@ -93,6 +93,9 @@ LRESULT CALLBACK WndProc(_In_ HWND hWnd, _In_ UINT message, _In_ WPARAM wParam, 
 	case WM_MOUSEWHEEL:
 		input->mouseWheelDelta += GET_WHEEL_DELTA_WPARAM(wParam) / (float)WHEEL_DELTA;
 		return 0;
+	case WM_CHAR:
+		input->typedKey = wParam;
+		return 0;
 	case WM_ENTERSIZEMOVE:
 		SetTimer(windowHandle, 1, USER_TIMER_MINIMUM, NULL);
 		break;

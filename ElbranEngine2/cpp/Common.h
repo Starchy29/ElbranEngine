@@ -34,6 +34,7 @@ struct StringBuffer {
 	StringBuffer& CopyText(const char*);
 	StringBuffer& Append(StringBuffer);
 	StringBuffer& Append(const char*);
+	StringBuffer& Append(char);
 	StringBuffer& Insert(StringBuffer, uint32_t index);
 	StringBuffer& Insert(const char*, uint32_t index);
 	StringBuffer& RemoveAt(uint32_t index, uint32_t length = 1);

@@ -27,6 +27,7 @@ public:
 			bool middleClicked;
 		} lastFrame;
 	} mouse;
+	char typedKey;
 
 	void Initialize(PlatformInput* platformInput);
 	void Release();

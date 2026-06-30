@@ -15,6 +15,7 @@ void InputManager::Release() {
 
 void InputManager::Update(float deltaTime, UInt2 viewDimensions, UInt2 viewOffset) {
 	platformInput->CheckInputs();
+	typedKey = platformInput->GetTypedKey();
 
 	// update mouse
 	mouse.lastFrame.screenPos = mouse.screenPos;

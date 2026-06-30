@@ -67,10 +67,15 @@ void WindowsInput::CheckInputs() {
 
 void WindowsInput::ClearInputs() {
     mouseWheelDelta = 0.f;
+    typedKey = 0;
 }
 
 float WindowsInput::DetermineMouseSpin() {
     return mouseWheelDelta;
+}
+
+char WindowsInput::GetTypedKey() {
+    return typedKey;
 }
 
 bool WindowsInput::IsKeyPressed(char key, uint8_t playerIndex) {
