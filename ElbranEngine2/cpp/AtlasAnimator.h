@@ -1,27 +1,43 @@
 #pragma once
 #include "Renderer.h"
 
-class AtlasAnimator {
-public:
+struct Animation {
+    const SpriteSheet* spriteSheet;
     float frameRate;
+    int16_t firstFrameIndex;
+    int16_t lastFrameIndex;
+    int16_t nextAnimationIndex;
     bool looped;
     bool rebounds;
 
-    AtlasAnimator() = default;
-    void Initialize(Renderer* atlasRenderer, float frameRate);
+    Animation() = default;
+    inline Animation(const SpriteSheet* spriteSheet, float frameRate, bool looped = false, bool rebounds = false) {
+        this->spriteSheet = spriteSheet;
+        this->frameRate = frameRate;
+        this->looped = looped;
+        this->rebounds = rebounds;
+        nextAnimationIndex = -1;
+        firstFrameIndex = 0;
+        lastFrameIndex = spriteSheet->SpriteCount() - 1;
+    }
+};
 
-    void Update(float deltaTime);
-    
-    void Restart(bool reversed = false);
-    bool IsComplete() const;
-
-private:
+struct AtlasAnimator {
+public:
     Renderer* atlasRenderer;
+    Animation* animations;
+    int16_t animationCount;
 
-    float timer;
-    int16_t currentIndex;
+    int16_t animationIndex;
+    int16_t frameIndex;
     bool reversed;
     bool completed;
+    float timer;
 
-    inline void UpdateSprite();
+    AtlasAnimator() = default;
+    void Initialize(Renderer* atlasRenderer, Animation* animations, int16_t animationCount);
+
+    void Update(float deltaTime);
+    void Start(int16_t index, bool reversed = false);
+    void UpdateSprite();
 };

@@ -163,13 +163,13 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="..\hlsl\ColorConversion.hlsli">
-      <Filter>Engine\Shaders\HLSL</Filter>
+      <Filter>Engine\Shaders</Filter>
     </None>
     <None Include="..\hlsl\Lighting.hlsli">
-      <Filter>Engine\Shaders\HLSL</Filter>
+      <Filter>Engine\Shaders</Filter>
     </None>
     <None Include="..\hlsl\ShaderStructs.hlsli">
-      <Filter>Engine\Shaders\HLSL</Filter>
+      <Filter>Engine\Shaders</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>
@@ -181,9 +181,6 @@
     </Filter>
     <Filter Include="Engine\Shaders">
       <UniqueIdentifier>{1e6d8481-631c-4ece-9a84-da2b57b13b32}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Engine\Shaders\HLSL">
-      <UniqueIdentifier>{94787536-8e77-4fda-b0f1-197120db3dc0}</UniqueIdentifier>
     </Filter>
     <Filter Include="Engine\Platforms\Windows">
       <UniqueIdentifier>{1b756258-60e6-49bd-acde-35ce9959bd23}</UniqueIdentifier>
@@ -199,56 +196,56 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
+    <FxCompile Include="..\hlsl\AtlasPS.hlsl">
+      <Filter>Engine\Shaders</Filter>
+    </FxCompile>
     <FxCompile Include="..\hlsl\BloomFilterPS.hlsl">
-      <Filter>Engine\Shaders\HLSL</Filter>
+      <Filter>Engine\Shaders</Filter>
     </FxCompile>
     <FxCompile Include="..\hlsl\BlurPS.hlsl">
-      <Filter>Engine\Shaders\HLSL</Filter>
+      <Filter>Engine\Shaders</Filter>
     </FxCompile>
     <FxCompile Include="..\hlsl\BrightnessSumCS.hlsl">
-      <Filter>Engine\Shaders\HLSL</Filter>
+      <Filter>Engine\Shaders</Filter>
     </FxCompile>
     <FxCompile Include="..\hlsl\CameraVS.hlsl">
-      <Filter>Engine\Shaders\HLSL</Filter>
+      <Filter>Engine\Shaders</Filter>
     </FxCompile>
     <FxCompile Include="..\hlsl\CircleFillPS.hlsl">
-      <Filter>Engine\Shaders\HLSL</Filter>
+      <Filter>Engine\Shaders</Filter>
     </FxCompile>
     <FxCompile Include="..\hlsl\ConSatValPS.hlsl">
-      <Filter>Engine\Shaders\HLSL</Filter>
+      <Filter>Engine\Shaders</Filter>
     </FxCompile>
     <FxCompile Include="..\hlsl\FullscreenVS.hlsl">
-      <Filter>Engine\Shaders\HLSL</Filter>
-    </FxCompile>
-    <FxCompile Include="..\hlsl\ParticleMoveCS.hlsl">
-      <Filter>Engine\Shaders\HLSL</Filter>
-    </FxCompile>
-    <FxCompile Include="..\hlsl\ParticlePassVS.hlsl">
-      <Filter>Engine\Shaders\HLSL</Filter>
-    </FxCompile>
-    <FxCompile Include="..\hlsl\ParticleQuadGS.hlsl">
-      <Filter>Engine\Shaders\HLSL</Filter>
-    </FxCompile>
-    <FxCompile Include="..\hlsl\ParticleSpawnCS.hlsl">
-      <Filter>Engine\Shaders\HLSL</Filter>
-    </FxCompile>
-    <FxCompile Include="..\hlsl\ScreenSumPS.hlsl">
-      <Filter>Engine\Shaders\HLSL</Filter>
-    </FxCompile>
-    <FxCompile Include="..\hlsl\SolidColorPS.hlsl">
-      <Filter>Engine\Shaders\HLSL</Filter>
-    </FxCompile>
-    <FxCompile Include="..\hlsl\TextRasterizePS.hlsl">
-      <Filter>Engine\Shaders\HLSL</Filter>
-    </FxCompile>
-    <FxCompile Include="..\hlsl\TexturePS.hlsl">
-      <Filter>Engine\Shaders\HLSL</Filter>
+      <Filter>Engine\Shaders</Filter>
     </FxCompile>
     <FxCompile Include="..\hlsl\ParticleClearCS.hlsl">
-      <Filter>Engine\Shaders\HLSL</Filter>
+      <Filter>Engine\Shaders</Filter>
     </FxCompile>
-    <FxCompile Include="..\hlsl\AtlasPS.hlsl">
-      <Filter>Engine\Shaders\HLSL</Filter>
+    <FxCompile Include="..\hlsl\ParticleMoveCS.hlsl">
+      <Filter>Engine\Shaders</Filter>
+    </FxCompile>
+    <FxCompile Include="..\hlsl\ParticleQuadGS.hlsl">
+      <Filter>Engine\Shaders</Filter>
+    </FxCompile>
+    <FxCompile Include="..\hlsl\ParticlePassVS.hlsl">
+      <Filter>Engine\Shaders</Filter>
+    </FxCompile>
+    <FxCompile Include="..\hlsl\ParticleSpawnCS.hlsl">
+      <Filter>Engine\Shaders</Filter>
+    </FxCompile>
+    <FxCompile Include="..\hlsl\ScreenSumPS.hlsl">
+      <Filter>Engine\Shaders</Filter>
+    </FxCompile>
+    <FxCompile Include="..\hlsl\SolidColorPS.hlsl">
+      <Filter>Engine\Shaders</Filter>
+    </FxCompile>
+    <FxCompile Include="..\hlsl\TextRasterizePS.hlsl">
+      <Filter>Engine\Shaders</Filter>
+    </FxCompile>
+    <FxCompile Include="..\hlsl\TexturePS.hlsl">
+      <Filter>Engine\Shaders</Filter>
     </FxCompile>
   </ItemGroup>
 </Project>
