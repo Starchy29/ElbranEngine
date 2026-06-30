@@ -19,7 +19,7 @@ void AtlasAnimator::Update(float deltaTime) {
 
 	if(reversed) {
 		frameIndex--;
-		if(currentIndex < currentAnimation->firstFrameIndex) {
+		if(frameIndex < currentAnimation->firstFrameIndex) {
 			// determine what to do when reaching the beginning
 			if(currentAnimation->looped && currentAnimation->rebounds) {
 				// start going forwards
@@ -58,7 +58,7 @@ void AtlasAnimator::Update(float deltaTime) {
 	else UpdateSprite();
 }
 
-void AtlasAnimator::Start(int16_t index, bool reversed = false) {
+void AtlasAnimator::Start(int16_t index, bool reversed) {
 	animationIndex = index;
 	frameIndex = reversed ? atlasRenderer->atlasData.atlas->SpriteCount() - 1 : 0;
 	timer = 1.f;

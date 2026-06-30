@@ -129,7 +129,6 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="..\cpp\AnimationGroup.cpp" />
     <ClCompile Include="..\cpp\Application.cpp" />
     <ClCompile Include="..\cpp\AssetContainer.cpp" />
     <ClCompile Include="..\cpp\AtlasAnimator.cpp" />
@@ -157,7 +156,6 @@
     <ClCompile Include="..\cpp\WindowsMain.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\cpp\AnimationGroup.h" />
     <ClInclude Include="..\cpp\AppComponents.h" />
     <ClInclude Include="..\cpp\Application.h" />
     <ClInclude Include="..\cpp\AssetContainer.h" />
@@ -178,6 +176,7 @@
     <ClInclude Include="..\cpp\Math.h" />
     <ClInclude Include="..\cpp\MemoryArena.h" />
     <ClInclude Include="..\cpp\ParticleBehavior.h" />
+    <ClInclude Include="..\cpp\PlayerControls.h" />
     <ClInclude Include="..\cpp\PostProcess.h" />
     <ClInclude Include="..\cpp\Random.h" />
     <ClInclude Include="..\cpp\Renderer.h" />

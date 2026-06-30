@@ -4,7 +4,7 @@
 
 bool UserInterface::mouseEnabled = true;
 bool UserInterface::gamepadEnabled = true;
-
+/*
 void UserInterface::Initialize(uint16_t maxElements) {
 	mouseEnabled = true;
 	gamepadEnabled = true;
@@ -185,3 +185,4 @@ void UserInterface::ChangeFocus(UIElement* newFocus) {
 		focus->OnFocused();
 	}
 }
+*/

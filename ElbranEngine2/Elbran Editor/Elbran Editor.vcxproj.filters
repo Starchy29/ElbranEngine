@@ -25,9 +25,6 @@
     <ClCompile Include="..\cpp\RenderGroup.cpp">
       <Filter>Engine\Rendering</Filter>
     </ClCompile>
-    <ClCompile Include="..\cpp\AnimationGroup.cpp">
-      <Filter>Engine\Toolkit</Filter>
-    </ClCompile>
     <ClCompile Include="..\cpp\AtlasAnimator.cpp">
       <Filter>Engine\Toolkit</Filter>
     </ClCompile>
@@ -99,9 +96,6 @@
     <ClInclude Include="..\cpp\RenderGroup.h">
       <Filter>Engine\Rendering</Filter>
     </ClInclude>
-    <ClInclude Include="..\cpp\AnimationGroup.h">
-      <Filter>Engine\Toolkit</Filter>
-    </ClInclude>
     <ClInclude Include="..\cpp\AtlasAnimator.h">
       <Filter>Engine\Toolkit</Filter>
     </ClInclude>
@@ -160,6 +154,7 @@
       <Filter>Engine</Filter>
     </ClInclude>
     <ClInclude Include="..\cpp\AppComponents.h" />
+    <ClInclude Include="..\cpp\PlayerControls.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\hlsl\ColorConversion.hlsli">
