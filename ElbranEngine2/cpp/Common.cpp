@@ -1,55 +1,7 @@
 #include "Common.h"
 #include "Math.h"
 
-uint32_t String::GetStringLength(const char* string) {
-	uint32_t length = 0;
-	while(string[length]) length++;
-	return length;
-}
-
-void String::AddStrings(const char* left, const char* right, char* outBuffer) {
-	uint64_t outIndex = 0;
-	while(left[outIndex]) {
-		outBuffer[outIndex] = left[outIndex];
-		outIndex++;
-	}
-	uint64_t rightIndex = 0;
-	while(right[rightIndex]) {
-		outBuffer[outIndex] = right[rightIndex];
-		outIndex++;
-		rightIndex++;
-	}
-	outBuffer[outIndex+1] = 0;
-}
-
-const char* String::FindChar(const char* string, char seeked) {
-	uint32_t i = 0;
-	while(string[i] != 0) {
-		if(string[i] == seeked) return string + i;
-		i++;
-	}
-	return nullptr;
-}
-
-bool String::AreStringsEqual(const char* left, const char* right) {
-	while(*left && *right) {
-		if(*left != *right) return false;
-		left += 1;
-		right += 1;
-	}
-	return true;
-}
-
-char* String::FindChar(char* string, char seeked) {
-	uint32_t i = 0;
-	while(string[i] != 0) {
-		if(string[i] == seeked) return string + i;
-		i++;
-	}
-	return nullptr;
-}
-
-char String::DigitToChar(uint8_t digit) {
+char StringConversion::DigitToChar(uint8_t digit) {
 	switch(digit) {
 	case 0: return '0';
 	case 1: return '1';
@@ -65,7 +17,7 @@ char String::DigitToChar(uint8_t digit) {
 	return 0;
 }
 
-void String::IntToString(int32_t number, char* outString) {
+void StringConversion::IntToString(int32_t number, char* outString) {
 	if(number < 0) {
 		*outString = '-';
 		outString++;
@@ -94,7 +46,7 @@ void String::IntToString(int32_t number, char* outString) {
 	return;
 }
 
-void String::FloatToString(float number, uint8_t decimalPlaces, char* outString) {
+void StringConversion::FloatToString(float number, uint8_t decimalPlaces, char* outString) {
 	IntToString((int32_t)number, outString);
 	if(decimalPlaces == 0) return;
 	while(*outString) outString++; // find the new end of the string
@@ -109,7 +61,7 @@ void String::FloatToString(float number, uint8_t decimalPlaces, char* outString)
 	*outString = 0;
 }
 
-int32_t String::ParseInt(const char* string, const char** textNumberEnd) {
+int32_t StringConversion::ParseInt(const char* string, const char** textNumberEnd) {
 	bool negative = string[0] == '-';
 	if(negative) string++;
 	int32_t total = 0;
@@ -156,7 +108,7 @@ int32_t String::ParseInt(const char* string, const char** textNumberEnd) {
 	return (negative ? -1 : 1) * total;
 }
 
-float String::ParseFloat(const char* string, const char** textNumberEnd) {
+float StringConversion::ParseFloat(const char* string, const char** textNumberEnd) {
 	const char* readLoc;
 	int32_t leftSide = ParseInt(string, &readLoc);
 	if(*readLoc != '.') {
@@ -303,3 +255,153 @@ const Color Color::Cyan = Color(0, 1, 1, 1);
 const Color Color::Magenta = Color(1, 0, 1, 1);
 const Color Color::Yellow = Color(1, 1, 0, 1);
 const Color Color::White = Color(1, 1, 1, 1);
+
+StringBuffer StringBuffer::FromText(char* text) {
+	// assumes text is null terminated
+	StringBuffer result = { text, UINT32_MAX };
+	result.capacity = StringBuffer::FindStringLength(text);
+	return result;
+}
+
+uint32_t StringBuffer::FindStringLength(const char* nullTerminated) {
+	uint32_t index = 0;
+	while(nullTerminated[index]) index++;
+	return index;
+}
+
+uint32_t StringBuffer::FindTextLength() const {
+	uint32_t length = 0;
+	for(uint32_t i = 0; i < capacity; i++) if(chars[i] == 0) return i;
+	return 0; // does not count as text unless it's null-terminated
+}
+
+bool StringBuffer::MatchesText(StringBuffer other) const {
+	// the buffers need not have the same length, but they must null-terminate at the same index
+	uint32_t index = 0;
+	uint32_t maxIndex = Math::Min((int32_t)capacity, (int32_t)other.capacity) - 1;
+	while(index <= maxIndex && chars[index] == other.chars[index]) {
+		if(chars[index] == 0) return true;
+		index++;
+	}
+	return false;
+}
+
+char* StringBuffer::FindChar(char seeked) {
+	uint32_t index = 0;
+	while(index < capacity && chars[index] != 0) {
+		if(chars[index] == seeked) return chars + index;
+		index++;
+	}
+	return nullptr;
+}
+
+char* StringBuffer::FindString(StringBuffer seeked) {
+	uint32_t seekedLength = seeked.FindTextLength();
+	if(seekedLength == 0) return nullptr;
+	uint32_t index = 0;
+	uint32_t matchLength = 0;
+	while(index <= capacity - seekedLength) {
+		if(chars[index] == seeked.chars[index]) { 
+			matchLength++;
+			if(matchLength == seekedLength) return chars + index;
+		}
+		else matchLength = 0;
+	}
+	return nullptr;
+}
+
+char* StringBuffer::FindString(const char* seeked) {
+	uint32_t seekedLength = StringBuffer::FindStringLength(seeked);
+	uint32_t index = 0;
+	uint32_t matchLength = 0;
+	while(index <= capacity - seekedLength) {
+		if(chars[index] == seeked[index]) { 
+			matchLength++;
+			if(matchLength == seekedLength) return chars + index;
+		}
+		else matchLength = 0;
+	}
+	return nullptr;
+}
+
+StringBuffer& StringBuffer::CopyText(StringBuffer string) {
+	uint32_t maxIndex = Math::Min((int32_t)capacity, (int32_t)string.capacity) - 1;
+	for(uint32_t i = 0; i <= maxIndex; i++) {
+		chars[i] = string.chars[i];
+		if(string.chars[i] == 0) return *this;
+	}
+	if(capacity > string.capacity) chars[string.capacity + 1] = 0; // null-terminate in cases when the input string was not null-terminated
+	else chars[capacity - 1] = 0; // null-terminate when the target buffer is too small to fit all of the text
+	return *this;
+}
+
+StringBuffer& StringBuffer::CopyText(const char* string) {
+	uint32_t stringLength = StringBuffer::FindStringLength(string);
+	uint32_t maxIndex = Math::Min((int32_t)capacity, (int32_t)stringLength) - 1;
+	for(uint32_t i = 0; i <= maxIndex; i++) {
+		chars[i] = string[i];
+		if(string[i] == 0) return *this;
+	}
+	if(capacity > stringLength) chars[stringLength + 1] = 0; // null-terminate in cases when the input string was not null-terminated
+	else chars[capacity - 1] = 0; // null-terminate when the target buffer is too small to fit all of the text
+	return *this;
+}
+
+StringBuffer& StringBuffer::Append(StringBuffer string) {
+	uint32_t textLength = FindTextLength();
+	StringBuffer bufferEnd = { chars + textLength, capacity - textLength };
+	bufferEnd.CopyText(string);
+	return *this;
+}
+
+StringBuffer& StringBuffer::Append(const char* string) {
+	uint32_t textLength = FindTextLength();
+	StringBuffer bufferEnd = { chars + textLength, capacity - textLength };
+	bufferEnd.CopyText(string);
+	return *this;
+}
+
+StringBuffer& StringBuffer::Insert(StringBuffer inserted, uint32_t index) {
+	uint32_t insertLength = inserted.FindTextLength();
+	uint32_t i = index + insertLength;
+	if(i >= capacity) {
+		chars[capacity - 1] = 0; // null terminate if grew past capacity
+		i = capacity - 2;
+	}
+
+	// shift existing chars to make room for inserted chars
+	for(; i >= index + insertLength; i--) chars[i] = chars[i - insertLength];
+
+	// insert new chars
+	for(; i >= index; i--) chars[i] = inserted.chars[i - index];
+	
+	return *this;
+}
+
+StringBuffer& StringBuffer::Insert(const char* inserted, uint32_t index) {
+	uint32_t insertLength = StringBuffer::FindStringLength(inserted);
+	uint32_t i = 2 * insertLength + index;
+	if(i >= capacity) {
+		chars[capacity - 1] = 0; // null terminate if grew past capacity
+		i = capacity - 2;
+	}
+
+	// shift existing chars to make room for inserted chars
+	for(; i >= index + insertLength; i--) chars[i] = chars[i - insertLength];
+
+	// insert new chars
+	for(; i >= index; i--) chars[i] = inserted[i - index];
+
+	return *this;
+}
+
+StringBuffer& StringBuffer::RemoveAt(uint32_t index, uint32_t length) {
+	// do not modify past the capacity or end of the text
+	uint32_t maxIndex = Math::Min((int32_t)FindTextLength() + 1, capacity);
+	if(index >= maxIndex) return *this;
+	if(index + length >= maxIndex) length = maxIndex - index - 1;
+
+	for(uint32_t i = index; i < maxIndex; i++) chars[i] = chars[i+1];
+
+	return *this;
+}

@@ -168,7 +168,8 @@ void QuitApp() {
 
 LoadedFile LoadWindowsFile(const char* fileName, MemoryArena* arena) {
 	char fullPath[1024] {};
-	String::AddStrings(filePath, fileName, fullPath);
+	StringBuffer pathBuffer { fullPath, 1024 };
+	pathBuffer.Append(fileName);
 	HANDLE fileHandle = CreateFileA(fullPath, GENERIC_READ, FILE_SHARE_READ, nullptr, OPEN_EXISTING, 0, nullptr);
 	if(fileHandle == INVALID_HANDLE_VALUE) return {};
 	LoadedFile file = {};
@@ -199,7 +200,7 @@ LoadedFile LoadWindowsFile(const char* fileName, MemoryArena* arena) {
 
 bool SaveWindowsFile(const char* fileName, void* bytes, uint64_t fileSize) {
 	char fullPath[1024] {};
-	String::AddStrings(filePath, fileName, fullPath);
+	StringBuffer pathBuffer { fullPath, 1024 };
 	HANDLE fileHandle = CreateFileA(fullPath, GENERIC_WRITE, 0, nullptr, CREATE_ALWAYS, 0, nullptr);
 	if(fileHandle == INVALID_HANDLE_VALUE) return false;
 	DWORD writtenBytes;

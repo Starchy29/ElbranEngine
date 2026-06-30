@@ -99,14 +99,14 @@ float LoadedFile::ReadF2Dot14() {
 
 int32_t LoadedFile::ReadTextInt() {
 	const char* parseEnd;
-	int32_t read = String::ParseInt((char*)bytes + readLocation, &parseEnd);
+	int32_t read = StringConversion::ParseInt((char*)bytes + readLocation, &parseEnd);
 	readLocation += (const uint8_t*)parseEnd - (bytes + readLocation);
 	return read;
 }
 
 float LoadedFile::ReadTextFloat() {
 	const char* parseEnd;
-	float read = String::ParseFloat((char*)bytes + readLocation, &parseEnd);
+	float read = StringConversion::ParseFloat((char*)bytes + readLocation, &parseEnd);
 	readLocation += (const uint8_t*)parseEnd - (bytes + readLocation);
 	return read;
 }

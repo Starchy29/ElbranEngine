@@ -9,19 +9,35 @@
 #define ASSERT(condition)
 #endif
 
-namespace String {
-	uint32_t GetStringLength(const char* string);
-	void AddStrings(const char* left, const char* right, char* outBuffer);
-	char* FindChar(char* string, char seeked);
-	const char* FindChar(const char* string, char seeked);
-	bool AreStringsEqual(const char* left, const char* right);
-
+namespace StringConversion {
 	char DigitToChar(uint8_t digit);
 	void IntToString(int32_t number, char* outString);
 	void FloatToString(float number, uint8_t decimalPlaces, char* outString);
 	int32_t ParseInt(const char* string, const char** textNumberEnd = nullptr);
 	float ParseFloat(const char* string, const char** textNumberEnd = nullptr);
 }
+
+struct StringBuffer {
+	char* chars;
+	uint32_t capacity;
+
+	static StringBuffer FromText(char*);
+	static uint32_t FindStringLength(const char*);
+
+	uint32_t FindTextLength() const;
+	bool MatchesText(StringBuffer) const;
+	char* FindChar(char);
+	char* FindString(StringBuffer);
+	char* FindString(const char*);
+	
+	StringBuffer& CopyText(StringBuffer);
+	StringBuffer& CopyText(const char*);
+	StringBuffer& Append(StringBuffer);
+	StringBuffer& Append(const char*);
+	StringBuffer& Insert(StringBuffer, uint32_t index);
+	StringBuffer& Insert(const char*, uint32_t index);
+	StringBuffer& RemoveAt(uint32_t index, uint32_t length = 1);
+};
 
 enum class Direction {
 	None,
