@@ -52,12 +52,5 @@ public:
 	void Initialize(const GraphicsAPI*, MemoryArena*);
 	void Release(const GraphicsAPI*);
 
-	static LoadedFile UnpackFile(LoadedFile loadedPackFile, const char* fileName);
-
-	static ImageBuffer LoadBMP(LoadedFile, const MemoryArena*);
-	static ImageBuffer LoadPNG(LoadedFile, const MemoryArena*);
-	static Font LoadTTF(LoadedFile, const GraphicsAPI*, const MemoryArena* arena);
-	static AudioSample LoadWAV(LoadedFile, const MemoryArena*);
-
 	static void ReleaseFont(const GraphicsAPI*, Font*);
 };

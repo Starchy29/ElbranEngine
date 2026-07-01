@@ -1,5 +1,9 @@
 #pragma once
 #include "MemoryArena.h"
+#include "GraphicsData.h"
+#include "AudioData.h"
+
+class GraphicsAPI;
 
 struct LoadedFile {
 	uint64_t fileSize;
@@ -28,5 +32,12 @@ namespace FileIO {
 	extern bool platformLittleEndian;
 	extern LoadedFile (*LoadFile)(const char* fileName, MemoryArena*);
 	extern bool (*SaveFile)(const char* fileName, void* bytes, uint64_t fileSize); // returns false if failed
+
+	LoadedFile UnpackFile(LoadedFile loadedPackFile, const char* fileName);
+
+	ImageBuffer LoadBMP(LoadedFile, const MemoryArena*);
+	ImageBuffer LoadPNG(LoadedFile, const MemoryArena*);
+	Font LoadTTF(LoadedFile, const GraphicsAPI*, const MemoryArena* arena);
+	AudioSample LoadWAV(LoadedFile, const MemoryArena*);
 };
 
