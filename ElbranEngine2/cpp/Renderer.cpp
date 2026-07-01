@@ -35,7 +35,7 @@ void Renderer::Draw(DrawComponents app) {
 		CameraVSConstants vsInput;
 		vsInput.worldTransform = worldMatrix->Transpose();
 		vsInput.uvOffset = Vector2::Zero;
-		vsInput.uvScale = Vector2(spriteData.flipX ? -1 : 1, spriteData.flipY ? -1 : 1); // assumes wrap enabled on sampling
+		vsInput.uvScale = Vector2(atlasData.flipX ? -1 : 1, atlasData.flipY ? -1 : 1); // assumes wrap enabled on sampling
 		app.graphics->SetVertexShader(&app.assets->shaders.cameraVS, &vsInput, sizeof(CameraVSConstants));
 
 		AtlasPSConstants psInput;

@@ -14,19 +14,6 @@ struct Transform {
 	Transform* parent;
 };
 
-struct Camera {
-	Transform* transform;
-	const Matrix* worldMatrix;
-	float viewWidth;
-
-	inline float GetViewHeight() const { return viewWidth / ASPECT_RATIO; }
-	inline Vector2 GetWorldDimensions() const { return Vector2(viewWidth, GetViewHeight()); }
-	inline AlignedRect GetViewArea() const {
-		ASSERT(transform->rotation == 0.f)
-		return AlignedRect(transform->position, GetWorldDimensions());
-	}
-};
-
 // matches buffer in Lighting.hlsli
 struct LightConstants {
 	Color ambientLight;

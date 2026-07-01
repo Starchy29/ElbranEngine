@@ -25,9 +25,6 @@ void RenderGroup::Initialize(uint32_t maxRenderers, uint32_t extraTransforms) {
 	worldMatrices = (Matrix*)dataBlock;
 	dataBlock += transformCapacity * sizeof(Matrix);
 	renderers = (Renderer*)dataBlock;
-
-	camera.viewWidth = 1.f;
-	camera.transform = ReserveTransform(&camera.worldMatrix);
 }
 
 void RenderGroup::Release(const GraphicsAPI* graphics) {
@@ -41,6 +38,8 @@ struct OrderedRenderer {
 };
 
 void RenderGroup::Draw(DrawComponents app) {
+	if(!camera) return;
+
 	// convert all transforms into local matrices
 	Matrix* localMatrices = (Matrix*)app.arena->Reserve(sizeof(Matrix) * transformCount);
 	for(uint32_t i = 0; i < transformCount; i++) {
@@ -62,10 +61,10 @@ void RenderGroup::Draw(DrawComponents app) {
 	}
 
 	// create projection matrix
-	Vector2 cameraPosition = *camera.worldMatrix * Vector2::Zero;
+	Vector2 cameraPosition = *camera->worldMatrix * Vector2::Zero;
 	Matrix viewProjection =
-		Matrix::ProjectOrthographic(camera.viewWidth, camera.GetViewHeight(), CAMERA_DEPTH) *
-		Matrix::View(cameraPosition, camera.transform->rotation);
+		Matrix::ProjectOrthographic(camera->viewWidth, camera->GetViewHeight(), Camera::DEPTH) *
+		Matrix::View(cameraPosition, camera->transform->rotation, Camera::MIN_Z);
 
 	// sort the renderers into the correct drawing order and compile the light data together
 	LightData lightData[MAX_LIGHTS_ONSCREEN];
@@ -187,3 +186,5 @@ Renderer* RenderGroup::ReserveRenderer() {
 	rendererCount++;
 	return reserved;
 }
+
+void RenderGroup::AddCamera(Camera* camera) { camera->transform = ReserveTransform(&camera->worldMatrix); }
