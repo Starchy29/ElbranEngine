@@ -1,5 +1,5 @@
-#include "Application.h"
-#include "Random.h"
+#include "..\Application.h"
+#include "..\Random.h"
 
 void Application::Initialize(void (*quitFunction)(), UInt2 windowSize, PlatformGraphics* platformGraphics, PlatformAudio* platformAudio, PlatformInput* platformInput) {
 	updateComponents = {&graphics, &audio, &input, &assets, &frameBuffer};

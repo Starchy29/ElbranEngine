@@ -1,9 +1,9 @@
-#include "FileIO.h"
-#include "Common.h"
-#include "Math.h"
-#include "FixedList.h"
+#include "..\FileIO.h"
+#include "..\Common.h"
+#include "..\Math.h"
+#include "..\FixedList.h"
 #include "lodepng.h"
-#include "GraphicsAPI.h"
+#include "..\GraphicsAPI.h"
 
 bool FileIO::platformLittleEndian = true;
 LoadedFile (*FileIO::LoadFile)(const char* fileName, MemoryArena*) = 0;

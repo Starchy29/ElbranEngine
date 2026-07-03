@@ -1,6 +1,6 @@
-#include "GraphicsAPI.h"
-#include "AssetContainer.h"
-#include "PostProcess.h"
+#include "..\GraphicsAPI.h"
+#include "..\AssetContainer.h"
+#include "..\PostProcess.h"
 
 #ifdef WINDOWS
 #include "DirectXAPI.h"

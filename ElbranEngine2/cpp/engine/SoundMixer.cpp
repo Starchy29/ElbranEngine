@@ -1,5 +1,5 @@
-#include "SoundMixer.h"
-#include "Math.h"
+#include "..\SoundMixer.h"
+#include "..\Math.h"
 
 #ifdef WINDOWS
 #include "WindowsAudio.h"

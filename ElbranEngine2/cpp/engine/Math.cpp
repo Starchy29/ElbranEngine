@@ -1,6 +1,6 @@
-#include "Math.h"
+#include "..\Math.h"
 #include <math.h>
-#include "Common.h"
+#include "..\Common.h"
 
 #pragma region Math
 float Math::Sign(float number) {

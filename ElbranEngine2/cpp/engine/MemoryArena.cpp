@@ -1,6 +1,6 @@
-#include "MemoryArena.h"
+#include "..\MemoryArena.h"
 #include <string>
-#include "Common.h"
+#include "..\Common.h"
 
 void MemoryArena::Initialize(uint64_t size) {
 	data = new uint8_t[size] {};

@@ -1,6 +1,6 @@
 #if defined(DEBUG) | defined(_DEBUG)
-#include "DebugHelper.h"
-#include "RenderGroup.h"
+#include "..\DebugHelper.h"
+#include "..\RenderGroup.h"
 
 void DebugHelper::ClearAll() {
 	for(int i = 0; i < NUM_DYNAMIC; i++) {

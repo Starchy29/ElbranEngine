@@ -1,6 +1,6 @@
 #ifdef WINDOWS
 #pragma once
-#include "InputManager.h"
+#include "..\InputManager.h"
 
 struct HWND__;
 struct _XINPUT_GAMEPAD;

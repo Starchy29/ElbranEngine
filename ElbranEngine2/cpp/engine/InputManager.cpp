@@ -1,5 +1,5 @@
-#include "InputManager.h"
-#include "RenderGroup.h"
+#include "..\InputManager.h"
+#include "..\RenderGroup.h"
 
 #ifdef WINDOWS
 #include "WindowsInput.h"

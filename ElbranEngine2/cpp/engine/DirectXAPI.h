@@ -1,9 +1,9 @@
 #ifdef WINDOWS
 #pragma once
 #include <wrl/client.h>
-#include "Common.h"
-#include "GraphicsData.h"
-#include "FileIO.h"
+#include "..\Common.h"
+#include "..\GraphicsData.h"
+#include "..\FileIO.h"
 
 struct LoadedFile;
 class ID3D11Device;

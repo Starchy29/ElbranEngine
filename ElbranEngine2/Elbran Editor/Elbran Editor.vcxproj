@@ -129,31 +129,31 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="..\cpp\Application.cpp" />
     <ClCompile Include="..\cpp\AssetContainer.cpp" />
     <ClCompile Include="..\cpp\AtlasAnimator.cpp" />
     <ClCompile Include="..\cpp\Button.cpp" />
     <ClCompile Include="..\cpp\Common.cpp" />
-    <ClCompile Include="..\cpp\DebugHelper.cpp" />
-    <ClCompile Include="..\cpp\DirectXAPI.cpp" />
+    <ClCompile Include="..\cpp\engine\Application.cpp" />
+    <ClCompile Include="..\cpp\engine\DebugHelper.cpp" />
+    <ClCompile Include="..\cpp\engine\DirectXAPI.cpp" />
+    <ClCompile Include="..\cpp\engine\FileIO.cpp" />
+    <ClCompile Include="..\cpp\engine\GraphicsAPI.cpp" />
+    <ClCompile Include="..\cpp\engine\InputManager.cpp" />
+    <ClCompile Include="..\cpp\engine\lodepng.cpp" />
+    <ClCompile Include="..\cpp\engine\Math.cpp" />
+    <ClCompile Include="..\cpp\engine\MemoryArena.cpp" />
+    <ClCompile Include="..\cpp\engine\Random.cpp" />
+    <ClCompile Include="..\cpp\engine\SoundMixer.cpp" />
+    <ClCompile Include="..\cpp\engine\WindowsAudio.cpp" />
+    <ClCompile Include="..\cpp\engine\WindowsInput.cpp" />
+    <ClCompile Include="..\cpp\engine\WindowsMain.cpp" />
     <ClCompile Include="..\cpp\Game.cpp" />
-    <ClCompile Include="..\cpp\GraphicsAPI.cpp" />
-    <ClCompile Include="..\cpp\InputManager.cpp" />
-    <ClCompile Include="..\cpp\FileIO.cpp" />
-    <ClCompile Include="..\cpp\lodepng.cpp" />
-    <ClCompile Include="..\cpp\Math.cpp" />
-    <ClCompile Include="..\cpp\MemoryArena.cpp" />
     <ClCompile Include="..\cpp\ParticleBehavior.cpp" />
     <ClCompile Include="..\cpp\PostProcess.cpp" />
-    <ClCompile Include="..\cpp\Random.cpp" />
     <ClCompile Include="..\cpp\Renderer.cpp" />
     <ClCompile Include="..\cpp\RenderGroup.cpp" />
     <ClCompile Include="..\cpp\SliderUI.cpp" />
-    <ClCompile Include="..\cpp\SoundMixer.cpp" />
     <ClCompile Include="..\cpp\UserInterface.cpp" />
-    <ClCompile Include="..\cpp\WindowsAudio.cpp" />
-    <ClCompile Include="..\cpp\WindowsInput.cpp" />
-    <ClCompile Include="..\cpp\WindowsMain.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\cpp\AppComponents.h" />
@@ -161,18 +161,20 @@
     <ClInclude Include="..\cpp\AssetContainer.h" />
     <ClInclude Include="..\cpp\AtlasAnimator.h" />
     <ClInclude Include="..\cpp\AudioData.h" />
+    <ClInclude Include="..\cpp\engine\DebugHelper.h" />
+    <ClInclude Include="..\cpp\engine\DirectXAPI.h" />
+    <ClInclude Include="..\cpp\engine\lodepng.h" />
+    <ClInclude Include="..\cpp\engine\WindowsAudio.h" />
+    <ClInclude Include="..\cpp\engine\WindowsInput.h" />
+    <ClInclude Include="..\cpp\FileIO.h" />
     <ClInclude Include="..\cpp\FixedList.h" />
-    <ClInclude Include="..\cpp\GraphicsData.h" />
     <ClInclude Include="..\cpp\Button.h" />
     <ClInclude Include="..\cpp\Common.h" />
-    <ClInclude Include="..\cpp\DebugHelper.h" />
-    <ClInclude Include="..\cpp\DirectXAPI.h" />
     <ClInclude Include="..\cpp\FixedMap.h" />
     <ClInclude Include="..\cpp\Game.h" />
     <ClInclude Include="..\cpp\GraphicsAPI.h" />
+    <ClInclude Include="..\cpp\GraphicsData.h" />
     <ClInclude Include="..\cpp\InputManager.h" />
-    <ClInclude Include="..\cpp\FileIO.h" />
-    <ClInclude Include="..\cpp\lodepng.h" />
     <ClInclude Include="..\cpp\Math.h" />
     <ClInclude Include="..\cpp\MemoryArena.h" />
     <ClInclude Include="..\cpp\ParticleBehavior.h" />
@@ -185,8 +187,6 @@
     <ClInclude Include="..\cpp\SliderUI.h" />
     <ClInclude Include="..\cpp\SoundMixer.h" />
     <ClInclude Include="..\cpp\UserInterface.h" />
-    <ClInclude Include="..\cpp\WindowsAudio.h" />
-    <ClInclude Include="..\cpp\WindowsInput.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\hlsl\ColorConversion.hlsli" />

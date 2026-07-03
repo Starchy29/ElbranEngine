@@ -1,11 +1,11 @@
 #ifdef WINDOWS
 #include <Windows.h>
-#include "Application.h"
+#include "..\Application.h"
 #include "DirectXAPI.h"
 #include "WindowsAudio.h"
 #include "WindowsInput.h"
-#include "FileIO.h"
-#include "DebugHelper.h"
+#include "..\FileIO.h"
+#include "..\DebugHelper.h"
 #include <string>
 
 #define START_WINDOW_WIDTH 960

@@ -1,6 +1,6 @@
 #ifdef WINDOWS
 #pragma once
-#include "AudioData.h"
+#include "..\AudioData.h"
 
 class IXAudio2;
 class IXAudio2MasteringVoice;

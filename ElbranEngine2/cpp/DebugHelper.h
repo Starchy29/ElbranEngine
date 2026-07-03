@@ -1,7 +1,7 @@
 #if defined(DEBUG) | defined(_DEBUG)
 #pragma once
 #include "Math.h"
-#include "Common.h"
+#include "..\Common.h"
 
 struct RenderGroup;
 struct Renderer;
