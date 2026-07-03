@@ -18,7 +18,7 @@ if %cpp%==true (
 pushd windows-x64-debug
 del ElbranGame_DEBUG.exe
 
-cl /std:c++20 /MDd /DWINDOWS /D_DEBUG /DDEBUG /D_UNICODE /D_MBCS /Zi ..\..\cpp\*.cpp ..\..\cpp\engine\*.cpp /FeElbranGame_DEBUG kernel32.lib user32.lib d3d11.lib dxguid.lib DXGI.lib XInput.lib Xinput9_1_0.lib Xaudio2.lib d3dcompiler.lib
+cl /std:c++20 /MDd /DWINDOWS /D_DEBUG /DDEBUG /D_UNICODE /D_MBCS /Zi ..\..\cpp\*.cpp /FeElbranGame_DEBUG ..\engine-libs\elbranEngine_win32_debug.lib kernel32.lib user32.lib d3d11.lib dxguid.lib DXGI.lib XInput.lib Xinput9_1_0.lib Xaudio2.lib d3dcompiler.lib /link /SUBSYSTEM:WINDOWS
 
 del *.obj
 del *.ilk
