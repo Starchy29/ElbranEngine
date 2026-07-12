@@ -106,19 +106,13 @@
     <ClInclude Include="..\cpp\Common.h">
       <Filter>Toolkit</Filter>
     </ClInclude>
-    <ClInclude Include="..\cpp\FixedList.h">
-      <Filter>Toolkit</Filter>
-    </ClInclude>
-    <ClInclude Include="..\cpp\FixedMap.h">
+    <ClInclude Include="..\cpp\FixedDataStructures.h">
       <Filter>Toolkit</Filter>
     </ClInclude>
     <ClInclude Include="..\cpp\MemoryArena.h">
       <Filter>Toolkit</Filter>
     </ClInclude>
     <ClInclude Include="..\cpp\AppComponents.h">
-      <Filter>Engine</Filter>
-    </ClInclude>
-    <ClInclude Include="..\cpp\engine\DebugHelper.h">
       <Filter>Engine</Filter>
     </ClInclude>
     <ClInclude Include="..\cpp\engine\lodepng.h">
@@ -163,6 +157,7 @@
     <ClInclude Include="..\cpp\Application.h">
       <Filter>Engine</Filter>
     </ClInclude>
+    <ClInclude Include="..\cpp\DebugHelper.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\hlsl\ColorConversion.hlsli">

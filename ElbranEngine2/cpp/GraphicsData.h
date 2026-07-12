@@ -1,6 +1,6 @@
 #pragma once
 #include "Math.h"
-#include "FixedMap.h"
+#include "FixedDataStructures.h"
 
 #define OBJECT_CONSTANT_REGISTER 0 // shaders with per-object constant buffers should use register 0
 #define MAX_POST_PROCESS_HELPER_TEXTURES 3
