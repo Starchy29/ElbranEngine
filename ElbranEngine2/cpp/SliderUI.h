@@ -24,7 +24,7 @@ public:
 	void OnEnabled() override;
 	void OnScrolled(float wheelDelta) override;
 	void OnMouseDragged(Vector2 mousePosition, Vector2 mouseDelta) override;
-	bool OnDirectionPressed(Direction direction) override;
+	void OnDirectionPressed(Direction direction, bool* outInputUsed) override;
 
 private:
 	bool vertical;

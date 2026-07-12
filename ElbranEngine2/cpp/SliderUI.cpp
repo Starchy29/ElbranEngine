@@ -81,15 +81,20 @@ void SliderUI::OnMouseDragged(Vector2 mousePosition, Vector2 mouseDelta) {
 	}
 }
 
-bool SliderUI::OnDirectionPressed(Direction direction) {
+void SliderUI::OnDirectionPressed(Direction direction, bool* outInputUsed) {
 	if(vertical) {
-		if(direction == Direction::Right || direction == Direction::Left) return false;
+		if(direction == Direction::Right || direction == Direction::Left)  {
+			*outInputUsed = false;
+			return;
+		}
 		SetValue(value + 1.0f / segments * (direction == Direction::Up ? 1.f : -1.f));
-		return true;
-	} 
-
-	// horizontal
-	if(direction == Direction::Up || direction == Direction::Down) return false;
-	SetValue(value + 1.0f / segments * (direction == Direction::Right ? 1.f : -1.f));
-	return true;
+		*outInputUsed = true;
+	} else { // horizontal
+		if(direction == Direction::Up || direction == Direction::Down) {
+			*outInputUsed = false;
+			return;
+		}
+		SetValue(value + 1.0f / segments * (direction == Direction::Right ? 1.f : -1.f));
+		*outInputUsed = true;
+	}
 }

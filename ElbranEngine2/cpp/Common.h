@@ -9,6 +9,17 @@
 #define ASSERT(condition)
 #endif
 
+enum class InputAction {
+	Up = 0,
+	Down,
+	Left,
+	Right,
+	Select,
+	Back,
+
+	COUNT
+};
+
 namespace StringConversion {
 	char DigitToChar(uint8_t digit);
 	void IntToString(int32_t number, char* outString);

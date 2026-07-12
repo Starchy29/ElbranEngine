@@ -1,17 +1,6 @@
 #include "Game.h"
 #include "InputManager.h"
 
-enum class InputAction {
-	Up = 0,
-	Down,
-	Left,
-	Right,
-	Select,
-	Back,
-
-	COUNT
-};
-
 char buf[1024];
 
 void Game::Initialize(AppComponents app) {
