@@ -17,7 +17,7 @@ double perfCountSecs;
 double minSecsPerFrame; // inverse of max fps
 WindowsInput* input;
 char filePath[1024];
-Application app;
+Application* app;
 bool initialized = false;
 
 #if defined(DEBUG) | defined(_DEBUG)
@@ -35,7 +35,7 @@ void UpdateApp() {
 			
 	float fDeltaTime = (float)deltaTime;
 
-	app.StepFrame(fDeltaTime);
+	app->StepFrame(fDeltaTime);
 
 	#if defined(DEBUG) | defined(_DEBUG)
 	if(SHOW_FPS) {
@@ -80,15 +80,10 @@ LRESULT CALLBACK WndProc(_In_ HWND hWnd, _In_ UINT message, _In_ WPARAM wParam, 
 		((MINMAXINFO*)lParam)->ptMinTrackSize.y = 200;
 		return 0;
 	case WM_SIZE:
-		if(wParam == SIZE_MINIMIZED) {
-			// dont update when minimized
-			return 0;
-		}
+		if(wParam == SIZE_MINIMIZED) return 0; // dont update when minimized
 
 		// Save the new client area dimensions
-		if(initialized) {
-			app.graphics.ResizeScreen(UInt2(LOWORD(lParam), HIWORD(lParam)));
-		}
+		if(initialized) app->graphics.ResizeScreen(UInt2(LOWORD(lParam), HIWORD(lParam)));
 		return 0;
 	case WM_MOUSEWHEEL:
 		input->mouseWheelDelta += GET_WHEEL_DELTA_WPARAM(wParam) / (float)WHEEL_DELTA;
@@ -243,10 +238,12 @@ int WINAPI WinMain(
 	RECT windowRect;
 	GetClientRect(windowHandle, &windowRect);
 	input = new WindowsInput(windowHandle);
-	app.Initialize(QuitApp, UInt2(windowRect.right - windowRect.left, windowRect.bottom - windowRect.top), new DirectXAPI(windowHandle), new WindowsAudio(), input);
+	app = (Application*)calloc(1, sizeof(Application));
+	app->Initialize(QuitApp, UInt2(windowRect.right - windowRect.left, windowRect.bottom - windowRect.top), new DirectXAPI(windowHandle), new WindowsAudio(), input);
 	initialized = true;
 	RunApp();
-	app.Release();
+	app->Release();
+	free(app);
 	return 0;
 }
 #endif
