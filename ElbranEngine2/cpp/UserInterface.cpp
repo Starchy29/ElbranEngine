@@ -75,7 +75,7 @@ void UserInterface::Update(const InputManager* inputs, float deltaTime, const Ca
 	}
 
 	// select the focused element
-	if(focus && inputs->controllers > 0 && inputs->controllers[0].JustPressed((uint32_t)InputAction::Select)) {
+	if(focus && inputs->controllers && inputs->controllers[0].JustPressed((uint32_t)InputAction::Select)) {
 		focus->OnSelected();
 	}
 }

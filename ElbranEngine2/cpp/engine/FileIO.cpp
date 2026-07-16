@@ -167,7 +167,7 @@ LoadedFile FileIO::UnpackFile(LoadedFile loadedPackFile, const char* fileName) {
 }
 
 #pragma region Image Loaders
-ImageBuffer FileIO::LoadBMP(LoadedFile file, const MemoryArena* arena) {
+ImageBuffer FileIO::LoadBMP(LoadedFile file) {
 	ASSERT(file.bytes)
 
 	file.littleEndian = true;
@@ -271,8 +271,7 @@ ImageBuffer FileIO::LoadBMP(LoadedFile file, const MemoryArena* arena) {
 	ImageBuffer result = {};
 	result.width = width;
 	result.height = height;
-	if(arena) result.pixels = (ImageBuffer::Pixel*)arena->Reserve(width*height*sizeof(ImageBuffer::Pixel));
-	else result.pixels = new ImageBuffer::Pixel[width*height];
+	result.pixels = new ImageBuffer::Pixel[width*height];
 
 	file.readLocation = bitmapOffset;
 	bool topDown = height < 0;
@@ -433,7 +432,7 @@ ImageBuffer FileIO::LoadBMP(LoadedFile file, const MemoryArena* arena) {
 	return result;
 }
 
-ImageBuffer FileIO::LoadPNG(LoadedFile file, const MemoryArena* arena) {
+ImageBuffer FileIO::LoadPNG(LoadedFile file) {
 	ASSERT(file.bytes)
 	std::vector<uint8_t> lodeFile(file.bytes, file.bytes + file.fileSize);
 	std::vector<uint8_t> loadedImage;
@@ -441,24 +440,23 @@ ImageBuffer FileIO::LoadPNG(LoadedFile file, const MemoryArena* arena) {
 	ImageBuffer result;
 	lodepng::decode(loadedImage, result.width, result.height, lodeFile); // thank you Lode Vandevenne
 	
-	if(arena) result.pixels = (ImageBuffer::Pixel*)arena->Reserve(result.width * result.height * sizeof(ImageBuffer::Pixel));
-	else result.pixels = new ImageBuffer::Pixel[result.width * result.height];
+	result.pixels = new ImageBuffer::Pixel[result.width * result.height];
 	memcpy(result.pixels, loadedImage.begin()._Ptr, result.width * result.height * sizeof(ImageBuffer::Pixel));
 	return result;
 }
 #pragma endregion
 
-AudioSample FileIO::LoadWAV(LoadedFile file, const MemoryArena* arena) {
+AudioSample FileIO::LoadWAV(LoadedFile file) {
 	ASSERT(file.bytes)
-		file.littleEndian = true;
+	file.littleEndian = true;
 	uint32_t chunkName = file.ReadUInt32();
 	ASSERT(chunkName == 'FFIR')
 
-		file.readLocation += 4;
+	file.readLocation += 4;
 	chunkName = file.ReadUInt32();
 	ASSERT(chunkName == 'EVAW')
 
-		AudioSample loadedSound = {};
+	AudioSample loadedSound = {};
 	loadedSound.baseVolume = 1.0f;
 
 	while(file.readLocation < file.fileSize) {
@@ -483,7 +481,6 @@ AudioSample FileIO::LoadWAV(LoadedFile file, const MemoryArena* arena) {
 		if(chunkSize % 2 != 0) file.readLocation++; // padding byte
 	}
 
-	if(!arena) file.Release();
 	return loadedSound;
 }
 

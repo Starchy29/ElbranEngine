@@ -187,4 +187,7 @@ Renderer* RenderGroup::ReserveRenderer() {
 	return reserved;
 }
 
-void RenderGroup::AddCamera(Camera* camera) { camera->transform = ReserveTransform(&camera->worldMatrix); }
+void RenderGroup::AddCamera(Camera* camera) {
+	camera->transform = ReserveTransform(&camera->worldMatrix);
+	this->camera = camera;
+}

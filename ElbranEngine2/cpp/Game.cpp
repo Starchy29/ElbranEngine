@@ -1,12 +1,11 @@
 #include "Game.h"
 #include "InputManager.h"
 
-char buf[1024];
-
 void Game::Initialize(AppComponents app) {
 	// set default key bindings
 	app.input->controllers = &controls;
 	app.input->playerCount = 1;
+	controls.numBinds = 6;
 	controls.bindings[(int)InputAction::Up] ={{'W', KEY_UP_ARROW, 0}, {GamepadButton::LStickUp, GamepadButton::DpadUp, GamepadButton::None}};
 	controls.bindings[(int)InputAction::Down] = {{'S', KEY_DOWN_ARROW, 0}, { GamepadButton::LStickDown, GamepadButton::DpadDown, GamepadButton::None}};
 	controls.bindings[(int)InputAction::Left] = {{'A', KEY_LEFT_ARROW, 0}, { GamepadButton::LStickLeft, GamepadButton::DpadLeft, GamepadButton::None}};

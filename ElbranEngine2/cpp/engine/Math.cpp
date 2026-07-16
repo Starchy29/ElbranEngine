@@ -555,7 +555,7 @@ Matrix Matrix::Translation(float x, float y, float z) {
 }
 
 Matrix Matrix::View(Vector2 eyePosition, float rotation, float z) {
-	return Rotation(-rotation) * Translation(-eyePosition.x, -eyePosition.y, z);
+	return Rotation(-rotation) * Translation(-eyePosition.x, -eyePosition.y, -z);
 }
 
 Matrix Matrix::ProjectOrthographic(float viewWidth, float viewHeight, float viewRange) {

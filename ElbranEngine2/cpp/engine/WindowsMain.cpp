@@ -172,7 +172,7 @@ void QuitApp() {
 LoadedFile LoadWindowsFile(const char* fileName, MemoryArena* arena) {
 	char fullPath[1024] {};
 	StringBuffer pathBuffer { fullPath, 1024 };
-	pathBuffer.Append(fileName);
+	pathBuffer.Append(filePath).Append(fileName);
 	HANDLE fileHandle = CreateFileA(fullPath, GENERIC_READ, FILE_SHARE_READ, nullptr, OPEN_EXISTING, 0, nullptr);
 	if(fileHandle == INVALID_HANDLE_VALUE) return {};
 	LoadedFile file = {};
@@ -185,11 +185,8 @@ LoadedFile LoadWindowsFile(const char* fileName, MemoryArena* arena) {
 	ASSERT(file.fileSize < 0xFFFFFFFF); // windows file read has max size
 
 	// read file
-	if(arena) {
-		file.bytes = (uint8_t*)arena->Reserve(file.fileSize);
-	} else {
-		file.bytes = new uint8_t[file.fileSize];
-	}
+	if(arena) file.bytes = (uint8_t*)arena->Reserve(file.fileSize);
+	else file.bytes = new uint8_t[file.fileSize];
 
 	DWORD bytesRead;
 	success = ReadFile(fileHandle, file.bytes, file.fileSize, &bytesRead, 0);
@@ -204,6 +201,7 @@ LoadedFile LoadWindowsFile(const char* fileName, MemoryArena* arena) {
 bool SaveWindowsFile(const char* fileName, void* bytes, uint64_t fileSize) {
 	char fullPath[1024] {};
 	StringBuffer pathBuffer { fullPath, 1024 };
+	pathBuffer.Append(filePath).Append(fileName);
 	HANDLE fileHandle = CreateFileA(fullPath, GENERIC_WRITE, 0, nullptr, CREATE_ALWAYS, 0, nullptr);
 	if(fileHandle == INVALID_HANDLE_VALUE) return false;
 	DWORD writtenBytes;

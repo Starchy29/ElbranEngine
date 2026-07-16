@@ -131,10 +131,12 @@ Sprite GraphicsAPI::CreateSprite(ImageBuffer image) const {
 			break;
 		}
 	}
+
+	delete[] image.pixels;
 	return result;
 }
 
-SpriteSheet GraphicsAPI::CreateSpriteSheet(MemoryArena* arena, ImageBuffer image, uint16_t rows, uint16_t cols) const {
+SpriteSheet GraphicsAPI::CreateSpriteSheet(ImageBuffer image, uint16_t rows, uint16_t cols) const {
 	SpriteSheet result = {};
 	result.rows = rows;
 	result.cols = cols;
@@ -146,8 +148,7 @@ SpriteSheet GraphicsAPI::CreateSpriteSheet(MemoryArena* arena, ImageBuffer image
 	uint32_t elements = (uint32_t)rows * cols;
 
 	ImageBuffer::Pixel* reorderedPixels;
-	if(arena) reorderedPixels = (ImageBuffer::Pixel*)arena->Reserve(sizeof(ImageBuffer::Pixel) * image.width * image.height);
-	else reorderedPixels = new ImageBuffer::Pixel[image.width * image.height];
+	reorderedPixels = new ImageBuffer::Pixel[image.width * image.height];
 
 	for(uint8_t r = 0; r < rows; r++) {
 		for(uint8_t c = 0; c < cols; c++) {
@@ -170,7 +171,8 @@ SpriteSheet GraphicsAPI::CreateSpriteSheet(MemoryArena* arena, ImageBuffer image
 		}
 	}
 
-	if(!arena) delete[] reorderedPixels;
+	delete[] reorderedPixels;
+	delete[] image.pixels;
 	return result;
 }
 

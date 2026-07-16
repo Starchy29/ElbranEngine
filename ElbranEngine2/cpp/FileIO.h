@@ -35,9 +35,9 @@ namespace FileIO {
 
 	LoadedFile UnpackFile(LoadedFile loadedPackFile, const char* fileName);
 
-	ImageBuffer LoadBMP(LoadedFile, const MemoryArena*);
-	ImageBuffer LoadPNG(LoadedFile, const MemoryArena*);
+	ImageBuffer LoadBMP(LoadedFile);
+	ImageBuffer LoadPNG(LoadedFile);
 	Font LoadTTF(LoadedFile, const GraphicsAPI*, const MemoryArena* arena);
-	AudioSample LoadWAV(LoadedFile, const MemoryArena*);
+	AudioSample LoadWAV(LoadedFile);
 };
 

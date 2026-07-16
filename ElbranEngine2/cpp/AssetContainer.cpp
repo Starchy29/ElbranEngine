@@ -63,7 +63,7 @@ void AssetContainer::Initialize(const GraphicsAPI* graphics, MemoryArena* arena)
 	// Load assets
 	LoadedFile packedAssets = FileIO::LoadFile("game_assets.bin", 0);
 
-	sprites.testSprite = graphics->CreateSprite(FileIO::LoadPNG(FileIO::UnpackFile(packedAssets, "elbran.png"), arena));
+	sprites.testSprite = graphics->CreateSprite(FileIO::LoadPNG(FileIO::UnpackFile(packedAssets, "elbran.png")));
 	fonts.arial = FileIO::LoadTTF(FileIO::UnpackFile(packedAssets, "arial.ttf"), graphics, arena);
 
 	packedShaders.Release();

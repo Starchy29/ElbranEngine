@@ -41,7 +41,7 @@ public:
 	ComputeShader CreateComputeShader(LoadedFile shaderBlob) const;
 
 	Sprite CreateSprite(ImageBuffer image) const;
-	SpriteSheet CreateSpriteSheet(MemoryArena*, ImageBuffer image, uint16_t rows, uint16_t cols) const;
+	SpriteSheet CreateSpriteSheet(ImageBuffer image, uint16_t rows, uint16_t cols) const;
 	Texture2D CreateConstantTexture(uint32_t width, uint32_t height, const uint8_t* textureData) const;
 	Texture2DArray CreateTextureArray(const uint8_t* textureData, uint16_t numElements, uint32_t textureWidth, uint32_t textureHeight) const;
 	Sampler* CreateDefaultSampler() const;
