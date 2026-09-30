@@ -6,17 +6,23 @@ struct RenderGroup;
 
 class SliderUI : public UIElement {
 public:
+	enum class SliderEffect {
+	
+	} sliderEffect;
+
 	Transform* root;
 	Renderer* track;
 	Renderer* mover;
 	uint16_t segments;
 
-	void (*onValueChanged)(SliderUI* slider, float newValue); // value is 0-1
-
 	SliderUI() = default;
 	void Initialize(RenderGroup* scene, float width, uint16_t segments, bool vertical = false);
 	void SetValue(float newValue);
 	float GetValue() const;
+
+	AlignedRect GetScreenArea() const override;
+	float GetScreenOrder() const override;
+	bool ProcessInput(InputEventUI inputEvent, AppComponents) override;
 
 	void OnFocused() override;
 	void OnUnfocused() override;

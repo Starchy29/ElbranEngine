@@ -14,69 +14,111 @@ void UserInterface::Release() {
 	delete[] elements;
 }
 
-void UserInterface::Update(const InputManager* inputs, float deltaTime, const Camera* sceneCamera) {
-	if(gamepadEnabled && inputs->controllers) {
-		bool inputUsed = false;
-		if(inputs->controllers[0].JustPressed((uint32_t)InputAction::Up)) {
-			if(focus) {
-				focus->OnDirectionPressed(Direction::Up, &inputUsed);
-				if(!inputUsed) ChangeFocus(FindClosest(Vector2::Up, sceneCamera));
-			} else ChangeFocus(FindFurthest(Vector2::Up));
-		}
-		else if(inputs->controllers[0].JustPressed((uint32_t)InputAction::Down)) {
-			if(focus) {
-				focus->OnDirectionPressed(Direction::Down, &inputUsed);
-				if(!inputUsed) ChangeFocus(FindClosest(Vector2::Down, sceneCamera));
-			} else ChangeFocus(FindFurthest(Vector2::Down));
-		}
-		else if(inputs->controllers[0].JustPressed((uint32_t)InputAction::Left)) {
-			if(focus) {
-				focus->OnDirectionPressed(Direction::Left, &inputUsed);
-				if(!inputUsed) ChangeFocus(FindClosest(Vector2::Left, sceneCamera));
-			} else ChangeFocus(FindFurthest(Vector2::Left));
-		}
-		else if(inputs->controllers[0].JustPressed((uint32_t)InputAction::Right)) {
-			if(focus) {
-				focus->OnDirectionPressed(Direction::Right, &inputUsed);
-				if(!inputUsed) ChangeFocus(FindClosest(Vector2::Right, sceneCamera));
-			} else ChangeFocus(FindFurthest(Vector2::Right));
+void UserInterface::Update(AppComponents app, float deltaTime, const Camera* sceneCamera) {
+	InputEventUI inputEvent;
+	if(gamepadEnabled && app.input->controllers) {
+		if(focus) {
+			// check if player pressed the select button
+			if(app.input->controllers[0].JustPressed((uint32_t)InputAction::Select)) {
+				focus->ProcessInput({ InputEventUI::Type::ControllerSelected }, app);
+				return;
+			}
+
+			// check if player pressed a direction
+			Direction inputDirection = Direction::None;
+			if(app.input->controllers[0].JustPressed((uint32_t)InputAction::Up)) inputDirection = Direction::Up;
+			else if(app.input->controllers[0].JustPressed((uint32_t)InputAction::Down)) inputDirection = Direction::Down;
+			else if(app.input->controllers[0].JustPressed((uint32_t)InputAction::Left)) inputDirection = Direction::Left;
+			else if(app.input->controllers[0].JustPressed((uint32_t)InputAction::Right)) inputDirection = Direction::Right;
+
+			inputEvent.type = InputEventUI::Type::DirectionPressed;
+			inputEvent.direction = inputDirection;
+			if(inputDirection != Direction::None) {
+				bool focusUsedInput = focus->ProcessInput(inputEvent, app);
+				if(!focusUsedInput) {
+					Vector2 directionVector;
+					switch(inputDirection) {
+					case Direction::Up: directionVector = Vector2::Up; break;
+					case Direction::Down: directionVector = Vector2::Down; break;
+					case Direction::Left: directionVector = Vector2::Left; break;
+					case Direction::Right: directionVector = Vector2::Right; break;
+					}
+					UIElement* newFocus = FindClosest(directionVector, sceneCamera);
+					if(newFocus && newFocus != focus) {
+						focus->ProcessInput({ InputEventUI::Type::Unfocused }, app);
+						focus = newFocus;
+						focus->ProcessInput({ InputEventUI::Type::ControllerFocused }, app);
+					}
+				}
+			}
+		} else {
+			// when there is no controller focus, focus on the furthest element in the direction the user presses
+			if(app.input->controllers[0].JustPressed((uint32_t)InputAction::Up)) focus = FindFurthest(Vector2::Up);
+			else if(app.input->controllers[0].JustPressed((uint32_t)InputAction::Down)) focus = FindFurthest(Vector2::Down);
+			else if(app.input->controllers[0].JustPressed((uint32_t)InputAction::Left)) focus = FindFurthest(Vector2::Left);
+			else if(app.input->controllers[0].JustPressed((uint32_t)InputAction::Right)) focus = FindFurthest(Vector2::Right);
+			if(focus) focus->ProcessInput({ InputEventUI::Type::ControllerFocused }, app);
 		}
 	}
 
 	if(mouseEnabled) {
-		Vector2 mouseDelta = inputs->GetMouseWorldDisplacement(sceneCamera);
-		Vector2 mousePos = inputs->GetMouseWorldPosition(sceneCamera);
+		Vector2 mouseDelta = app.input->GetMouseWorldDisplacement(sceneCamera);
+		Vector2 mousePos = app.input->GetMouseWorldPosition(sceneCamera);
+		UIElement** sortedElements = (UIElement**)app.arena->Reserve(sizeof(UIElement*) * numElements);
+		uint32_t numSorted = 0;
 
 		// click and drag
-		if(focus && (mouseDelta != Vector2::Zero && inputs->mouse.leftClicked || inputs->WasMouseClicked(true))) {
-			focus->OnMouseDragged(mousePos, mouseDelta);
+		if(focus && mouseDelta != Vector2::Zero && app.input->mouse.leftClicked && app.input->mouse.lastFrame.leftClicked) {
+			inputEvent.type = InputEventUI::Type::Dragged;
+			inputEvent.mousePos = mousePos;
+			inputEvent.mouseDelta = mouseDelta;
+			bool dragUsed = focus->ProcessInput(inputEvent, app);
+			if(dragUsed) return;
+		}
+
+		// determine which elements are currently hovered and sort them by z order
+		for(uint16_t i = 0; i < numElements; i++) {
+			float newScreenOrder = elements[i]->GetScreenOrder();
+			if(!elements[i]->GetScreenArea().Contains(mousePos)) continue;
+			uint16_t insertIndex;
+			for(insertIndex = numSorted; insertIndex > 0; insertIndex--) {
+				if(newScreenOrder >= sortedElements[insertIndex - 1]->GetScreenOrder()) break;
+				sortedElements[insertIndex] = sortedElements[insertIndex - 1];
+			}
+			sortedElements[insertIndex] = elements[i];
+			numSorted++;
 		}
 
 		// check for a new hovered element
 		if(mouseDelta != Vector2::Zero) {
 			UIElement* hovered = nullptr;
-			AlignedRect unitSquare = AlignedRect(Vector2::Zero, Vector2(1.f, 1.f));
-			for(uint16_t i = 0; i < numElements; i++) {
-				Vector2 normalizedMouse = elements[i]->selectArea->Inverse() * mousePos;
-				if(unitSquare.Contains(normalizedMouse)) {
-					hovered = elements[i];
-					break;
-				}
+			if(numSorted > 0) hovered = sortedElements[0];
+
+			if(hovered != focus) {
+				if(focus) focus->ProcessInput({ InputEventUI::Type::Unfocused }, app);
+				focus = hovered;
+				inputEvent.type = InputEventUI::Type::MouseHovered;
+				inputEvent.mousePos = mousePos;
+				if(focus) focus->ProcessInput(inputEvent, app);
 			}
-
-			ChangeFocus(hovered);
 		}
 
-		// scroll the focused element with the mouse wheel
-		float scroll = inputs->mouse.wheelDelta;
-		if(scroll != 0.f && focus) {
-			focus->OnScrolled(scroll);
+		// try clicking or scrolling on a hovered element
+		if(app.input->mouse.wheelDelta != 0.f) {
+			inputEvent.type = InputEventUI::Type::Scrolled;
+			inputEvent.scrollDelta = app.input->mouse.wheelDelta;
 		}
-	}
-
-	// select the focused element
-	if(focus && inputs->controllers && inputs->controllers[0].JustPressed((uint32_t)InputAction::Select)) {
-		focus->OnSelected();
+		else if(app.input->WasMouseClicked(true)) {
+			inputEvent.type = InputEventUI::Type::MouseClicked;
+			inputEvent.mousePos = mousePos;
+		}
+		if(numSorted > 0) {
+			for(uint16_t i = 0; i < numSorted; i++) {
+				// attempt the input on each hovered element from front to back
+				bool usedInput = sortedElements[i]->ProcessInput(inputEvent, app);
+				if(usedInput) break;
+			}
+		}
 	}
 }
 
@@ -89,7 +131,7 @@ UIElement* UserInterface::FindFurthest(Vector2 direction) {
 	UIElement* furthest = nullptr;
 	float maxDistance;
 	for(uint16_t i = 0; i < numElements; i++) {
-		Vector2 position = *elements[i]->selectArea * Vector2::Zero;
+		Vector2 position = elements[i]->GetScreenArea().Center();
 		Vector2 weighted = position * direction;
 		float distance = weighted.x + weighted.y;
 		if(furthest == nullptr || distance > maxDistance) {
@@ -104,11 +146,11 @@ UIElement* UserInterface::FindFurthest(Vector2 direction) {
 UIElement* UserInterface::FindClosest(Vector2 direction, const Camera* sceneCamera) {
 	// assumes focus is non-null
 	Vector2 screenSize = sceneCamera->GetWorldDimensions();
-	Vector2 start = *focus->selectArea * Vector2::Zero;
+	Vector2 start = focus->GetScreenArea().Center();
 	float minDistance;
 	UIElement* closest = nullptr;
 	for(uint16_t i = 0; i < numElements; i++) {
-		Vector2 position = *elements[i]->selectArea * Vector2::Zero;
+		Vector2 position = elements[i]->GetScreenArea().Center();
 		float dotProd = (position - start).Dot(direction);
 		if(Math::Abs(dotProd) < 0.1f) {
 			continue;
@@ -127,11 +169,4 @@ UIElement* UserInterface::FindClosest(Vector2 direction, const Camera* sceneCame
 	}
 
 	return closest;
-}
-
-void UserInterface::ChangeFocus(UIElement* newFocus) {
-	if(newFocus == focus) return;
-	if(focus) focus->OnUnfocused();
-	focus = newFocus;
-	if(focus) focus->OnFocused();
 }

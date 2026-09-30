@@ -37,6 +37,7 @@ namespace FileIO {
 
 	ImageBuffer LoadBMP(LoadedFile);
 	ImageBuffer LoadPNG(LoadedFile);
+	void LoadDDS(LoadedFile);
 	Font LoadTTF(LoadedFile, const GraphicsAPI*, const MemoryArena* arena);
 	AudioSample LoadWAV(LoadedFile);
 };

@@ -6,19 +6,23 @@ struct RenderGroup;
 
 class Button : public UIElement {
 public:
-	void (*clickEffect)(Button* clicked);
+	enum class ClickEffect {
+		QuitGame
+	} clickEffect;
 	Renderer* box;
 
 	Color normalColor;
 	Color hoveredColor;
+	bool disabled;
 
 	Button() = default;
-	void Initialize(RenderGroup* scene, void (*clickEffect)(Button*));
+	void Initialize(RenderGroup* scene);
 
-	void OnFocused() override;
-	void OnUnfocused() override;
-	void OnDisabled() override;
-	void OnEnabled() override;
-	void OnSelected() override;
+	AlignedRect GetScreenArea() const override;
+	float GetScreenOrder() const override;
+	bool ProcessInput(InputEventUI inputEvent, AppComponents) override;
+
+	void Disable();
+	void Enable();
 };
 

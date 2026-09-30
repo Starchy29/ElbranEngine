@@ -1,32 +1,52 @@
 #include "Button.h"
 #include "RenderGroup.h"
 
-void Button::Initialize(RenderGroup* scene, void (*clickEffect)(Button*)) {
-	this->clickEffect = clickEffect;
+void Button::Initialize(RenderGroup* scene) {
 	normalColor = Color::White;
 	hoveredColor = Color(0.5f, 0.5f, 0.5f);
 
 	box = scene->ReserveRenderer();
 	box->InitShape(PrimitiveShape::Square, normalColor);
-	selectArea = box->worldMatrix;
 }
 
-void Button::OnFocused() {
-	box->shapeData.color = hoveredColor;
+AlignedRect Button::GetScreenArea() const {
+	// assumes button has no world rotation
+	return AlignedRect(box->transform->position, box->transform->scale);
 }
 
-void Button::OnUnfocused() {
+float Button::GetScreenOrder() const {
+	return box->transform->zOrder;
+}
+
+bool Button::ProcessInput(InputEventUI inputEvent, AppComponents app) {
+	switch(inputEvent.type) {
+	case InputEventUI::Type::ControllerFocused:
+	case InputEventUI::Type::MouseHovered:
+		if(disabled) return false;
+		box->shapeData.color = hoveredColor;
+		return true;
+	case InputEventUI::Type::Unfocused:
+		if(disabled) return false;
+		box->shapeData.color = normalColor;
+		return true;
+	case InputEventUI::Type::ControllerSelected:
+	case InputEventUI::Type::MouseClicked:
+		if(disabled) return false;
+		switch(clickEffect) {
+		
+		}
+		return true;
+	}
+	return false;
+}
+
+void Button::Disable() {
+	disabled = true;
 	box->shapeData.color = normalColor;
-}
-
-void Button::OnDisabled() {
 	box->shapeData.color.alpha = 0.5f;
 }
 
-void Button::OnEnabled() {
+void Button::Enable() {
+	disabled = false;
 	box->shapeData.color.alpha = 1.0f;
-}
-
-void Button::OnSelected() {
-	clickEffect(this);
 }

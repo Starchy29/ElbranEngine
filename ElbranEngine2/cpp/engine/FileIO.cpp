@@ -444,6 +444,15 @@ ImageBuffer FileIO::LoadPNG(LoadedFile file) {
 	memcpy(result.pixels, loadedImage.begin()._Ptr, result.width * result.height * sizeof(ImageBuffer::Pixel));
 	return result;
 }
+
+void FileIO::LoadDDS(LoadedFile file) {
+	ASSERT(file.bytes)
+	uint32_t magicWord = file.ReadUInt32();
+	ASSERT(magicWord == 'DDS ')
+
+
+
+}
 #pragma endregion
 
 AudioSample FileIO::LoadWAV(LoadedFile file) {

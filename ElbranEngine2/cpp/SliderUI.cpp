@@ -50,6 +50,18 @@ float SliderUI::GetValue() const {
 	return value;
 }
 
+AlignedRect SliderUI::GetScreenArea() const {
+	return AlignedRect();
+}
+
+float SliderUI::GetScreenOrder() const {
+	return 0.0f;
+}
+
+bool SliderUI::ProcessInput(InputEventUI inputEvent, AppComponents) {
+	return false;
+}
+
 void SliderUI::OnFocused() {
 	mover->shapeData.color = Color(0.5f, 0.5f, 0.5f);
 }
