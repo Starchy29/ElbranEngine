@@ -8,6 +8,7 @@
 class Game {
 public:
 	PlayerControls controls;
+	void (*quitFunction)();
 
 	Game() = default;
 	void Initialize(AppComponents);

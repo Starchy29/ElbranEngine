@@ -5,8 +5,10 @@ class SoundMixer;
 class InputManager;
 class AssetContainer;
 class MemoryArena;
+class Game;
 
 struct AppComponents {
+	Game* game;
 	const GraphicsAPI* graphics;
 	SoundMixer* audio;
 	InputManager* input;

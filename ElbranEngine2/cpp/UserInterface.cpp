@@ -36,6 +36,7 @@ void UserInterface::Update(AppComponents app, float deltaTime, const Camera* sce
 			if(inputDirection != Direction::None) {
 				bool focusUsedInput = focus->ProcessInput(inputEvent, app);
 				if(!focusUsedInput) {
+					// focus on the next adjacent element
 					Vector2 directionVector;
 					switch(inputDirection) {
 					case Direction::Up: directionVector = Vector2::Up; break;
@@ -43,21 +44,52 @@ void UserInterface::Update(AppComponents app, float deltaTime, const Camera* sce
 					case Direction::Left: directionVector = Vector2::Left; break;
 					case Direction::Right: directionVector = Vector2::Right; break;
 					}
-					UIElement* newFocus = FindClosest(directionVector, sceneCamera);
-					if(newFocus && newFocus != focus) {
-						focus->ProcessInput({ InputEventUI::Type::Unfocused }, app);
-						focus = newFocus;
-						focus->ProcessInput({ InputEventUI::Type::ControllerFocused }, app);
+
+					UIElement* newFocus = focus;
+					for(uint16_t i = 0; i < numElements; i++) {
+						newFocus = FindAdjacentElement(newFocus, directionVector, sceneCamera);
+						if(newFocus == nullptr || newFocus == focus) break;
+						bool focusAllowed = newFocus->ProcessInput({ InputEventUI::Type::ControllerFocused }, app);
+						if(focusAllowed) {
+							focus->ProcessInput({ InputEventUI::Type::Unfocused }, app);
+							focus = newFocus;
+							break;
+						}
 					}
 				}
 			}
-		} else {
+		}
+		else if(numElements > 0) {
 			// when there is no controller focus, focus on the furthest element in the direction the user presses
-			if(app.input->controllers[0].JustPressed((uint32_t)InputAction::Up)) focus = FindFurthest(Vector2::Up);
-			else if(app.input->controllers[0].JustPressed((uint32_t)InputAction::Down)) focus = FindFurthest(Vector2::Down);
-			else if(app.input->controllers[0].JustPressed((uint32_t)InputAction::Left)) focus = FindFurthest(Vector2::Left);
-			else if(app.input->controllers[0].JustPressed((uint32_t)InputAction::Right)) focus = FindFurthest(Vector2::Right);
-			if(focus) focus->ProcessInput({ InputEventUI::Type::ControllerFocused }, app);
+			Vector2 pressedVector = Vector2::Zero;
+			if(app.input->controllers[0].JustPressed((uint32_t)InputAction::Up)) pressedVector = Vector2::Up;
+			else if(app.input->controllers[0].JustPressed((uint32_t)InputAction::Down)) pressedVector = Vector2::Down;
+			else if(app.input->controllers[0].JustPressed((uint32_t)InputAction::Left)) pressedVector = Vector2::Left;
+			else if(app.input->controllers[0].JustPressed((uint32_t)InputAction::Right)) pressedVector = Vector2::Right;
+
+			if(pressedVector != Vector2::Zero) {
+				UIElement* furthest = nullptr;
+				float maxDistance;
+				for(uint16_t i = 0; i < numElements; i++) {
+					Vector2 position = elements[i]->GetScreenArea().Center();
+					Vector2 weighted = position * pressedVector;
+					float distance = weighted.x + weighted.y;
+					if(furthest == nullptr || distance > maxDistance) {
+						furthest = elements[i];
+						maxDistance = distance;
+					}
+				}
+
+				pressedVector *= -1.f;
+				for(uint16_t i = 0; i < numElements; i++) {
+					bool focusSucceeded = furthest->ProcessInput({ InputEventUI::Type::ControllerFocused }, app);
+					if(focusSucceeded) {
+						focus = furthest;
+						break;
+					}
+					furthest = FindAdjacentElement(furthest, pressedVector, sceneCamera);
+				}
+			}
 		}
 	}
 
@@ -92,14 +124,21 @@ void UserInterface::Update(AppComponents app, float deltaTime, const Camera* sce
 		// check for a new hovered element
 		if(mouseDelta != Vector2::Zero) {
 			UIElement* hovered = nullptr;
-			if(numSorted > 0) hovered = sortedElements[0];
+			inputEvent.type = InputEventUI::Type::MouseHovered;
+			inputEvent.mousePos = mousePos;
+			for(uint32_t i = 0; i < numSorted; i++) {
+				bool hoverAccepted = false;
+				if(sortedElements[i] == focus) hoverAccepted = true;
+				else hoverAccepted = sortedElements[i]->ProcessInput(inputEvent, app);
+				if(hoverAccepted) {
+					hovered = sortedElements[i];
+					break;
+				}
+			}
 
 			if(hovered != focus) {
 				if(focus) focus->ProcessInput({ InputEventUI::Type::Unfocused }, app);
 				focus = hovered;
-				inputEvent.type = InputEventUI::Type::MouseHovered;
-				inputEvent.mousePos = mousePos;
-				if(focus) focus->ProcessInput(inputEvent, app);
 			}
 		}
 
@@ -127,26 +166,10 @@ void UserInterface::Join(UIElement* element) {
 	numElements++;
 }
 
-UIElement* UserInterface::FindFurthest(Vector2 direction) {
-	UIElement* furthest = nullptr;
-	float maxDistance;
-	for(uint16_t i = 0; i < numElements; i++) {
-		Vector2 position = elements[i]->GetScreenArea().Center();
-		Vector2 weighted = position * direction;
-		float distance = weighted.x + weighted.y;
-		if(furthest == nullptr || distance > maxDistance) {
-			furthest = elements[i];
-			maxDistance = distance;
-		}
-	}
-
-	return furthest;
-}
-
-UIElement* UserInterface::FindClosest(Vector2 direction, const Camera* sceneCamera) {
+UIElement* UserInterface::FindAdjacentElement(UIElement* closestFrom, Vector2 direction, const Camera* sceneCamera) {
 	// assumes focus is non-null
 	Vector2 screenSize = sceneCamera->GetWorldDimensions();
-	Vector2 start = focus->GetScreenArea().Center();
+	Vector2 start = closestFrom->GetScreenArea().Center();
 	float minDistance;
 	UIElement* closest = nullptr;
 	for(uint16_t i = 0; i < numElements; i++) {

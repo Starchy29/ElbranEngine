@@ -2,18 +2,18 @@
 #include "..\Random.h"
 
 void Application::Initialize(void (*quitFunction)(), UInt2 windowSize, PlatformGraphics* platformGraphics, PlatformAudio* platformAudio, PlatformInput* platformInput) {
-	updateComponents = {&graphics, &audio, &input, &assets, &frameBuffer};
+	updateComponents = {&game, &graphics, &audio, &input, &assets, &frameBuffer};
 	drawComponents = {&graphics, &assets, &frameBuffer};
 
 	frameBuffer.Initialize(4194304);
 	_rng.Initialize();
-	this->quitFunction = quitFunction;
 
 	graphics.Initialize(platformGraphics, windowSize);
 	audio.Initialize(platformAudio);
 	input.Initialize(platformInput);
 
 	assets.Initialize(&graphics, &frameBuffer);
+	game.quitFunction = quitFunction;
 	game.Initialize(updateComponents);
 	frameBuffer.Clear();
 }

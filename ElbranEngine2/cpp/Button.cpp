@@ -1,5 +1,6 @@
 #include "Button.h"
 #include "RenderGroup.h"
+#include "Game.h"
 
 void Button::Initialize(RenderGroup* scene) {
 	normalColor = Color::White;
@@ -32,9 +33,7 @@ bool Button::ProcessInput(InputEventUI inputEvent, AppComponents app) {
 	case InputEventUI::Type::ControllerSelected:
 	case InputEventUI::Type::MouseClicked:
 		if(disabled) return false;
-		switch(clickEffect) {
-		
-		}
+		clickFunction(this, app);
 		return true;
 	}
 	return false;

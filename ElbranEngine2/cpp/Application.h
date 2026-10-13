@@ -16,8 +16,6 @@ public:
 	Game game;
 	MemoryArena frameBuffer;
 
-	void (*quitFunction)();
-
 	Application() = default;
 	void Initialize(void (*quitFunction)(), UInt2 windowSize, PlatformGraphics* platformGraphics, PlatformAudio* platformAudio, PlatformInput* platformInput);
 	void Release();

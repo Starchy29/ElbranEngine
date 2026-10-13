@@ -6,11 +6,8 @@ struct RenderGroup;
 
 class Button : public UIElement {
 public:
-	enum class ClickEffect {
-		QuitGame
-	} clickEffect;
+	void(*clickFunction)(Button* clicked, AppComponents);
 	Renderer* box;
-
 	Color normalColor;
 	Color hoveredColor;
 	bool disabled;

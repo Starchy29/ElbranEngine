@@ -52,9 +52,6 @@ public:
 	void Update(AppComponents, float deltaTime, const Camera* sceneCamera);
 
 	void Join(UIElement* element);
-
-private:
-	UIElement* FindFurthest(Vector2 direction);
-	UIElement* FindClosest(Vector2 direction, const Camera* sceneCamera);
+	UIElement* FindAdjacentElement(UIElement* closestFrom, Vector2 direction, const Camera* sceneCamera);
 };
 
